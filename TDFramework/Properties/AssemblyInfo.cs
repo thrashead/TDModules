@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Sina SALIK (Thrashead)'s Company")]
 [assembly: AssemblyProduct("TDFramework")]
-[assembly: AssemblyCopyright("Copyright by Sina SALIK © 2004 - 2018")]
+[assembly: AssemblyCopyright("Copyright by Sina SALIK © 2004 - 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
