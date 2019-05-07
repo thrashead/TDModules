@@ -34,7 +34,7 @@ namespace TestProjectV3
             table1.SelectSettings.OrderColumn = ContentsColumns.CategoryID;
             table1.SelectSettings.OrderBy = OrderBy.DESC;
 
-            table1.WhereList.Add(new Where(ContentsColumns.ID, new int[] { 3, 4, 5 }, Operators.IN));
+            table1.WhereList.Add(new Where(ContentsColumns.ID, new [] { 3, 4, 5 }, Operators.IN));
 
             Relation<Contents, Categories> rel = new Relation<Contents, Categories>(ContentsColumns.CategoryID, CategoriesColumns.ID);
 
@@ -215,7 +215,7 @@ namespace TestProjectV3
             };
             tableCat.Insert(true);
 
-            //dataGridView1.DataSource = table.Data;
+            dataGridView1.DataSource = tableCat.Data;
         }
     }
 }
