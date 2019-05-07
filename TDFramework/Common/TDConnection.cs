@@ -1,10 +1,10 @@
 // ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
@@ -18,9 +18,9 @@ namespace TDFramework.Common
     {
         static TDConnection()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
-                TDConnection.ConnectionStringForOnce = null;
+                ConnectionStringForOnce = null;
             };
         }
 
@@ -29,7 +29,7 @@ namespace TDFramework.Common
         {
             get
             {
-                if (String.IsNullOrEmpty(ConnectionStringForOnce))
+                if (string.IsNullOrEmpty(ConnectionStringForOnce))
                 {
                     return new SqlConnection(ConfigurationManager.ConnectionStrings["TDConnection"].ConnectionString);
                 }

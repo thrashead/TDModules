@@ -1,46 +1,34 @@
 ﻿// ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
 using System;
 
-namespace TDFramework.Common
+namespace TDFramework.Common.Internal
 {
     internal sealed class Guider
     {
         static Guider()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
         }
 
-        internal static string GetGuid(bool showMinus = false)
-        {
-            if (showMinus == true)
-            {
-                return Guid.NewGuid().ToString();
-            }
-            else
-            {
-                return Guid.NewGuid().ToString().Replace("-", "");
-            }
-        }
-
-        internal static string GetGuid(int lettercount, bool showMinus = false)
+        internal static string GetGuid(int letterCount, bool showMinus = false)
         {
             string s = "";
 
             for (int i = 0; i < 10; i++)
             {
-                if (showMinus == true)
+                if (showMinus)
                 {
                     s = s + Guid.NewGuid().ToString() + "-";
                 }
@@ -50,13 +38,13 @@ namespace TDFramework.Common
                 }
             }
 
-            if (lettercount < 1)
+            if (letterCount < 1)
             {
                 return "";
             }
             else
             {
-                return s.Remove(lettercount).Trim('-');
+                return s.Remove(letterCount).Trim('-');
             }
         }
     }

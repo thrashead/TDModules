@@ -1,29 +1,30 @@
 // ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using System.Data.SqlClient;
-using System.Collections.Generic;
 using TDFramework.Common;
 using TDFramework.Common.TDModel;
+using TDFramework.Library;
 
-namespace TDFramework
+namespace TDFramework.Data
 {
     internal sealed class Data<T> where T : ITDModel
     {
         static Data()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
@@ -31,94 +32,94 @@ namespace TDFramework
 
         #region Select
 
-        internal static Table<T> Select(dynamic _columns = null, List<Where> _whereList = null, Select _selectValues = null)
+        internal static Table<T> Select(dynamic columns = null, List<Where> whereList = null, Select selectValues = null)
         {
             Type typeModel = typeof(T);
             string tableName = typeModel.GetDBTableName();
 
             SqlCommand selectCmd = new SqlCommand();
 
-            string querystring = "";
+            string queryStr;
 
-            if (_selectValues != null)
+            if (selectValues != null)
             {
-                if (_selectValues.Pager != null)
+                if (selectValues.Pager != null)
                 {
-                    if (!String.IsNullOrEmpty(_selectValues.Pager.FirstRecord) && !String.IsNullOrEmpty(_selectValues.Pager.LastRecord))
+                    if (!string.IsNullOrEmpty(selectValues.Pager.FirstRecord) && !string.IsNullOrEmpty(selectValues.Pager.LastRecord))
                     {
-                        querystring = ApplySkipTake(tableName, selectCmd, _selectValues, _whereList, _columns);
+                        queryStr = ApplySkipTake(tableName, selectCmd, selectValues, whereList, columns);
                     }
                     else
                     {
-                        querystring = "Select " + ApplyDistinct(_selectValues) + ApplyTop(_selectValues) + ApplyAggregate(_selectValues);
+                        queryStr = "Select " + ApplyDistinct(selectValues) + ApplyTop(selectValues) + ApplyAggregate(selectValues);
 
-                        querystring += ApplySelectColumns(_columns, _selectValues);
+                        queryStr += ApplySelectColumns(columns);
 
-                        querystring = querystring.Trim().TrimEnd(',');
+                        queryStr = queryStr.Trim().TrimEnd(',');
 
-                        querystring += " From " + tableName;
+                        queryStr += " From " + tableName;
 
-                        querystring += ApplyWhereList(selectCmd, _whereList);
+                        queryStr += ApplyWhereList(selectCmd, whereList);
 
-                        querystring += ApplyGroupBy(_selectValues);
+                        queryStr += ApplyGroupBy(selectValues);
 
-                        querystring += ApplyHaving(selectCmd, _selectValues);
+                        queryStr += ApplyHaving(selectCmd, selectValues);
 
-                        querystring += ApplyOrder(_selectValues);
+                        queryStr += ApplyOrder(selectValues);
                     }
                 }
                 else
                 {
-                    querystring = "Select " + ApplyDistinct(_selectValues) + ApplyTop(_selectValues) + ApplyAggregate(_selectValues);
+                    queryStr = "Select " + ApplyDistinct(selectValues) + ApplyTop(selectValues) + ApplyAggregate(selectValues);
 
-                    querystring += ApplySelectColumns(_columns, _selectValues);
+                    queryStr += ApplySelectColumns(columns);
 
-                    querystring = querystring.Trim().TrimEnd(',');
+                    queryStr = queryStr.Trim().TrimEnd(',');
 
-                    querystring += " From " + tableName;
+                    queryStr += " From " + tableName;
 
-                    querystring += ApplyWhereList(selectCmd, _whereList);
+                    queryStr += ApplyWhereList(selectCmd, whereList);
 
-                    querystring += ApplyGroupBy(_selectValues);
+                    queryStr += ApplyGroupBy(selectValues);
 
-                    querystring += ApplyHaving(selectCmd, _selectValues);
+                    queryStr += ApplyHaving(selectCmd, selectValues);
 
-                    querystring += ApplyOrder(_selectValues);
+                    queryStr += ApplyOrder(selectValues);
                 }
             }
             else
             {
-                querystring = "Select " + ApplyDistinct(_selectValues) + ApplyTop(_selectValues) + ApplyAggregate(_selectValues);
+                queryStr = "Select " + ApplyDistinct(selectValues) + ApplyTop(selectValues) + ApplyAggregate(selectValues);
 
-                querystring += ApplySelectColumns(_columns, _selectValues);
+                queryStr += ApplySelectColumns(columns);
 
-                querystring = querystring.Trim().TrimEnd(',');
+                queryStr = queryStr.Trim().TrimEnd(',');
 
-                querystring += " From " + tableName;
+                queryStr += " From " + tableName;
 
-                querystring += ApplyWhereList(selectCmd, _whereList);
+                queryStr += ApplyWhereList(selectCmd, whereList);
 
-                querystring += ApplyGroupBy(_selectValues);
+                queryStr += ApplyGroupBy(selectValues);
 
-                querystring += ApplyHaving(selectCmd, _selectValues);
+                queryStr += ApplyHaving(selectCmd, selectValues);
 
-                querystring += ApplyOrder(_selectValues);
+                queryStr += ApplyOrder(selectValues);
             }
 
-            return ReturnSelect(selectCmd, querystring);
+            return ReturnSelect(selectCmd, queryStr);
         }
 
-        private static Table<T> ReturnSelect(SqlCommand _selectCmd, string _querystring)
+        private static Table<T> ReturnSelect(SqlCommand selectCmd, string queryString)
         {
             Table<T> table = new Table<T>();
-            SqlDataAdapter dataAdap = new SqlDataAdapter();
 
-            dataAdap.SelectCommand = _selectCmd;
+            SqlDataAdapter dataAdap = new SqlDataAdapter { SelectCommand = selectCmd };
+
             dataAdap.SelectCommand.Connection = TDConnection.SqlConnection;
-            _querystring = _querystring.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
-            dataAdap.SelectCommand.CommandText = _querystring;
-            table.QueryString = _querystring;
-            table.Parameters = _selectCmd.Parameters.ToParameterList();
+            queryString = queryString.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
+            dataAdap.SelectCommand.CommandText = queryString;
+            table.QueryString = queryString;
+            table.Parameters = selectCmd.Parameters.ToParameterList();
 
             try
             {
@@ -129,9 +130,7 @@ namespace TDFramework
             }
             catch (Exception ex)
             {
-                table.Error = new Error();
-                table.Error.Message = ex.Message;
-                table.Error.Layer = ErrorLayers.DATA;
+                table.Error = new Error { Message = ex.Message, Layer = ErrorLayers.DATA };
             }
             finally
             {
@@ -142,53 +141,56 @@ namespace TDFramework
             return table;
         }
 
-        private static string ApplyAggregate(Select _selectValues = null)
+        private static string ApplyAggregate(Select selectValues = null)
         {
-            string querystring = "";
+            string queryStr = "";
 
-            if (_selectValues != null)
+            if (selectValues?.Aggregate != null)
             {
-                if (_selectValues.Aggregate != null)
+                if (selectValues.Aggregate.Column != null)
                 {
-                    if (_selectValues.Aggregate.Column != null)
+                    Type typeModel = typeof(T);
+                    PropertyInfo propInfo = typeModel.GetProperty(selectValues.Aggregate.Column.ToString());
+
+                    if (propInfo.PropertyType.InType())
                     {
-                        Type typeModel = typeof(T);
-                        PropertyInfo propInfo = typeModel.GetProperty(_selectValues.Aggregate.Column.ToString());
-
-                        if (propInfo.PropertyType.InType())
+                        switch (selectValues.Aggregate.Agregate)
                         {
-                            switch (_selectValues.Aggregate.Agregate)
-                            {
-                                case Aggregates.AVERAGE: querystring += "Avg";
-                                    break;
-                                case Aggregates.COUNT: querystring += "Count";
-                                    break;
-                                case Aggregates.MAXIMUM: querystring += "Max";
-                                    break;
-                                case Aggregates.MINIMUM: querystring += "Min";
-                                    break;
-                                case Aggregates.SUMMARY: querystring += "Sum";
-                                    break;
-                                default: querystring += "Count";
-                                    break;
-                            }
-
-                            querystring += "([" + propInfo.GetTableColumnName() + "]) AggColumn, ";
+                            case Aggregates.AVERAGE:
+                                queryStr += "Avg";
+                                break;
+                            case Aggregates.COUNT:
+                                queryStr += "Count";
+                                break;
+                            case Aggregates.MAXIMUM:
+                                queryStr += "Max";
+                                break;
+                            case Aggregates.MINIMUM:
+                                queryStr += "Min";
+                                break;
+                            case Aggregates.SUMMARY:
+                                queryStr += "Sum";
+                                break;
+                            default:
+                                queryStr += "Count";
+                                break;
                         }
+
+                        queryStr += "([" + propInfo.GetTableColumnName() + "]) AggColumn, ";
                     }
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplyTop(Select _selectValues = null)
+        private static string ApplyTop(Select selectValues = null)
         {
-            if (_selectValues != null)
+            if (selectValues != null)
             {
-                if (_selectValues.Top != null)
+                if (selectValues.Top != null)
                 {
-                    return " Top " + _selectValues.Top.ToString() + " ";
+                    return " Top " + selectValues.Top.ToString() + " ";
                 }
                 else
                 {
@@ -201,217 +203,210 @@ namespace TDFramework
             }
         }
 
-        private static string ApplySelectColumns(dynamic _columns, Select _selectValues)
+        private static string ApplySelectColumns(dynamic columns)
         {
-            string querystring = "";
-            SelectColumns selectColumns;
+            string queryStr = "";
 
-            if (_columns == null)
+            if (columns == null)
             {
-                querystring += "*";
+                queryStr += "*";
             }
-            else if (Enum.TryParse(_columns.ToString(), out selectColumns))
+            else if (Enum.TryParse(columns.ToString(), out SelectColumns _))
             {
-                querystring += "";
+                queryStr += "";
             }
             else
             {
-                Type type = _columns.GetType();
+                Type type = columns.GetType();
 
                 if (type.IsGenericType)
                 {
-                    if (_columns.Count > 0)
+                    if (columns.Count > 0)
                     {
-                        foreach (dynamic item in _columns)
+                        foreach (dynamic item in columns)
                         {
                             Type typeModel = typeof(T);
                             PropertyInfo propInfo = typeModel.GetProperty(item.ToString());
 
                             if (propInfo.PropertyType.InType())
                             {
-                                querystring += "[" + propInfo.GetTableColumnName() + "], ";
+                                queryStr += "[" + propInfo.GetTableColumnName() + "], ";
                             }
                         }
                     }
                     else
                     {
-                        querystring += "*";
+                        queryStr += "*";
                     }
                 }
                 else
                 {
                     Type typeModel = typeof(T);
-                    PropertyInfo propInfo = typeModel.GetProperty(_columns.ToString());
+                    PropertyInfo propInfo = typeModel.GetProperty(columns.ToString());
 
                     if (propInfo.PropertyType.InType())
                     {
-                        querystring += "[" + propInfo.GetTableColumnName() + "]";
+                        queryStr += "[" + propInfo.GetTableColumnName() + "]";
                     }
                 }
             }
 
-            querystring = querystring.Trim().TrimEnd(',');
+            queryStr = queryStr.Trim().TrimEnd(',');
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplyGroupBy(Select _selectValues)
+        private static string ApplyGroupBy(Select selectValues)
         {
-            string querystring = "";
+            string queryStr = "";
 
-            if (_selectValues != null)
+            if (selectValues?.Aggregate != null)
             {
-                if (_selectValues.Aggregate != null)
+                if (selectValues.Aggregate.GroupColumns != null)
                 {
-                    if (_selectValues.Aggregate.GroupColumns != null)
+                    Type type = selectValues.Aggregate.GroupColumns.GetType();
+
+                    if (type.IsGenericType)
                     {
-                        Type type = _selectValues.Aggregate.GroupColumns.GetType();
-
-                        if (type.IsGenericType)
+                        if (selectValues.Aggregate.GroupColumns.Count > 0)
                         {
-                            if (_selectValues.Aggregate.GroupColumns.Count > 0)
+                            foreach (dynamic item in selectValues.Aggregate.GroupColumns)
                             {
-                                foreach (dynamic item in _selectValues.Aggregate.GroupColumns)
-                                {
-                                    Type typeModel = typeof(T);
-                                    PropertyInfo propInfo = typeModel.GetProperty(item.ToString());
+                                Type typeModel = typeof(T);
+                                PropertyInfo propInfo = typeModel.GetProperty(item.ToString());
 
-                                    if (propInfo.PropertyType.InType())
-                                    {
-                                        querystring += "[" + propInfo.GetTableColumnName() + "], ";
-                                    }
+                                if (propInfo.PropertyType.InType())
+                                {
+                                    queryStr += "[" + propInfo.GetTableColumnName() + "], ";
                                 }
                             }
                         }
-                        else
-                        {
-                            Type typeModel = typeof(T);
-                            PropertyInfo propInfo = typeModel.GetProperty(_selectValues.Aggregate.GroupColumns.ToString());
+                    }
+                    else
+                    {
+                        Type typeModel = typeof(T);
+                        PropertyInfo propInfo = typeModel.GetProperty(selectValues.Aggregate.GroupColumns.ToString());
 
-                            if (propInfo.PropertyType.InType())
-                            {
-                                querystring += "[" + propInfo.GetTableColumnName() + "]";
-                            }
+                        if (propInfo.PropertyType.InType())
+                        {
+                            queryStr += "[" + propInfo.GetTableColumnName() + "]";
                         }
                     }
+                }
 
-                    querystring = querystring.Trim().TrimEnd(',');
+                queryStr = queryStr.Trim().TrimEnd(',');
 
-                    if (querystring != "")
-                    {
-                        querystring = " Group By " + querystring;
-                    }
+                if (queryStr != "")
+                {
+                    queryStr = " Group By " + queryStr;
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplyHaving(SqlCommand _cmd, Select _selectValues)
+        private static string ApplyHaving(SqlCommand cmd, Select selectValues)
         {
             Type typeModel = typeof(T);
 
             List<PropertyInfo> props = typeModel.GetProperties().ToList().ReturnValidProperties();
 
-            string querystring = "";
-            if (_selectValues != null)
+            string queryStr = "";
+            if (selectValues?.Aggregate != null)
             {
-                if (_selectValues.Aggregate != null)
+                if (selectValues.Aggregate.GroupColumns != null)
                 {
-                    if (_selectValues.Aggregate.GroupColumns != null)
+                    if (selectValues.Aggregate.Having != null)
                     {
-                        if (_selectValues.Aggregate.Having != null)
+                        if (selectValues.Aggregate.Having.Count > 0)
                         {
-                            if (_selectValues.Aggregate.Having.Count > 0)
+                            foreach (Having item in selectValues.Aggregate.Having)
                             {
-                                foreach (Having item in _selectValues.Aggregate.Having)
+                                if (props.Where(a => a.Name == item.Column.ToString()).ToList().Count > 0)
                                 {
-                                    if (props.Where(a => a.Name == item.Column.ToString()).ToList().Count > 0)
-                                    {
-                                        PropertyInfo pinfo = props.Where(a => a.Name == item.Column.ToString()).ToList().FirstOrDefault();
-                                        item.Column = pinfo.GetTableColumnName();
-                                    }
+                                    PropertyInfo pinfo = props.Where(a => a.Name == item.Column.ToString()).ToList().FirstOrDefault();
+                                    item.Column = pinfo.GetTableColumnName();
                                 }
-
-                                HavingValues cv = Having.CreateHaving(_selectValues.Aggregate.Having);
-
-                                querystring = " Having " + cv.QueryString;
-                                _cmd.Parameters.AddRange(cv.Parameters.ToArray());
                             }
+
+                            HavingValues cv = Having.CreateHaving(selectValues.Aggregate.Having);
+
+                            queryStr = " Having " + cv.QueryString;
+                            cmd.Parameters.AddRange(cv.Parameters.ToArray());
                         }
                     }
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplyOrder(Select _selectValues = null)
+        private static string ApplyOrder(Select selectValues = null)
         {
-            string querystring = "";
+            string queryStr = "";
 
-            if (_selectValues != null)
+            if (selectValues != null)
             {
-                if (_selectValues.OrderColumn != null)
+                if (selectValues.OrderColumn != null)
                 {
                     Type typeModel = typeof(T);
-                    PropertyInfo propInfo = typeModel.GetProperty(_selectValues.OrderColumn.ToString());
+                    PropertyInfo propInfo = typeModel.GetProperty(selectValues.OrderColumn.ToString());
 
                     if (propInfo.PropertyType.InType())
                     {
-                        querystring += " Order By [" + propInfo.GetTableColumnName() + "]";
+                        queryStr += " Order By [" + propInfo.GetTableColumnName() + "]";
 
-                        if (_selectValues.OrderBy != null)
+                        if (selectValues.OrderBy != null)
                         {
-                            string orderby = _selectValues.OrderBy.ToString() == "DESC" ? " Desc" : " Asc";
-                            querystring += orderby;
+                            string orderby = selectValues.OrderBy.ToString() == "DESC" ? " Desc" : " Asc";
+                            queryStr += orderby;
                         }
                     }
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplySkipTake(string _tableName, SqlCommand _selectCmd, Select _selectValues, List<Where> _whereList = null, dynamic _columns = null)
+        private static string ApplySkipTake(string tableName, SqlCommand selectCmd, Select selectValues, List<Where> whereList = null, dynamic columns = null)
         {
-            string order = ApplyOrder(_selectValues);
+            string order = ApplyOrder(selectValues);
 
             Type typeModel = typeof(T);
             List<PropertyInfo> props = typeModel.GetProperties().ToList();
 
             order = order == "" ? "Order By " + props.ReturnFirstColumn() : order;
 
-            string querystring = "With Pager As (Select Row_Number() Over (" + order + ") As 'RowNumber', ";
+            string queryStr = "With Pager As (Select Row_Number() Over (" + order + ") As 'RowNumber', ";
 
-            querystring += ApplyAggregate(_selectValues) + ApplySelectColumns(_columns, _selectValues);
+            queryStr += ApplyAggregate(selectValues) + ApplySelectColumns(columns);
 
-            querystring = querystring.Trim().TrimEnd(',');
+            queryStr = queryStr.Trim().TrimEnd(',');
 
-            querystring += " From " + _tableName + " " + ApplyWhereList(_selectCmd, _whereList);
+            queryStr += " From " + tableName + " " + ApplyWhereList(selectCmd, whereList);
 
-            querystring += ApplyGroupBy(_selectValues);
+            queryStr += ApplyGroupBy(selectValues);
 
-            querystring += ApplyHaving(_selectCmd, _selectValues);
+            queryStr += ApplyHaving(selectCmd, selectValues);
 
-            querystring += ") Select" + ApplyDistinct(_selectValues) + ApplyTop(_selectValues);
+            queryStr += ") Select" + ApplyDistinct(selectValues) + ApplyTop(selectValues);
 
-            querystring += " * From Pager ";
+            queryStr += " * From Pager ";
 
-            querystring += "Where RowNumber Between " + _selectValues.Pager.FirstRecord + " AND " + _selectValues.Pager.LastRecord;
+            queryStr += "Where RowNumber Between " + selectValues.Pager.FirstRecord + " AND " + selectValues.Pager.LastRecord;
 
-            return querystring;
+            return queryStr;
         }
 
         #endregion
 
         #region Insert
 
-        internal static Table<T> Insert(dynamic _values, bool returnID = false)
+        internal static Table<T> Insert(dynamic values, bool returnID = false)
         {
             Type typeModel = typeof(T);
             string tableName = typeModel.GetDBTableName();
-            object obj = (T)_values;
+            object obj = (T)values;
 
             List<PropertyInfo> props = typeModel.GetProperties().ToList().ReturnValidProperties();
 
@@ -420,11 +415,11 @@ namespace TDFramework
             Table<T> table = new Table<T>();
             SqlCommand insertCmd = new SqlCommand();
 
-            string querystring = props.ReturnQueryStringForInsert(tableName, identity, returnID);
+            string queryStr = props.ReturnQueryStringForInsert(tableName, identity, returnID);
 
-            querystring = querystring.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
-            insertCmd.CommandText = querystring;
-            table.QueryString = querystring;
+            queryStr = queryStr.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
+            insertCmd.CommandText = queryStr;
+            table.QueryString = queryStr;
 
             foreach (PropertyInfo item in props)
             {
@@ -432,7 +427,7 @@ namespace TDFramework
                 {
                     if (identity != item.Name)
                     {
-                        insertCmd.Parameters.AddWithValue("@" + item.GetTableColumnName(), ((T)_values).GetType().GetProperty(item.Name).GetValue(obj, null) ?? (object)DBNull.Value);
+                        insertCmd.Parameters.AddWithValue("@" + item.GetTableColumnName(), ((T)values).GetType().GetProperty(item.Name)?.GetValue(obj, null) ?? DBNull.Value);
                     }
                 }
             }
@@ -445,7 +440,7 @@ namespace TDFramework
             {
                 insertCmd.Connection.Open();
 
-                if (returnID == true)
+                if (returnID)
                 {
                     table.Data = insertCmd.ExecuteScalar();
                     if (table.Data.GetType() != typeof(DBNull))
@@ -460,9 +455,7 @@ namespace TDFramework
             }
             catch (Exception ex)
             {
-                table.Error = new Error();
-                table.Error.Message = ex.Message;
-                table.Error.Layer = ErrorLayers.DATA;
+                table.Error = new Error { Message = ex.Message, Layer = ErrorLayers.DATA };
             }
             finally
             {
@@ -477,93 +470,91 @@ namespace TDFramework
 
         #region Update
 
-        internal static Table<T> Update(dynamic _values, dynamic _columns = null, List<Where> _whereList = null)
+        internal static Table<T> Update(dynamic values, dynamic columns = null, List<Where> whereList = null)
         {
             SqlCommand updateCmd = new SqlCommand();
 
-            Type typeUpdateColumns = _columns == null ? null : _columns.GetType();
+            Type typeUpdateColumns = columns == null ? null : columns.GetType();
 
-            string querystring = ApplyParameter(updateCmd, _values, _columns, typeUpdateColumns);
+            string queryStr = ApplyParameter(updateCmd, values, columns, typeUpdateColumns);
 
-            querystring += ApplyWhereList(updateCmd, _whereList);
+            queryStr += ApplyWhereList(updateCmd, whereList);
 
-            return ReturnUpdate(updateCmd, querystring);
+            return ReturnUpdate(updateCmd, queryStr);
         }
 
-        private static Table<T> ReturnUpdate(SqlCommand _updateCmd, string _querystring)
+        private static Table<T> ReturnUpdate(SqlCommand updateCmd, string queryString)
         {
             Table<T> table = new Table<T>();
 
-            _updateCmd.Connection = TDConnection.SqlConnection;
-            _querystring = _querystring.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
-            _updateCmd.CommandText = _querystring;
-            table.QueryString = _querystring;
-            table.Parameters = _updateCmd.Parameters.ToParameterList();
+            updateCmd.Connection = TDConnection.SqlConnection;
+            queryString = queryString.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
+            updateCmd.CommandText = queryString;
+            table.QueryString = queryString;
+            table.Parameters = updateCmd.Parameters.ToParameterList();
 
             try
             {
-                _updateCmd.Connection.Open();
-                _updateCmd.ExecuteNonQuery();
+                updateCmd.Connection.Open();
+                updateCmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
-                table.Error = new Error();
-                table.Error.Message = ex.Message;
-                table.Error.Layer = ErrorLayers.DATA;
+                table.Error = new Error { Message = ex.Message, Layer = ErrorLayers.DATA };
             }
             finally
             {
-                _updateCmd.Connection.Close();
+                updateCmd.Connection.Close();
                 TDConnection.ConnectionStringForOnce = null;
             }
 
             return table;
         }
 
-        private static string ApplyParameter(SqlCommand _updateCmd, dynamic _values, dynamic _columns, Type _typeUpdateColumns)
+        private static string ApplyParameter(SqlCommand updateCmd, dynamic values, dynamic columns, Type typeUpdateColumns)
         {
             Type typeModel = typeof(T);
             string tableName = typeModel.GetDBTableName();
-            object obj = (T)_values;
+            object obj = (T)values;
 
             List<PropertyInfo> props = typeModel.GetProperties().ToList().ReturnValidProperties();
 
             string identity = props.ReturnIDColumn();
 
-            string querystring = "Update " + tableName + " Set ";
+            string queryStr = "Update " + tableName + " Set ";
 
-            if (_columns != null)
+            if (columns != null)
             {
-                _typeUpdateColumns = _columns.GetType();
+                typeUpdateColumns = columns.GetType();
 
-                if (_typeUpdateColumns.IsGenericType)
+                if (typeUpdateColumns.IsGenericType)
                 {
-                    foreach (dynamic item in _columns)
+                    foreach (dynamic item in columns)
                     {
-                        PropertyInfo propInfo = _values.GetType().GetProperty(item.ToString());
+                        PropertyInfo propInfo = values.GetType().GetProperty(item.ToString());
 
                         if (propInfo.PropertyType.InType())
                         {
                             if (identity != propInfo.Name)
                             {
-                                querystring += "[" + propInfo.GetTableColumnName() + "]=@" + propInfo.GetTableColumnName() + ",";
+                                queryStr += "[" + propInfo.GetTableColumnName() + "]=@" + propInfo.GetTableColumnName() + ",";
 
-                                _updateCmd.Parameters.AddWithValue("@" + propInfo.GetTableColumnName() + "", propInfo.GetValue(obj, null) ?? (object)DBNull.Value);
+                                updateCmd.Parameters.AddWithValue("@" + propInfo.GetTableColumnName() + "", propInfo.GetValue(obj, null) ?? DBNull.Value);
                             }
                         }
                     }
                 }
                 else
                 {
-                    PropertyInfo propInfo = _values.GetType().GetProperty(_columns.ToString());
+                    PropertyInfo propInfo = values.GetType().GetProperty(columns.ToString());
 
                     if (propInfo.PropertyType.InType())
                     {
                         if (identity != propInfo.Name)
                         {
-                            querystring += "[" + propInfo.GetTableColumnName() + "]=@" + propInfo.GetTableColumnName() + ",";
+                            queryStr += "[" + propInfo.GetTableColumnName() + "]=@" + propInfo.GetTableColumnName() + ",";
 
-                            _updateCmd.Parameters.AddWithValue("@" + propInfo.GetTableColumnName() + "", propInfo.GetValue(obj, null) ?? (object)DBNull.Value);
+                            updateCmd.Parameters.AddWithValue("@" + propInfo.GetTableColumnName() + "", propInfo.GetValue(obj, null) ?? DBNull.Value);
                         }
                     }
                 }
@@ -576,7 +567,7 @@ namespace TDFramework
                     {
                         if (identity != item.Name)
                         {
-                            querystring += "[" + item.GetTableColumnName() + "]=@" + item.GetTableColumnName() + ",";
+                            queryStr += "[" + item.GetTableColumnName() + "]=@" + item.GetTableColumnName() + ",";
                         }
                     }
                 }
@@ -587,59 +578,57 @@ namespace TDFramework
                     {
                         if (identity != item.Name)
                         {
-                            _updateCmd.Parameters.AddWithValue("@" + item.GetTableColumnName(), ((T)_values).GetType().GetProperty(item.Name).GetValue(obj, null) ?? (object)DBNull.Value);
+                            updateCmd.Parameters.AddWithValue("@" + item.GetTableColumnName(), ((T)values).GetType().GetProperty(item.Name)?.GetValue(obj, null) ?? DBNull.Value);
                         }
                     }
                 }
             }
 
-            querystring = querystring.TrimEnd(',');
+            queryStr = queryStr.TrimEnd(',');
 
-            return querystring;
+            return queryStr;
         }
 
         #endregion
 
         #region Delete
 
-        internal static Table<T> Delete(List<Where> _whereList = null)
+        internal static Table<T> Delete(List<Where> whereList = null)
         {
             Type typeModel = typeof(T);
             string tableName = typeModel.GetDBTableName();
 
             SqlCommand deleteCmd = new SqlCommand();
 
-            string querystring = "Delete From " + tableName;
+            string queryStr = "Delete From " + tableName;
 
-            querystring += ApplyWhereList(deleteCmd, _whereList);
+            queryStr += ApplyWhereList(deleteCmd, whereList);
 
-            return ReturnDelete(deleteCmd, querystring);
+            return ReturnDelete(deleteCmd, queryStr);
         }
 
-        private static Table<T> ReturnDelete(SqlCommand _deleteCmd, string _querystring)
+        private static Table<T> ReturnDelete(SqlCommand deleteCmd, string queryString)
         {
             Table<T> table = new Table<T>();
 
-            _deleteCmd.Connection = TDConnection.SqlConnection;
-            _querystring = _querystring.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
-            _deleteCmd.CommandText = _querystring;
-            table.QueryString = _querystring;
-            table.Parameters = _deleteCmd.Parameters.ToParameterList();
+            deleteCmd.Connection = TDConnection.SqlConnection;
+            queryString = queryString.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
+            deleteCmd.CommandText = queryString;
+            table.QueryString = queryString;
+            table.Parameters = deleteCmd.Parameters.ToParameterList();
 
             try
             {
-                _deleteCmd.Connection.Open();
-                _deleteCmd.ExecuteNonQuery();
+                deleteCmd.Connection.Open();
+                deleteCmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
-                table.Error = new Error();
-                table.Error.Message = ex.Message;
-                table.Error.Layer = ErrorLayers.DATA;
+                table.Error = new Error { Message = ex.Message, Layer = ErrorLayers.DATA };
             }
             finally
             {
-                _deleteCmd.Connection.Close();
+                deleteCmd.Connection.Close();
                 TDConnection.ConnectionStringForOnce = null;
             }
 
@@ -650,19 +639,19 @@ namespace TDFramework
 
         #region ApplyWhereList
 
-        private static string ApplyWhereList(SqlCommand _cmd, List<Where> _whereList)
+        private static string ApplyWhereList(SqlCommand cmd, List<Where> whereList)
         {
             Type typeModel = typeof(T);
 
             List<PropertyInfo> props = typeModel.GetProperties().ToList().ReturnValidProperties();
 
-            string querystring = "";
+            string queryStr = "";
 
-            if (_whereList != null)
+            if (whereList != null)
             {
-                if (_whereList.Count > 0)
+                if (whereList.Count > 0)
                 {
-                    foreach (Where item in _whereList)
+                    foreach (Where item in whereList)
                     {
                         if (props.Where(a => a.Name == item.Column.ToString()).ToList().Count > 0)
                         {
@@ -671,25 +660,25 @@ namespace TDFramework
                         }
                     }
 
-                    WhereValues cv = Where.CreateWhere(_whereList);
+                    WhereValues cv = Where.CreateWhere(whereList);
 
-                    querystring = " Where " + cv.QueryString;
-                    _cmd.Parameters.AddRange(cv.Parameters.ToArray());
+                    queryStr = " Where " + cv.QueryString;
+                    cmd.Parameters.AddRange(cv.Parameters.ToArray());
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
         #endregion
 
         #region ApplyDistinct
 
-        private static string ApplyDistinct(Select _select = null)
+        private static string ApplyDistinct(Select select = null)
         {
-            if (_select != null)
+            if (select != null)
             {
-                if (_select.Distinct != false)
+                if (select.Distinct)
                 {
                     return " Distinct ";
                 }
@@ -697,18 +686,6 @@ namespace TDFramework
                 {
                     return "";
                 }
-            }
-            else
-            {
-                return "";
-            }
-        }
-
-        private static string ApplyDistinct(bool _applyDistinct = false)
-        {
-            if (_applyDistinct != false)
-            {
-                return " Distinct ";
             }
             else
             {

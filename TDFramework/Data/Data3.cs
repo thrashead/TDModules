@@ -1,23 +1,24 @@
 // ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using System.Data.SqlClient;
-using System.Collections.Generic;
 using TDFramework.Common;
 using TDFramework.Common.TDModel;
+using TDFramework.Library;
 
-namespace TDFramework
+namespace TDFramework.Data
 {
     internal sealed class Data<T1, T2, T3>
         where T1 : ITDModel
@@ -26,7 +27,7 @@ namespace TDFramework
     {
         static Data()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
@@ -34,67 +35,66 @@ namespace TDFramework
 
         #region Select
 
-        internal static Table<T1> Select(Table<T1> _table1, Table<T2> _table2, Table<T3> _table3, List<Relation<T1, T2>> _relationList1, List<Relation<T2, T3>> _relationList2, List<Relation<T1, T3>> _relationList3, bool _asDataTable)
+        internal static Table<T1> Select(Table<T1> table1, Table<T2> table2, Table<T3> table3, List<Relation<T1, T2>> relationList1, List<Relation<T2, T3>> relationList2, List<Relation<T1, T3>> relationList3, bool asDataTable)
         {
             SqlCommand selectCmd = new SqlCommand();
-            string querystring = "";
 
-            FillAlias(_table1, _table2, _table3);
+            FillAlias(table1, table2, table3);
 
-            querystring = "Select ";
+            string queryStr = "Select ";
 
-            if (_table1.SelectSettings.Pager != null)
+            if (table1.SelectSettings.Pager != null)
             {
-                if (!String.IsNullOrEmpty(_table1.SelectSettings.Pager.FirstRecord) && !String.IsNullOrEmpty(_table1.SelectSettings.Pager.LastRecord))
+                if (!string.IsNullOrEmpty(table1.SelectSettings.Pager.FirstRecord) && !string.IsNullOrEmpty(table1.SelectSettings.Pager.LastRecord))
                 {
-                    querystring = ApplySkipTake(selectCmd, _table1, _table2, _table3, _relationList1, _relationList2, _relationList3, 1);
+                    queryStr = ApplySkipTake(selectCmd, table1, table2, table3, relationList1, relationList2, relationList3, 1);
                 }
                 else
                 {
-                    querystring = CreateQueryString(_table1, _table2, _table3, selectCmd, querystring, _relationList1, _relationList2, _relationList3);
+                    queryStr = CreateQueryString(table1, table2, table3, selectCmd, queryStr, relationList1, relationList2, relationList3);
                 }
             }
-            else if (_table2.SelectSettings.Pager != null)
+            else if (table2.SelectSettings.Pager != null)
             {
-                if (!String.IsNullOrEmpty(_table2.SelectSettings.Pager.FirstRecord) && !String.IsNullOrEmpty(_table2.SelectSettings.Pager.LastRecord))
+                if (!string.IsNullOrEmpty(table2.SelectSettings.Pager.FirstRecord) && !string.IsNullOrEmpty(table2.SelectSettings.Pager.LastRecord))
                 {
-                    querystring = ApplySkipTake(selectCmd, _table1, _table2, _table3, _relationList1, _relationList2, _relationList3, 2);
+                    queryStr = ApplySkipTake(selectCmd, table1, table2, table3, relationList1, relationList2, relationList3, 2);
                 }
                 else
                 {
-                    querystring = CreateQueryString(_table1, _table2, _table3, selectCmd, querystring, _relationList1, _relationList2, _relationList3);
+                    queryStr = CreateQueryString(table1, table2, table3, selectCmd, queryStr, relationList1, relationList2, relationList3);
                 }
             }
-            else if (_table3.SelectSettings.Pager != null)
+            else if (table3.SelectSettings.Pager != null)
             {
-                if (!String.IsNullOrEmpty(_table3.SelectSettings.Pager.FirstRecord) && !String.IsNullOrEmpty(_table3.SelectSettings.Pager.LastRecord))
+                if (!string.IsNullOrEmpty(table3.SelectSettings.Pager.FirstRecord) && !string.IsNullOrEmpty(table3.SelectSettings.Pager.LastRecord))
                 {
-                    querystring = ApplySkipTake(selectCmd, _table1, _table2, _table3, _relationList1, _relationList2, _relationList3, 3);
+                    queryStr = ApplySkipTake(selectCmd, table1, table2, table3, relationList1, relationList2, relationList3, 3);
                 }
                 else
                 {
-                    querystring = CreateQueryString(_table1, _table2, _table3, selectCmd, querystring, _relationList1, _relationList2, _relationList3);
+                    queryStr = CreateQueryString(table1, table2, table3, selectCmd, queryStr, relationList1, relationList2, relationList3);
                 }
             }
             else
             {
-                querystring = CreateQueryString(_table1, _table2, _table3, selectCmd, querystring, _relationList1, _relationList2, _relationList3);
+                queryStr = CreateQueryString(table1, table2, table3, selectCmd, queryStr, relationList1, relationList2, relationList3);
             }
 
-            return ReturnSelect(selectCmd, querystring, _asDataTable);
+            return ReturnSelect(selectCmd, queryStr, asDataTable);
         }
 
-        private static Table<T1> ReturnSelect(SqlCommand _selectCmd, string _querystring, bool _asDataTable)
+        private static Table<T1> ReturnSelect(SqlCommand selectCmd, string queryString, bool asDataTable)
         {
             Table<T1> table = new Table<T1>();
-            SqlDataAdapter dataAdap = new SqlDataAdapter();
 
-            dataAdap.SelectCommand = _selectCmd;
+            SqlDataAdapter dataAdap = new SqlDataAdapter { SelectCommand = selectCmd };
+
             dataAdap.SelectCommand.Connection = TDConnection.SqlConnection;
-            _querystring = _querystring.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
-            dataAdap.SelectCommand.CommandText = _querystring;
-            table.QueryString = _querystring;
-            table.Parameters = _selectCmd.Parameters.ToParameterList();
+            queryString = queryString.MakeSingle(" ").Replace("( ", "(").Replace(" )", ")");
+            dataAdap.SelectCommand.CommandText = queryString;
+            table.QueryString = queryString;
+            table.Parameters = selectCmd.Parameters.ToParameterList();
 
             try
             {
@@ -103,7 +103,7 @@ namespace TDFramework
                 dataAdap.Fill(table.Data);
                 table.Count = table.Data.Rows.Count;
 
-                if (_asDataTable == false)
+                if (asDataTable == false)
                 {
                     Type typeModel1 = typeof(T1);
                     string tableName1 = typeModel1.Name;
@@ -120,9 +120,7 @@ namespace TDFramework
             }
             catch (Exception ex)
             {
-                table.Error = new Error();
-                table.Error.Message = ex.Message;
-                table.Error.Layer = ErrorLayers.DATA;
+                table.Error = new Error { Message = ex.Message, Layer = ErrorLayers.DATA };
             }
             finally
             {
@@ -133,103 +131,98 @@ namespace TDFramework
             return table;
         }
 
-        private static string CreateQueryString(Table<T1> _table1, Table<T2> _table2, Table<T3> _table3, SqlCommand _selectCmd, string _querystring, List<Relation<T1, T2>> _relationList1, List<Relation<T2, T3>> _relationList2, List<Relation<T1, T3>> _relationList3, bool _applyTop = true, bool _applyOrder = true, bool _applyDistinct = true)
+        private static string CreateQueryString(Table<T1> table1, Table<T2> table2, Table<T3> table3, SqlCommand selectCmd, string queryString, List<Relation<T1, T2>> relationList1, List<Relation<T2, T3>> relationList2, List<Relation<T1, T3>> relationList3, bool applyTop = true, bool applyOrder = true, bool applyDistinct = true)
         {
             string textCreater = "";
 
             //Distinct
-            if (_applyDistinct == true)
+            if (applyDistinct)
             {
-                textCreater = FillDistinct(_table1, _table2, _table3);
+                textCreater = FillDistinct(table1, table2, table3);
             }
 
-            _querystring += textCreater;
+            queryString += textCreater;
 
             textCreater = "";
 
             //Top
-            if (_applyTop == true)
+            if (applyTop)
             {
-                textCreater = FillTop(_table1, _table2, _table3);
+                textCreater = FillTop(table1, table2, table3);
             }
 
-            _querystring += textCreater;
+            queryString += textCreater;
 
             //Aggregate
-            textCreater = "";
 
-            textCreater = ApplyAggregate<T1>(_table1.SelectSettings, _table1.Alias);
+            textCreater = ApplyAggregate<T1>(table1.SelectSettings, table1.Alias);
 
             if (textCreater.Trim() == "")
             {
-                if (_table2.SelectSettings.Aggregate != null)
+                if (table2.SelectSettings.Aggregate != null)
                 {
-                    if (_table2.SelectSettings.Aggregate.Column != null)
+                    if (table2.SelectSettings.Aggregate.Column != null)
                     {
-                        textCreater = ApplyAggregate<T2>(_table2.SelectSettings, _table2.Alias);
+                        textCreater = ApplyAggregate<T2>(table2.SelectSettings, table2.Alias);
                     }
                 }
             }
 
-            _querystring += textCreater;
+            queryString += textCreater;
 
-            string selectColumns1 = "";
-            string selectColumns2 = "";
-            string selectColumns3 = "";
+            string selectColumns1 = ApplySelectColumns<T1>(table1.Columns, table1.Alias);
 
-            selectColumns1 = ApplySelectColumns<T1>(_table1.Columns, _table1.SelectSettings, _table1.Alias);
+            string selectColumns2 = ApplySelectColumns<T2>(table2.Columns, table2.Alias);
 
-            selectColumns2 = ApplySelectColumns<T2>(_table2.Columns, _table2.SelectSettings, _table2.Alias);
-
-            selectColumns3 = ApplySelectColumns<T3>(_table3.Columns, _table3.SelectSettings, _table3.Alias);
+            string selectColumns3 = ApplySelectColumns<T3>(table3.Columns, table3.Alias);
 
             if (selectColumns1 != "" && selectColumns2 == "" && selectColumns3 == "")
             {
-                _querystring += selectColumns1;
+                queryString += selectColumns1;
             }
             else if (selectColumns1 == "" && selectColumns2 != "" && selectColumns3 == "")
             {
-                _querystring += selectColumns2;
+                queryString += selectColumns2;
             }
             else if (selectColumns1 == "" && selectColumns2 == "" && selectColumns3 != "")
             {
-                _querystring += selectColumns3;
+                queryString += selectColumns3;
             }
             else if (selectColumns1 != "" && selectColumns2 != "" && selectColumns3 == "")
             {
-                _querystring += selectColumns1 + ", " + selectColumns2;
+                queryString += selectColumns1 + ", " + selectColumns2;
             }
             else if (selectColumns1 == "" && selectColumns2 != "" && selectColumns3 != "")
             {
-                _querystring += selectColumns2 + ", " + selectColumns3;
+                queryString += selectColumns2 + ", " + selectColumns3;
             }
             else if (selectColumns1 != "" && selectColumns2 == "" && selectColumns3 != "")
             {
-                _querystring += selectColumns1 + ", " + selectColumns3;
+                queryString += selectColumns1 + ", " + selectColumns3;
             }
             else if (selectColumns1 != "" && selectColumns2 != "" && selectColumns3 != "")
             {
-                _querystring += selectColumns1 + ", " + selectColumns2 + ", " + selectColumns3;
+                queryString += selectColumns1 + ", " + selectColumns2 + ", " + selectColumns3;
             }
 
-            _querystring = _querystring.Trim().TrimEnd(',');
+            queryString = queryString.Trim().TrimEnd(',');
 
-            _querystring += " From " + _table1.TableName + " " + _table1.Alias + " ";
+            queryString += " From " + table1.TableName + " " + table1.Alias + " ";
 
             int counter = 0;
-            if (_relationList1 != null)
+            if (relationList1 != null)
             {
-                foreach (Relation<T1, T2> item in _relationList1)
+                foreach (Relation<T1, T2> item in relationList1)
                 {
                     if (counter == 0)
                     {
-                        string joinQuery = item.JoinType.ToJoiner() + " " + _table2.TableName + " " + _table2.Alias + " ";
+                        string joinQuery = item.JoinType.ToJoiner() + " " + table2.TableName + " " + table2.Alias + " ";
 
-                        _querystring += _querystring.Contains(joinQuery) ? item.QueryString(_table1, _table2, "And") : joinQuery + item.QueryString(_table1, _table2);
+                        queryString += queryString.Contains(joinQuery) ? item.QueryString(table1, table2, "And") : joinQuery + item.QueryString(table1, table2);
                     }
                     else
                     {
-                        _querystring += item.QueryString(_table1, _table2, "And");
+                        queryString += item.QueryString(table1, table2, "And");
                     }
 
                     counter++;
@@ -237,19 +230,19 @@ namespace TDFramework
             }
 
             counter = 0;
-            if (_relationList2 != null)
+            if (relationList2 != null)
             {
-                foreach (Relation<T2, T3> item in _relationList2)
+                foreach (Relation<T2, T3> item in relationList2)
                 {
                     if (counter == 0)
                     {
-                        string joinQuery = item.JoinType.ToJoiner() + " " + _table3.TableName + " " + _table3.Alias + " ";
-                                 
-                        _querystring += _querystring.Contains(joinQuery) ? item.QueryString(_table2, _table3, "And") : joinQuery + item.QueryString(_table2, _table3);
+                        string joinQuery = item.JoinType.ToJoiner() + " " + table3.TableName + " " + table3.Alias + " ";
+
+                        queryString += queryString.Contains(joinQuery) ? item.QueryString(table2, table3, "And") : joinQuery + item.QueryString(table2, table3);
                     }
                     else
                     {
-                        _querystring += item.QueryString(_table2, _table3, "And");
+                        queryString += item.QueryString(table2, table3, "And");
                     }
 
                     counter++;
@@ -257,19 +250,19 @@ namespace TDFramework
             }
 
             counter = 0;
-            if (_relationList3 != null)
+            if (relationList3 != null)
             {
-                foreach (Relation<T1, T3> item in _relationList3)
+                foreach (Relation<T1, T3> item in relationList3)
                 {
                     if (counter == 0)
                     {
-                        string joinQuery = item.JoinType.ToJoiner() + " " + _table3.TableName + " " + _table3.Alias + " ";
+                        string joinQuery = item.JoinType.ToJoiner() + " " + table3.TableName + " " + table3.Alias + " ";
 
-                        _querystring += _querystring.Contains(joinQuery) ? item.QueryString(_table1, _table3, "And") : joinQuery + item.QueryString(_table1, _table3);
+                        queryString += queryString.Contains(joinQuery) ? item.QueryString(table1, table3, "And") : joinQuery + item.QueryString(table1, table3);
                     }
                     else
                     {
-                        _querystring += item.QueryString(_table1, _table3, "And");
+                        queryString += item.QueryString(table1, table3, "And");
                     }
 
                     counter++;
@@ -278,124 +271,118 @@ namespace TDFramework
 
             string knot = " Where ";
 
-            if (_table1.WhereList.Count > 0 && _table2.WhereList.Count <= 0 && _table3.WhereList.Count <= 0)
+            if (table1.WhereList.Count > 0 && table2.WhereList.Count <= 0 && table3.WhereList.Count <= 0)
             {
-                _querystring += ApplyWhereList<T1>(_selectCmd, _table1.WhereList, _table1.Alias);
+                queryString += ApplyWhereList<T1>(selectCmd, table1.WhereList, table1.Alias);
             }
-            else if (_table1.WhereList.Count <= 0 && _table2.WhereList.Count > 0 && _table3.WhereList.Count <= 0)
+            else if (table1.WhereList.Count <= 0 && table2.WhereList.Count > 0 && table3.WhereList.Count <= 0)
             {
-                _querystring += ApplyWhereList<T2>(_selectCmd, _table2.WhereList, _table2.Alias);
+                queryString += ApplyWhereList<T2>(selectCmd, table2.WhereList, table2.Alias);
             }
-            else if (_table1.WhereList.Count <= 0 && _table2.WhereList.Count <= 0 && _table3.WhereList.Count > 0)
+            else if (table1.WhereList.Count <= 0 && table2.WhereList.Count <= 0 && table3.WhereList.Count > 0)
             {
-                _querystring += ApplyWhereList<T3>(_selectCmd, _table3.WhereList, _table3.Alias);
+                queryString += ApplyWhereList<T3>(selectCmd, table3.WhereList, table3.Alias);
             }
-            else if (_table1.WhereList.Count > 0 && _table2.WhereList.Count > 0 && _table3.WhereList.Count <= 0)
+            else if (table1.WhereList.Count > 0 && table2.WhereList.Count > 0 && table3.WhereList.Count <= 0)
             {
-                _querystring += ApplyWhereList<T1>(_selectCmd, _table1.WhereList, _table1.Alias);
+                queryString += ApplyWhereList<T1>(selectCmd, table1.WhereList, table1.Alias);
 
-                knot = " " + _table2.WhereList.First().Knot.ToString() + " ";
-                _querystring += ApplyWhereList<T2>(_selectCmd, _table2.WhereList, _table2.Alias, knot);
+                knot = " " + table2.WhereList.First().Knot.ToString() + " ";
+                queryString += ApplyWhereList<T2>(selectCmd, table2.WhereList, table2.Alias, knot);
             }
-            else if (_table1.WhereList.Count <= 0 && _table2.WhereList.Count > 0 && _table3.WhereList.Count > 0)
+            else if (table1.WhereList.Count <= 0 && table2.WhereList.Count > 0 && table3.WhereList.Count > 0)
             {
-                _querystring += ApplyWhereList<T2>(_selectCmd, _table2.WhereList, _table2.Alias);
+                queryString += ApplyWhereList<T2>(selectCmd, table2.WhereList, table2.Alias);
 
-                knot = " " + _table3.WhereList.First().Knot.ToString() + " ";
-                _querystring += ApplyWhereList<T3>(_selectCmd, _table3.WhereList, _table3.Alias, knot);
+                knot = " " + table3.WhereList.First().Knot.ToString() + " ";
+                queryString += ApplyWhereList<T3>(selectCmd, table3.WhereList, table3.Alias, knot);
             }
-            else if (_table1.WhereList.Count > 0 && _table2.WhereList.Count <= 0 && _table3.WhereList.Count > 0)
+            else if (table1.WhereList.Count > 0 && table2.WhereList.Count <= 0 && table3.WhereList.Count > 0)
             {
-                _querystring += ApplyWhereList<T1>(_selectCmd, _table1.WhereList, _table1.Alias);
+                queryString += ApplyWhereList<T1>(selectCmd, table1.WhereList, table1.Alias);
 
-                knot = " " + _table3.WhereList.First().Knot.ToString() + " ";
-                _querystring += ApplyWhereList<T3>(_selectCmd, _table3.WhereList, _table3.Alias, knot);
+                knot = " " + table3.WhereList.First().Knot.ToString() + " ";
+                queryString += ApplyWhereList<T3>(selectCmd, table3.WhereList, table3.Alias, knot);
             }
-            else if (_table1.WhereList.Count > 0 && _table2.WhereList.Count > 0 && _table3.WhereList.Count > 0)
+            else if (table1.WhereList.Count > 0 && table2.WhereList.Count > 0 && table3.WhereList.Count > 0)
             {
-                _querystring += ApplyWhereList<T1>(_selectCmd, _table1.WhereList, _table1.Alias);
+                queryString += ApplyWhereList<T1>(selectCmd, table1.WhereList, table1.Alias);
 
-                knot = " " + _table2.WhereList.First().Knot.ToString() + " ";
-                _querystring += ApplyWhereList<T2>(_selectCmd, _table2.WhereList, _table2.Alias, knot);
+                knot = " " + table2.WhereList.First().Knot.ToString() + " ";
+                queryString += ApplyWhereList<T2>(selectCmd, table2.WhereList, table2.Alias, knot);
 
-                knot = " " + _table3.WhereList.First().Knot.ToString() + " ";
-                _querystring += ApplyWhereList<T3>(_selectCmd, _table3.WhereList, _table3.Alias, knot);
+                knot = " " + table3.WhereList.First().Knot.ToString() + " ";
+                queryString += ApplyWhereList<T3>(selectCmd, table3.WhereList, table3.Alias, knot);
             }
 
-            _querystring += ApplyGroupBy<T1>(_table1.SelectSettings, _table1.Alias);
+            queryString += ApplyGroupBy<T1>(table1.SelectSettings, table1.Alias);
 
-            _querystring += ApplyGroupBy<T2>(_table2.SelectSettings, _table2.Alias, _querystring);
+            queryString += ApplyGroupBy<T2>(table2.SelectSettings, table2.Alias, queryString);
 
-            _querystring += ApplyGroupBy<T3>(_table3.SelectSettings, _table3.Alias, _querystring);
+            queryString += ApplyGroupBy<T3>(table3.SelectSettings, table3.Alias, queryString);
 
             //Having
             textCreater = "";
-            textCreater += ApplyHaving<T1>(_selectCmd, _table1.SelectSettings, _table1.Alias);
+            textCreater += ApplyHaving<T1>(selectCmd, table1.SelectSettings, table1.Alias);
 
             knot = " Having ";
 
             if (textCreater != "")
             {
-                if (_table2.SelectSettings.Aggregate != null)
+                if (table2.SelectSettings.Aggregate?.Having != null)
                 {
-                    if (_table2.SelectSettings.Aggregate.Having != null)
+                    if (table2.SelectSettings.Aggregate.Having.Count > 0)
                     {
-                        if (_table2.SelectSettings.Aggregate.Having.Count > 0)
-                        {
-                            knot = " " + _table1.SelectSettings.Aggregate.Having.First().Knot.ToString() + " ";
-                            textCreater += ApplyHaving<T2>(_selectCmd, _table2.SelectSettings, _table2.Alias, knot);
-                        }
+                        knot = " " + table1.SelectSettings.Aggregate.Having.First().Knot.ToString() + " ";
+                        textCreater += ApplyHaving<T2>(selectCmd, table2.SelectSettings, table2.Alias, knot);
                     }
                 }
             }
             else
             {
-                textCreater += ApplyHaving<T2>(_selectCmd, _table2.SelectSettings, _table2.Alias, knot);
+                textCreater += ApplyHaving<T2>(selectCmd, table2.SelectSettings, table2.Alias, knot);
             }
 
             if (textCreater != "")
             {
-                if (_table3.SelectSettings.Aggregate != null)
+                if (table3.SelectSettings.Aggregate?.Having != null)
                 {
-                    if (_table3.SelectSettings.Aggregate.Having != null)
+                    if (table3.SelectSettings.Aggregate.Having.Count > 0)
                     {
-                        if (_table3.SelectSettings.Aggregate.Having.Count > 0)
-                        {
-                            knot = " " + _table2.SelectSettings.Aggregate.Having.First().Knot.ToString() + " ";
-                            textCreater += ApplyHaving<T3>(_selectCmd, _table3.SelectSettings, _table3.Alias, knot);
-                        }
+                        knot = " " + table2.SelectSettings.Aggregate.Having.First().Knot.ToString() + " ";
+                        textCreater += ApplyHaving<T3>(selectCmd, table3.SelectSettings, table3.Alias, knot);
                     }
                 }
             }
             else
             {
-                textCreater += ApplyHaving<T3>(_selectCmd, _table3.SelectSettings, _table3.Alias, knot);
+                textCreater += ApplyHaving<T3>(selectCmd, table3.SelectSettings, table3.Alias, knot);
             }
 
-            _querystring += textCreater;
+            queryString += textCreater;
 
-            if (_applyOrder == true)
+            if (applyOrder)
             {
-                if (_table1.SelectSettings.OrderColumn != null)
+                if (table1.SelectSettings.OrderColumn != null)
                 {
-                    _querystring += ApplyOrder<T1>(_table1.SelectSettings, _table1.Alias);
+                    queryString += ApplyOrder<T1>(table1.SelectSettings, table1.Alias);
                 }
-                else if (_table2.SelectSettings.OrderColumn != null)
+                else if (table2.SelectSettings.OrderColumn != null)
                 {
-                    _querystring += ApplyOrder<T2>(_table2.SelectSettings, _table2.Alias);
+                    queryString += ApplyOrder<T2>(table2.SelectSettings, table2.Alias);
                 }
-                else if (_table3.SelectSettings.OrderColumn != null)
+                else if (table3.SelectSettings.OrderColumn != null)
                 {
-                    _querystring += ApplyOrder<T3>(_table3.SelectSettings, _table3.Alias);
+                    queryString += ApplyOrder<T3>(table3.SelectSettings, table3.Alias);
                 }
             }
 
-            return _querystring;
+            return queryString;
         }
 
-        private static string ApplyDistinct(Select _select = null)
+        private static string ApplyDistinct(Select select = null)
         {
-            if (_select.Distinct != false)
+            if (select != null && select.Distinct)
             {
                 return " Distinct ";
             }
@@ -405,11 +392,11 @@ namespace TDFramework
             }
         }
 
-        private static string ApplyTop(Select _select = null)
+        private static string ApplyTop(Select select = null)
         {
-            if (_select.Top != null)
+            if (select?.Top != null)
             {
-                return " Top " + _select.Top.ToString() + " ";
+                return " Top " + select.Top.ToString() + " ";
             }
             else
             {
@@ -417,68 +404,73 @@ namespace TDFramework
             }
         }
 
-        private static string ApplyAggregate<T>(Select _select, string _alias)
+        private static string ApplyAggregate<T>(Select select, string alias)
         {
-            string querystring = "";
+            string queryStr = "";
 
-            if (_select.Aggregate != null)
+            if (select.Aggregate != null)
             {
-                if (_select.Aggregate.Column != null)
+                if (select.Aggregate.Column != null)
                 {
                     Type typeModel = typeof(T);
-                    PropertyInfo propInfo = typeModel.GetProperty(_select.Aggregate.Column.ToString());
+                    PropertyInfo propInfo = typeModel.GetProperty(select.Aggregate.Column.ToString());
 
                     if (propInfo.PropertyType.InType())
                     {
-                        switch (_select.Aggregate.Agregate)
+                        switch (select.Aggregate.Agregate)
                         {
-                            case Aggregates.AVERAGE: querystring += "Avg";
+                            case Aggregates.AVERAGE:
+                                queryStr += "Avg";
                                 break;
-                            case Aggregates.COUNT: querystring += "Count";
+                            case Aggregates.COUNT:
+                                queryStr += "Count";
                                 break;
-                            case Aggregates.MAXIMUM: querystring += "Max";
+                            case Aggregates.MAXIMUM:
+                                queryStr += "Max";
                                 break;
-                            case Aggregates.MINIMUM: querystring += "Min";
+                            case Aggregates.MINIMUM:
+                                queryStr += "Min";
                                 break;
-                            case Aggregates.SUMMARY: querystring += "Sum";
+                            case Aggregates.SUMMARY:
+                                queryStr += "Sum";
                                 break;
-                            default: querystring += "Count";
+                            default:
+                                queryStr += "Count";
                                 break;
                         }
 
-                        querystring += "(" + _alias + ".[" + propInfo.GetTableColumnName() + "]) AggColumn, ";
+                        queryStr += "(" + alias + ".[" + propInfo.GetTableColumnName() + "]) AggColumn, ";
                     }
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplySelectColumns<T>(dynamic _columns, Select _select, string _alias, bool forPager = false)
+        private static string ApplySelectColumns<T>(dynamic columns, string alias, bool forPager = false)
         {
-            string querystring = "";
-            SelectColumns selectColumns;
+            string queryStr = "";
 
-            string _aliasJoin = _alias == "" ? "" : _alias + "_";
-            _alias = _alias == "" ? "" : _alias + ".";
+            string aliasJoin = alias == "" ? "" : alias + "_";
+            alias = alias == "" ? "" : alias + ".";
 
-            if (_columns == null)
+            if (columns == null)
             {
-                querystring += ReturnAllColumns<T>(_alias, forPager);
+                queryStr += ReturnAllColumns<T>(alias, forPager);
             }
-            else if (Enum.TryParse(_columns.ToString(), out selectColumns))
+            else if (Enum.TryParse(columns.ToString(), out SelectColumns _))
             {
-                querystring += "";
+                queryStr += "";
             }
             else
             {
-                Type type = _columns.GetType();
+                Type type = columns.GetType();
 
                 if (type.IsGenericType)
                 {
-                    if (_columns.Count > 0)
+                    if (columns.Count > 0)
                     {
-                        foreach (dynamic item in _columns)
+                        foreach (dynamic item in columns)
                         {
                             Type typeModel = typeof(T);
                             PropertyInfo propInfo = typeModel.GetProperty(item.ToString());
@@ -487,68 +479,68 @@ namespace TDFramework
                             {
                                 if (!forPager)
                                 {
-                                    querystring += _alias + "[" + propInfo.GetTableColumnName() + "] as " + _aliasJoin + propInfo.GetTableColumnName();
+                                    queryStr += alias + "[" + propInfo.GetTableColumnName() + "] as " + aliasJoin + propInfo.GetTableColumnName();
                                 }
                                 else
                                 {
-                                    querystring += _aliasJoin + propInfo.GetTableColumnName();
+                                    queryStr += aliasJoin + propInfo.GetTableColumnName();
                                 }
 
-                                querystring += ", ";
+                                queryStr += ", ";
                             }
                         }
                     }
                     else
                     {
-                        querystring += ReturnAllColumns<T>(_alias, forPager); ;
+                        queryStr += ReturnAllColumns<T>(alias, forPager);
                     }
                 }
                 else
                 {
                     Type typeModel = typeof(T);
-                    PropertyInfo propInfo = typeModel.GetProperty(_columns.ToString());
+                    PropertyInfo propInfo = typeModel.GetProperty(columns.ToString());
 
                     if (propInfo.PropertyType.InType())
                     {
                         if (!forPager)
                         {
-                            querystring += _alias + "[" + propInfo.GetTableColumnName() + "] as " + _aliasJoin + propInfo.GetTableColumnName() + ", ";
+                            queryStr += alias + "[" + propInfo.GetTableColumnName() + "] as " + aliasJoin + propInfo.GetTableColumnName() + ", ";
                         }
                         else
                         {
-                            querystring += _aliasJoin + propInfo.GetTableColumnName();
+                            queryStr += aliasJoin + propInfo.GetTableColumnName();
                         }
                     }
                 }
             }
 
-            querystring = querystring.Trim().TrimEnd(',');
+            queryStr = queryStr.Trim().TrimEnd(',');
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplyGroupBy<T>(Select _select, string _alias, string _querystring = "")
+        private static string ApplyGroupBy<T>(Select select, string alias, string queryString = "")
         {
-            string querystring = "";
+            string queryStr = "";
 
-            if (_select.Aggregate != null)
+            if (select.Aggregate != null)
             {
-                if (_select.Aggregate.GroupColumns != null)
+                if (select.Aggregate.GroupColumns != null)
                 {
-                    Type type = _select.Aggregate.GroupColumns.GetType();
+                    Type type = select.Aggregate.GroupColumns.GetType();
 
                     if (type.IsGenericType)
                     {
-                        if (_select.Aggregate.GroupColumns.Count > 0)
+                        if (select.Aggregate.GroupColumns.Count > 0)
                         {
-                            foreach (dynamic item in _select.Aggregate.GroupColumns)
+                            foreach (dynamic item in select.Aggregate.GroupColumns)
                             {
                                 Type typeModel = typeof(T);
                                 PropertyInfo propInfo = typeModel.GetProperty(item.ToString());
 
                                 if (propInfo.PropertyType.InType())
                                 {
-                                    querystring += _alias + ".[" + propInfo.GetTableColumnName() + "], ";
+                                    queryStr += alias + ".[" + propInfo.GetTableColumnName() + "], ";
                                 }
                             }
                         }
@@ -556,226 +548,222 @@ namespace TDFramework
                     else
                     {
                         Type typeModel = typeof(T);
-                        PropertyInfo propInfo = typeModel.GetProperty(_select.Aggregate.GroupColumns.ToString());
+                        PropertyInfo propInfo = typeModel.GetProperty(select.Aggregate.GroupColumns.ToString());
 
                         if (propInfo.PropertyType.InType())
                         {
-                            querystring += _alias + ".[" + propInfo.GetTableColumnName() + "]";
+                            queryStr += alias + ".[" + propInfo.GetTableColumnName() + "]";
                         }
                     }
                 }
 
-                querystring = querystring.Trim().TrimEnd(',');
+                queryStr = queryStr.Trim().TrimEnd(',');
 
-                if (querystring != "")
+                if (queryStr != "")
                 {
-                    querystring = _querystring.Contains(" Group By ") ? ", " + querystring : " Group By " + querystring;
+                    queryStr = queryString.Contains(" Group By ") ? ", " + queryStr : " Group By " + queryStr;
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplyOrder<T>(Select _select = null, string _alias = null)
+        private static string ApplyOrder<T>(Select select = null, string alias = null)
         {
-            string querystring = "";
+            string queryStr = "";
 
-            if (_select.OrderColumn != null)
+            if (select != null && select.OrderColumn != null)
             {
                 Type typeModel = typeof(T);
-                PropertyInfo propInfo = typeModel.GetProperty(_select.OrderColumn.ToString());
+                PropertyInfo propInfo = typeModel.GetProperty(select.OrderColumn.ToString());
 
                 if (propInfo.PropertyType.InType())
                 {
-                    querystring += " Order By " + _alias + ".[" + propInfo.GetTableColumnName() + "]";
+                    queryStr += " Order By " + alias + ".[" + propInfo.GetTableColumnName() + "]";
 
-                    if (_select.OrderBy != null)
+                    if (select.OrderBy != null)
                     {
-                        string orderby = _select.OrderBy.ToString() == "DESC" ? " Desc" : " Asc";
-                        querystring += orderby;
+                        string orderby = select.OrderBy.ToString() == "DESC" ? " Desc" : " Asc";
+                        queryStr += orderby;
                     }
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplySkipTake(SqlCommand _selectCmd, Table<T1> _table1, Table<T2> _table2, Table<T3> _table3, List<Relation<T1, T2>> _relationList1, List<Relation<T2, T3>> _relationList2, List<Relation<T1, T3>> _relationList3, int _whichTable)
+        private static string ApplySkipTake(SqlCommand selectCmd, Table<T1> table1, Table<T2> table2, Table<T3> table3, List<Relation<T1, T2>> relationList1, List<Relation<T2, T3>> relationList2, List<Relation<T1, T3>> relationList3, int whichTable)
         {
             //Order
-            string textCreater = "";
-            textCreater = ApplyOrder<T1>(_table1.SelectSettings, _table1.Alias);
+            string textCreater = ApplyOrder<T1>(table1.SelectSettings, table1.Alias);
 
             if (textCreater.Trim() == "")
             {
-                textCreater = ApplyOrder<T2>(_table2.SelectSettings, _table2.Alias);
+                textCreater = ApplyOrder<T2>(table2.SelectSettings, table2.Alias);
             }
 
             if (textCreater.Trim() == "")
             {
-                textCreater = ApplyOrder<T3>(_table3.SelectSettings, _table3.Alias);
+                textCreater = ApplyOrder<T3>(table3.SelectSettings, table3.Alias);
             }
 
             Type typeModel1 = typeof(T1);
             List<PropertyInfo> props1 = typeModel1.GetProperties().ToList();
 
-            textCreater = textCreater == "" ? "Order By " + _table1.Alias + ".[" + props1.ReturnFirstColumn() + "]" : textCreater;
+            textCreater = textCreater == "" ? "Order By " + table1.Alias + ".[" + props1.ReturnFirstColumn() + "]" : textCreater;
 
-            string querystring = "With Pager As (Select Row_Number() Over (" + textCreater + ") As 'RowNumber', ";
+            string queryStr = "With Pager As (Select Row_Number() Over (" + textCreater + ") As 'RowNumber', ";
 
-            querystring = CreateQueryString(_table1, _table2, _table3, _selectCmd, querystring, _relationList1, _relationList2, _relationList3, false, false, false);
+            queryStr = CreateQueryString(table1, table2, table3, selectCmd, queryStr, relationList1, relationList2, relationList3, false, false, false);
 
-            querystring += ") Select";
+            queryStr += ") Select";
 
             //Distinct
-            textCreater = "";
-            textCreater = ApplyDistinct(_table1.SelectSettings);
+            textCreater = ApplyDistinct(table1.SelectSettings);
+
             if (textCreater.Trim() == "")
             {
-                textCreater = ApplyDistinct(_table2.SelectSettings);
+                textCreater = ApplyDistinct(table2.SelectSettings);
             }
             if (textCreater.Trim() == "")
             {
-                textCreater = ApplyDistinct(_table3.SelectSettings);
+                textCreater = ApplyDistinct(table3.SelectSettings);
             }
-            querystring += textCreater;
+            queryStr += textCreater;
 
             //Top
-            textCreater = "";
-            textCreater = ApplyTop(_table1.SelectSettings);
+            textCreater = ApplyTop(table1.SelectSettings);
             if (textCreater.Trim() == "")
             {
-                textCreater = ApplyTop(_table2.SelectSettings);
+                textCreater = ApplyTop(table2.SelectSettings);
             }
             if (textCreater.Trim() == "")
             {
-                textCreater = ApplyTop(_table3.SelectSettings);
+                textCreater = ApplyTop(table3.SelectSettings);
             }
-            querystring += textCreater;
+            queryStr += textCreater;
 
-            if (_table1.SelectSettings.Aggregate != null)
+            if (table1.SelectSettings.Aggregate != null)
             {
-                if (_table1.SelectSettings.Aggregate.Column != null)
+                if (table1.SelectSettings.Aggregate.Column != null)
                 {
-                    querystring += " AggColumn, ";
+                    queryStr += " AggColumn, ";
                 }
-                else if (_table2.SelectSettings.Aggregate != null)
+                else if (table2.SelectSettings.Aggregate != null)
                 {
-                    if (_table2.SelectSettings.Aggregate.Column != null)
+                    if (table2.SelectSettings.Aggregate.Column != null)
                     {
-                        querystring += " AggColumn, ";
+                        queryStr += " AggColumn, ";
                     }
-                    else if (_table3.SelectSettings.Aggregate != null)
+                    else if (table3.SelectSettings.Aggregate != null)
                     {
-                        if (_table3.SelectSettings.Aggregate.Column != null)
+                        if (table3.SelectSettings.Aggregate.Column != null)
                         {
-                            querystring += " AggColumn, ";
+                            queryStr += " AggColumn, ";
                         }
                     }
                 }
-                else if (_table3.SelectSettings.Aggregate != null)
+                else if (table3.SelectSettings.Aggregate != null)
                 {
-                    if (_table3.SelectSettings.Aggregate.Column != null)
+                    if (table3.SelectSettings.Aggregate.Column != null)
                     {
-                        querystring += " AggColumn, ";
+                        queryStr += " AggColumn, ";
                     }
                 }
             }
-            else if (_table2.SelectSettings.Aggregate != null)
+            else if (table2.SelectSettings.Aggregate != null)
             {
-                if (_table2.SelectSettings.Aggregate.Column != null)
+                if (table2.SelectSettings.Aggregate.Column != null)
                 {
-                    querystring += " AggColumn, ";
+                    queryStr += " AggColumn, ";
                 }
             }
-            else if (_table3.SelectSettings.Aggregate != null)
+            else if (table3.SelectSettings.Aggregate != null)
             {
-                if (_table3.SelectSettings.Aggregate.Column != null)
+                if (table3.SelectSettings.Aggregate.Column != null)
                 {
-                    querystring += " AggColumn, ";
+                    queryStr += " AggColumn, ";
                 }
             }
 
-            SelectColumns selectColumns;
-
-            if (_table1.Columns == null && _table2.Columns == null && _table3.Columns == null)
+            if (table1.Columns == null && table2.Columns == null && table3.Columns == null)
             {
-                querystring += ReturnAllColumns<T1>(_table1.Alias, true);
-                querystring += ReturnAllColumns<T2>(_table2.Alias, true);
-                querystring += ReturnAllColumns<T3>(_table3.Alias, true);
+                queryStr += ReturnAllColumns<T1>(table1.Alias, true);
+                queryStr += ReturnAllColumns<T2>(table2.Alias, true);
+                queryStr += ReturnAllColumns<T3>(table3.Alias, true);
             }
             else
             {
-                if (_table1.Columns != null)
+                if (table1.Columns != null)
                 {
-                    if (!Enum.TryParse(_table1.Columns.ToString(), out selectColumns))
+                    if (!Enum.TryParse(table1.Columns.ToString(), out SelectColumns _))
                     {
-                        querystring += ApplySelectColumns<T1>(_table1.Columns, _table1.SelectSettings, _table1.Alias, true) + ", ";
+                        queryStr += ApplySelectColumns<T1>(table1.Columns, table1.Alias, true) + ", ";
                     }
                 }
                 else
                 {
-                    querystring += ReturnAllColumns<T1>(_table1.Alias, true);
+                    queryStr += ReturnAllColumns<T1>(table1.Alias, true);
                 }
 
-                if (_table2.Columns != null)
+                if (table2.Columns != null)
                 {
-                    if (!Enum.TryParse(_table2.Columns.ToString(), out selectColumns))
+                    if (!Enum.TryParse(table2.Columns.ToString(), out SelectColumns _))
                     {
-                        querystring += ApplySelectColumns<T2>(_table2.Columns, _table2.SelectSettings, _table2.Alias, true);
+                        queryStr += ApplySelectColumns<T2>(table2.Columns, table2.Alias, true);
                     }
                 }
                 else
                 {
-                    querystring += ReturnAllColumns<T2>(_table2.Alias, true);
+                    queryStr += ReturnAllColumns<T2>(table2.Alias, true);
                 }
 
-                if (_table3.Columns != null)
+                if (table3.Columns != null)
                 {
-                    if (!Enum.TryParse(_table3.Columns.ToString(), out selectColumns))
+                    if (!Enum.TryParse(table3.Columns.ToString(), out SelectColumns _))
                     {
-                        querystring += ApplySelectColumns<T3>(_table3.Columns, _table3.SelectSettings, _table3.Alias, true);
+                        queryStr += ApplySelectColumns<T3>(table3.Columns, table3.Alias, true);
                     }
                 }
                 else
                 {
-                    querystring += ReturnAllColumns<T3>(_table3.Alias, true);
+                    queryStr += ReturnAllColumns<T3>(table3.Alias, true);
                 }
             }
 
-            querystring = querystring.Trim().TrimEnd(',');
+            queryStr = queryStr.Trim().TrimEnd(',');
 
-            querystring += " From Pager ";
+            queryStr += " From Pager ";
 
-            if (_whichTable == 1)
+            if (whichTable == 1)
             {
-                querystring += "Where RowNumber Between " + _table1.SelectSettings.Pager.FirstRecord + " AND " + _table1.SelectSettings.Pager.LastRecord;
+                queryStr += "Where RowNumber Between " + table1.SelectSettings.Pager.FirstRecord + " AND " + table1.SelectSettings.Pager.LastRecord;
             }
-            else if (_whichTable == 2)
+            else if (whichTable == 2)
             {
-                querystring += "Where RowNumber Between " + _table2.SelectSettings.Pager.FirstRecord + " AND " + _table2.SelectSettings.Pager.LastRecord;
+                queryStr += "Where RowNumber Between " + table2.SelectSettings.Pager.FirstRecord + " AND " + table2.SelectSettings.Pager.LastRecord;
             }
-            else if (_whichTable == 3)
+            else if (whichTable == 3)
             {
-                querystring += "Where RowNumber Between " + _table3.SelectSettings.Pager.FirstRecord + " AND " + _table3.SelectSettings.Pager.LastRecord;
+                queryStr += "Where RowNumber Between " + table3.SelectSettings.Pager.FirstRecord + " AND " + table3.SelectSettings.Pager.LastRecord;
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplyWhereList<T>(SqlCommand _cmd, List<Where> _whereList, string _alias, string _knot = " Where ")
+        private static string ApplyWhereList<T>(SqlCommand cmd, List<Where> whereList, string alias, string knot = " Where ")
         {
             Type typeModel = typeof(T);
 
             List<PropertyInfo> props1 = typeModel.GetProperties().ToList().ReturnValidProperties();
 
-            string querystring = "";
+            string queryStr = "";
 
-            if (_whereList != null)
+            if (whereList != null)
             {
-                if (_whereList.Count > 0)
+                if (whereList.Count > 0)
                 {
-                    foreach (Where item in _whereList)
+                    foreach (Where item in whereList)
                     {
                         if (props1.Where(a => a.Name == item.Column.ToString()).ToList().Count > 0)
                         {
@@ -784,99 +772,96 @@ namespace TDFramework
                         }
                     }
 
-                    WhereValues cv = Where.CreateWhere(_whereList, _alias);
+                    WhereValues cv = Where.CreateWhere(whereList, alias);
 
-                    querystring = _knot + cv.QueryString;
-                    _cmd.Parameters.AddRange(cv.Parameters.ToArray());
+                    queryStr = knot + cv.QueryString;
+                    cmd.Parameters.AddRange(cv.Parameters.ToArray());
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static string ApplyHaving<T>(SqlCommand _cmd, Select _select, string _alias, string _knot = " Having ")
+        private static string ApplyHaving<T>(SqlCommand cmd, Select select, string alias, string knot = " Having ")
         {
             Type typeModel = typeof(T);
 
             List<PropertyInfo> props = typeModel.GetProperties().ToList().ReturnValidProperties();
 
-            string querystring = "";
-            if (_select != null)
+            string queryStr = "";
+            if (select?.Aggregate != null)
             {
-                if (_select.Aggregate != null)
+                if (select.Aggregate.GroupColumns != null)
                 {
-                    if (_select.Aggregate.GroupColumns != null)
+                    if (select.Aggregate.Having != null)
                     {
-                        if (_select.Aggregate.Having != null)
+                        if (select.Aggregate.Having.Count > 0)
                         {
-                            if (_select.Aggregate.Having.Count > 0)
+                            foreach (Having item in select.Aggregate.Having)
                             {
-                                foreach (Having item in _select.Aggregate.Having)
+                                if (props.Where(a => a.Name == item.Column.ToString()).ToList().Count > 0)
                                 {
-                                    if (props.Where(a => a.Name == item.Column.ToString()).ToList().Count > 0)
-                                    {
-                                        PropertyInfo pinfo = props.Where(a => a.Name == item.Column.ToString()).ToList().FirstOrDefault();
-                                        item.Column = pinfo.GetTableColumnName();
-                                    }
+                                    PropertyInfo pinfo = props.Where(a => a.Name == item.Column.ToString()).ToList().FirstOrDefault();
+                                    item.Column = pinfo.GetTableColumnName();
                                 }
-
-                                HavingValues cv = Having.CreateHaving(_select.Aggregate.Having, _alias);
-
-                                querystring = _knot + cv.QueryString;
-                                _cmd.Parameters.AddRange(cv.Parameters.ToArray());
                             }
+
+                            HavingValues cv = Having.CreateHaving(select.Aggregate.Having, alias);
+
+                            queryStr = knot + cv.QueryString;
+                            cmd.Parameters.AddRange(cv.Parameters.ToArray());
                         }
                     }
                 }
             }
 
-            return querystring;
+            return queryStr;
         }
 
-        private static void FillAlias(Table<T1> _table1, Table<T2> _table2, Table<T3> _table3)
+        private static void FillAlias(Table<T1> table1, Table<T2> table2, Table<T3> table3)
         {
-            _table1.Alias = "A";
-            _table2.Alias = "B";
-            _table3.Alias = "C";
+            table1.Alias = "A";
+            table2.Alias = "B";
+            table3.Alias = "C";
         }
 
-        private static string FillDistinct(Table<T1> _table1, Table<T2> _table2, Table<T3> _table3)
+        private static string FillDistinct(Table<T1> table1, Table<T2> table2, Table<T3> table3)
         {
-            if (_table1.SelectSettings.Distinct != false)
+            if (table1.SelectSettings.Distinct)
             {
-                return ApplyDistinct(_table1.SelectSettings);
+                return ApplyDistinct(table1.SelectSettings);
             }
-            else if (_table2.SelectSettings.Distinct != false)
+            else if (table2.SelectSettings.Distinct)
             {
-                return ApplyDistinct(_table2.SelectSettings);
+                return ApplyDistinct(table2.SelectSettings);
             }
-            else if (_table3.SelectSettings.Distinct != false)
+            else if (table3.SelectSettings.Distinct)
             {
-                return ApplyDistinct(_table3.SelectSettings);
+                return ApplyDistinct(table3.SelectSettings);
             }
 
             return "";
         }
 
-        private static string FillTop(Table<T1> _table1, Table<T2> _table2, Table<T3> _table3)
+        private static string FillTop(Table<T1> table1, Table<T2> table2, Table<T3> table3)
         {
-            if (_table1.SelectSettings.Top != null)
+            if (table1.SelectSettings.Top != null)
             {
-                return ApplyTop(_table1.SelectSettings);
+                return ApplyTop(table1.SelectSettings);
             }
-            else if (_table2.SelectSettings.Top != null)
+            else if (table2.SelectSettings.Top != null)
             {
-                return ApplyTop(_table2.SelectSettings);
+                return ApplyTop(table2.SelectSettings);
             }
-            else if (_table3.SelectSettings.Top != null)
+            else if (table3.SelectSettings.Top != null)
             {
-                return ApplyTop(_table3.SelectSettings);
+                return ApplyTop(table3.SelectSettings);
             }
 
             return "";
         }
 
-        private static string ReturnAllColumns<T>(string _alias, bool _forPager)
+        private static string ReturnAllColumns<T>(string alias, bool forPager)
         {
             string returnText = "";
 
@@ -885,13 +870,13 @@ namespace TDFramework
 
             foreach (PropertyInfo item in propList)
             {
-                if (!_forPager)
+                if (!forPager)
                 {
-                    returnText += _alias + "[" + item.GetTableColumnName() + "] as " + _alias.Replace(".", "_") + item.GetTableColumnName() + ", ";
+                    returnText += alias + "[" + item.GetTableColumnName() + "] as " + alias.Replace(".", "_") + item.GetTableColumnName() + ", ";
                 }
                 else
                 {
-                    returnText += _alias + "_" + item.GetTableColumnName() + ", ";
+                    returnText += alias + "_" + item.GetTableColumnName() + ", ";
                 }
             }
 

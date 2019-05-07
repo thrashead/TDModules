@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using TDFramework.Common.TDModel;
-using TDFramework.Common.Attributes;
 using Models.TbKaynakModel;
+using TDFramework.Common.Attributes;
+using TDFramework.Common.TDModel;
 
 namespace Models.TbKategoriModel
 {

@@ -1,10 +1,10 @@
 ﻿// ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
@@ -12,61 +12,63 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Dynamic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Threading;
 using TDFramework.Common;
 
-namespace TDFramework
+namespace TDFramework.Library
 {
     internal static class ExtMethods
     {
         static ExtMethods()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
-                TDFramework.Common.TDConnection.ConnectionStringForOnce = null;
+                TDConnection.ConnectionStringForOnce = null;
             };
         }
 
-        internal static string GetTypeName(this Type _type)
+        internal static string GetTypeName(this Type type)
         {
-            var nullableType = Nullable.GetUnderlyingType(_type);
+            Type nullableType = Nullable.GetUnderlyingType(type);
 
             bool isNullableType = nullableType != null;
 
             if (isNullableType)
                 return nullableType.Name;
             else
-                return _type.Name;
+                return type.Name;
         }
 
-        internal static string GetTableColumnName(this PropertyInfo _propInfo)
+        internal static string GetTableColumnName(this PropertyInfo propInfo)
         {
-            string columnName = _propInfo.Name;
+            string columnName = propInfo.Name;
 
-            if (_propInfo.GetCustomAttributes(false).Where(a => a.ToString().Split('+').Last().Replace("Attribute", "").Split('.').Last() == "TableColumn").ToList().Count > 0)
+            if (propInfo.GetCustomAttributes(false).Where(a => a.ToString().Split('+').Last().Replace("Attribute", "").Split('.').Last() == "TableColumn").ToList().Count > 0)
             {
-                object o = _propInfo.GetCustomAttributes(false).Where(a => a.ToString().Split('+').Last().Replace("Attribute", "").Split('.').Last() == "TableColumn").ToList().FirstOrDefault();
+                object o = propInfo.GetCustomAttributes(false).Where(a => a.ToString().Split('+').Last().Replace("Attribute", "").Split('.').Last() == "TableColumn").ToList().FirstOrDefault();
 
-                PropertyInfo propsAttr = o.GetType().GetProperty("Name");
-
-                if (propsAttr != null)
+                if (o != null)
                 {
-                    columnName = propsAttr.GetValue(o, null).ToString();
+                    PropertyInfo propsAttr = o.GetType().GetProperty("Name");
+
+                    if (propsAttr != null)
+                    {
+                        columnName = propsAttr.GetValue(o, null).ToString();
+                    }
                 }
             }
 
             return columnName;
         }
 
-        internal static string GetDBTableName(this Type _type)
+        internal static string GetDBTableName(this Type type)
         {
-            string tableName = _type.Name;
+            string tableName = type.Name;
 
-            foreach (object item in _type.GetCustomAttributes(false))
+            foreach (object item in type.GetCustomAttributes(false))
             {
                 string attr = item.ToString().Split('+').Last().Replace("Attribute", "").Split('.').Last();
 
@@ -84,16 +86,16 @@ namespace TDFramework
             return tableName;
         }
 
-        internal static bool InType(this Type _type)
+        internal static bool InType(this Type type)
         {
-            if (_type.IsGenericType && _type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
-                _type = _type.GetGenericArguments()[0];
+                type = type.GetGenericArguments()[0];
             }
 
-            string[] types = new string[15] { "Int16", "Int32", "Int64", "Decimal", "Double", "Char", "String", "Byte", "Boolean", "DateTime", "DateTimeOffset", "TimeSpan", "Single", "Object", "Guid" };
+            string[] types = { "Int16", "Int32", "Int64", "Decimal", "Double", "Char", "String", "Byte", "Boolean", "DateTime", "DateTimeOffset", "TimeSpan", "Single", "Object", "Guid" };
 
-            if (types.Contains(_type.Name))
+            if (types.Contains(type.Name))
             {
                 return true;
             }
@@ -147,19 +149,11 @@ namespace TDFramework
             return true;
         }
 
-        internal static string ReturnRealColumnName<T>(this object _column)
-        {
-            Type typeModel = typeof(T);
-            PropertyInfo propInfo = typeModel.GetProperty(_column.ToString());
-
-            return propInfo.GetTableColumnName().ToString();
-        }
-
-        internal static string ReturnIDColumn(this List<PropertyInfo> _props)
+        internal static string ReturnIDColumn(this List<PropertyInfo> props)
         {
             string identity = "";
 
-            foreach (PropertyInfo item in _props.ReturnValidProperties())
+            foreach (PropertyInfo item in props.ReturnValidProperties())
             {
                 foreach (object itemAttr in item.GetCustomAttributes(false))
                 {
@@ -175,60 +169,60 @@ namespace TDFramework
             return identity;
         }
 
-        internal static string ReturnFirstColumn(this List<PropertyInfo> _props)
+        internal static string ReturnFirstColumn(this List<PropertyInfo> props)
         {
             string firstColumn = "ID";
 
-            if (_props.Count > 0)
+            if (props.Count > 0)
             {
-                firstColumn = _props.FirstOrDefault().GetTableColumnName();
+                firstColumn = props.FirstOrDefault().GetTableColumnName();
             }
 
             return firstColumn;
         }
 
-        internal static string ReturnQueryStringForInsert(this List<PropertyInfo> _props, string tableName, string _identity, bool returnID = false)
+        internal static string ReturnQueryStringForInsert(this List<PropertyInfo> props, string tableName, string identity, bool returnID = false)
         {
-            string querystring = "Insert Into " + tableName + "(";
+            string queryStr = "Insert Into " + tableName + "(";
 
-            foreach (PropertyInfo item in _props.ReturnValidProperties())
+            foreach (PropertyInfo item in props.ReturnValidProperties())
             {
                 if (item.PropertyType.InType())
                 {
-                    if (_identity != item.Name)
+                    if (identity != item.Name)
                     {
-                        querystring += "[" + item.GetTableColumnName() + "],";
+                        queryStr += "[" + item.GetTableColumnName() + "],";
                     }
                 }
             }
 
-            querystring = querystring.TrimEnd(',');
-            querystring += ") Values(";
+            queryStr = queryStr.TrimEnd(',');
+            queryStr += ") Values(";
 
-            foreach (PropertyInfo item in _props)
+            foreach (PropertyInfo item in props)
             {
                 if (item.PropertyType.InType())
                 {
-                    if (_identity != item.Name)
+                    if (identity != item.Name)
                     {
-                        querystring += "@" + item.GetTableColumnName() + ",";
+                        queryStr += "@" + item.GetTableColumnName() + ",";
                     }
                 }
             }
 
-            querystring = querystring.TrimEnd(',');
-            querystring += ")";
+            queryStr = queryStr.TrimEnd(',');
+            queryStr += ")";
 
-            querystring = returnID == true ? querystring + " Select SCOPE_IDENTITY()" : querystring;
+            queryStr = returnID ? queryStr + " Select SCOPE_IDENTITY()" : queryStr;
 
-            return querystring;
+            return queryStr;
         }
 
-        internal static List<PropertyInfo> ReturnValidProperties(this List<PropertyInfo> _props, bool forSelect = false)
+        internal static List<PropertyInfo> ReturnValidProperties(this List<PropertyInfo> props, bool forSelect = false)
         {
             List<PropertyInfo> returnProps = new List<PropertyInfo>();
 
-            foreach (PropertyInfo item in _props)
+            foreach (PropertyInfo item in props)
             {
                 if (item.GetCustomAttributes(false).Where(a => a.ToString().Split('+').Last().Replace("Attribute", "").Split('.').Last() == "NotTableColumn").ToList().Count <= 0)
                 {
@@ -249,23 +243,9 @@ namespace TDFramework
             return returnProps;
         }
 
-        internal static int SelectCount(this object _data)
+        internal static string ToJoiner(this JoinTypes joinType)
         {
-            try
-            {
-                string count = ((DBNull)_data).ToString();
-
-                return 0;
-            }
-            catch
-            {
-                return 1;
-            }
-        }
-
-        internal static string ToJoiner(this JoinTypes _joinType)
-        {
-            switch (_joinType)
+            switch (joinType)
             {
                 case JoinTypes.CROSS: return "Cross Join";
                 case JoinTypes.FULL: return "Full Join";
@@ -276,78 +256,80 @@ namespace TDFramework
             }
         }
 
-        internal static List<dynamic> ToDynamicList(this DataTable _dataTable, string _className)
+        internal static List<dynamic> ToDynamicList(this DataTable dataTable, string className)
         {
-            return ToDynamicList(ToDictionary(_dataTable), GetNewObject(_dataTable.Columns, _className));
+            return ToDynamicList(ToDictionary(dataTable), GetNewObject(dataTable.Columns, className));
         }
         #region ToDynamicList
 
-        private static List<Dictionary<string, object>> ToDictionary(DataTable _dataTable)
+        private static List<Dictionary<string, object>> ToDictionary(DataTable dataTable)
         {
-            var columns = _dataTable.Columns.Cast<DataColumn>();
-            var Temp = _dataTable.AsEnumerable().Select(dataRow => columns.Select(column =>
+            var columns = dataTable.Columns.Cast<DataColumn>();
+
+            var temp = dataTable.AsEnumerable().Select(dataRow => columns.Select(column =>
                                  new { Column = column.ColumnName, Value = dataRow[column] })
                              .ToDictionary(data => data.Column, data => data.Value)).ToList();
-            return Temp.ToList();
+
+            return temp.ToList();
         }
 
-        private static List<dynamic> ToDynamicList(List<Dictionary<string, object>> _list, Type _typeObj)
+        private static List<dynamic> ToDynamicList(List<Dictionary<string, object>> list, Type typeObj)
         {
             dynamic temp = new List<dynamic>();
-            foreach (Dictionary<string, object> item in _list)
+
+            foreach (Dictionary<string, object> item in list)
             {
-                object Obj = Activator.CreateInstance(_typeObj);
+                object obj = Activator.CreateInstance(typeObj);
 
-                PropertyInfo[] properties = Obj.GetType().GetProperties();
+                PropertyInfo[] properties = obj.GetType().GetProperties();
 
-                Dictionary<string, object> DictList = (Dictionary<string, object>)item;
+                Dictionary<string, object> dictList = item;
 
-                foreach (KeyValuePair<string, object> keyValuePair in DictList)
+                foreach (KeyValuePair<string, object> keyValuePair in dictList)
                 {
                     foreach (PropertyInfo property in properties)
                     {
                         if (property.Name == keyValuePair.Key)
                         {
-                            if (keyValuePair.Value != null && keyValuePair.Value.GetType() != typeof(System.DBNull))
+                            if (keyValuePair.Value != null && keyValuePair.Value.GetType() != typeof(DBNull))
                             {
-                                if (keyValuePair.Value.GetType() == typeof(System.Guid))
+                                if (keyValuePair.Value is Guid)
                                 {
-                                    property.SetValue(Obj, keyValuePair.Value, null);
+                                    property.SetValue(obj, keyValuePair.Value, null);
                                 }
                                 else
                                 {
-                                    property.SetValue(Obj, keyValuePair.Value, null);
+                                    property.SetValue(obj, keyValuePair.Value, null);
                                 }
                             }
                             break;
                         }
                     }
                 }
-                temp.Add(Obj);
+                temp.Add(obj);
             }
             return temp;
         }
 
-        private static Type GetNewObject(DataColumnCollection _columns, string _className)
+        private static Type GetNewObject(DataColumnCollection columns, string className)
         {
-            AssemblyName assemblyName = new AssemblyName();
-            assemblyName.Name = "YourAssembly";
-            System.Reflection.Emit.AssemblyBuilder assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
+            AssemblyName assemblyName = new AssemblyName { Name = "YourAssembly" };
+            AssemblyBuilder assemblyBuilder = Thread.GetDomain().DefineDynamicAssembly(assemblyName, AssemblyBuilderAccess.Run);
             ModuleBuilder module = assemblyBuilder.DefineDynamicModule("YourDynamicModule");
-            TypeBuilder typeBuilder = module.DefineType(_className, TypeAttributes.Public);
+            TypeBuilder typeBuilder = module.DefineType(className, TypeAttributes.Public);
 
-            foreach (DataColumn column in _columns)
+            foreach (DataColumn column in columns)
             {
                 string propertyName = column.ColumnName;
                 FieldBuilder field = typeBuilder.DefineField(propertyName, column.DataType, FieldAttributes.Public);
-                PropertyBuilder property = typeBuilder.DefineProperty(propertyName, System.Reflection.PropertyAttributes.None, column.DataType, new Type[] { column.DataType });
-                MethodAttributes GetSetAttr = MethodAttributes.Public | MethodAttributes.HideBySig;
-                MethodBuilder currGetPropMthdBldr = typeBuilder.DefineMethod("get_value", GetSetAttr, column.DataType, Type.EmptyTypes); // new Type[] { column.DataType });
+                PropertyBuilder property = typeBuilder.DefineProperty(propertyName, System.Reflection.PropertyAttributes.None, column.DataType, new[] { column.DataType });
+                MethodAttributes getSetAttr = MethodAttributes.Public | MethodAttributes.HideBySig;
+                MethodBuilder currGetPropMthdBldr = typeBuilder.DefineMethod("get_value", getSetAttr, column.DataType, Type.EmptyTypes); // new Type[] { column.DataType });
                 ILGenerator currGetIL = currGetPropMthdBldr.GetILGenerator();
                 currGetIL.Emit(OpCodes.Ldarg_0);
                 currGetIL.Emit(OpCodes.Ldfld, field);
                 currGetIL.Emit(OpCodes.Ret);
-                MethodBuilder currSetPropMthdBldr = typeBuilder.DefineMethod("set_value", GetSetAttr, null, new Type[] { column.DataType });
+                MethodBuilder currSetPropMthdBldr = typeBuilder.DefineMethod("set_value", getSetAttr, null, new[] { column.DataType });
                 ILGenerator currSetIL = currSetPropMthdBldr.GetILGenerator();
                 currSetIL.Emit(OpCodes.Ldarg_0);
                 currSetIL.Emit(OpCodes.Ldarg_1);
@@ -362,14 +344,14 @@ namespace TDFramework
 
         #endregion
 
-        internal static string MakeSingle(this string _text, string _changeText)
+        internal static string MakeSingle(this string text, string changeText)
         {
             do
             {
-                _text = _text.Replace(_changeText + _changeText, _changeText);
-            } while (_text.Contains(_changeText + _changeText));
+                text = text.Replace(changeText + changeText, changeText);
+            } while (text.Contains(changeText + changeText));
 
-            return _text;
+            return text;
         }
 
         internal static string ToShortAggregateName(this Aggregates aggregate)

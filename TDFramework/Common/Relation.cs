@@ -1,10 +1,10 @@
 ﻿// ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
@@ -19,7 +19,7 @@ namespace TDFramework.Common
     {
         static Relation()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
@@ -27,9 +27,9 @@ namespace TDFramework.Common
 
         public Relation(dynamic firstRelatedColumn, dynamic secondRelatedColumn, JoinTypes joinType = JoinTypes.INNER)
         {
-            this.JoinType = joinType;
-            this.FirstRelatedColumn = firstRelatedColumn;
-            this.SecondRelatedColumn = secondRelatedColumn;
+            JoinType = joinType;
+            FirstRelatedColumn = firstRelatedColumn;
+            SecondRelatedColumn = secondRelatedColumn;
         }
 
         internal JoinTypes JoinType { get; set; }
@@ -40,9 +40,9 @@ namespace TDFramework.Common
         {
             string queryString = "";
 
-            if (this.JoinType != JoinTypes.CROSS)
+            if (JoinType != JoinTypes.CROSS)
             {
-                queryString += knot + " " + firstTable.Alias + "." + this.FirstRelatedColumn + " = " + secondTable.Alias + "." + this.SecondRelatedColumn + " ";
+                queryString += knot + " " + firstTable.Alias + "." + FirstRelatedColumn + " = " + secondTable.Alias + "." + SecondRelatedColumn + " ";
             }
 
             return queryString;

@@ -1,10 +1,10 @@
 ﻿// ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.SqlClient;
+using TDFramework.Common.Internal;
+using TDFramework.Library;
 
 namespace TDFramework.Common
 {
@@ -27,520 +29,519 @@ namespace TDFramework.Common
 
         static Having()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
         }
 
-		public Having()
-		{
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = false;
-            this.Knot = Knots.AND;
-            this.Aggregate = Aggregates.COUNT;
-            this.Parantheses = null;
+        public Having()
+        {
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = false;
+            Knot = Knots.AND;
+            Aggregate = Aggregates.COUNT;
+            Parantheses = null;
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = false;
-            this.Knot = Knots.AND;
-            this.Aggregate = aggregate;
-            this.Parantheses = null;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = false;
+            Knot = Knots.AND;
+            Aggregate = aggregate;
+            Parantheses = null;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Operators operatorr)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = operatorr;
-            this.Not = false;
-            this.Knot = Knots.AND;
-            this.Aggregate = aggregate;
-            this.Parantheses = null;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = operatorr;
+            Not = false;
+            Knot = Knots.AND;
+            Aggregate = aggregate;
+            Parantheses = null;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, bool not)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = not;
-            this.Knot = Knots.AND;
-            this.Aggregate = aggregate;
-            this.Parantheses = null;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = not;
+            Knot = Knots.AND;
+            Aggregate = aggregate;
+            Parantheses = null;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Knots knot)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = false;
-            this.Knot = knot;
-            this.Aggregate = aggregate;
-            this.Parantheses = null;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = false;
+            Knot = knot;
+            Aggregate = aggregate;
+            Parantheses = null;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Parantheses parantheses)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = false;
-            this.Knot = Knots.AND;
-            this.Aggregate = aggregate;
-            this.Parantheses = parantheses;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = false;
+            Knot = Knots.AND;
+            Aggregate = aggregate;
+            Parantheses = parantheses;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Operators operatorr, bool not)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = operatorr;
-            this.Not = not;
-            this.Knot = Knots.AND;
-            this.Aggregate = aggregate;
-            this.Parantheses = null;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = operatorr;
+            Not = not;
+            Knot = Knots.AND;
+            Aggregate = aggregate;
+            Parantheses = null;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Operators operatorr, Knots knot)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = operatorr;
-            this.Not = false;
-            this.Knot = knot;
-            this.Aggregate = aggregate;
-            this.Parantheses = null;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = operatorr;
+            Not = false;
+            Knot = knot;
+            Aggregate = aggregate;
+            Parantheses = null;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Operators operatorr, Parantheses parantheses)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = operatorr;
-            this.Not = false;
-            this.Knot = Knots.AND;
-            this.Aggregate = aggregate;
-            this.Parantheses = parantheses;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = operatorr;
+            Not = false;
+            Knot = Knots.AND;
+            Aggregate = aggregate;
+            Parantheses = parantheses;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, bool not, Knots knot)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = not;
-            this.Knot = knot;
-            this.Aggregate = aggregate;
-            this.Parantheses = null;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = not;
+            Knot = knot;
+            Aggregate = aggregate;
+            Parantheses = null;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, bool not, Parantheses parantheses)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = not;
-            this.Knot = Knots.AND;
-            this.Aggregate = aggregate;
-            this.Parantheses = parantheses;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = not;
+            Knot = Knots.AND;
+            Aggregate = aggregate;
+            Parantheses = parantheses;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Knots knot, Parantheses parantheses)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = false;
-            this.Knot = knot;
-            this.Aggregate = aggregate;
-            this.Parantheses = parantheses;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = false;
+            Knot = knot;
+            Aggregate = aggregate;
+            Parantheses = parantheses;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Operators operatorr, bool not, Knots knot)
-		{
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = operatorr;
-            this.Not = not;
-            this.Knot = knot;
-            this.Aggregate = aggregate;
-            this.Parantheses = null;
+        {
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = operatorr;
+            Not = not;
+            Knot = knot;
+            Aggregate = aggregate;
+            Parantheses = null;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
-		}
+        }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Operators operatorr, bool not, Parantheses parantheses)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = operatorr;
-            this.Not = not;
-            this.Knot = Knots.AND;
-            this.Aggregate = aggregate;
-            this.Parantheses = parantheses;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = operatorr;
+            Not = not;
+            Knot = Knots.AND;
+            Aggregate = aggregate;
+            Parantheses = parantheses;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Operators operatorr, Knots knot, Parantheses parantheses)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = operatorr;
-            this.Not = false;
-            this.Knot = knot;
-            this.Aggregate = aggregate;
-            this.Parantheses = parantheses;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = operatorr;
+            Not = false;
+            Knot = knot;
+            Aggregate = aggregate;
+            Parantheses = parantheses;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, bool not, Knots knot, Parantheses parantheses)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = Operators.EQUAL;
-            this.Not = not;
-            this.Knot = knot;
-            this.Aggregate = aggregate;
-            this.Parantheses = parantheses;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = Operators.EQUAL;
+            Not = not;
+            Knot = knot;
+            Aggregate = aggregate;
+            Parantheses = parantheses;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
         public Having(dynamic column, dynamic values, Aggregates aggregate, Operators operatorr, bool not, Knots knot, Parantheses parantheses)
         {
-            this.Column = column;
-            this.Values = new List<dynamic>();
-            this.Operator = operatorr;
-            this.Not = not;
-            this.Knot = knot;
-            this.Aggregate = aggregate;
-            this.Parantheses = parantheses;
+            Column = column;
+            Values = new List<dynamic>();
+            Operator = operatorr;
+            Not = not;
+            Knot = knot;
+            Aggregate = aggregate;
+            Parantheses = parantheses;
 
             if (values.GetType().IsGenericType == true)
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else if (values.GetType().BaseType.Name == "Array")
             {
                 foreach (var item in values)
                 {
-                    this.Values.Add(item);
+                    Values.Add(item);
                 }
             }
             else
             {
-                this.Values.Add(values);
+                Values.Add(values);
             }
         }
 
-        internal static HavingValues CreateHaving(List<Having> _having, string _alias = "")
+        internal static HavingValues CreateHaving(List<Having> having, string alias = "")
         {
             HavingValues cv = new HavingValues();
-            HavingValues tempCV = new HavingValues();
 
-            _alias = _alias == "" ? "" : _alias + ".";
+            alias = alias == "" ? "" : alias + ".";
 
-            foreach (Having item in _having)
+            foreach (Having item in having)
             {
                 string not = item.Not == false ? "" : "Not";
 
-            begin: ;
+                begin:
                 int i = 0;
                 foreach (dynamic value in item.Values)
                 {
                     if (value != null)
                     {
-                        if (value.GetType() == typeof(bool))
+                        if (value is bool)
                         {
                             item.Values[i] = value.ToString().ToLower().Replace("true", "1").Replace("false", "0");
                             goto begin;
@@ -550,31 +551,33 @@ namespace TDFramework.Common
                     i++;
                 }
 
+                HavingValues tempCV;
+
                 switch (item.Operator)
                 {
                     case Operators.EQUAL:
-                        tempCV = CreateEqualHaving(item, not, _alias);
+                        tempCV = CreateEqualHaving(item, not, alias);
                         break;
                     case Operators.GREATER:
-                        tempCV = CreateGreaterHaving(item, not, _alias);
+                        tempCV = CreateGreaterHaving(item, not, alias);
                         break;
                     case Operators.GREATEREQUAL:
-                        tempCV = CreateGreaterEqualHaving(item, not, _alias);
+                        tempCV = CreateGreaterEqualHaving(item, not, alias);
                         break;
                     case Operators.SMALLER:
-                        tempCV = CreateSmallerHaving(item, not, _alias);
+                        tempCV = CreateSmallerHaving(item, not, alias);
                         break;
                     case Operators.SMALLEREQUAL:
-                        tempCV = CreateSmallerEqualHaving(item, not, _alias);
+                        tempCV = CreateSmallerEqualHaving(item, not, alias);
                         break;
                     case Operators.BETWEEN:
-                        tempCV = CreateBetweenHaving(item, not, _alias);
+                        tempCV = CreateBetweenHaving(item, not, alias);
                         break;
                     case Operators.IN:
-                        tempCV = CreateInHaving(item, not, _alias);
+                        tempCV = CreateInHaving(item, not, alias);
                         break;
                     default:
-                        tempCV = CreateEqualHaving(item, not, _alias);
+                        tempCV = CreateEqualHaving(item, not, alias);
                         break;
                 }
 
@@ -587,168 +590,168 @@ namespace TDFramework.Common
             return cv;
         }
 
-        private static HavingValues CreateEqualHaving(Having _having, string not, string _alias = "")
+        private static HavingValues CreateEqualHaving(Having having, string not, string alias = "")
         {
             HavingValues cv = new HavingValues();
-            string paramName = _having.Column.ToString() + Guider.GetGuid(5);
+            string paramName = having.Column.ToString() + Guider.GetGuid(5);
 
             string openParantheses = "";
             string closedParantheses = "";
 
-            if (_having.Parantheses != null)
+            if (having.Parantheses != null)
             {
-                for (int i = 1; i <= _having.Parantheses.OpenCount; i++)
+                for (int i = 1; i <= having.Parantheses.OpenCount; i++)
                 {
                     openParantheses += "(";
                 }
 
-                for (int i = 1; i <= _having.Parantheses.ClosedCount; i++)
+                for (int i = 1; i <= having.Parantheses.ClosedCount; i++)
                 {
                     closedParantheses += ")";
                 }
             }
 
-            cv.QueryString += " " + _having.Knot.ToString() + " " + openParantheses + "(" + not + " " + _having.Aggregate.ToShortAggregateName() + "(" + _alias + "[" + _having.Column.ToString() + "]) = @" + paramName + ")" + closedParantheses;
-            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = _having.Values.FirstOrDefault() });
+            cv.QueryString += " " + having.Knot.ToString() + " " + openParantheses + "(" + not + " " + having.Aggregate.ToShortAggregateName() + "(" + alias + "[" + having.Column.ToString() + "]) = @" + paramName + ")" + closedParantheses;
+            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = having.Values.FirstOrDefault() });
 
             return cv;
         }
 
-        private static HavingValues CreateGreaterHaving(Having _having, string not, string _alias = "")
+        private static HavingValues CreateGreaterHaving(Having having, string not, string alias = "")
         {
             HavingValues cv = new HavingValues();
-            string paramName = _having.Column.ToString() + Guider.GetGuid(5);
+            string paramName = having.Column.ToString() + Guider.GetGuid(5);
 
             string openParantheses = "";
             string closedParantheses = "";
 
-            if (_having.Parantheses != null)
+            if (having.Parantheses != null)
             {
-                for (int i = 1; i <= _having.Parantheses.OpenCount; i++)
+                for (int i = 1; i <= having.Parantheses.OpenCount; i++)
                 {
                     openParantheses += "(";
                 }
 
-                for (int i = 1; i <= _having.Parantheses.ClosedCount; i++)
+                for (int i = 1; i <= having.Parantheses.ClosedCount; i++)
                 {
                     closedParantheses += ")";
                 }
             }
 
-            cv.QueryString += " " + _having.Knot.ToString() + " " + openParantheses + "(" + not + " " + _having.Aggregate.ToShortAggregateName() + "(" + _alias + "[" + _having.Column.ToString() + "]) > @" + paramName + ")" + closedParantheses;
-            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = _having.Values.FirstOrDefault() });
+            cv.QueryString += " " + having.Knot.ToString() + " " + openParantheses + "(" + not + " " + having.Aggregate.ToShortAggregateName() + "(" + alias + "[" + having.Column.ToString() + "]) > @" + paramName + ")" + closedParantheses;
+            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = having.Values.FirstOrDefault() });
 
             return cv;
         }
 
-        private static HavingValues CreateGreaterEqualHaving(Having _having, string not, string _alias = "")
+        private static HavingValues CreateGreaterEqualHaving(Having having, string not, string alias = "")
         {
             HavingValues cv = new HavingValues();
-            string paramName = _having.Column.ToString() + Guider.GetGuid(5);
+            string paramName = having.Column.ToString() + Guider.GetGuid(5);
 
             string openParantheses = "";
             string closedParantheses = "";
 
-            if (_having.Parantheses != null)
+            if (having.Parantheses != null)
             {
-                for (int i = 1; i <= _having.Parantheses.OpenCount; i++)
+                for (int i = 1; i <= having.Parantheses.OpenCount; i++)
                 {
                     openParantheses += "(";
                 }
 
-                for (int i = 1; i <= _having.Parantheses.ClosedCount; i++)
+                for (int i = 1; i <= having.Parantheses.ClosedCount; i++)
                 {
                     closedParantheses += ")";
                 }
             }
 
-            cv.QueryString += " " + _having.Knot.ToString() + " " + openParantheses + "(" + not + " " + _having.Aggregate.ToShortAggregateName() + "(" + _alias + "[" + _having.Column.ToString() + "]) >= @" + paramName + ")" + closedParantheses;
-            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = _having.Values.FirstOrDefault() });
+            cv.QueryString += " " + having.Knot.ToString() + " " + openParantheses + "(" + not + " " + having.Aggregate.ToShortAggregateName() + "(" + alias + "[" + having.Column.ToString() + "]) >= @" + paramName + ")" + closedParantheses;
+            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = having.Values.FirstOrDefault() });
 
             return cv;
         }
 
-        private static HavingValues CreateSmallerHaving(Having _having, string not, string _alias = "")
+        private static HavingValues CreateSmallerHaving(Having having, string not, string alias = "")
         {
             HavingValues cv = new HavingValues();
-            string paramName = _having.Column.ToString() + Guider.GetGuid(5);
+            string paramName = having.Column.ToString() + Guider.GetGuid(5);
 
             string openParantheses = "";
             string closedParantheses = "";
 
-            if (_having.Parantheses != null)
+            if (having.Parantheses != null)
             {
-                for (int i = 1; i <= _having.Parantheses.OpenCount; i++)
+                for (int i = 1; i <= having.Parantheses.OpenCount; i++)
                 {
                     openParantheses += "(";
                 }
 
-                for (int i = 1; i <= _having.Parantheses.ClosedCount; i++)
+                for (int i = 1; i <= having.Parantheses.ClosedCount; i++)
                 {
                     closedParantheses += ")";
                 }
             }
 
-            cv.QueryString += " " + _having.Knot.ToString() + " " + openParantheses + "(" + not + " " + _having.Aggregate.ToShortAggregateName() + "(" + _alias + "[" + _having.Column.ToString() + "]) < @" + paramName + ")" + closedParantheses;
-            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = _having.Values.FirstOrDefault() });
+            cv.QueryString += " " + having.Knot.ToString() + " " + openParantheses + "(" + not + " " + having.Aggregate.ToShortAggregateName() + "(" + alias + "[" + having.Column.ToString() + "]) < @" + paramName + ")" + closedParantheses;
+            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = having.Values.FirstOrDefault() });
 
             return cv;
         }
 
-        private static HavingValues CreateSmallerEqualHaving(Having _having, string not, string _alias = "")
+        private static HavingValues CreateSmallerEqualHaving(Having having, string not, string alias = "")
         {
             HavingValues cv = new HavingValues();
-            string paramName = _having.Column.ToString() + Guider.GetGuid(5);
+            string paramName = having.Column.ToString() + Guider.GetGuid(5);
 
             string openParantheses = "";
             string closedParantheses = "";
 
-            if (_having.Parantheses != null)
+            if (having.Parantheses != null)
             {
-                for (int i = 1; i <= _having.Parantheses.OpenCount; i++)
+                for (int i = 1; i <= having.Parantheses.OpenCount; i++)
                 {
                     openParantheses += "(";
                 }
 
-                for (int i = 1; i <= _having.Parantheses.ClosedCount; i++)
+                for (int i = 1; i <= having.Parantheses.ClosedCount; i++)
                 {
                     closedParantheses += ")";
                 }
             }
 
-            cv.QueryString += " " + _having.Knot.ToString() + " " + openParantheses + "(" + not + " " + _having.Aggregate.ToShortAggregateName() + "(" + _alias + "[" + _having.Column.ToString() + "]) <= @" + paramName + ")" + closedParantheses;
-            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = _having.Values.FirstOrDefault() });
+            cv.QueryString += " " + having.Knot.ToString() + " " + openParantheses + "(" + not + " " + having.Aggregate.ToShortAggregateName() + "(" + alias + "[" + having.Column.ToString() + "]) <= @" + paramName + ")" + closedParantheses;
+            cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = having.Values.FirstOrDefault() });
 
             return cv;
         }
 
-        private static HavingValues CreateBetweenHaving(Having _having, string not, string _alias = "")
+        private static HavingValues CreateBetweenHaving(Having having, string not, string alias = "")
         {
             HavingValues cv = new HavingValues();
-            dynamic[] values = _having.Values.ToArray();
+            dynamic[] values = having.Values.ToArray();
 
             if (values.Length > 1)
             {
-                string paramName = _having.Column.ToString() + Guider.GetGuid(5);
-                string paramName2 = _having.Column.ToString() + Guider.GetGuid(5);
+                string paramName = having.Column.ToString() + Guider.GetGuid(5);
+                string paramName2 = having.Column.ToString() + Guider.GetGuid(5);
 
                 string openParantheses = "";
                 string closedParantheses = "";
 
-                if (_having.Parantheses != null)
+                if (having.Parantheses != null)
                 {
-                    for (int i = 1; i <= _having.Parantheses.OpenCount; i++)
+                    for (int i = 1; i <= having.Parantheses.OpenCount; i++)
                     {
                         openParantheses += "(";
                     }
 
-                    for (int i = 1; i <= _having.Parantheses.ClosedCount; i++)
+                    for (int i = 1; i <= having.Parantheses.ClosedCount; i++)
                     {
                         closedParantheses += ")";
                     }
                 }
 
-                cv.QueryString += " " + _having.Knot.ToString() + " " + openParantheses + "(" + _having.Aggregate.ToShortAggregateName() + "(" + _alias + "[" + _having.Column.ToString() + "]) " + not + " Between @" + paramName + " And @" + paramName2 + ")" + closedParantheses;
+                cv.QueryString += " " + having.Knot.ToString() + " " + openParantheses + "(" + having.Aggregate.ToShortAggregateName() + "(" + alias + "[" + having.Column.ToString() + "]) " + not + " Between @" + paramName + " And @" + paramName2 + ")" + closedParantheses;
                 cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = values[0] });
                 cv.Parameters.Add(new SqlParameter() { ParameterName = paramName2, Value = values[1] });
             }
@@ -756,33 +759,33 @@ namespace TDFramework.Common
             return cv;
         }
 
-        private static HavingValues CreateInHaving(Having _having, string not, string _alias = "")
+        private static HavingValues CreateInHaving(Having having, string not, string alias = "")
         {
             HavingValues cv = new HavingValues();
 
-            if (_having.Values.Count > 0)
+            if (having.Values.Count > 0)
             {
                 string openParantheses = "";
                 string closedParantheses = "";
 
-                if (_having.Parantheses != null)
+                if (having.Parantheses != null)
                 {
-                    for (int i = 1; i <= _having.Parantheses.OpenCount; i++)
+                    for (int i = 1; i <= having.Parantheses.OpenCount; i++)
                     {
                         openParantheses += "(";
                     }
 
-                    for (int i = 1; i <= _having.Parantheses.ClosedCount; i++)
+                    for (int i = 1; i <= having.Parantheses.ClosedCount; i++)
                     {
                         closedParantheses += ")";
                     }
                 }
 
-                cv.QueryString += " " + _having.Knot.ToString() + " " + openParantheses + "(" + _having.Aggregate.ToShortAggregateName() + "(" + _alias + "[" + _having.Column.ToString() + "]) " + not + " In(";
+                cv.QueryString += " " + having.Knot.ToString() + " " + openParantheses + "(" + having.Aggregate.ToShortAggregateName() + "(" + alias + "[" + having.Column.ToString() + "]) " + not + " In(";
 
-                foreach (dynamic item in _having.Values)
+                foreach (dynamic item in having.Values)
                 {
-                    string paramName = _having.Column.ToString() + Guider.GetGuid(5);
+                    string paramName = having.Column.ToString() + Guider.GetGuid(5);
 
                     cv.QueryString += "@" + paramName + ", ";
                     cv.Parameters.Add(new SqlParameter() { ParameterName = paramName, Value = item });
@@ -800,7 +803,7 @@ namespace TDFramework.Common
     {
         static HavingValues()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
@@ -808,8 +811,8 @@ namespace TDFramework.Common
 
         public HavingValues()
         {
-            this.QueryString = "";
-            this.Parameters = new List<SqlParameter>();
+            QueryString = "";
+            Parameters = new List<SqlParameter>();
         }
 
         internal string QueryString { get; set; }

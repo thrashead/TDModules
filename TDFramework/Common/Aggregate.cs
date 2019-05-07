@@ -1,10 +1,10 @@
 ﻿// ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
@@ -17,7 +17,7 @@ namespace TDFramework.Common
     {
         static Aggregate()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
@@ -25,62 +25,62 @@ namespace TDFramework.Common
 
         public Aggregate(dynamic groupColumns)
         {
-            this.Column = null;
-            this.GroupColumns = groupColumns;
-            this.GroupBy = this.GroupColumns == null ? false : true;
-            this.Having = null;
+            Column = null;
+            GroupColumns = groupColumns;
+            GroupBy = GroupColumns != null;
+            Having = null;
         }
 
         public Aggregate(dynamic groupColumns, Having having)
         {
-            this.Column = null;
-            this.GroupColumns = groupColumns;
-            this.GroupBy = this.GroupColumns == null ? false : true;
-            this.Having = new List<Having>() { having };
+            Column = null;
+            GroupColumns = groupColumns;
+            GroupBy = GroupColumns != null;
+            Having = new List<Having>() { having };
         }
 
         public Aggregate(dynamic groupColumns, List<Having> havingList)
         {
-            this.Column = null;
-            this.GroupColumns = groupColumns;
-            this.GroupBy = this.GroupColumns == null ? false : true;
-            this.Having = havingList;
+            Column = null;
+            GroupColumns = groupColumns;
+            GroupBy = GroupColumns != null;
+            Having = havingList;
         }
 
         public Aggregate(dynamic column, Aggregates aggregate)
         {
-            this.Agregate = aggregate;
-            this.Column = column;
-            this.GroupColumns = null;
-            this.GroupBy = false;
-            this.Having = null;
+            Agregate = aggregate;
+            Column = column;
+            GroupColumns = null;
+            GroupBy = false;
+            Having = null;
         }
 
         public Aggregate(dynamic column, Aggregates aggregate, dynamic groupColumns)
         {
-            this.Agregate = aggregate;
-            this.Column = column;
-            this.GroupColumns = groupColumns;
-            this.GroupBy = this.GroupColumns == null ? false : true;
-            this.Having = null;
+            Agregate = aggregate;
+            Column = column;
+            GroupColumns = groupColumns;
+            GroupBy = GroupColumns != null;
+            Having = null;
         }
 
         public Aggregate(dynamic column, Aggregates aggregate, dynamic groupColumns, Having having)
         {
-            this.Agregate = aggregate;
-            this.Column = column;
-            this.GroupColumns = groupColumns;
-            this.GroupBy = this.GroupColumns == null ? false : true;
-            this.Having = new List<Having>() { having };
+            Agregate = aggregate;
+            Column = column;
+            GroupColumns = groupColumns;
+            GroupBy = GroupColumns != null;
+            Having = new List<Having>() { having };
         }
 
         public Aggregate(dynamic column, Aggregates aggregate, dynamic groupColumns, List<Having> havingList)
         {
-            this.Agregate = aggregate;
-            this.Column = column;
-            this.GroupColumns = groupColumns;
-            this.GroupBy = this.GroupColumns == null ? false : true;
-            this.Having = havingList;
+            Agregate = aggregate;
+            Column = column;
+            GroupColumns = groupColumns;
+            GroupBy = GroupColumns != null;
+            Having = havingList;
         }
 
         internal Aggregates Agregate { get; set; }

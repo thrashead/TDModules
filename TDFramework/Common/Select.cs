@@ -1,10 +1,10 @@
 // ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
@@ -23,7 +23,7 @@ namespace TDFramework.Common
 
         static Select()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
@@ -31,62 +31,62 @@ namespace TDFramework.Common
 
         public Select()
         {
-            this.OrderColumn = null;
-            this.OrderBy = null;
-            this.Top = null;
-            this.Distinct = false;
-            this.Aggregate = null;
-            this.Pager = null;
+            OrderColumn = null;
+            OrderBy = null;
+            Top = null;
+            Distinct = false;
+            Aggregate = null;
+            Pager = null;
         }
 
         public Select(int top)
         {
-            this.OrderColumn = null;
-            this.OrderBy = null;
-            this.Top = top;
-            this.Distinct = false;
-            this.Aggregate = null;
-            this.Pager = null;
+            OrderColumn = null;
+            OrderBy = null;
+            Top = top;
+            Distinct = false;
+            Aggregate = null;
+            Pager = null;
         }
 
         public Select(bool distinct)
         {
-            this.OrderColumn = null;
-            this.OrderBy = null;
-            this.Top = null;
-            this.Distinct = distinct;
-            this.Aggregate = null;
-            this.Pager = null;
+            OrderColumn = null;
+            OrderBy = null;
+            Top = null;
+            Distinct = distinct;
+            Aggregate = null;
+            Pager = null;
         }
 
         public Select(Aggregate aggregate)
         {
-            this.OrderColumn = null;
-            this.OrderBy = null;
-            this.Top = null;
-            this.Distinct = false;
-            this.Aggregate = aggregate;
-            this.Pager = null;
+            OrderColumn = null;
+            OrderBy = null;
+            Top = null;
+            Distinct = false;
+            Aggregate = aggregate;
+            Pager = null;
         }
 
         public Select(Pager pager)
         {
-            this.OrderColumn = null;
-            this.OrderBy = null;
-            this.Top = null;
-            this.Distinct = false;
-            this.Aggregate = null;
-            this.Pager = pager;
+            OrderColumn = null;
+            OrderBy = null;
+            Top = null;
+            Distinct = false;
+            Aggregate = null;
+            Pager = pager;
         }
 
         public Select(dynamic orderColumn = null, OrderBy? orderBy = null, int? top = null, bool distinct = false, Aggregate aggregate = null, Pager pager = null)
         {
-            this.OrderColumn = orderColumn;
-            this.OrderBy = orderBy;
-            this.Top = top;
-            this.Distinct = distinct;
-            this.Aggregate = aggregate;
-            this.Pager = pager;
+            OrderColumn = orderColumn;
+            OrderBy = orderBy;
+            Top = top;
+            Distinct = distinct;
+            Aggregate = aggregate;
+            Pager = pager;
         }
     }
 

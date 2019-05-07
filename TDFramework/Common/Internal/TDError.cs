@@ -1,25 +1,26 @@
 ﻿// ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
 using System;
 using System.Collections.Generic;
 using TDFramework.Common.TDModel;
+using TDFramework.Library;
 
-namespace TDFramework.Common
+namespace TDFramework.Common.Internal
 {
     internal sealed class TDError<T>
             where T : ITDModel
     {
         static TDError()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
@@ -27,11 +28,11 @@ namespace TDFramework.Common
 
         internal TDError()
         {
-            this.Columns = null;
-            this.Values = null;
-            this.SelectValues = null;
-            this.Where = null;
-            this.WhereList = new List<Where>();
+            Columns = null;
+            Values = null;
+            SelectValues = null;
+            Where = null;
+            WhereList = new List<Where>();
         }
 
         internal dynamic Columns { get; set; }
@@ -40,50 +41,50 @@ namespace TDFramework.Common
         internal Where Where { get; set; }
         internal List<Where> WhereList { get; set; }
 
-        internal static Error ReturnError(TDError<T> _tdError, MethodType methodType = MethodType.Select, ErrorTypes errorType = ErrorTypes.Columns)
+        internal static Error ReturnError(TDError<T> tdError, MethodType methodType = MethodType.Select, ErrorTypes errorType = ErrorTypes.Columns)
         {
             Error rbError = null;
 
-            if (_tdError != null)
+            if (tdError != null)
             {
-                if (_tdError.Columns != null)
+                if (tdError.Columns != null)
                 {
-                    rbError = ReturnError(_tdError.Columns, methodType, errorType);
+                    rbError = ReturnError(tdError.Columns, methodType, errorType);
                     if (rbError != null) { goto returnPoint; }
                 }
 
-                if (_tdError.Values != null)
+                if (tdError.Values != null)
                 {
-                    rbError = ReturnError(_tdError.Values, methodType, errorType);
+                    rbError = ReturnError(tdError.Values, methodType, errorType);
                     if (rbError != null) { goto returnPoint; }
                 }
 
-                if (_tdError.SelectValues != null)
+                if (tdError.SelectValues != null)
                 {
-                    rbError = ReturnError(_tdError.SelectValues);
+                    rbError = ReturnError(tdError.SelectValues);
                     if (rbError != null) { goto returnPoint; }
 
-                    if (_tdError.Columns != null)
+                    if (tdError.Columns != null)
                     {
-                        rbError = ReturnError(_tdError.Columns, _tdError.SelectValues);
+                        rbError = ReturnError(tdError.Columns, tdError.SelectValues);
                         if (rbError != null) { goto returnPoint; }
                     }
                 }
 
-                if (_tdError.Where != null)
+                if (tdError.Where != null)
                 {
-                    rbError = ReturnError(_tdError.Where, methodType);
+                    rbError = ReturnError(tdError.Where, methodType);
                     if (rbError != null) { goto returnPoint; }
                 }
 
-                if (_tdError.WhereList != null)
+                if (tdError.WhereList != null)
                 {
-                    rbError = ReturnError(_tdError.WhereList, methodType);
-                    if (rbError != null) { goto returnPoint; }
+                    rbError = ReturnError(tdError.WhereList, methodType);
                 }
             }
 
-        returnPoint: ;
+            returnPoint:
+
             return rbError;
         }
 
@@ -111,7 +112,7 @@ namespace TDFramework.Common
                             return new Error() { Layer = ErrorLayers.TABLE, Message = "column parameter of Aggregate constructor cannot be a generic list type." };
                         }
 
-                        if (String.IsNullOrEmpty(select.Aggregate.Column.ToString()))
+                        if (string.IsNullOrEmpty(select.Aggregate.Column.ToString()))
                         {
                             return new Error() { Layer = ErrorLayers.TABLE, Message = "column parameter of Aggregate constructor cannot be empty." };
                         }
@@ -148,7 +149,7 @@ namespace TDFramework.Common
                                             return new Error() { Layer = ErrorLayers.TABLE, Message = "Column parameter of any objects in Having List object cannot be generic list" };
                                         }
 
-                                        if (String.IsNullOrEmpty(item.Column.ToString()))
+                                        if (string.IsNullOrEmpty(item.Column.ToString()))
                                         {
                                             return new Error() { Layer = ErrorLayers.TABLE, Message = "Column parameter of any objects in Having List object cannot be empty." };
                                         }
@@ -193,7 +194,7 @@ namespace TDFramework.Common
                         return new Error() { Layer = ErrorLayers.TABLE, Message = "Column property in where parameter of " + methodType.ToString() + " method cannot be generic list" };
                     }
 
-                    if (String.IsNullOrEmpty(where.Column.ToString()))
+                    if (string.IsNullOrEmpty(where.Column.ToString()))
                     {
                         return new Error() { Layer = ErrorLayers.TABLE, Message = "Column property in where parameter of " + methodType.ToString() + " method cannot be empty." };
                     }
@@ -236,7 +237,7 @@ namespace TDFramework.Common
                             return new Error() { Layer = ErrorLayers.TABLE, Message = "Column property of any objects in whereList parameter of " + methodType.ToString() + " method cannot be generic list" };
                         }
 
-                        if (String.IsNullOrEmpty(item.Column.ToString()))
+                        if (string.IsNullOrEmpty(item.Column.ToString()))
                         {
                             return new Error() { Layer = ErrorLayers.TABLE, Message = "Column property of any objects in whereList parameter of " + methodType.ToString() + " method cannot be empty." };
                         }
@@ -265,8 +266,7 @@ namespace TDFramework.Common
                         }
                         else
                         {
-                            SelectColumns selectColumns;
-                            if (!Enum.TryParse(columnsOrValues.ToString(), out selectColumns))
+                            if (!Enum.TryParse(columnsOrValues.ToString(), out SelectColumns _))
                             {
                                 if (!((object)columnsOrValues).InValidEnumType<T>())
                                 {
@@ -282,7 +282,7 @@ namespace TDFramework.Common
                                         return new Error() { Layer = ErrorLayers.TABLE, Message = "dynamic columns parameter of Select method is Empty" };
                                     }
                                 }
-                                else if (String.IsNullOrEmpty(columnsOrValues.ToString()))
+                                else if (string.IsNullOrEmpty(columnsOrValues.ToString()))
                                 {
                                     return new Error() { Layer = ErrorLayers.TABLE, Message = "dynamic columns parameter of Select method is Empty" };
                                 }
@@ -310,7 +310,7 @@ namespace TDFramework.Common
                                     return new Error() { Layer = ErrorLayers.TABLE, Message = "dynamic columns parameter of Update method is Empty" };
                                 }
                             }
-                            else if (String.IsNullOrEmpty(columnsOrValues.ToString()))
+                            else if (string.IsNullOrEmpty(columnsOrValues.ToString()))
                             {
                                 return new Error() { Layer = ErrorLayers.TABLE, Message = "dynamic columns parameter of Update method is Empty" };
                             }
@@ -335,8 +335,7 @@ namespace TDFramework.Common
 
         private static Error ReturnError(dynamic columns, Select select)
         {
-            SelectColumns selectColumns;
-            if (Enum.TryParse(columns.ToString(), out selectColumns))
+            if (Enum.TryParse(columns.ToString(), out SelectColumns _))
             {
                 if (select.Aggregate == null)
                 {
@@ -355,11 +354,9 @@ namespace TDFramework.Common
         {
             if (table != null)
             {
-                SelectColumns selectColumns;
-
                 if (table.Columns != null)
                 {
-                    if (!Enum.TryParse(table.Columns.ToString(), out selectColumns))
+                    if (!Enum.TryParse(table.Columns.ToString(), out SelectColumns _))
                     {
                         if (!((object)table.Columns).InValidEnumType<T>())
                         {
@@ -432,7 +429,7 @@ namespace TDFramework.Common
                                                 };
                                             }
 
-                                            if (String.IsNullOrEmpty(item.Column.ToString()))
+                                            if (string.IsNullOrEmpty(item.Column.ToString()))
                                             {
                                                 return new Error()
                                                 {
@@ -540,9 +537,8 @@ namespace TDFramework.Common
         {
             Error rb = null;
             bool control = true;
-            SelectColumns selectColumns;
 
-            if (!String.IsNullOrEmpty(table1.Alias))
+            if (!string.IsNullOrEmpty(table1.Alias))
             {
                 if (table1.Alias == table2.Alias)
                 {
@@ -556,11 +552,11 @@ namespace TDFramework.Common
 
             if (table1.Columns != null)
             {
-                if (Enum.TryParse(table1.Columns.ToString(), out selectColumns))
+                if (Enum.TryParse(table1.Columns.ToString(), out SelectColumns _))
                 {
                     if (table2.Columns != null)
                     {
-                        if (Enum.TryParse(table2.Columns.ToString(), out selectColumns))
+                        if (Enum.TryParse(table2.Columns.ToString(), out SelectColumns _))
                         {
                             if (table1.SelectSettings.Aggregate == null && table2.SelectSettings.Aggregate == null)
                             {
@@ -614,9 +610,8 @@ namespace TDFramework.Common
         {
             Error rb = null;
             bool control = true;
-            SelectColumns selectColumns;
 
-            if (!String.IsNullOrEmpty(table1.Alias))
+            if (!string.IsNullOrEmpty(table1.Alias))
             {
                 if ((table1.Alias == table2.Alias) || (table1.Alias == table3.Alias) || (table2.Alias == table3.Alias))
                 {
@@ -630,15 +625,15 @@ namespace TDFramework.Common
 
             if (table1.Columns != null)
             {
-                if (Enum.TryParse(table1.Columns.ToString(), out selectColumns))
+                if (Enum.TryParse(table1.Columns.ToString(), out SelectColumns _))
                 {
                     if (table2.Columns != null)
                     {
-                        if (Enum.TryParse(table2.Columns.ToString(), out selectColumns))
+                        if (Enum.TryParse(table2.Columns.ToString(), out SelectColumns _))
                         {
                             if (table3.Columns != null)
                             {
-                                if (Enum.TryParse(table3.Columns.ToString(), out selectColumns))
+                                if (Enum.TryParse(table3.Columns.ToString(), out SelectColumns _))
                                 {
                                     if (table1.SelectSettings.Aggregate == null && table2.SelectSettings.Aggregate == null && table3.SelectSettings.Aggregate == null)
                                     {

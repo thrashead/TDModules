@@ -1,10 +1,10 @@
 // ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
@@ -12,157 +12,158 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using TDFramework;
-using TDFramework.Common.TDModel;
+using TDFramework.Library;
 
-namespace TDFramework.Common
+namespace TDFramework.Common.Internal
 {
     internal sealed class SqlMethods
-	{
+    {
         static SqlMethods()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
         }
 
-		private static CommandType ReturnCommandType(CommandType? _sqlCommandType)
-		{
-			switch (_sqlCommandType)
-			{
-				case CommandType.StoredProcedure: return CommandType.StoredProcedure;
-				case CommandType.TableDirect: return CommandType.TableDirect;
-				case CommandType.Text: return CommandType.Text;
-				default: return CommandType.Text;
-			}
-		}
+        private static CommandType ReturnCommandType(CommandType? sqlCommandType)
+        {
+            switch (sqlCommandType)
+            {
+                case CommandType.StoredProcedure: return CommandType.StoredProcedure;
+                case CommandType.TableDirect: return CommandType.TableDirect;
+                case CommandType.Text: return CommandType.Text;
+                default: return CommandType.Text;
+            }
+        }
 
-        internal static Table ExecuteReader(string _querystring, List<SqlParameter> _parameters = null, CommandType? _sqlCommandType = null)
-		{
+        internal static Table ExecuteReader(string queryString, List<SqlParameter> parameters = null, CommandType? sqlCommandType = null)
+        {
             Table table = new Table();
-			SqlDataAdapter dataAdap = new SqlDataAdapter();
 
-			dataAdap.SelectCommand = new SqlCommand();
-			dataAdap.SelectCommand.Connection = TDConnection.SqlConnection;
-            _querystring = _querystring.MakeSingle(" ");
-            dataAdap.SelectCommand.CommandText = _querystring;
-			dataAdap.SelectCommand.CommandType = ReturnCommandType(_sqlCommandType);
-            table.QueryString = _querystring;
-            table.Parameters = _parameters;
+            SqlDataAdapter dataAdap = new SqlDataAdapter
+            {
+                SelectCommand = new SqlCommand { Connection = TDConnection.SqlConnection }
+            };
 
-			if (_parameters != null)
-			{
-				foreach (SqlParameter item in _parameters)
-				{
-					object value = item.Value ?? DBNull.Value;
-					dataAdap.SelectCommand.Parameters.AddWithValue(item.ParameterName, value);
-				}
-			}
+            queryString = queryString.MakeSingle(" ");
+            dataAdap.SelectCommand.CommandText = queryString;
+            dataAdap.SelectCommand.CommandType = ReturnCommandType(sqlCommandType);
+            table.QueryString = queryString;
+            table.Parameters = parameters;
 
-			try
-			{
+            if (parameters != null)
+            {
+                foreach (SqlParameter item in parameters)
+                {
+                    object value = item.Value ?? DBNull.Value;
+                    dataAdap.SelectCommand.Parameters.AddWithValue(item.ParameterName, value);
+                }
+            }
+
+            try
+            {
                 dataAdap.SelectCommand.Connection.Open();
-				table.Data = new DataTable();
+                table.Data = new DataTable();
                 dataAdap.Fill(table.Data);
                 table.Count = table.Data.Rows.Count;
-			}
-			catch (Exception ex)
-			{
-                table.Error = new Error();
-                table.Error.Message = ex.Message;
-                table.Error.Layer = ErrorLayers.COMMON;
-			}
-			finally
-			{
+            }
+            catch (Exception ex)
+            {
+                table.Error = new Error { Message = ex.Message, Layer = ErrorLayers.COMMON };
+            }
+            finally
+            {
                 dataAdap.SelectCommand.Connection.Close();
                 TDConnection.ConnectionStringForOnce = null;
             }
 
-			return table;
-		}
+            return table;
+        }
 
-        internal static Table ExecuteNonQuery(string _querystring, List<SqlParameter> _parameters = null, CommandType? _sqlCommandType = null)
-		{
+        internal static Table ExecuteNonQuery(string queryString, List<SqlParameter> parameters = null, CommandType? sqlCommandType = null)
+        {
             Table table = new Table();
-            SqlCommand executeCmd = new SqlCommand();
 
-            executeCmd.Connection = TDConnection.SqlConnection;
-			executeCmd.CommandType = ReturnCommandType(_sqlCommandType);
-            _querystring = _querystring.MakeSingle(" ");
-            executeCmd.CommandText = _querystring;
-            table.QueryString = _querystring;
-            table.Parameters = _parameters;
+            SqlCommand executeCmd = new SqlCommand
+            {
+                Connection = TDConnection.SqlConnection,
+                CommandType = ReturnCommandType(sqlCommandType)
+            };
 
-			if (_parameters != null)
-			{
-				foreach (SqlParameter item in _parameters)
-				{
-					object value = item.Value ?? DBNull.Value;
-					executeCmd.Parameters.AddWithValue(item.ParameterName, value);
-				}
-			}
+            queryString = queryString.MakeSingle(" ");
+            executeCmd.CommandText = queryString;
+            table.QueryString = queryString;
+            table.Parameters = parameters;
 
-			try
-			{
+            if (parameters != null)
+            {
+                foreach (SqlParameter item in parameters)
+                {
+                    object value = item.Value ?? DBNull.Value;
+                    executeCmd.Parameters.AddWithValue(item.ParameterName, value);
+                }
+            }
+
+            try
+            {
                 executeCmd.Connection.Open();
-				executeCmd.ExecuteNonQuery();
-			}
-			catch (Exception ex)
-			{
-                table.Error = new Error();
-                table.Error.Message = ex.Message;
-                table.Error.Layer = ErrorLayers.COMMON;
-			}
-			finally
-			{
+                executeCmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                table.Error = new Error { Message = ex.Message, Layer = ErrorLayers.COMMON };
+            }
+            finally
+            {
                 executeCmd.Connection.Close();
                 TDConnection.ConnectionStringForOnce = null;
             }
 
-			return table;
-		}
+            return table;
+        }
 
-        internal static Table ExecuteScalar(string _querystring, List<SqlParameter> _parameters = null, CommandType? _sqlCommandType = null)
-		{
+        internal static Table ExecuteScalar(string queryString, List<SqlParameter> parameters = null, CommandType? sqlCommandType = null)
+        {
             Table table = new Table();
-			SqlCommand executeCmd = new SqlCommand();
 
-            executeCmd.Connection = TDConnection.SqlConnection;
-            executeCmd.CommandType = ReturnCommandType(_sqlCommandType);
-            _querystring = _querystring.MakeSingle(" ");
-            executeCmd.CommandText = _querystring;
-            table.QueryString = _querystring;
-            table.Parameters = _parameters;
+            SqlCommand executeCmd = new SqlCommand
+            {
+                Connection = TDConnection.SqlConnection,
+                CommandType = ReturnCommandType(sqlCommandType)
+            };
 
-			if (_parameters != null)
-			{
-				foreach (SqlParameter item in _parameters)
-				{
-					object value = item.Value ?? DBNull.Value;
-					executeCmd.Parameters.AddWithValue(item.ParameterName, value);
-				}
-			}
+            queryString = queryString.MakeSingle(" ");
+            executeCmd.CommandText = queryString;
+            table.QueryString = queryString;
+            table.Parameters = parameters;
 
-			try
-			{
+            if (parameters != null)
+            {
+                foreach (SqlParameter item in parameters)
+                {
+                    object value = item.Value ?? DBNull.Value;
+                    executeCmd.Parameters.AddWithValue(item.ParameterName, value);
+                }
+            }
+
+            try
+            {
                 executeCmd.Connection.Open();
-				table.Data = executeCmd.ExecuteScalar();
+                table.Data = executeCmd.ExecuteScalar();
                 table.Count = 1;
-			}
-			catch(Exception ex)
-			{
-                table.Error = new Error();
-                table.Error.Message = ex.Message;
-                table.Error.Layer = ErrorLayers.COMMON;
-			}
-			finally
-			{
+            }
+            catch (Exception ex)
+            {
+                table.Error = new Error { Message = ex.Message, Layer = ErrorLayers.COMMON };
+            }
+            finally
+            {
                 executeCmd.Connection.Close();
                 TDConnection.ConnectionStringForOnce = null;
             }
 
-			return table;
-		}
-	}
+            return table;
+        }
+    }
 }

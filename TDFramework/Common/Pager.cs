@@ -1,10 +1,10 @@
 ﻿// ==============================
 // AUTHOR           : Sina SALIK
 // PROJECT NAME     : TDFramework
-// VERSION          : v3.2.2.2
+// VERSION          : v3.2.2.3
 // CREATE DATE      : 05.10.2015
 // RELEASE DATE     : 29.10.2015
-// LAST UPDATE      : 03.07.2018
+// LAST UPDATE      : 07.05.2019
 // SPECIAL NOTES    : Thrashead
 // ==============================
 
@@ -16,7 +16,7 @@ namespace TDFramework.Common
     {
         static Pager()
         {
-            System.AppDomain.CurrentDomain.UnhandledException += delegate(object sender, UnhandledExceptionEventArgs e)
+            AppDomain.CurrentDomain.UnhandledException += delegate
             {
                 TDConnection.ConnectionStringForOnce = null;
             };
@@ -27,16 +27,16 @@ namespace TDFramework.Common
             switch (pagerType)
             {
                 case PagerTypes.PAGE:
-                    this.FirstRecord = ((pageCountOrFirstRecord * itemsPerPageOrLastRecord) - (itemsPerPageOrLastRecord - 1)).ToString();
-                    this.LastRecord = (pageCountOrFirstRecord * itemsPerPageOrLastRecord).ToString();
+                    FirstRecord = ((pageCountOrFirstRecord * itemsPerPageOrLastRecord) - (itemsPerPageOrLastRecord - 1)).ToString();
+                    LastRecord = (pageCountOrFirstRecord * itemsPerPageOrLastRecord).ToString();
                     break;
                 case PagerTypes.INTERVAL:
-                    this.FirstRecord = pageCountOrFirstRecord.ToString();
-                    this.LastRecord = itemsPerPageOrLastRecord.ToString();
+                    FirstRecord = pageCountOrFirstRecord.ToString();
+                    LastRecord = itemsPerPageOrLastRecord.ToString();
                     break;
                 default:
-                    this.FirstRecord = ((pageCountOrFirstRecord * itemsPerPageOrLastRecord) - (itemsPerPageOrLastRecord - 1)).ToString();
-                    this.LastRecord = (pageCountOrFirstRecord * itemsPerPageOrLastRecord).ToString();
+                    FirstRecord = ((pageCountOrFirstRecord * itemsPerPageOrLastRecord) - (itemsPerPageOrLastRecord - 1)).ToString();
+                    LastRecord = (pageCountOrFirstRecord * itemsPerPageOrLastRecord).ToString();
                     break;
             }
         }

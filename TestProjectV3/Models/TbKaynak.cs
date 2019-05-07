@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
-using TDFramework.Common.TDModel;
-using TDFramework.Common.Attributes;
 using Models.TbKriterModel;
 using Models.TbTestLogModel;
+using TDFramework.Common.Attributes;
+using TDFramework.Common.TDModel;
 
 namespace Models.TbKaynakModel
 {
