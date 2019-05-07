@@ -1,0 +1,247 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Windows.Forms;
+using System.Data.SqlClient;
+using TDFactoryEF.Helper;
+using Common;
+using System.Threading;
+
+namespace TDFactoryEF
+{
+    public partial class TDFactoryEF : Form
+    {
+        public TDFactoryEF()
+        {
+            InitializeComponent();
+            Relations = new List<Relation>();
+        }
+
+        ConnectionInfo connectionInfo;
+        Thread t;
+
+        public static List<Relation> Relations { get; set; }
+        public static string PathAddress { get; set; }
+
+        List<ColumnInfo> columnNames;
+        List<ColumnInfo> tempColumnNames = new List<ColumnInfo>();
+        List<TableColumnNames> tableColumnNames = new List<TableColumnNames>();
+
+        List<string> foreignTables;
+        List<string> tableNames;
+        List<string> selectedTables;
+
+        int tableindex, columnindex, selectedtableindex;
+        bool tableselected = false, columnselected = false;
+        string DBName = "";
+        string selectedcolumn;
+        string projectName = "Proje";
+
+        private void TDFactoryForm_Load(object sender, EventArgs e)
+        {
+            cmbVTVeriTipi.SelectedIndex = 0;
+            lstAndIzin.SetSelected(0, true);
+
+            t = new Thread(new ThreadStart(ListControl));
+            t.Start();
+        }
+
+        private void TDFactoryForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            t.Abort();
+        }
+
+        delegate void SetResultCallBack(bool result);
+
+        private void SetResult(bool result)
+        {
+            pnlKaydet.Enabled = result;
+        }
+
+        void ListControl()
+        {
+            while (Application.OpenForms.Count > 0)
+            {
+                if (lstSeciliKolonlar.Items.Count > 0)
+                {
+                    SetResultCallBack d = new SetResultCallBack(SetResult);
+                    this.Invoke(d, new object[] { true });
+                }
+                else
+                {
+                    SetResultCallBack d = new SetResultCallBack(SetResult);
+                    this.Invoke(d, new object[] { false });
+                }
+
+                Thread.Sleep(100);
+            }
+        }
+
+        public List<ForeignKeyChecker> ForeignKeyCheck(SqlConnection con, string _tableName = null)
+        {
+            SqlDataAdapter dataAdap = new SqlDataAdapter();
+            DataTable dataTable = new DataTable();
+            List<ForeignKeyChecker> fkList = new List<ForeignKeyChecker>();
+
+            string _queryString = @"SELECT fk.Name as ForeignKeyName, " +
+                                    "fk.referenced_object_id as PrimaryTableID, " +
+                                    "OBJECT_NAME(fk.referenced_object_id) as PrimaryTableName, " +
+                                    "cpa.object_id as PrimaryColumnID, " +
+                                    "cref.name as PrimaryColumnName, " +
+                                    "fk.parent_object_id as ForeignTableID, " +
+                                    "OBJECT_NAME(fk.parent_object_id) as ForeignTableName, " +
+                                    "cref.object_id as ForeignColumnID, " +
+                                    "cpa.name as ForeignColumnName " +
+                                    "FROM sys.foreign_keys fk, sys.foreign_key_columns fkc, sys.columns cpa, sys.columns cref " +
+                                    "WHERE  fkc.constraint_object_id = fk.object_id " +
+                                    "AND fkc.parent_object_id = cpa.object_id " +
+                                    "AND fkc.parent_column_id = cpa.column_id " +
+                                    "AND  fkc.referenced_object_id = cref.object_id " +
+                                    "AND fkc.referenced_column_id = cref.column_id ";
+
+            dataAdap.SelectCommand = new SqlCommand();
+            dataAdap.SelectCommand.Connection = con;
+
+            if (_tableName != null)
+            {
+                _queryString += " AND (OBJECT_NAME(fk.referenced_object_id)=@TableName OR OBJECT_NAME(fk.parent_object_id)=@TableName)";
+                dataAdap.SelectCommand.Parameters.AddWithValue("TableName", _tableName);
+            }
+
+            dataAdap.SelectCommand.CommandText = _queryString;
+
+            try
+            {
+                con.Open();
+                dataAdap.Fill(dataTable);
+
+                if (dataTable != null)
+                {
+                    try
+                    {
+                        foreach (DataRow tableItem in dataTable.Rows)
+                        {
+                            ForeignKeyChecker data = new ForeignKeyChecker()
+                            {
+                                ForeignKeyName = tableItem.Table.Columns.Contains("ForeignKeyName") ? tableItem["ForeignKeyName"] != DBNull.Value ? tableItem["ForeignKeyName"].ToString() : null : null,
+                                PrimaryTableName = tableItem.Table.Columns.Contains("PrimaryTableName") ? tableItem["PrimaryTableName"] != DBNull.Value ? tableItem["PrimaryTableName"].ToString() : null : null,
+                                PrimaryColumnName = tableItem.Table.Columns.Contains("PrimaryColumnName") ? tableItem["PrimaryColumnName"] != DBNull.Value ? tableItem["PrimaryColumnName"].ToString() : null : null,
+                                ForeignTableName = tableItem.Table.Columns.Contains("ForeignTableName") ? tableItem["ForeignTableName"] != DBNull.Value ? tableItem["ForeignTableName"].ToString() : null : null,
+                                ForeignColumnName = tableItem.Table.Columns.Contains("ForeignColumnName") ? tableItem["ForeignColumnName"] != DBNull.Value ? tableItem["ForeignColumnName"].ToString() : null : null,
+                                PrimaryTableAndColumnName = tableItem.Table.Columns.Contains("PrimaryTableName") && tableItem.Table.Columns.Contains("ForeignColumnName") ? tableItem["PrimaryTableName"] != DBNull.Value && tableItem["ForeignColumnName"] != DBNull.Value ? tableItem["PrimaryTableName"].ToString() + tableItem["ForeignColumnName"].ToString() : null : null,
+                                ForeignTableAndColumnName = tableItem.Table.Columns.Contains("ForeignTableName") && tableItem.Table.Columns.Contains("ForeignColumnName") ? tableItem["ForeignTableName"] != DBNull.Value && tableItem["ForeignColumnName"] != DBNull.Value ? tableItem["ForeignTableName"].ToString() + tableItem["ForeignColumnName"].ToString() : null : null,
+                            };
+
+                            fkList.Add(data);
+                        }
+                    }
+                    catch
+                    {
+                        return new List<ForeignKeyChecker>();
+                    }
+                }
+            }
+            catch
+            {
+                return new List<ForeignKeyChecker>();
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            foreach (ForeignKeyChecker fkc in fkList)
+            {
+                if (fkc.PrimaryColumnName != null)
+                {
+                    List<TableColumnNames> columns = tableColumnNames.Where(a => a.TableName == _tableName && a.ColumnName == fkc.PrimaryColumnName).ToList();
+
+                    if (columns.Count > 0)
+                    {
+                        fkc.PrimaryColumnType = columns.FirstOrDefault().TypeName.Name;
+                        fkc.ForeignColumnType = columns.FirstOrDefault().TypeName.Name;
+                    }
+                }
+            }
+
+            return fkList;
+        }
+
+        private List<TableColumnNames> GetTableColumnNames()
+        {
+            List<ColumnInfo> columnInfo;
+
+            string[] tablecolumn = new string[2];
+
+            tableColumnNames.Clear();
+
+            foreach (object item in lstSeciliKolonlar.Items)
+            {
+                if (chkWindowsAuthentication.Checked == true)
+                {
+                    columnInfo = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
+                }
+                else
+                {
+                    columnInfo = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
+                }
+
+                string charlength = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().MaxLength;
+                charlength = charlength.ToUpper() == "MAX" ? "" : charlength;
+                bool nullable = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsNullable == "YES" ? true : false;
+                bool identity = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsIdentity == "YES" ? true : false;
+                bool primarykey = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsPrimaryKey == "YES" ? true : false;
+                tableColumnNames.Add(new TableColumnNames() { TableName = item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""), ColumnName = item.ToString().Split(' ')[0], TypeName = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().DataType.ReturnType(), IsNullable = nullable, CharLength = charlength, IsIdentity = identity, IsPrimaryKey = primarykey });
+            }
+
+            return tableColumnNames;
+        }
+
+        private List<string> GetSelectedTableNames(List<TableColumnNames> _tableColumnNames)
+        {
+            List<string> returnList = new List<string>();
+
+            foreach (TableColumnNames item in _tableColumnNames)
+            {
+                if (!returnList.Contains(item.TableName))
+                {
+                    returnList.Add(item.TableName);
+                }
+            }
+
+            return returnList;
+        }
+
+        private string GetColumnText(List<TableColumnNames> columns)
+        {
+            string columnText = "";
+
+            if (columns.Count > 1)
+            {
+                foreach (TableColumnNames item in columns)
+                {
+                    if (item.TypeName.Name == "String")
+                    {
+                        columnText = item.ColumnName;
+                        break;
+                    }
+                }
+            }
+
+            if (columnText == "")
+            {
+                if (columns.Count > 1)
+                {
+                    columnText = columns[1].ColumnName + ".ToString()";
+                }
+                else
+                {
+                    columnText = columns[0].ColumnName + ".ToString()";
+                }
+            }
+
+            return columnText;
+        }
+    }
+}

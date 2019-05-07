@@ -1,0 +1,4 @@
+﻿v3.2.0.1
+
+Insert, Update ve Delete komutlarında Table nesnesinin özellikleri boş dönüyordu. Düzeltildi.
+
