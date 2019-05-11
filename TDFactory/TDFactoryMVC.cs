@@ -3078,7 +3078,8 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
                     yaz.WriteLine("USE [" + DBName + "]");
-                    yaz.WriteLine("GO\n");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
 
                     foreach (string Table in selectedTables)
                     {
@@ -3107,8 +3108,13 @@ namespace TDFactory
 
                         //Select//
                         yaz.WriteLine("/* Select */");
-                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
-                        yaz.WriteLine("CREATE PROC usp_" + Table + "Select");
+                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "Select]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "Select]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+
+                        yaz.WriteLine("CREATE PROC [usp_" + Table + "Select]");
 
                         if (idType != null)
                         {
@@ -3116,10 +3122,13 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("AS");
-                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
-                        yaz.WriteLine("BEGIN TRAN\n");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
 
-                        string sqlText = "SELECT ";
+                        string sqlText = "\tSELECT ";
 
                         foreach (ColumnInfo column in columnNames)
                         {
@@ -3129,23 +3138,29 @@ namespace TDFactory
                         sqlText = sqlText.Remove(sqlText.Length - 1);
                         sqlText = sqlText.Replace(",", ", ");
 
-                        sqlText += "\nFROM [" + Table + "]";
+                        yaz.WriteLine(sqlText);
+                        yaz.WriteLine("\tFROM [" + Table + "]");
 
                         if (idType != null)
                         {
-                            sqlText += "\nWHERE ([" + idColumn + "] = @" + idColumn + " OR [" + idColumn + "] IS NULL)";
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR [" + idColumn + "] IS NULL)");
                         }
 
-                        yaz.WriteLine(sqlText);
-
-                        yaz.WriteLine("\nCOMMIT");
-                        yaz.WriteLine("GO\n");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
                         //Select//
 
                         //SelectTop//
                         yaz.WriteLine("/* SelectTop */");
-                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
-                        yaz.WriteLine("CREATE PROC usp_" + Table + "SelectTop");
+                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "SelectTop]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "SelectTop]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+
+                        yaz.WriteLine("CREATE PROC [usp_" + Table + "SelectTop]");
 
                         if (idType != null)
                         {
@@ -3154,10 +3169,13 @@ namespace TDFactory
                         yaz.WriteLine("\t@Top int");
 
                         yaz.WriteLine("AS");
-                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
-                        yaz.WriteLine("BEGIN TRAN\n");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
 
-                        sqlText = "SELECT Top (@Top) ";
+                        sqlText = "\tSELECT Top (@Top) ";
 
                         foreach (ColumnInfo column in columnNames)
                         {
@@ -3167,23 +3185,29 @@ namespace TDFactory
                         sqlText = sqlText.Remove(sqlText.Length - 1);
                         sqlText = sqlText.Replace(",", ", ");
 
-                        sqlText += "\nFROM [" + Table + "]";
+                        yaz.WriteLine(sqlText);
+                        yaz.WriteLine("\tFROM [" + Table + "]");
 
                         if (idType != null)
                         {
-                            sqlText += "\nWHERE ([" + idColumn + "] = @" + idColumn + " OR [" + idColumn + "] IS NULL)";
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR [" + idColumn + "] IS NULL)");
                         }
 
-                        yaz.WriteLine(sqlText);
-
-                        yaz.WriteLine("\nCOMMIT");
-                        yaz.WriteLine("GO\n");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
                         //SelectTop//
 
                         ////Insert//
                         yaz.WriteLine("/* Insert */");
-                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
-                        yaz.WriteLine("CREATE PROC usp_" + Table + "Insert");
+                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "Insert]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "Insert]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+
+                        yaz.WriteLine("CREATE PROC [usp_" + Table + "Insert]");
 
                         i = 1;
                         foreach (ColumnInfo column in columnNames)
@@ -3207,10 +3231,13 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("AS");
-                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
-                        yaz.WriteLine("BEGIN TRAN\n");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
 
-                        sqlText = "INSERT INTO [" + Table + "] (";
+                        sqlText = "\tINSERT INTO [" + Table + "] (";
 
                         foreach (ColumnInfo column in columnNames)
                         {
@@ -3221,7 +3248,11 @@ namespace TDFactory
                         }
 
                         sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText + ")\nSELECT ";
+                        sqlText = sqlText + ")";
+
+                        yaz.WriteLine(sqlText);
+
+                        sqlText = "\tSELECT ";
 
                         foreach (ColumnInfo column in columnNames)
                         {
@@ -3234,9 +3265,13 @@ namespace TDFactory
                         sqlText = sqlText.Remove(sqlText.Length - 1);
                         sqlText = sqlText.Replace(",", ", ");
 
+                        yaz.WriteLine(sqlText);
+
                         if (idType != null)
                         {
-                            sqlText = sqlText + "\n\nSELECT ";
+                            yaz.WriteLine("");
+
+                            sqlText = "\tSELECT ";
 
                             foreach (ColumnInfo column in columnNames)
                             {
@@ -3246,20 +3281,27 @@ namespace TDFactory
                             sqlText = sqlText.Remove(sqlText.Length - 1);
                             sqlText = sqlText.Replace(",", ", ");
 
-                            sqlText = sqlText + "\nFROM [" + Table + "]\nWHERE [" + idColumn + "] = SCOPE_IDENTITY()";
+                            yaz.WriteLine(sqlText);
+
+                            yaz.WriteLine("\tFROM [" + Table + "]");
+                            yaz.WriteLine("\tWHERE [" + idColumn + "] = SCOPE_IDENTITY()");
                         }
 
-                        yaz.WriteLine(sqlText);
-
-                        yaz.WriteLine("\nCOMMIT");
-
-                        yaz.WriteLine("GO\n");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
                         ////Insert//
 
                         ////Update//
                         yaz.WriteLine("/* Update */");
-                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
-                        yaz.WriteLine("CREATE PROC usp_" + Table + "Update");
+                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "Update]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "Update]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+
+                        yaz.WriteLine("CREATE PROC [usp_" + Table + "Update]");
 
                         i = 1;
                         foreach (ColumnInfo column in columnNames)
@@ -3280,10 +3322,16 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("AS");
-                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
-                        yaz.WriteLine("BEGIN TRAN\n");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
 
-                        sqlText = "UPDATE [" + Table + "]\nSET ";
+
+                        yaz.WriteLine("\tUPDATE [" + Table + "]");
+
+                        sqlText = "\tSET ";
 
                         foreach (ColumnInfo column in columnNames)
                         {
@@ -3295,12 +3343,16 @@ namespace TDFactory
 
                         sqlText = sqlText.Remove(sqlText.Length - 1);
 
+                        yaz.WriteLine(sqlText);
+
                         if (idType != null)
                         {
-                            sqlText = sqlText + "\nWHERE [" + idColumn + "] = @" + idColumn;
+                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
                         }
 
-                        sqlText = sqlText + "\n\nSELECT ";
+                        yaz.WriteLine("");
+
+                        sqlText = "\tSELECT ";
 
                         foreach (ColumnInfo column in columnNames)
                         {
@@ -3310,24 +3362,30 @@ namespace TDFactory
                         sqlText = sqlText.Remove(sqlText.Length - 1);
                         sqlText = sqlText.Replace(",", ", ");
 
-                        sqlText = sqlText + "\nFROM [" + Table + "]";
+                        yaz.WriteLine(sqlText);
+
+                        yaz.WriteLine("\tFROM [" + Table + "]");
 
                         if (idType != null)
                         {
-                            sqlText = sqlText + "\nWHERE [" + idColumn + "] = @" + idColumn;
+                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
                         }
 
-                        yaz.WriteLine(sqlText);
-
-                        yaz.WriteLine("\nCOMMIT");
-
-                        yaz.WriteLine("GO\n");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
                         ////Update//
 
                         //Delete//
                         yaz.WriteLine("/* Delete */");
-                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
-                        yaz.WriteLine("CREATE PROC usp_" + Table + "Delete");
+                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "Delete]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "Delete]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+
+                        yaz.WriteLine("CREATE PROC [usp_" + Table + "Delete]");
 
                         if (idType != null)
                         {
@@ -3335,19 +3393,25 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("AS");
-                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
-                        yaz.WriteLine("BEGIN TRAN\n");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
 
-                        yaz.WriteLine("DELETE\nFROM [" + Table + "]");
+                        yaz.WriteLine("\tDELETE");
+                        yaz.WriteLine("\tFROM [" + Table + "]");
 
                         if (idType != null)
                         {
-                            yaz.WriteLine("WHERE [" + idColumn + "] = @" + idColumn);
+                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
                         }
 
-                        yaz.WriteLine("\nCOMMIT");
-                        yaz.WriteLine("GO\n");
-                        //Select//
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        //Delete//
                     }
 
                     yaz.Close();
