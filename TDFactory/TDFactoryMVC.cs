@@ -1198,23 +1198,23 @@ namespace TDFactory
                     Directory.CreateDirectory(PathAddress + "\\" + projectName);
                 }
 
-                if (!Directory.Exists(PathAddress + "\\" + projectName + "\\App_Start"))
-                {
-                    Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\App_Start");
-                }
-
-                if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas"))
-                {
-                    Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Areas");
-                }
-
-                if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas\\Admin"))
-                {
-                    Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Areas\\Admin");
-                }
-
                 if (chkMVCHepsi.Checked)
                 {
+                    if (!Directory.Exists(PathAddress + "\\" + projectName + "\\App_Start"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\App_Start");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Areas");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas\\Admin"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Areas\\Admin");
+                    }
+
                     if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Models"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Models");
@@ -1342,6 +1342,11 @@ namespace TDFactory
 
                     if (chkMVCView.Checked)
                     {
+                        if (!Directory.Exists(PathAddress + "\\" + projectName + "\\App_Start"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\App_Start");
+                        }
+
                         if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Views"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Views");
@@ -1360,6 +1365,16 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Views\\Home"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Views\\Home");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Areas");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas\\Admin"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Areas\\Admin");
                         }
 
                         if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas\\Admin\\Views"))
@@ -1385,9 +1400,24 @@ namespace TDFactory
 
                     if (chkMVCController.Checked)
                     {
+                        if (!Directory.Exists(PathAddress + "\\" + projectName + "\\App_Start"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\App_Start");
+                        }
+
                         if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Controllers"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Controllers");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Areas");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas\\Admin"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectName + "\\Areas\\Admin");
                         }
 
                         if (!Directory.Exists(PathAddress + "\\" + projectName + "\\Areas\\Admin\\Controllers"))
@@ -1455,7 +1485,7 @@ namespace TDFactory
             }
             else
             {
-                if (chkMVCHepsi.Checked || chkMVCWebConfig.Checked)
+                if (chkMVCHepsi.Checked || chkMVCWebConfig.Checked || chkMVCView.Checked)
                 {
                     if (!Directory.Exists(PathAddress + "\\" + projectName))
                     {
@@ -1542,74 +1572,74 @@ namespace TDFactory
 
         void CreateRegistrar()
         {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\App_Start\\RouteConfig.cs", FileMode.Create))
+            if (Directory.Exists(PathAddress + "\\" + projectName + "\\App_Start"))
             {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\App_Start\\RouteConfig.cs", FileMode.Create))
                 {
-                    yaz.WriteLine("using System;");
-                    yaz.WriteLine("using System.Collections.Generic;");
-                    yaz.WriteLine("using System.Linq;");
-                    yaz.WriteLine("using System.Web;");
-                    yaz.WriteLine("using System.Web.Mvc;");
-                    yaz.WriteLine("using System.Web.Routing;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("namespace " + projectName + "");
-                    yaz.WriteLine("{");
-                    yaz.WriteLine("\tpublic class RouteConfig");
-                    yaz.WriteLine("\t{");
-                    yaz.WriteLine("\t\tpublic static void RegisterRoutes(RouteCollection routes)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\troutes.IgnoreRoute(\"{resource}.axd/{*pathInfo}\");");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\troutes.MapRoute(");
-                    yaz.WriteLine("\t\t\t\tname: \"Default\",");
-                    yaz.WriteLine("\t\t\t\turl: \"{controller}/{action}/{id}\",");
-                    yaz.WriteLine("\t\t\t\tdefaults: new { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional },");
-                    yaz.WriteLine("\t\t\t\tnamespaces: new[] { \"" + projectName + ".Controllers\" }");
-                    yaz.WriteLine("\t\t\t);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                    {
+                        yaz.WriteLine("using System;");
+                        yaz.WriteLine("using System.Collections.Generic;");
+                        yaz.WriteLine("using System.Linq;");
+                        yaz.WriteLine("using System.Web;");
+                        yaz.WriteLine("using System.Web.Mvc;");
+                        yaz.WriteLine("using System.Web.Routing;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("namespace " + projectName + "");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class RouteConfig");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\tpublic static void RegisterRoutes(RouteCollection routes)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\troutes.IgnoreRoute(\"{resource}.axd/{*pathInfo}\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\troutes.MapRoute(");
+                        yaz.WriteLine("\t\t\t\tname: \"Default\",");
+                        yaz.WriteLine("\t\t\t\turl: \"{controller}/{action}/{id}\",");
+                        yaz.WriteLine("\t\t\t\tdefaults: new { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional },");
+                        yaz.WriteLine("\t\t\t\tnamespaces: new[] { \"" + projectName + ".Controllers\" }");
+                        yaz.WriteLine("\t\t\t);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
 
-                    yaz.Close();
+                        yaz.Close();
+                    }
                 }
             }
 
             if (Directory.Exists(PathAddress + "\\" + projectName + "\\Areas\\Admin"))
             {
-                if (!File.Exists(PathAddress + "\\" + projectName + "\\Areas\\Admin\\AdminAreaRegistration.cs"))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Areas\\Admin\\AdminAreaRegistration.cs", FileMode.Create))
                 {
-                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Areas\\Admin\\AdminAreaRegistration.cs", FileMode.Create))
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                        {
-                            yaz.WriteLine("using System.Web.Mvc;");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("namespace " + projectName + ".Areas.Admin");
-                            yaz.WriteLine("{");
-                            yaz.WriteLine("\tpublic class AdminAreaRegistration : AreaRegistration");
-                            yaz.WriteLine("\t{");
-                            yaz.WriteLine("\t\tpublic override string AreaName");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tget");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn \"Admin\";");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\tpublic override void RegisterArea(AreaRegistrationContext context)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tcontext.MapRoute(");
-                            yaz.WriteLine("\t\t\t\t\"Admin_default\",");
-                            yaz.WriteLine("\t\t\t\t\"Admin/{controller}/{action}/{id}\",");
-                            yaz.WriteLine("\t\t\t\tnew { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional },");
-                            yaz.WriteLine("\t\t\t\tnamespaces: new[] { \"" + projectName + ".Areas.Admin.Controllers\" }");
-                            yaz.WriteLine("\t\t\t);");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("\t}");
-                            yaz.WriteLine("}");
-                            yaz.Close();
-                        }
+                        yaz.WriteLine("using System.Web.Mvc;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Admin");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class AdminAreaRegistration : AreaRegistration");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\tpublic override string AreaName");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tget");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\treturn \"Admin\";");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tpublic override void RegisterArea(AreaRegistrationContext context)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tcontext.MapRoute(");
+                        yaz.WriteLine("\t\t\t\t\"Admin_default\",");
+                        yaz.WriteLine("\t\t\t\t\"Admin/{controller}/{action}/{id}\",");
+                        yaz.WriteLine("\t\t\t\tnew { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional },");
+                        yaz.WriteLine("\t\t\t\tnamespaces: new[] { \"" + projectName + ".Areas.Admin.Controllers\" }");
+                        yaz.WriteLine("\t\t\t);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+                        yaz.Close();
                     }
                 }
             }
