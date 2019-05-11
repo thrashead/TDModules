@@ -1495,6 +1495,7 @@ namespace TDFactoryEF
                 CreateMVCViewLayer();
                 CreateMVCControllerLayer();
                 CreateWebConfig();
+                CreateStoredProcedure();
                 CreateStilScript();
                 CreateWcfServis();
             }
@@ -1518,6 +1519,11 @@ namespace TDFactoryEF
                 if (chkMVCWebConfig.Checked == true)
                 {
                     CreateWebConfig();
+                }
+
+                if (chkMVCStoredProc.Checked == true)
+                {
+                    CreateStoredProcedure();
                 }
 
                 if (chkMVCStilScript.Checked == true)
@@ -2808,6 +2814,291 @@ namespace TDFactoryEF
                     yaz.WriteLine("\t\t</compilation>");
                     yaz.WriteLine("\t</system.web>");
                     yaz.WriteLine("</configuration>");
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateStoredProcedure()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\StoredProcedures.sql",
+                FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("USE [" + DBName + "]");
+                    yaz.WriteLine("GO\n");
+
+                    foreach (string Table in selectedTables)
+                    {
+                        string idColumn = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table).FirstOrDefault();
+                        string[] dizi = new string[lstSeciliKolonlar.Items.Count];
+                        string[] diziML = new string[] { "nvarchar", "varchar", "binary", "char", "nchar", "varbinary" };
+
+                        int i = 0;
+                        foreach (string item in lstSeciliKolonlar.Items)
+                        {
+                            dizi[i] = item.Replace(" [" + Table + "]", "");
+                            i++;
+                        }
+
+                        List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+
+                        string idType = null;
+
+                        try
+                        {
+                            idType = columnNames.Where(a => a.ColumnName == idColumn).FirstOrDefault().DataType;
+                        }
+                        catch
+                        {
+                        }
+
+                        //Select//
+                        yaz.WriteLine("/* Select */");
+                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
+                        yaz.WriteLine("CREATE PROC usp_" + Table + "Select");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\t@" + idColumn + " " + idType);
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
+                        yaz.WriteLine("BEGIN TRAN\n");
+
+                        string sqlText = "SELECT ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            sqlText += "[" + column.ColumnName + "],";
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        sqlText += "\nFROM [" + Table + "]";
+
+                        if (idType != null)
+                        {
+                            sqlText += "\nWHERE ([" + idColumn + "] = @" + idColumn + " OR [" + idColumn + "] IS NULL)";
+                        }
+
+                        yaz.WriteLine(sqlText);
+
+                        yaz.WriteLine("\nCOMMIT");
+                        yaz.WriteLine("GO\n");
+                        //Select//
+
+                        //SelectTop//
+                        yaz.WriteLine("/* SelectTop */");
+                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
+                        yaz.WriteLine("CREATE PROC usp_" + Table + "SelectTop");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\t@" + idColumn + " " + idType + ",");
+                        }
+                        yaz.WriteLine("\t@Top int");
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
+                        yaz.WriteLine("BEGIN TRAN\n");
+
+                        sqlText = "SELECT Top (@Top) ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            sqlText += "[" + column.ColumnName + "],";
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        sqlText += "\nFROM [" + Table + "]";
+
+                        if (idType != null)
+                        {
+                            sqlText += "\nWHERE ([" + idColumn + "] = @" + idColumn + " OR [" + idColumn + "] IS NULL)";
+                        }
+
+                        yaz.WriteLine(sqlText);
+
+                        yaz.WriteLine("\nCOMMIT");
+                        yaz.WriteLine("GO\n");
+                        //SelectTop//
+
+                        ////Insert//
+                        yaz.WriteLine("/* Insert */");
+                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
+                        yaz.WriteLine("CREATE PROC usp_" + Table + "Insert");
+
+                        i = 1;
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (column.IsIdentity == "NO")
+                            {
+                                string extra = "";
+
+                                if (column.DataType.In(diziML))
+                                    extra += column.MaxLength != "" ? "(" + column.MaxLength + ")" : "";
+
+                                extra += column.IsNullable != "NO" ? " = NULL" : "";
+
+                                if (i != columnNames.Count)
+                                    yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
+                                else
+                                    yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
+                            }
+
+                            i++;
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
+                        yaz.WriteLine("BEGIN TRAN\n");
+
+                        sqlText = "INSERT INTO [" + Table + "] (";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (column.IsIdentity == "NO")
+                            {
+                                sqlText = sqlText + "[" + column.ColumnName + "],";
+                            }
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText + ")\nSELECT ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (column.IsIdentity == "NO")
+                            {
+                                sqlText = sqlText + "@" + column.ColumnName + ",";
+                            }
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        if (idType != null)
+                        {
+                            sqlText = sqlText + "\n\nSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                sqlText = sqlText + "[" + column.ColumnName + "],";
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            sqlText = sqlText + "\nFROM [" + Table + "]\nWHERE [" + idColumn + "] = SCOPE_IDENTITY()";
+                        }
+
+                        yaz.WriteLine(sqlText);
+
+                        yaz.WriteLine("\nCOMMIT");
+
+                        yaz.WriteLine("GO\n");
+                        ////Insert//
+
+                        ////Update//
+                        yaz.WriteLine("/* Update */");
+                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
+                        yaz.WriteLine("CREATE PROC usp_" + Table + "Update");
+
+                        i = 1;
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            string extra = "";
+
+                            if (column.DataType.In(diziML))
+                                extra += column.MaxLength != "" ? "(" + column.MaxLength + ")" : "";
+
+                            extra += column.IsNullable != "NO" ? " = NULL" : "";
+
+                            if (i != columnNames.Count)
+                                yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
+                            else
+                                yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
+
+                            i++;
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
+                        yaz.WriteLine("BEGIN TRAN\n");
+
+                        sqlText = "UPDATE [" + Table + "]\nSET ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (column.IsIdentity == "NO")
+                            {
+                                sqlText = sqlText + "[" + column.ColumnName + "] = @" + column.ColumnName + ",";
+                            }
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+
+                        if (idType != null)
+                        {
+                            sqlText = sqlText + "\nWHERE [" + idColumn + "] = @" + idColumn;
+                        }
+
+                        sqlText = sqlText + "\n\nSELECT ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            sqlText = sqlText + "[" + column.ColumnName + "],";
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        sqlText = sqlText + "\nFROM [" + Table + "]";
+
+                        if (idType != null)
+                        {
+                            sqlText = sqlText + "\nWHERE [" + idColumn + "] = @" + idColumn;
+                        }
+
+                        yaz.WriteLine(sqlText);
+
+                        yaz.WriteLine("\nCOMMIT");
+
+                        yaz.WriteLine("GO\n");
+                        ////Update//
+
+                        //Delete//
+                        yaz.WriteLine("/* Delete */");
+                        yaz.WriteLine("SET ANSI_NULLS ON\nGO\nSET QUOTED_IDENTIFIER ON\nGO");
+                        yaz.WriteLine("CREATE PROC usp_" + Table + "Delete");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\t@" + idColumn + " " + idType);
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("SET NOCOUNT ON\nSET XACT_ABORT ON\n");
+                        yaz.WriteLine("BEGIN TRAN\n");
+
+                        yaz.WriteLine("DELETE\nFROM [" + Table + "]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("WHERE [" + idColumn + "] = @" + idColumn);
+                        }
+
+                        yaz.WriteLine("\nCOMMIT");
+                        yaz.WriteLine("GO\n");
+                        //Select//
+                    }
+
                     yaz.Close();
                 }
             }

@@ -674,6 +674,7 @@ namespace TDFactory
                 chkMVCController.Checked = false;
                 chkMVCView.Checked = false;
                 chkMVCWebConfig.Checked = false;
+                chkMVCStoredProc.Checked = false;
                 chkMVCStilScript.Checked = false;
                 chkMVCWcfServis.Checked = false;
                 chkMVCHepsi.Checked = true;

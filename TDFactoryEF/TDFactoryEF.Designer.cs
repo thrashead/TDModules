@@ -175,6 +175,7 @@
             this.lblMaksimumKarakter = new System.Windows.Forms.Label();
             this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
+            this.chkMVCStoredProc = new System.Windows.Forms.CheckBox();
             this.tbconTablar.SuspendLayout();
             this.tabpageVeritabaniOlustur.SuspendLayout();
             this.grpBaglanti.SuspendLayout();
@@ -1278,6 +1279,7 @@
             this.pnlKaydet.Controls.Add(this.lblWCKullanici);
             this.pnlKaydet.Controls.Add(this.txtWCSifre);
             this.pnlKaydet.Controls.Add(this.txtWCKullanici);
+            this.pnlKaydet.Controls.Add(this.chkMVCStoredProc);
             this.pnlKaydet.Controls.Add(this.chkMVCStilScript);
             this.pnlKaydet.Controls.Add(this.chkMVCWcfServis);
             this.pnlKaydet.Controls.Add(this.chkMVCWebConfig);
@@ -1649,7 +1651,7 @@
             // 
             this.chkMVCStilScript.AutoSize = true;
             this.chkMVCStilScript.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCStilScript.Location = new System.Drawing.Point(291, 146);
+            this.chkMVCStilScript.Location = new System.Drawing.Point(291, 147);
             this.chkMVCStilScript.Name = "chkMVCStilScript";
             this.chkMVCStilScript.Size = new System.Drawing.Size(73, 17);
             this.chkMVCStilScript.TabIndex = 0;
@@ -1685,7 +1687,7 @@
             // 
             this.chkMVCController.AutoSize = true;
             this.chkMVCController.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCController.Location = new System.Drawing.Point(294, 126);
+            this.chkMVCController.Location = new System.Drawing.Point(294, 108);
             this.chkMVCController.Name = "chkMVCController";
             this.chkMVCController.Size = new System.Drawing.Size(70, 17);
             this.chkMVCController.TabIndex = 0;
@@ -1741,7 +1743,7 @@
             // 
             this.chkMVCModel.AutoSize = true;
             this.chkMVCModel.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCModel.Location = new System.Drawing.Point(309, 87);
+            this.chkMVCModel.Location = new System.Drawing.Point(309, 69);
             this.chkMVCModel.Name = "chkMVCModel";
             this.chkMVCModel.Size = new System.Drawing.Size(55, 17);
             this.chkMVCModel.TabIndex = 0;
@@ -1753,7 +1755,7 @@
             // 
             this.chkMVCView.AutoSize = true;
             this.chkMVCView.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCView.Location = new System.Drawing.Point(315, 105);
+            this.chkMVCView.Location = new System.Drawing.Point(315, 87);
             this.chkMVCView.Name = "chkMVCView";
             this.chkMVCView.Size = new System.Drawing.Size(49, 17);
             this.chkMVCView.TabIndex = 0;
@@ -1777,7 +1779,7 @@
             this.chkMVCHepsi.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkMVCHepsi.Checked = true;
             this.chkMVCHepsi.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMVCHepsi.Location = new System.Drawing.Point(311, 67);
+            this.chkMVCHepsi.Location = new System.Drawing.Point(311, 49);
             this.chkMVCHepsi.Name = "chkMVCHepsi";
             this.chkMVCHepsi.Size = new System.Drawing.Size(53, 17);
             this.chkMVCHepsi.TabIndex = 0;
@@ -2069,6 +2071,18 @@
             this.lblMaksimumKarakter.Size = new System.Drawing.Size(0, 13);
             this.lblMaksimumKarakter.TabIndex = 14;
             // 
+            // chkMVCStoredProc
+            // 
+            this.chkMVCStoredProc.AutoSize = true;
+            this.chkMVCStoredProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCStoredProc.Location = new System.Drawing.Point(255, 128);
+            this.chkMVCStoredProc.Name = "chkMVCStoredProc";
+            this.chkMVCStoredProc.Size = new System.Drawing.Size(109, 17);
+            this.chkMVCStoredProc.TabIndex = 0;
+            this.chkMVCStoredProc.Text = "Stored Procedure";
+            this.chkMVCStoredProc.UseVisualStyleBackColor = true;
+            this.chkMVCStoredProc.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
             // TDFactoryEF
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2260,5 +2274,6 @@
         private System.Windows.Forms.CheckBox chkAndData;
         private System.Windows.Forms.CheckBox chkMVCWcfServis;
         private System.Windows.Forms.CheckBox chkMVCModel;
+        private System.Windows.Forms.CheckBox chkMVCStoredProc;
     }
 }
