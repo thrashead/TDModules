@@ -2922,7 +2922,7 @@ namespace TDFactoryEF
 
                         if (idType != null)
                         {
-                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR [" + idColumn + "] IS NULL)");
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)");
                         }
 
                         yaz.WriteLine("");
@@ -2969,7 +2969,7 @@ namespace TDFactoryEF
 
                         if (idType != null)
                         {
-                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR [" + idColumn + "] IS NULL)");
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)");
                         }
 
                         yaz.WriteLine("");
