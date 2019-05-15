@@ -58,7 +58,7 @@ namespace TDLibrary
 
                     if (file?.FileName.IsNull() != true)
                     {
-                        if (file.ContentLength > 0 && file.ContentLength < maxSize)
+                        if (file.ContentLength >= 0 && file.ContentLength < maxSize)
                         {
                             string guid = Guider.GetGuid(5);
                             var fileName = Path.GetFileName(file.FileName);
@@ -131,7 +131,7 @@ namespace TDLibrary
 
                         if (file?.FileName.IsNull() != true)
                         {
-                            if (file.ContentLength > 0 && file.ContentLength < maxSize)
+                            if (file.ContentLength >= 0 && file.ContentLength < maxSize)
                             {
                                 var fileName = Path.GetFileName(file.FileName);
                                 fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
@@ -205,7 +205,7 @@ namespace TDLibrary
 
                     if (file?.FileName.IsNull() != true)
                     {
-                        if (file.ContentLength > 0 && file.ContentLength < maxSize)
+                        if (file.ContentLength >= 0 && file.ContentLength < maxSize)
                         {
                             string guid = Guider.GetGuid(5);
                             var fileName = Path.GetFileName(file.FileName);
