@@ -3102,6 +3102,8 @@ namespace TDFactory
 
         void CreateStoredProcedure()
         {
+            string schema = DefaultSchema(new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo)));
+
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\StoredProcedures.sql",
                 FileMode.Create))
             {
@@ -3138,13 +3140,13 @@ namespace TDFactory
 
                         //Select//
                         yaz.WriteLine("/* Select */");
-                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "Select]') IS NOT NULL");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Select]') IS NOT NULL");
                         yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "Select]");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Select]");
                         yaz.WriteLine("END");
                         yaz.WriteLine("GO");
 
-                        yaz.WriteLine("CREATE PROC [usp_" + Table + "Select]");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Select]");
 
                         if (idType != null)
                         {
@@ -3169,7 +3171,7 @@ namespace TDFactory
                         sqlText = sqlText.Replace(",", ", ");
 
                         yaz.WriteLine(sqlText);
-                        yaz.WriteLine("\tFROM [" + Table + "]");
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
                         if (idType != null)
                         {
@@ -3184,13 +3186,13 @@ namespace TDFactory
 
                         //SelectTop//
                         yaz.WriteLine("/* SelectTop */");
-                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "SelectTop]') IS NOT NULL");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectTop]') IS NOT NULL");
                         yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "SelectTop]");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectTop]");
                         yaz.WriteLine("END");
                         yaz.WriteLine("GO");
 
-                        yaz.WriteLine("CREATE PROC [usp_" + Table + "SelectTop]");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectTop]");
 
                         if (idType != null)
                         {
@@ -3216,7 +3218,7 @@ namespace TDFactory
                         sqlText = sqlText.Replace(",", ", ");
 
                         yaz.WriteLine(sqlText);
-                        yaz.WriteLine("\tFROM [" + Table + "]");
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
                         if (idType != null)
                         {
@@ -3231,13 +3233,13 @@ namespace TDFactory
 
                         ////Insert//
                         yaz.WriteLine("/* Insert */");
-                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "Insert]') IS NOT NULL");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Insert]') IS NOT NULL");
                         yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "Insert]");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Insert]");
                         yaz.WriteLine("END");
                         yaz.WriteLine("GO");
 
-                        yaz.WriteLine("CREATE PROC [usp_" + Table + "Insert]");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Insert]");
 
                         i = 1;
                         foreach (ColumnInfo column in columnNames)
@@ -3267,7 +3269,7 @@ namespace TDFactory
                         yaz.WriteLine("\tBEGIN TRAN");
                         yaz.WriteLine("");
 
-                        sqlText = "\tINSERT INTO [" + Table + "] (";
+                        sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
 
                         foreach (ColumnInfo column in columnNames)
                         {
@@ -3313,7 +3315,7 @@ namespace TDFactory
 
                             yaz.WriteLine(sqlText);
 
-                            yaz.WriteLine("\tFROM [" + Table + "]");
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
                             yaz.WriteLine("\tWHERE [" + idColumn + "] = SCOPE_IDENTITY()");
                         }
 
@@ -3325,13 +3327,13 @@ namespace TDFactory
 
                         ////Update//
                         yaz.WriteLine("/* Update */");
-                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "Update]') IS NOT NULL");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Update]') IS NOT NULL");
                         yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "Update]");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Update]");
                         yaz.WriteLine("END");
                         yaz.WriteLine("GO");
 
-                        yaz.WriteLine("CREATE PROC [usp_" + Table + "Update]");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
 
                         i = 1;
                         foreach (ColumnInfo column in columnNames)
@@ -3359,7 +3361,7 @@ namespace TDFactory
                         yaz.WriteLine("");
 
 
-                        yaz.WriteLine("\tUPDATE [" + Table + "]");
+                        yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "]");
 
                         sqlText = "\tSET ";
 
@@ -3394,7 +3396,7 @@ namespace TDFactory
 
                         yaz.WriteLine(sqlText);
 
-                        yaz.WriteLine("\tFROM [" + Table + "]");
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
                         if (idType != null)
                         {
@@ -3409,13 +3411,13 @@ namespace TDFactory
 
                         //Delete//
                         yaz.WriteLine("/* Delete */");
-                        yaz.WriteLine("IF OBJECT_ID('[usp_" + Table + "Delete]') IS NOT NULL");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Delete]') IS NOT NULL");
                         yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC [usp_" + Table + "Delete]");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Delete]");
                         yaz.WriteLine("END");
                         yaz.WriteLine("GO");
 
-                        yaz.WriteLine("CREATE PROC [usp_" + Table + "Delete]");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Delete]");
 
                         if (idType != null)
                         {
@@ -3430,7 +3432,7 @@ namespace TDFactory
                         yaz.WriteLine("");
 
                         yaz.WriteLine("\tDELETE");
-                        yaz.WriteLine("\tFROM [" + Table + "]");
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
                         if (idType != null)
                         {

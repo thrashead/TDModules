@@ -78,6 +78,54 @@ namespace TDFactory
             }
         }
 
+        public string DefaultSchema(SqlConnection con)
+        {
+            SqlDataAdapter dataAdap = new SqlDataAdapter();
+            DataTable dataTable = new DataTable();
+            List<ForeignKeyChecker> fkList = new List<ForeignKeyChecker>();
+
+            string _queryString = @"SELECT top 1 default_schema_name FROM sys.database_principals WHERE type = 'S'";
+
+            dataAdap.SelectCommand = new SqlCommand();
+            dataAdap.SelectCommand.Connection = con;
+
+            if (txtWCKullanici.Text != "")
+            {
+                _queryString += " and name = @user";
+                dataAdap.SelectCommand.Parameters.AddWithValue("user", txtWCKullanici.Text);
+            }
+
+            dataAdap.SelectCommand.CommandText = _queryString;
+
+            try
+            {
+                con.Open();
+                dataAdap.Fill(dataTable);
+
+                if (dataTable != null)
+                {
+                    try
+                    {
+                        return "[" + dataTable.Rows[0]["default_schema_name"].ToString() + "]";
+                    }
+                    catch
+                    {
+                        return "[dbo]";
+                    }
+                }
+            }
+            catch
+            {
+                return "[dbo]";
+            }
+            finally
+            {
+                con.Close();
+            }
+
+            return "[dbo]";
+        }
+
         public List<ForeignKeyChecker> ForeignKeyCheck(SqlConnection con, string _tableName = null)
         {
             SqlDataAdapter dataAdap = new SqlDataAdapter();

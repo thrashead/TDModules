@@ -38,6 +38,46 @@ namespace TDFactoryEF
         string selectedcolumn;
         string projectName = "Proje";
 
+        private void TDFactoryForm_Load(object sender, EventArgs e)
+        {
+            cmbVTVeriTipi.SelectedIndex = 0;
+            lstAndIzin.SetSelected(0, true);
+
+            t = new Thread(new ThreadStart(ListControl));
+            t.Start();
+        }
+
+        private void TDFactoryForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            t.Abort();
+        }
+
+        delegate void SetResultCallBack(bool result);
+
+        private void SetResult(bool result)
+        {
+            pnlKaydet.Enabled = result;
+        }
+
+        void ListControl()
+        {
+            while (Application.OpenForms.Count > 0)
+            {
+                if (lstSeciliKolonlar.Items.Count > 0)
+                {
+                    SetResultCallBack d = new SetResultCallBack(SetResult);
+                    this.Invoke(d, new object[] { true });
+                }
+                else
+                {
+                    SetResultCallBack d = new SetResultCallBack(SetResult);
+                    this.Invoke(d, new object[] { false });
+                }
+
+                Thread.Sleep(100);
+            }
+        }
+
         public string DefaultSchema(SqlConnection con)
         {
             SqlDataAdapter dataAdap = new SqlDataAdapter();
@@ -84,46 +124,6 @@ namespace TDFactoryEF
             }
 
             return "[dbo]";
-        }
-
-        private void TDFactoryForm_Load(object sender, EventArgs e)
-        {
-            cmbVTVeriTipi.SelectedIndex = 0;
-            lstAndIzin.SetSelected(0, true);
-
-            t = new Thread(new ThreadStart(ListControl));
-            t.Start();
-        }
-
-        private void TDFactoryForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            t.Abort();
-        }
-
-        delegate void SetResultCallBack(bool result);
-
-        private void SetResult(bool result)
-        {
-            pnlKaydet.Enabled = result;
-        }
-
-        void ListControl()
-        {
-            while (Application.OpenForms.Count > 0)
-            {
-                if (lstSeciliKolonlar.Items.Count > 0)
-                {
-                    SetResultCallBack d = new SetResultCallBack(SetResult);
-                    this.Invoke(d, new object[] { true });
-                }
-                else
-                {
-                    SetResultCallBack d = new SetResultCallBack(SetResult);
-                    this.Invoke(d, new object[] { false });
-                }
-
-                Thread.Sleep(100);
-            }
         }
 
         public List<ForeignKeyChecker> ForeignKeyCheck(SqlConnection con, string _tableName = null)
