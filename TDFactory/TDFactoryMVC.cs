@@ -2636,6 +2636,8 @@ namespace TDFactory
 
         void CreateMVCEFViewLayer()
         {
+            int i = 0;
+
             foreach (string Table in selectedTables)
             {
                 List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
@@ -2650,6 +2652,15 @@ namespace TDFactory
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
                 CreateMVCDirectories(Table);
+
+                if (i <= 0)
+                {
+                    CreateLayout();
+                    CreateHomePage();
+                    CreateViewsWebConfig();
+
+                    i++;
+                }
 
                 //Index
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\" + Table + "\\Index.cshtml", FileMode.Create))
@@ -3384,6 +3395,13 @@ namespace TDFactory
 
                 CreateMVCDirectories(Table);
 
+                if (i <= 0)
+                {
+                    CreateHomeController();
+
+                    i++;
+                }
+
                 StreamWriter yaz = File.CreateText(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Controllers\\" + Table + "Controller.cs");
 
                 yaz.WriteLine("using System;");
@@ -3775,7 +3793,7 @@ namespace TDFactory
                     yaz.WriteLine("<?xml version=\"1.0\"?>");
                     yaz.WriteLine("<configuration>");
                     yaz.WriteLine("\t<connectionStrings>");
-                    yaz.WriteLine("\t\t<add name=\"" + projectName + "Entities\" connectionString=\"metadata=res://*/Data." + projectName + ".csdl|res://*/Data." + projectName + ".ssdl|res://*/Data." + projectName + ".msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=.;initial catalog=" + DBName + ";user id=" + wcKullanici + ";password=" + wcSifre + ";MultipleActiveResultSets=True;App=EntityFramework&quot;\" providerName=\"System.Data.EntityClient\" />");
+                    yaz.WriteLine("\t\t<add name=\"" + DBName + "Entities\" connectionString=\"metadata=res://*/Data." + DBName + ".csdl|res://*/Data." + DBName + ".ssdl|res://*/Data." + DBName + ".msl;provider=System.Data.SqlClient;provider connection string=&quot;data source=.;initial catalog=" + DBName + ";user id=" + wcKullanici + ";password=" + wcSifre + ";MultipleActiveResultSets=True;App=EntityFramework&quot;\" providerName=\"System.Data.EntityClient\" />");
                     yaz.WriteLine("\t</connectionStrings>");
                     yaz.WriteLine("\t<appSettings>");
                     yaz.WriteLine("\t\t<add key=\"MainPath\" value=\"http://localhost/" + projectName + "\"/>");

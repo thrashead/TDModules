@@ -113,6 +113,8 @@
             this.btnTabloEkle = new System.Windows.Forms.Button();
             this.grpIslem = new System.Windows.Forms.GroupBox();
             this.pnlKaydet = new System.Windows.Forms.Panel();
+            this.rdTDFramework = new System.Windows.Forms.RadioButton();
+            this.rdEntityFramework = new System.Windows.Forms.RadioButton();
             this.rdAndWcf = new System.Windows.Forms.RadioButton();
             this.rdAndSqlite = new System.Windows.Forms.RadioButton();
             this.chkAndData = new System.Windows.Forms.CheckBox();
@@ -178,8 +180,8 @@
             this.lblMaksimumKarakter = new System.Windows.Forms.Label();
             this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
-            this.rdEntityFramework = new System.Windows.Forms.RadioButton();
-            this.rdTDFramework = new System.Windows.Forms.RadioButton();
+            this.pnlProjectType = new System.Windows.Forms.Panel();
+            this.pnlAndroidService = new System.Windows.Forms.Panel();
             this.tbconTablar.SuspendLayout();
             this.tabpageVeritabaniOlustur.SuspendLayout();
             this.grpBaglanti.SuspendLayout();
@@ -198,6 +200,8 @@
             this.grpIslem.SuspendLayout();
             this.pnlKaydet.SuspendLayout();
             this.grpKolon.SuspendLayout();
+            this.pnlProjectType.SuspendLayout();
+            this.pnlAndroidService.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbconTablar
@@ -1264,10 +1268,8 @@
             // 
             // pnlKaydet
             // 
-            this.pnlKaydet.Controls.Add(this.rdTDFramework);
-            this.pnlKaydet.Controls.Add(this.rdEntityFramework);
-            this.pnlKaydet.Controls.Add(this.rdAndWcf);
-            this.pnlKaydet.Controls.Add(this.rdAndSqlite);
+            this.pnlKaydet.Controls.Add(this.pnlAndroidService);
+            this.pnlKaydet.Controls.Add(this.pnlProjectType);
             this.pnlKaydet.Controls.Add(this.chkAndData);
             this.pnlKaydet.Controls.Add(this.lstAndIzin);
             this.pnlKaydet.Controls.Add(this.lblAndIzinler);
@@ -1306,10 +1308,33 @@
             this.pnlKaydet.Size = new System.Drawing.Size(736, 240);
             this.pnlKaydet.TabIndex = 68;
             // 
+            // rdTDFramework
+            // 
+            this.rdTDFramework.AutoSize = true;
+            this.rdTDFramework.Checked = true;
+            this.rdTDFramework.Location = new System.Drawing.Point(3, 2);
+            this.rdTDFramework.Name = "rdTDFramework";
+            this.rdTDFramework.Size = new System.Drawing.Size(92, 17);
+            this.rdTDFramework.TabIndex = 85;
+            this.rdTDFramework.TabStop = true;
+            this.rdTDFramework.Text = "TDFramework";
+            this.rdTDFramework.UseVisualStyleBackColor = true;
+            this.rdTDFramework.CheckedChanged += new System.EventHandler(this.ProjectType_CheckedChanged);
+            // 
+            // rdEntityFramework
+            // 
+            this.rdEntityFramework.AutoSize = true;
+            this.rdEntityFramework.Location = new System.Drawing.Point(142, 2);
+            this.rdEntityFramework.Name = "rdEntityFramework";
+            this.rdEntityFramework.Size = new System.Drawing.Size(106, 17);
+            this.rdEntityFramework.TabIndex = 84;
+            this.rdEntityFramework.Text = "Entity Framework";
+            this.rdEntityFramework.UseVisualStyleBackColor = true;
+            // 
             // rdAndWcf
             // 
             this.rdAndWcf.AutoSize = true;
-            this.rdAndWcf.Location = new System.Drawing.Point(611, 185);
+            this.rdAndWcf.Location = new System.Drawing.Point(4, 3);
             this.rdAndWcf.Name = "rdAndWcf";
             this.rdAndWcf.Size = new System.Drawing.Size(49, 17);
             this.rdAndWcf.TabIndex = 83;
@@ -1320,7 +1345,7 @@
             // rdAndSqlite
             // 
             this.rdAndSqlite.AutoSize = true;
-            this.rdAndSqlite.Location = new System.Drawing.Point(666, 185);
+            this.rdAndSqlite.Location = new System.Drawing.Point(59, 3);
             this.rdAndSqlite.Name = "rdAndSqlite";
             this.rdAndSqlite.Size = new System.Drawing.Size(57, 17);
             this.rdAndSqlite.TabIndex = 82;
@@ -2109,27 +2134,23 @@
             this.lblMaksimumKarakter.Size = new System.Drawing.Size(0, 13);
             this.lblMaksimumKarakter.TabIndex = 14;
             // 
-            // rdEntityFramework
+            // pnlProjectType
             // 
-            this.rdEntityFramework.AutoSize = true;
-            this.rdEntityFramework.Location = new System.Drawing.Point(109, 60);
-            this.rdEntityFramework.Name = "rdEntityFramework";
-            this.rdEntityFramework.Size = new System.Drawing.Size(106, 17);
-            this.rdEntityFramework.TabIndex = 84;
-            this.rdEntityFramework.Text = "Entity Framework";
-            this.rdEntityFramework.UseVisualStyleBackColor = true;
+            this.pnlProjectType.Controls.Add(this.rdTDFramework);
+            this.pnlProjectType.Controls.Add(this.rdEntityFramework);
+            this.pnlProjectType.Location = new System.Drawing.Point(2, 56);
+            this.pnlProjectType.Name = "pnlProjectType";
+            this.pnlProjectType.Size = new System.Drawing.Size(303, 21);
+            this.pnlProjectType.TabIndex = 86;
             // 
-            // rdTDFramework
+            // pnlAndroidService
             // 
-            this.rdTDFramework.AutoSize = true;
-            this.rdTDFramework.Checked = true;
-            this.rdTDFramework.Location = new System.Drawing.Point(6, 60);
-            this.rdTDFramework.Name = "rdTDFramework";
-            this.rdTDFramework.Size = new System.Drawing.Size(92, 17);
-            this.rdTDFramework.TabIndex = 85;
-            this.rdTDFramework.TabStop = true;
-            this.rdTDFramework.Text = "TDFramework";
-            this.rdTDFramework.UseVisualStyleBackColor = true;
+            this.pnlAndroidService.Controls.Add(this.rdAndWcf);
+            this.pnlAndroidService.Controls.Add(this.rdAndSqlite);
+            this.pnlAndroidService.Location = new System.Drawing.Point(613, 184);
+            this.pnlAndroidService.Name = "pnlAndroidService";
+            this.pnlAndroidService.Size = new System.Drawing.Size(116, 21);
+            this.pnlAndroidService.TabIndex = 87;
             // 
             // TDFactory
             // 
@@ -2170,6 +2191,10 @@
             this.pnlKaydet.PerformLayout();
             this.grpKolon.ResumeLayout(false);
             this.grpKolon.PerformLayout();
+            this.pnlProjectType.ResumeLayout(false);
+            this.pnlProjectType.PerformLayout();
+            this.pnlAndroidService.ResumeLayout(false);
+            this.pnlAndroidService.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2327,5 +2352,7 @@
         private System.Windows.Forms.CheckBox chkMVCStoredProc;
         private System.Windows.Forms.RadioButton rdTDFramework;
         private System.Windows.Forms.RadioButton rdEntityFramework;
+        private System.Windows.Forms.Panel pnlProjectType;
+        private System.Windows.Forms.Panel pnlAndroidService;
     }
 }

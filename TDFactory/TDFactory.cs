@@ -217,6 +217,22 @@ namespace TDFactory
             return fkList;
         }
 
+        private void ProjectType_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdEntityFramework.Checked)
+            {
+                chkRTables.Enabled = false;
+                chkDBTable.Enabled = false;
+                chkDBColumn.Enabled = false;
+            }
+            else if (rdTDFramework.Checked)
+            {
+                chkRTables.Enabled = true;
+                chkDBTable.Enabled = true;
+                chkDBColumn.Enabled = true;
+            }
+        }
+
         private List<TableColumnNames> GetTableColumnNames()
         {
             List<ColumnInfo> columnInfo;
