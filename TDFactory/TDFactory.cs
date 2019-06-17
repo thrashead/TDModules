@@ -37,6 +37,7 @@ namespace TDFactory
         string DBName = "";
         string selectedcolumn;
         string projectName = "Proje";
+        string projectFolder = "";
 
         private void TDFactoryForm_Load(object sender, EventArgs e)
         {

@@ -157,7 +157,7 @@ namespace TDFactory
                     {
                         try
                         {
-                            Process.Start(folderDialogKatmanOlustur.SelectedPath + "\\" + projectName);
+                            Process.Start(folderDialogKatmanOlustur.SelectedPath + "\\" + projectFolder);
                         }
                         catch
                         {

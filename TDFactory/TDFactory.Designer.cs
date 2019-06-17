@@ -137,6 +137,7 @@
             this.chkMVCStilScript = new System.Windows.Forms.CheckBox();
             this.chkMVCWcfServis = new System.Windows.Forms.CheckBox();
             this.chkMVCWebConfig = new System.Windows.Forms.CheckBox();
+            this.chkMVCStoredProc = new System.Windows.Forms.CheckBox();
             this.chkMVCController = new System.Windows.Forms.CheckBox();
             this.chkRTables = new System.Windows.Forms.CheckBox();
             this.txtProjectName = new System.Windows.Forms.TextBox();
@@ -177,7 +178,8 @@
             this.lblMaksimumKarakter = new System.Windows.Forms.Label();
             this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
-            this.chkMVCStoredProc = new System.Windows.Forms.CheckBox();
+            this.rdEntityFramework = new System.Windows.Forms.RadioButton();
+            this.rdTDFramework = new System.Windows.Forms.RadioButton();
             this.tbconTablar.SuspendLayout();
             this.tabpageVeritabaniOlustur.SuspendLayout();
             this.grpBaglanti.SuspendLayout();
@@ -1262,6 +1264,8 @@
             // 
             // pnlKaydet
             // 
+            this.pnlKaydet.Controls.Add(this.rdTDFramework);
+            this.pnlKaydet.Controls.Add(this.rdEntityFramework);
             this.pnlKaydet.Controls.Add(this.rdAndWcf);
             this.pnlKaydet.Controls.Add(this.rdAndSqlite);
             this.pnlKaydet.Controls.Add(this.chkAndData);
@@ -1305,12 +1309,10 @@
             // rdAndWcf
             // 
             this.rdAndWcf.AutoSize = true;
-            this.rdAndWcf.Checked = true;
             this.rdAndWcf.Location = new System.Drawing.Point(611, 185);
             this.rdAndWcf.Name = "rdAndWcf";
             this.rdAndWcf.Size = new System.Drawing.Size(49, 17);
             this.rdAndWcf.TabIndex = 83;
-            this.rdAndWcf.TabStop = true;
             this.rdAndWcf.Text = "WCF";
             this.rdAndWcf.UseVisualStyleBackColor = true;
             this.rdAndWcf.CheckedChanged += new System.EventHandler(this.rdAndData_CheckedChanged);
@@ -1539,7 +1541,7 @@
             // 
             this.lblVTKatman.AutoSize = true;
             this.lblVTKatman.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblVTKatman.Location = new System.Drawing.Point(6, 141);
+            this.lblVTKatman.Location = new System.Drawing.Point(3, 145);
             this.lblVTKatman.Name = "lblVTKatman";
             this.lblVTKatman.Size = new System.Drawing.Size(121, 13);
             this.lblVTKatman.TabIndex = 5;
@@ -1619,7 +1621,7 @@
             // lblWCSifre
             // 
             this.lblWCSifre.AutoSize = true;
-            this.lblWCSifre.Location = new System.Drawing.Point(23, 187);
+            this.lblWCSifre.Location = new System.Drawing.Point(20, 191);
             this.lblWCSifre.Name = "lblWCSifre";
             this.lblWCSifre.Size = new System.Drawing.Size(37, 13);
             this.lblWCSifre.TabIndex = 75;
@@ -1628,7 +1630,7 @@
             // lblWCKullanici
             // 
             this.lblWCKullanici.AutoSize = true;
-            this.lblWCKullanici.Location = new System.Drawing.Point(8, 162);
+            this.lblWCKullanici.Location = new System.Drawing.Point(5, 166);
             this.lblWCKullanici.Name = "lblWCKullanici";
             this.lblWCKullanici.Size = new System.Drawing.Size(52, 13);
             this.lblWCKullanici.TabIndex = 74;
@@ -1636,7 +1638,7 @@
             // 
             // txtWCSifre
             // 
-            this.txtWCSifre.Location = new System.Drawing.Point(61, 184);
+            this.txtWCSifre.Location = new System.Drawing.Point(58, 188);
             this.txtWCSifre.Name = "txtWCSifre";
             this.txtWCSifre.Size = new System.Drawing.Size(149, 20);
             this.txtWCSifre.TabIndex = 73;
@@ -1645,7 +1647,7 @@
             // 
             // txtWCKullanici
             // 
-            this.txtWCKullanici.Location = new System.Drawing.Point(61, 159);
+            this.txtWCKullanici.Location = new System.Drawing.Point(58, 163);
             this.txtWCKullanici.Name = "txtWCKullanici";
             this.txtWCKullanici.Size = new System.Drawing.Size(149, 20);
             this.txtWCKullanici.TabIndex = 72;
@@ -1654,7 +1656,7 @@
             // chkDBColumn
             // 
             this.chkDBColumn.AutoSize = true;
-            this.chkDBColumn.Location = new System.Drawing.Point(9, 115);
+            this.chkDBColumn.Location = new System.Drawing.Point(6, 122);
             this.chkDBColumn.Name = "chkDBColumn";
             this.chkDBColumn.Size = new System.Drawing.Size(142, 17);
             this.chkDBColumn.TabIndex = 69;
@@ -1664,7 +1666,7 @@
             // chkDBTable
             // 
             this.chkDBTable.AutoSize = true;
-            this.chkDBTable.Location = new System.Drawing.Point(9, 96);
+            this.chkDBTable.Location = new System.Drawing.Point(6, 103);
             this.chkDBTable.Name = "chkDBTable";
             this.chkDBTable.Size = new System.Drawing.Size(134, 17);
             this.chkDBTable.TabIndex = 70;
@@ -1707,6 +1709,18 @@
             this.chkMVCWebConfig.UseVisualStyleBackColor = true;
             this.chkMVCWebConfig.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
             // 
+            // chkMVCStoredProc
+            // 
+            this.chkMVCStoredProc.AutoSize = true;
+            this.chkMVCStoredProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCStoredProc.Location = new System.Drawing.Point(255, 126);
+            this.chkMVCStoredProc.Name = "chkMVCStoredProc";
+            this.chkMVCStoredProc.Size = new System.Drawing.Size(109, 17);
+            this.chkMVCStoredProc.TabIndex = 0;
+            this.chkMVCStoredProc.Text = "Stored Procedure";
+            this.chkMVCStoredProc.UseVisualStyleBackColor = true;
+            this.chkMVCStoredProc.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
             // chkMVCController
             // 
             this.chkMVCController.AutoSize = true;
@@ -1725,7 +1739,7 @@
             this.chkRTables.Checked = true;
             this.chkRTables.CheckState = System.Windows.Forms.CheckState.Checked;
             this.chkRTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.chkRTables.Location = new System.Drawing.Point(9, 76);
+            this.chkRTables.Location = new System.Drawing.Point(6, 83);
             this.chkRTables.Name = "chkRTables";
             this.chkRTables.Size = new System.Drawing.Size(90, 17);
             this.chkRTables.TabIndex = 71;
@@ -2095,17 +2109,27 @@
             this.lblMaksimumKarakter.Size = new System.Drawing.Size(0, 13);
             this.lblMaksimumKarakter.TabIndex = 14;
             // 
-            // chkMVCStoredProc
+            // rdEntityFramework
             // 
-            this.chkMVCStoredProc.AutoSize = true;
-            this.chkMVCStoredProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCStoredProc.Location = new System.Drawing.Point(255, 126);
-            this.chkMVCStoredProc.Name = "chkMVCStoredProc";
-            this.chkMVCStoredProc.Size = new System.Drawing.Size(109, 17);
-            this.chkMVCStoredProc.TabIndex = 0;
-            this.chkMVCStoredProc.Text = "Stored Procedure";
-            this.chkMVCStoredProc.UseVisualStyleBackColor = true;
-            this.chkMVCStoredProc.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            this.rdEntityFramework.AutoSize = true;
+            this.rdEntityFramework.Location = new System.Drawing.Point(109, 60);
+            this.rdEntityFramework.Name = "rdEntityFramework";
+            this.rdEntityFramework.Size = new System.Drawing.Size(106, 17);
+            this.rdEntityFramework.TabIndex = 84;
+            this.rdEntityFramework.Text = "Entity Framework";
+            this.rdEntityFramework.UseVisualStyleBackColor = true;
+            // 
+            // rdTDFramework
+            // 
+            this.rdTDFramework.AutoSize = true;
+            this.rdTDFramework.Checked = true;
+            this.rdTDFramework.Location = new System.Drawing.Point(6, 60);
+            this.rdTDFramework.Name = "rdTDFramework";
+            this.rdTDFramework.Size = new System.Drawing.Size(92, 17);
+            this.rdTDFramework.TabIndex = 85;
+            this.rdTDFramework.TabStop = true;
+            this.rdTDFramework.Text = "TDFramework";
+            this.rdTDFramework.UseVisualStyleBackColor = true;
             // 
             // TDFactory
             // 
@@ -2301,5 +2325,7 @@
         private System.Windows.Forms.CheckBox chkAndData;
         private System.Windows.Forms.CheckBox chkMVCWcfServis;
         private System.Windows.Forms.CheckBox chkMVCStoredProc;
+        private System.Windows.Forms.RadioButton rdTDFramework;
+        private System.Windows.Forms.RadioButton rdEntityFramework;
     }
 }
