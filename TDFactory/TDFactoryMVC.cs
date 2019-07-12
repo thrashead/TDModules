@@ -2125,12 +2125,14 @@ namespace TDFactory
         void CreateAngular()
         {
             CreateAngularDirectories();
+            CreateAngularFiles();
 
             if (chkMVCHepsi.Checked == true)
             {
                 CreateAngularModelLayer();
                 CreateAngularViewLayer();
                 CreateAngularControllerLayer();
+                CreateAngularServicesLayer();
                 CreateAngularTypeScriptLayer();
                 CreateWebConfig();
                 CreateStilScript();
@@ -2152,6 +2154,7 @@ namespace TDFactory
                 if (chkMVCController.Checked == true)
                 {
                     CreateAngularControllerLayer();
+                    CreateAngularServicesLayer();
                     CreateAngularTypeScriptLayer();
                 }
 
@@ -2579,6 +2582,183 @@ namespace TDFactory
             }
         }
 
+        void CreateAngularFiles()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\app.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<router-outlet></router-outlet>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\app.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from \"@angular/core\";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("declare global {");
+                    yaz.WriteLine("\tinterface JQuery {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: \"" + projectName.Substring(0, 3).ToLower() + "-app\",");
+                    yaz.WriteLine("\ttemplateUrl: './app.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AppComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            CreateAngularAppModule();
+
+            CreateAngularRoutingModule();
+        }
+
+        void CreateAngularAppModule()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\app.module.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { APP_BASE_HREF } from '@angular/common';");
+                    yaz.WriteLine("import { NgModule } from '@angular/core';");
+                    yaz.WriteLine("import { BrowserModule } from '@angular/platform-browser';");
+                    yaz.WriteLine("import { ReactiveFormsModule } from '@angular/forms';");
+                    yaz.WriteLine("import { AppRoutingModule } from './app-routing.module';");
+                    yaz.WriteLine("import { HttpClientModule } from '@angular/common/http';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("import { AppComponent } from './app';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("import { LayoutComponent } from './shared/layout';");
+                    yaz.WriteLine("import { HomeComponent } from './home/index';");
+                    yaz.WriteLine("import { ScriptsComponent } from './shared/controls/scripts';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("//Admin");
+                    yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
+                    yaz.WriteLine("import { AdminLayoutComponent } from './admin/views/shared/layoutAdmin';");
+                    yaz.WriteLine("import { AdminHomeComponent } from './admin/views/home/index';");
+                    yaz.WriteLine("import { AdminHeaderComponent } from './admin/views/shared/controls/header';");
+                    yaz.WriteLine("import { AdminLeftMenuComponent } from './admin/views/shared/controls/leftmenu';");
+                    yaz.WriteLine("import { AdminScriptsComponent } from './admin/views/shared/controls/scripts';");
+                    yaz.WriteLine("import { AdminCopyDeleteComponent } from './admin/views/shared/controls/copydelete';");
+                    yaz.WriteLine("import { AdminFooterComponent } from './admin/views/shared/controls/footer';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("import { AdminBaglantiIndexComponent } from './admin/views/baglanti';");
+                    yaz.WriteLine("import { AdminBaglantiEkleComponent } from './admin/views/baglanti/ekle';");
+                    yaz.WriteLine("import { AdminBaglantiDuzenleComponent } from './admin/views/baglanti/duzenle';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("import * as $ from \"jquery\";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@NgModule({");
+                    yaz.WriteLine("\tdeclarations: [");
+                    yaz.WriteLine("\t\tAppComponent,");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tLayoutComponent,");
+                    yaz.WriteLine("\t\tHomeComponent,");
+                    yaz.WriteLine("\t\tScriptsComponent,");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tAdminLoginComponent,");
+                    yaz.WriteLine("\t\tAdminLayoutComponent,");
+                    yaz.WriteLine("\t\tAdminHomeComponent,");
+                    yaz.WriteLine("\t\tAdminHeaderComponent,");
+                    yaz.WriteLine("\t\tAdminLeftMenuComponent,");
+                    yaz.WriteLine("\t\tAdminScriptsComponent,");
+                    yaz.WriteLine("\t\tAdminCopyDeleteComponent,");
+                    yaz.WriteLine("\t\tAdminFooterComponent,");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tAdminBaglantiIndexComponent,");
+                    yaz.WriteLine("\t\tAdminBaglantiEkleComponent,");
+                    yaz.WriteLine("\t\tAdminBaglantiDuzenleComponent,");
+                    yaz.WriteLine("\t],");
+                    yaz.WriteLine("\timports: [");
+                    yaz.WriteLine("\t\tBrowserModule,");
+                    yaz.WriteLine("\t\tAppRoutingModule,");
+                    yaz.WriteLine("\t\tReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),");
+                    yaz.WriteLine("\t\tHttpClientModule");
+                    yaz.WriteLine("\t],");
+                    yaz.WriteLine("\t//'/' -> '/Emlak/' Bu şekilde değişecek");
+                    yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/Emlak/' }],");
+                    yaz.WriteLine("\tbootstrap: [AppComponent]");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("export class AppModule { }");
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateAngularRoutingModule()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\app-routing.module.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { NgModule } from '@angular/core';");
+                    yaz.WriteLine("import { Routes, RouterModule } from '@angular/router';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("import { LayoutComponent } from './shared/layout';");
+                    yaz.WriteLine("import { HomeComponent } from './home/home';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("import { AdminLayoutComponent } from './admin/views/shared/layoutAdmin';");
+                    yaz.WriteLine("import { AdminHomeComponent } from './admin/views/home/index';");
+                    yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
+                    yaz.WriteLine("");
+
+                    yaz.WriteLine("import { AdminBaglantiIndexComponent } from './admin/views/baglanti';");
+                    yaz.WriteLine("import { AdminBaglantiEkleComponent } from './admin/views/baglanti/ekle';");
+                    yaz.WriteLine("import { AdminBaglantiDuzenleComponent } from './admin/views/baglanti/duzenle';");
+                    yaz.WriteLine("");
+
+                    yaz.WriteLine("const routes: Routes = [");
+                    yaz.WriteLine("\t{ path: 'Admin', component: AdminLoginComponent },");
+                    yaz.WriteLine("\t{ path: 'Admin/Login', component: AdminLoginComponent },");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\tpath: '',");
+                    yaz.WriteLine("\t\tcomponent: LayoutComponent,");
+                    yaz.WriteLine("\t\tchildren: [");
+                    yaz.WriteLine("\t\t\t//{ path: '', redirectTo: 'Home', pathMatch: 'full' },");
+                    yaz.WriteLine("\t\t\t{ path: '', component: HomeComponent, pathMatch: 'full' },");
+                    yaz.WriteLine("\t\t]");
+                    yaz.WriteLine("\t},");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\tpath: '',");
+                    yaz.WriteLine("\t\tcomponent: AdminLayoutComponent,");
+                    yaz.WriteLine("\t\tchildren: [");
+                    yaz.WriteLine("\t\t\t{ path: 'Admin/Home', component: AdminHomeComponent },");
+                    yaz.WriteLine("");
+
+                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti', component: AdminBaglantiIndexComponent },");
+                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti/Index', component: AdminBaglantiIndexComponent },");
+                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti/Ekle', component: AdminBaglantiEkleComponent },");
+                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti/Ekle/:linkID', component: AdminBaglantiEkleComponent },");
+                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti/Duzenle/:id', component: AdminBaglantiDuzenleComponent },");
+                    yaz.WriteLine("");
+
+                    yaz.WriteLine("\t\t]");
+                    yaz.WriteLine("\t},");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t{ path: '**', redirectTo: '' }");
+                    yaz.WriteLine("];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@NgModule({");
+                    yaz.WriteLine("\timports: [RouterModule.forRoot(routes)],");
+                    yaz.WriteLine("\texports: [RouterModule]");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("export class AppRoutingModule { }");
+                    yaz.Close();
+                }
+            }
+        }
+
         void CreateAngularRegistrar()
         {
             if (Directory.Exists(PathAddress + "\\" + projectFolder + "\\App_Start"))
@@ -2682,24 +2862,6 @@ namespace TDFactory
                         yaz.WriteLine("using System.Collections.Generic;");
                         yaz.WriteLine("using System.Web.Mvc;");
 
-                        List<TableColumnNames> tempcolumns = columnNames.Where(a => a.TypeName != null).ToList();
-
-                        if (tempcolumns.Count > 0)
-                        {
-                            List<TableColumnNames> subTempcolumns = tempcolumns.Where(a => a.TypeName.Name == "String").ToList();
-
-                            if (subTempcolumns.Count > 0)
-                            {
-                                List<TableColumnNames> lastColumns = subTempcolumns.Where(a => String.IsNullOrEmpty(a.CharLength)).ToList();
-
-                                if (lastColumns.Count > 0)
-                                {
-                                    yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
-                                }
-                            }
-                        }
-                        yaz.WriteLine("");
-
                         yaz.WriteLine("namespace Models");
                         yaz.WriteLine("{");
 
@@ -2740,14 +2902,6 @@ namespace TDFactory
                         {
                             if (column.TypeName != null)
                             {
-                                if (column.TypeName.Name == "String")
-                                {
-                                    if (String.IsNullOrEmpty(column.CharLength))
-                                    {
-                                        yaz.WriteLine("\t\t[DataType(DataType.MultilineText)]");
-                                    }
-                                }
-
                                 if (column.IsNullable)
                                 {
                                     switch (column.TypeName.Name)
@@ -2835,6 +2989,86 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+                        yaz.Close();
+                    }
+                }
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models\\I" + Table + ".ts", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
+
+                        yaz.WriteLine("export interface I" + Table);
+                        yaz.WriteLine("{");
+
+                        int counter = columnNames.Count;
+                        int i = 1;
+
+                        foreach (TableColumnNames column in columnNames)
+                        {
+                            if (column.TypeName != null)
+                            {
+                                switch (column.TypeName.Name)
+                                {
+                                    case "Int16": yaz.WriteLine("\t" + column.ColumnName + " : number,"); break;
+                                    case "Int32": yaz.WriteLine("\t" + column.ColumnName + " : number,"); break;
+                                    case "Int64": yaz.WriteLine("\t" + column.ColumnName + " : number,"); break;
+                                    case "Decimal": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    case "Double": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    case "Char": yaz.WriteLine("\t" + column.ColumnName + " : string,"); break;
+                                    case "Chars": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    case "String": yaz.WriteLine("\t" + column.ColumnName + " : string,"); break;
+                                    case "Byte": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    case "Bytes": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    case "Boolean": yaz.WriteLine("\t" + column.ColumnName + " : boolean,"); break;
+                                    case "DateTime": yaz.WriteLine("\t" + column.ColumnName + " : Date,"); break;
+                                    case "DateTimeOffset": yaz.WriteLine("\t" + column.ColumnName + " : string,"); break;
+                                    case "TimeSpan": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    case "Single": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    case "Object": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    case "Guid": yaz.WriteLine("\t" + column.ColumnName + " : any,"); break;
+                                    default: yaz.WriteLine("\t" + column.ColumnName + " : string,"); break;
+                                }
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t//" + column.ColumnName + " isimli kolonun veri tipi bu programda tanumlı değil.");
+                            }
+
+                            i++;
+                        }
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tMesaj : string,");
+
+
+                        if (chkRTables.Checked == true)
+                        {
+                            if (fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("");
+
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+                                    yaz.WriteLine("\t" + ForeignTableName + "List : Array<" + ForeignTableName + ">,");
+                                }
+                            }
+
+                            if (fkcListForeign.Count > 0)
+                            {
+                                yaz.WriteLine("");
+
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    yaz.WriteLine("\t" + PrimaryTableName + "List : any[],");
+                                }
+                            }
+                        }
+
                         yaz.WriteLine("}");
                         yaz.Close();
                     }
@@ -3194,6 +3428,237 @@ namespace TDFactory
         }
 
         void CreateAngularControllerLayer()
+        {
+            int i = 0;
+
+            foreach (string Table in selectedTables)
+            {
+                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+
+                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
+
+                identityColumns = identityColumns.IdentityCheck(lstSeciliKolonlar);
+
+                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+
+                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
+                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
+
+                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
+                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
+                if (i <= 0)
+                {
+                    CreateAngularHomeController();
+
+                    i++;
+                }
+
+                StreamWriter yaz = File.CreateText(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\" + Table + "Controller.cs");
+
+                yaz.WriteLine("using System;");
+                yaz.WriteLine("using System.Linq;");
+                yaz.WriteLine("using System.Web.Mvc;");
+                yaz.WriteLine("using System.Collections.Generic;");
+                yaz.WriteLine("using TDLibrary;");
+                yaz.WriteLine("using Models;");
+
+                yaz.WriteLine("");
+                yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
+                yaz.WriteLine("{");
+                yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
+                yaz.WriteLine("\t{");
+                yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                yaz.WriteLine("");
+
+                // Index
+                string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
+
+                yaz.WriteLine("\t\tpublic ViewResult Index(string conditions)");
+                yaz.WriteLine("\t\t{");
+                yaz.WriteLine("\t\t\treturn View();");
+                yaz.WriteLine("\t\t}");
+                yaz.WriteLine("");
+
+                if (identityColumns.Count > 0)
+                {
+                    string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
+
+                    // Ekle
+                    yaz.WriteLine("\t\tpublic ActionResult Ekle()");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
+                    yaz.WriteLine("");
+
+                    if (chkRTables.Checked == true)
+                    {
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                            }
+                        }
+                    }
+
+                    yaz.WriteLine("\t\t\treturn View(table);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+
+                    yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
+                    yaz.WriteLine("\t\tpublic ActionResult Ekle(" + Table + " table)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\tentity." + Table + ".Add(table);");
+                    yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("");
+
+                    if (chkRTables.Checked == true)
+                    {
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                            }
+                        }
+                    }
+
+                    yaz.WriteLine("\t\t\treturn View(\"Ekle\", table);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+
+                    //Duzenle
+                    yaz.WriteLine("\t\t[HttpGet]");
+                    yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
+                    yaz.WriteLine("");
+
+                    if (chkRTables.Checked == true)
+                    {
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                yaz.WriteLine("\t\t\t\t{");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t{");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                            }
+                        }
+                    }
+
+                    yaz.WriteLine("\t\t\treturn View(table);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
+                    yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + Table + " table)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\t" + Table + " _table = entity." + Table + ".Find(table." + id + ");");
+                    yaz.WriteLine("");
+
+                    foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                    {
+                        yaz.WriteLine("\t\t\t\t_table." + column.ColumnName + " = table." + column.ColumnName + ";");
+                    }
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
+                    yaz.WriteLine("\t\t\t}");
+
+                    yaz.WriteLine("");
+
+                    if (chkRTables.Checked == true)
+                    {
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                yaz.WriteLine("\t\t\t\t{");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t{");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                            }
+                        }
+                    }
+
+                    yaz.WriteLine("\t\t\treturn View(\"Duzenle\", table);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+
+                    //Sil
+                    yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " conditions)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(conditions);");
+                    yaz.WriteLine("\t\t\tentity." + Table + ".Remove(table);");
+                    yaz.WriteLine("\t\t\tentity.SaveChanges();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn Json(true);");
+                    yaz.WriteLine("\t\t}");
+                }
+
+                yaz.WriteLine("\t}");
+                yaz.WriteLine("}");
+
+                yaz.Close();
+            }
+        }
+
+        void CreateAngularServicesLayer()
         {
             int i = 0;
 
