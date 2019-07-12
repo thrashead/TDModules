@@ -142,13 +142,13 @@ namespace TDFactory
                     tableColumnNames = GetTableColumnNames();
                     selectedTables = GetSelectedTableNames(tableColumnNames);
 
-                    if (chkMVCModel.Checked || chkMVCHepsi.Checked)
+                    if (chkAngular.Checked)
                     {
-                        CreateMVCLayers(true);
+                        CreateAngular();
                     }
                     else
                     {
-                        CreateMVCLayers(false);
+                        CreateMVC();
                     }
 
                     MessageBox.Show("Katmanlar Başarıyla Oluşturuldu.");

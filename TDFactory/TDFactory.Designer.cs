@@ -113,8 +113,8 @@
             this.btnTabloEkle = new System.Windows.Forms.Button();
             this.grpIslem = new System.Windows.Forms.GroupBox();
             this.pnlKaydet = new System.Windows.Forms.Panel();
-            this.rdTDFramework = new System.Windows.Forms.RadioButton();
-            this.rdEntityFramework = new System.Windows.Forms.RadioButton();
+            this.chkAngular = new System.Windows.Forms.CheckBox();
+            this.pnlAndroidService = new System.Windows.Forms.Panel();
             this.rdAndWcf = new System.Windows.Forms.RadioButton();
             this.rdAndSqlite = new System.Windows.Forms.RadioButton();
             this.chkAndData = new System.Windows.Forms.CheckBox();
@@ -134,8 +134,6 @@
             this.lblWCKullanici = new System.Windows.Forms.Label();
             this.txtWCSifre = new System.Windows.Forms.TextBox();
             this.txtWCKullanici = new System.Windows.Forms.TextBox();
-            this.chkDBColumn = new System.Windows.Forms.CheckBox();
-            this.chkDBTable = new System.Windows.Forms.CheckBox();
             this.chkMVCStilScript = new System.Windows.Forms.CheckBox();
             this.chkMVCWcfServis = new System.Windows.Forms.CheckBox();
             this.chkMVCWebConfig = new System.Windows.Forms.CheckBox();
@@ -180,8 +178,6 @@
             this.lblMaksimumKarakter = new System.Windows.Forms.Label();
             this.folderDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
-            this.pnlProjectType = new System.Windows.Forms.Panel();
-            this.pnlAndroidService = new System.Windows.Forms.Panel();
             this.tbconTablar.SuspendLayout();
             this.tabpageVeritabaniOlustur.SuspendLayout();
             this.grpBaglanti.SuspendLayout();
@@ -199,9 +195,8 @@
             this.tabpageKatmanlariOlustur.SuspendLayout();
             this.grpIslem.SuspendLayout();
             this.pnlKaydet.SuspendLayout();
-            this.grpKolon.SuspendLayout();
-            this.pnlProjectType.SuspendLayout();
             this.pnlAndroidService.SuspendLayout();
+            this.grpKolon.SuspendLayout();
             this.SuspendLayout();
             // 
             // tbconTablar
@@ -1268,8 +1263,8 @@
             // 
             // pnlKaydet
             // 
+            this.pnlKaydet.Controls.Add(this.chkAngular);
             this.pnlKaydet.Controls.Add(this.pnlAndroidService);
-            this.pnlKaydet.Controls.Add(this.pnlProjectType);
             this.pnlKaydet.Controls.Add(this.chkAndData);
             this.pnlKaydet.Controls.Add(this.lstAndIzin);
             this.pnlKaydet.Controls.Add(this.lblAndIzinler);
@@ -1287,8 +1282,6 @@
             this.pnlKaydet.Controls.Add(this.lblWCKullanici);
             this.pnlKaydet.Controls.Add(this.txtWCSifre);
             this.pnlKaydet.Controls.Add(this.txtWCKullanici);
-            this.pnlKaydet.Controls.Add(this.chkDBColumn);
-            this.pnlKaydet.Controls.Add(this.chkDBTable);
             this.pnlKaydet.Controls.Add(this.chkMVCStilScript);
             this.pnlKaydet.Controls.Add(this.chkMVCWcfServis);
             this.pnlKaydet.Controls.Add(this.chkMVCWebConfig);
@@ -1308,28 +1301,25 @@
             this.pnlKaydet.Size = new System.Drawing.Size(736, 240);
             this.pnlKaydet.TabIndex = 68;
             // 
-            // rdTDFramework
+            // chkAngular
             // 
-            this.rdTDFramework.AutoSize = true;
-            this.rdTDFramework.Checked = true;
-            this.rdTDFramework.Location = new System.Drawing.Point(3, 2);
-            this.rdTDFramework.Name = "rdTDFramework";
-            this.rdTDFramework.Size = new System.Drawing.Size(92, 17);
-            this.rdTDFramework.TabIndex = 85;
-            this.rdTDFramework.TabStop = true;
-            this.rdTDFramework.Text = "TDFramework";
-            this.rdTDFramework.UseVisualStyleBackColor = true;
-            this.rdTDFramework.CheckedChanged += new System.EventHandler(this.ProjectType_CheckedChanged);
+            this.chkAngular.AutoSize = true;
+            this.chkAngular.Location = new System.Drawing.Point(6, 218);
+            this.chkAngular.Name = "chkAngular";
+            this.chkAngular.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.chkAngular.Size = new System.Drawing.Size(62, 17);
+            this.chkAngular.TabIndex = 88;
+            this.chkAngular.Text = "Angular";
+            this.chkAngular.UseVisualStyleBackColor = true;
             // 
-            // rdEntityFramework
+            // pnlAndroidService
             // 
-            this.rdEntityFramework.AutoSize = true;
-            this.rdEntityFramework.Location = new System.Drawing.Point(142, 2);
-            this.rdEntityFramework.Name = "rdEntityFramework";
-            this.rdEntityFramework.Size = new System.Drawing.Size(106, 17);
-            this.rdEntityFramework.TabIndex = 84;
-            this.rdEntityFramework.Text = "Entity Framework";
-            this.rdEntityFramework.UseVisualStyleBackColor = true;
+            this.pnlAndroidService.Controls.Add(this.rdAndWcf);
+            this.pnlAndroidService.Controls.Add(this.rdAndSqlite);
+            this.pnlAndroidService.Location = new System.Drawing.Point(613, 184);
+            this.pnlAndroidService.Name = "pnlAndroidService";
+            this.pnlAndroidService.Size = new System.Drawing.Size(116, 21);
+            this.pnlAndroidService.TabIndex = 87;
             // 
             // rdAndWcf
             // 
@@ -1676,27 +1666,7 @@
             this.txtWCKullanici.Name = "txtWCKullanici";
             this.txtWCKullanici.Size = new System.Drawing.Size(149, 20);
             this.txtWCKullanici.TabIndex = 72;
-            this.txtWCKullanici.Text = "kullanici";
-            // 
-            // chkDBColumn
-            // 
-            this.chkDBColumn.AutoSize = true;
-            this.chkDBColumn.Location = new System.Drawing.Point(6, 122);
-            this.chkDBColumn.Name = "chkDBColumn";
-            this.chkDBColumn.Size = new System.Drawing.Size(142, 17);
-            this.chkDBColumn.TabIndex = 69;
-            this.chkDBColumn.Text = "DBColumn Attribute Ekle";
-            this.chkDBColumn.UseVisualStyleBackColor = true;
-            // 
-            // chkDBTable
-            // 
-            this.chkDBTable.AutoSize = true;
-            this.chkDBTable.Location = new System.Drawing.Point(6, 103);
-            this.chkDBTable.Name = "chkDBTable";
-            this.chkDBTable.Size = new System.Drawing.Size(134, 17);
-            this.chkDBTable.TabIndex = 70;
-            this.chkDBTable.Text = "DBTable Attribute Ekle";
-            this.chkDBTable.UseVisualStyleBackColor = true;
+            this.txtWCKullanici.Text = "user";
             // 
             // chkMVCStilScript
             // 
@@ -1794,9 +1764,9 @@
             // btnBaslat
             // 
             this.btnBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnBaslat.Location = new System.Drawing.Point(4, 214);
+            this.btnBaslat.Location = new System.Drawing.Point(70, 214);
             this.btnBaslat.Name = "btnBaslat";
-            this.btnBaslat.Size = new System.Drawing.Size(360, 23);
+            this.btnBaslat.Size = new System.Drawing.Size(294, 23);
             this.btnBaslat.TabIndex = 27;
             this.btnBaslat.Text = "Web Katmanları Oluştur";
             this.btnBaslat.UseVisualStyleBackColor = true;
@@ -2134,24 +2104,6 @@
             this.lblMaksimumKarakter.Size = new System.Drawing.Size(0, 13);
             this.lblMaksimumKarakter.TabIndex = 14;
             // 
-            // pnlProjectType
-            // 
-            this.pnlProjectType.Controls.Add(this.rdTDFramework);
-            this.pnlProjectType.Controls.Add(this.rdEntityFramework);
-            this.pnlProjectType.Location = new System.Drawing.Point(2, 56);
-            this.pnlProjectType.Name = "pnlProjectType";
-            this.pnlProjectType.Size = new System.Drawing.Size(303, 21);
-            this.pnlProjectType.TabIndex = 86;
-            // 
-            // pnlAndroidService
-            // 
-            this.pnlAndroidService.Controls.Add(this.rdAndWcf);
-            this.pnlAndroidService.Controls.Add(this.rdAndSqlite);
-            this.pnlAndroidService.Location = new System.Drawing.Point(613, 184);
-            this.pnlAndroidService.Name = "pnlAndroidService";
-            this.pnlAndroidService.Size = new System.Drawing.Size(116, 21);
-            this.pnlAndroidService.TabIndex = 87;
-            // 
             // TDFactory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2189,12 +2141,10 @@
             this.grpIslem.ResumeLayout(false);
             this.pnlKaydet.ResumeLayout(false);
             this.pnlKaydet.PerformLayout();
-            this.grpKolon.ResumeLayout(false);
-            this.grpKolon.PerformLayout();
-            this.pnlProjectType.ResumeLayout(false);
-            this.pnlProjectType.PerformLayout();
             this.pnlAndroidService.ResumeLayout(false);
             this.pnlAndroidService.PerformLayout();
+            this.grpKolon.ResumeLayout(false);
+            this.grpKolon.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -2323,8 +2273,6 @@
         private System.Windows.Forms.CheckBox chkMVCController;
         private System.Windows.Forms.TextBox txtProjectName;
         private System.Windows.Forms.Label lblProjectName;
-        private System.Windows.Forms.CheckBox chkDBColumn;
-        private System.Windows.Forms.CheckBox chkDBTable;
         private System.Windows.Forms.CheckBox chkRTables;
         private System.Windows.Forms.CheckBox chkMVCModel;
         private System.Windows.Forms.CheckBox chkMVCWebConfig;
@@ -2350,9 +2298,7 @@
         private System.Windows.Forms.CheckBox chkAndData;
         private System.Windows.Forms.CheckBox chkMVCWcfServis;
         private System.Windows.Forms.CheckBox chkMVCStoredProc;
-        private System.Windows.Forms.RadioButton rdTDFramework;
-        private System.Windows.Forms.RadioButton rdEntityFramework;
-        private System.Windows.Forms.Panel pnlProjectType;
         private System.Windows.Forms.Panel pnlAndroidService;
+        private System.Windows.Forms.CheckBox chkAngular;
     }
 }
