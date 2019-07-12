@@ -2132,7 +2132,7 @@ namespace TDFactory
                 CreateAngularModelLayer();
                 CreateAngularViewLayer();
                 CreateAngularControllerLayer();
-                CreateAngularServicesLayer();
+                CreateAngularServiceLayer();
                 CreateAngularTypeScriptLayer();
                 CreateWebConfig();
                 CreateStilScript();
@@ -2154,7 +2154,7 @@ namespace TDFactory
                 if (chkMVCController.Checked == true)
                 {
                     CreateAngularControllerLayer();
-                    CreateAngularServicesLayer();
+                    CreateAngularServiceLayer();
                     CreateAngularTypeScriptLayer();
                 }
 
@@ -2641,7 +2641,6 @@ namespace TDFactory
                     yaz.WriteLine("import { HomeComponent } from './home/index';");
                     yaz.WriteLine("import { ScriptsComponent } from './shared/controls/scripts';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("//Admin");
                     yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
                     yaz.WriteLine("import { AdminLayoutComponent } from './admin/views/shared/layoutAdmin';");
                     yaz.WriteLine("import { AdminHomeComponent } from './admin/views/home/index';");
@@ -2651,10 +2650,15 @@ namespace TDFactory
                     yaz.WriteLine("import { AdminCopyDeleteComponent } from './admin/views/shared/controls/copydelete';");
                     yaz.WriteLine("import { AdminFooterComponent } from './admin/views/shared/controls/footer';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("import { AdminBaglantiIndexComponent } from './admin/views/baglanti';");
-                    yaz.WriteLine("import { AdminBaglantiEkleComponent } from './admin/views/baglanti/ekle';");
-                    yaz.WriteLine("import { AdminBaglantiDuzenleComponent } from './admin/views/baglanti/duzenle';");
-                    yaz.WriteLine("");
+
+                    foreach (string Table in selectedTables)
+                    {
+                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToLower() + "';");
+                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToLower() + "/ekle';");
+                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToLower() + "/duzenle';");
+                        yaz.WriteLine("");
+                    }
+
                     yaz.WriteLine("import * as $ from \"jquery\";");
                     yaz.WriteLine("");
                     yaz.WriteLine("@NgModule({");
@@ -2673,10 +2677,15 @@ namespace TDFactory
                     yaz.WriteLine("\t\tAdminScriptsComponent,");
                     yaz.WriteLine("\t\tAdminCopyDeleteComponent,");
                     yaz.WriteLine("\t\tAdminFooterComponent,");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tAdminBaglantiIndexComponent,");
-                    yaz.WriteLine("\t\tAdminBaglantiEkleComponent,");
-                    yaz.WriteLine("\t\tAdminBaglantiDuzenleComponent,");
+
+                    foreach (string Table in selectedTables)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tAdmin" + Table + "IndexComponent,");
+                        yaz.WriteLine("\t\tAdmin" + Table + "EkleComponent,");
+                        yaz.WriteLine("\t\tAdmin" + Table + "DuzenleComponent,");
+                    }
+
                     yaz.WriteLine("\t],");
                     yaz.WriteLine("\timports: [");
                     yaz.WriteLine("\t\tBrowserModule,");
@@ -2684,8 +2693,8 @@ namespace TDFactory
                     yaz.WriteLine("\t\tReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),");
                     yaz.WriteLine("\t\tHttpClientModule");
                     yaz.WriteLine("\t],");
-                    yaz.WriteLine("\t//'/' -> '/Emlak/' Bu şekilde değişecek");
-                    yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/Emlak/' }],");
+                    yaz.WriteLine("\t//'/' -> '/" + projectName + "/' Bu şekilde değişecek");
+                    yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/" + projectName + "/' }],");
                     yaz.WriteLine("\tbootstrap: [AppComponent]");
                     yaz.WriteLine("})");
                     yaz.WriteLine("export class AppModule { }");
@@ -2711,10 +2720,13 @@ namespace TDFactory
                     yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
                     yaz.WriteLine("");
 
-                    yaz.WriteLine("import { AdminBaglantiIndexComponent } from './admin/views/baglanti';");
-                    yaz.WriteLine("import { AdminBaglantiEkleComponent } from './admin/views/baglanti/ekle';");
-                    yaz.WriteLine("import { AdminBaglantiDuzenleComponent } from './admin/views/baglanti/duzenle';");
-                    yaz.WriteLine("");
+                    foreach (string Table in selectedTables)
+                    {
+                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToLower() + "';");
+                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToLower() + "/ekle';");
+                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToLower() + "/duzenle';");
+                        yaz.WriteLine("");
+                    }
 
                     yaz.WriteLine("const routes: Routes = [");
                     yaz.WriteLine("\t{ path: 'Admin', component: AdminLoginComponent },");
@@ -2734,14 +2746,25 @@ namespace TDFactory
                     yaz.WriteLine("\t\tcomponent: AdminLayoutComponent,");
                     yaz.WriteLine("\t\tchildren: [");
                     yaz.WriteLine("\t\t\t{ path: 'Admin/Home', component: AdminHomeComponent },");
-                    yaz.WriteLine("");
 
-                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti', component: AdminBaglantiIndexComponent },");
-                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti/Index', component: AdminBaglantiIndexComponent },");
-                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti/Ekle', component: AdminBaglantiEkleComponent },");
-                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti/Ekle/:linkID', component: AdminBaglantiEkleComponent },");
-                    yaz.WriteLine("\t\t\t{ path: 'Admin/Baglanti/Duzenle/:id', component: AdminBaglantiDuzenleComponent },");
-                    yaz.WriteLine("");
+                    foreach (string Table in selectedTables)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "', component: Admin" + Table + "IndexComponent },");
+                        yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Index', component: Admin" + Table + "IndexComponent },");
+                        yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Ekle', component: Admin" + Table + "EkleComponent },");
+
+                        SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                        List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
+                        fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
+                        if (fkcListForeign.Count > 0)
+                        {
+                            yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Ekle/:linkID', component: Admin" + Table + "EkleComponent },");
+                        }
+
+                        yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Duzenle/:id', component: Admin" + Table + "DuzenleComponent },");
+                    }
 
                     yaz.WriteLine("\t\t]");
                     yaz.WriteLine("\t},");
@@ -2844,6 +2867,7 @@ namespace TDFactory
                 List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
 
                 SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+
                 List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
                 fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
 
@@ -2852,7 +2876,7 @@ namespace TDFactory
 
                 CreateDirectories(Table);
 
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Models\\" + Table + ".cs", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Models\\" + Table + "Model.cs", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
@@ -2865,16 +2889,19 @@ namespace TDFactory
                         yaz.WriteLine("namespace Models");
                         yaz.WriteLine("{");
 
-                        yaz.WriteLine("\tpublic class " + Table);
+                        yaz.WriteLine("\tpublic class " + Table + "Model");
                         yaz.WriteLine("\t{");
-                        yaz.WriteLine("\t\tpublic " + Table + "()");
-                        yaz.WriteLine("\t\t{");
 
                         if (chkRTables.Checked == true)
                         {
+                            if (fkcList.Count > 0 || fkcListForeign.Count > 0)
+                            {
+                                yaz.WriteLine("\t\tpublic " + Table + "Model()");
+                                yaz.WriteLine("\t\t{");
+                            }
+
                             if (fkcList.Count > 0)
                             {
-
                                 foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
@@ -2891,9 +2918,13 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t" + PrimaryTableName + "List = new List<SelectListItem>();");
                                 }
                             }
+
+                            if (fkcList.Count > 0 || fkcListForeign.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                            }
                         }
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
 
                         int counter = columnNames.Count;
                         int i = 1;
@@ -3076,50 +3107,6 @@ namespace TDFactory
             }
         }
 
-        void CreateAngularLayout()
-        {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\_Layout.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@using TDLibrary");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<!DOCTYPE html>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<html>");
-                    yaz.WriteLine("<head>");
-                    yaz.WriteLine("\t<link rel=\"shortcut icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
-                    yaz.WriteLine("\t<link rel=\"icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
-                    yaz.WriteLine("\t<title>@ViewBag.Title</title>");
-                    yaz.WriteLine("</head>");
-                    yaz.WriteLine("<body>");
-                    yaz.WriteLine("\t@RenderBody()");
-                    yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Views/Shared/Controls/_Scripts.cshtml\"); }");
-                    yaz.WriteLine("</body>");
-                    yaz.WriteLine("</html>");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\Controls\\_Scripts.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@using TDLibrary");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/runtime-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/polyfills-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/styles-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/vendor-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/main-es2015.js\"></script>");
-
-                    yaz.Close();
-                }
-            }
-        }
-
         void CreateAngularViewLayer()
         {
             int i = 0;
@@ -3152,134 +3139,91 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        int tablewidth = 120;
-                        int colcount = tableColumnNames.Where(a => a.TableName == Table).ToList().Count;
+                        yaz.WriteLine("<div id=\"content\">");
+                        yaz.WriteLine("\t<div id=\"content-header\">");
+                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a href=\"javascript:;\" class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + "</a></div>");
+                        yaz.WriteLine("\t</div>");
+                        yaz.WriteLine("\t<div class=\"container-fluid\">");
+                        yaz.WriteLine("\t\t<div class=\"row-fluid\">");
+                        yaz.WriteLine("\t\t\t<div class=\"span12\">");
+                        yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
+                        yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
+                        yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
+                        yaz.WriteLine("\t\t\t\t\t\t<h5>" + Table + "</h5>");
+                        yaz.WriteLine("\t\t\t\t\t</div>");
+                        yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
+                        yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
+                        yaz.WriteLine("\t\t\t\t\t\t\t<thead>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t<tr>");
 
-                        switch (colcount)
+                        i = 0;
+
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
                         {
-                            case 1:
-                                tablewidth = tablewidth + 50;
-                                break;
-                            case 2:
-                                tablewidth = tablewidth + 50 + 230;
-                                break;
-                            case 3:
-                                tablewidth = tablewidth + 50 + 230 + 240;
-                                break;
-                            case 4:
-                                tablewidth = tablewidth + 50 + 230 + 240 + 138;
-                                break;
-                            default:
-                                tablewidth = tablewidth + 50 + 230 + 240 + 138;
-                                tablewidth = tablewidth + ((colcount - 4) * 138);
-                                break;
+                            string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + column.ColumnName + "</th>");
+
+                            i++;
                         }
 
-                        yaz.WriteLine("@using TDLibrary");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("@{");
-                        yaz.WriteLine("\tViewBag.Title = \"" + Table + "\";");
-                        yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_Layout.cshtml\";");
-                        yaz.WriteLine("}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("<div id=\"tablo" + Table + "\">");
-                        yaz.WriteLine("</div>");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href=\"@AppMgr.ScriptPath/tdTable/tdTable.css\" />");
-                        yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/tdTable/tdTable.js\"></script>");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("<script>");
-                        yaz.WriteLine("\t$(\"#tablo" + Table + "\").tdTable(");
-                        yaz.WriteLine("\t{");
-                        yaz.WriteLine("\t\trootfolder: \"@AppMgr.ScriptPath/tdTable\",");
-                        yaz.WriteLine("\t\ttitle: \"" + Table + "\",");
-                        yaz.WriteLine("\t\tlistmethod: \"@AppMgr.AdminPath/" + Table + "/" + Table + "Index\",");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t<tr *ngFor=\"let item of " + Table + "List\">");
 
-                        if (identityColumns.Count > 0)
+                        i = 0;
+
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
                         {
-                            yaz.WriteLine("\t\tdeletemethod: \"@AppMgr.AdminPath/" + Table + "/Sil\",");
-                        }
+                            string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
-                        yaz.WriteLine("\t\titemperpage: 10,");
-                        yaz.WriteLine("\t\ttablewidth: " + tablewidth + ",");
-                        yaz.WriteLine("\t\tenablesorting: true,");
-                        yaz.WriteLine("\t\tshowfooter: true,");
-                        yaz.WriteLine("\t\tshowcommands: true,");
-                        yaz.WriteLine("\t\ttheme: \"blue\",");
-                        yaz.WriteLine("\t\tconditions: {");
-
-                        if (identityColumns.Count > 0)
-                        {
-                            yaz.WriteLine("\t\t\tOrderBy: \"" + id + "\",");
-                        }
-
-                        yaz.WriteLine("\t\t\tFields: {");
-
-                        int cssSayac = 1;
-                        string cssClass = "first";
-
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                        {
-                            switch (cssSayac)
+                            if (column.TypeName != typeof(bool))
                             {
-                                case 1:
-                                    cssClass = "first";
-                                    break;
-                                case 2:
-                                    cssClass = "second";
-                                    break;
-                                case 3:
-                                    cssClass = "third";
-                                    break;
-                                case 4:
-                                    cssClass = "fourth";
-                                    break;
-                                default:
-                                    cssClass = "fourth";
-                                    break;
-                            }
-                            List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
-
-                            if (foreLst.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t\t\t" + foreLst.FirstOrDefault().PrimaryTableName + "Adi: {");
-                                yaz.WriteLine("\t\t\t\t\tTitle: \"" + foreLst.FirstOrDefault().PrimaryTableName + "Adi\",");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + column.ColumnName + " }}</td>");
                             }
                             else
                             {
-                                yaz.WriteLine("\t\t\t\t" + column.ColumnName + ": {");
-                                yaz.WriteLine("\t\t\t\t\tTitle: \"" + column.ColumnName + "\",");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + " style=\"text-align:center;\"><img *ngIf=\"item?." + column.ColumnName + "\" class=\"active\" /><img *ngIf=\"!item?." + column.ColumnName + "\" class=\"passive\" /></td>");
                             }
-                            yaz.WriteLine("\t\t\t\t\tCssClass: \"" + cssClass + "\"");
 
-                            yaz.WriteLine("\t\t\t\t},");
-
-                            cssSayac++;
+                            i++;
                         }
 
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("\t\t},");
-                        yaz.WriteLine("\t\tcommands: {");
-                        yaz.WriteLine("\t\t\tAddText: \"Ekle\",");
-                        yaz.WriteLine("\t\t\tAddLink: \"" + Table + "/Ekle\",");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
 
                         if (identityColumns.Count > 0)
                         {
-                            yaz.WriteLine("\t\t\tDetailLink: \"" + Table + "/Detay/{" + id + "}\",");
-                            yaz.WriteLine("\t\t\tUpdateLink: \"" + Table + "/Duzenle/{" + id + "}\",");
-                            yaz.WriteLine("\t\t\tDeleteLink: \"javascript:;\"");
-                        }
-                        else
-                        {
-                            yaz.WriteLine("\t\t\tShowDetailLink: false,");
-                            yaz.WriteLine("\t\t\tShowUpdateLink: false,");
-                            yaz.WriteLine("\t\t\tShowDeleteLink: false");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" *ngIf=\"updateShow\" [routerLink]=\"['/Admin/" + Table + "/Duzenle/' + item?." + id + "]\">Düzenle</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" *ngIf=\"copyShow\" data-toggle=\"modal\" href=\"#cpyData\" [attr.data-id]=\"item?." + id + "\">Kopyala</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" *ngIf=\"deleteShow\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-id]=\"item?." + id + "\">Sil</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rdltLink\" *ngIf=\"realDeleteShow\" data-toggle=\"modal\" href=\"#rdltData\" [attr.data-id]=\"item?." + id + "\">Kaldır</a></li>");
                         }
 
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("\t});");
-                        yaz.WriteLine("</script>");
-
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t</tbody>");
+                        yaz.WriteLine("\t\t\t\t\t\t</table>");
+                        yaz.WriteLine("\t\t\t\t\t</div>");
+                        yaz.WriteLine("\t\t\t\t</div>");
+                        yaz.WriteLine("\t\t\t</div>");
+                        yaz.WriteLine("\t\t</div>");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t<div class=\"pagelinks\">");
+                        yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "/Ekle\" class=\"btn btn-primary btn-add\" *ngIf=\"insertShow\">" + Table + " Ekle</a>");
+                        yaz.WriteLine("\t\t</div>");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t<input id=\"hdnModel\" type=\"hidden\" value=\"" + Table + "\" />");
+                        yaz.WriteLine("\t</div>");
+                        yaz.WriteLine("</div>");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("<admin-copydelete></admin-copydelete>");
                         yaz.Close();
                     }
                 }
@@ -3423,6 +3367,67 @@ namespace TDFactory
                             yaz.Close();
                         }
                     }
+                }
+            }
+        }
+
+        void CreateAngularLayout()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\_Layout.cshtml", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("@using TDLibrary");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<!DOCTYPE html>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<html>");
+                    yaz.WriteLine("<head>");
+                    yaz.WriteLine("\t<link rel=\"shortcut icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
+                    yaz.WriteLine("\t<link rel=\"icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
+                    yaz.WriteLine("\t<title>@ViewBag.Title</title>");
+                    yaz.WriteLine("</head>");
+                    yaz.WriteLine("<body>");
+                    yaz.WriteLine("\t@RenderBody()");
+                    yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Views/Shared/Controls/_Scripts.cshtml\"); }");
+                    yaz.WriteLine("</body>");
+                    yaz.WriteLine("</html>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\Controls\\_Scripts.cshtml", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("@using TDLibrary");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/runtime-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/polyfills-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/styles-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/vendor-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/main-es2015.js\"></script>");
+
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateAngularHomePage()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Home\\Index.cshtml", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("@{");
+                    yaz.WriteLine("\tViewBag.Title = \"" + projectName + " Ana Sayfa\";");
+                    yaz.WriteLine("\tLayout = \"~/Views/Shared/_Layout.cshtml\";");
+                    yaz.WriteLine("}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToLower() + "-app></" + projectName.Substring(0, 3).ToLower() + "-app>");
+                    yaz.Close();
                 }
             }
         }
@@ -3658,7 +3663,7 @@ namespace TDFactory
             }
         }
 
-        void CreateAngularServicesLayer()
+        void CreateAngularServiceLayer()
         {
             int i = 0;
 
@@ -4501,23 +4506,6 @@ namespace TDFactory
 
                         yaz.Close();
                     }
-                }
-            }
-        }
-
-        void CreateAngularHomePage()
-        {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Home\\Index.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@{");
-                    yaz.WriteLine("\tViewBag.Title = \"" + projectName + " Ana Sayfa\";");
-                    yaz.WriteLine("\tLayout = \"~/Views/Shared/_Layout.cshtml\";");
-                    yaz.WriteLine("}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToLower() + "-app></" + projectName.Substring(0, 3).ToLower() + "-app>");
-                    yaz.Close();
                 }
             }
         }
