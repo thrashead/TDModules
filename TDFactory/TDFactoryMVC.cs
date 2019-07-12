@@ -2131,6 +2131,7 @@ namespace TDFactory
                 CreateAngularModelLayer();
                 CreateAngularViewLayer();
                 CreateAngularControllerLayer();
+                CreateAngularTypeScriptLayer();
                 CreateWebConfig();
                 CreateStilScript();
 
@@ -2151,6 +2152,7 @@ namespace TDFactory
                 if (chkMVCController.Checked == true)
                 {
                     CreateAngularControllerLayer();
+                    CreateAngularTypeScriptLayer();
                 }
 
                 if (chkMVCWebConfig.Checked == true)
@@ -2200,6 +2202,41 @@ namespace TDFactory
             {
                 if (chkMVCHepsi.Checked)
                 {
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls");
+                    }
+
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared");
@@ -2339,6 +2376,16 @@ namespace TDFactory
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Models");
                         }
 
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models");
+                        }
+
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\models"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\models");
@@ -2370,6 +2417,31 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Views\\Home"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Views\\Home");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls");
                         }
 
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared"))
@@ -2413,6 +2485,21 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services");
                         }
 
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\services"))
@@ -2474,7 +2561,20 @@ namespace TDFactory
             {
                 if (chkMVCHepsi.Checked || chkMVCView.Checked)
                 {
-                    
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName);
+                    }
                 }
             }
         }
@@ -2487,10 +2587,6 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        yaz.WriteLine("using System;");
-                        yaz.WriteLine("using System.Collections.Generic;");
-                        yaz.WriteLine("using System.Linq;");
-                        yaz.WriteLine("using System.Web;");
                         yaz.WriteLine("using System.Web.Mvc;");
                         yaz.WriteLine("using System.Web.Routing;");
                         yaz.WriteLine("");
@@ -2503,10 +2599,17 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\troutes.IgnoreRoute(\"{resource}.axd/{*pathInfo}\");");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\troutes.MapRoute(");
-                        yaz.WriteLine("\t\t\t\tname: \"Default\",");
-                        yaz.WriteLine("\t\t\t\turl: \"{controller}/{action}/{id}\",");
-                        yaz.WriteLine("\t\t\t\tdefaults: new { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional },");
+                        yaz.WriteLine("\t\t\t\tname: \"Shared\",");
+                        yaz.WriteLine("\t\t\t\turl: \"Shared/{action}/{id}\",");
+                        yaz.WriteLine("\t\t\t\tdefaults: new { controller = \"Shared\", action = \"Index\", id = UrlParameter.Optional },");
                         yaz.WriteLine("\t\t\t\tnamespaces: new[] { \"" + projectName + ".Controllers\" }");
+                        yaz.WriteLine("\t\t\t);");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\troutes.MapRoute(");
+                        yaz.WriteLine("\t\t\t\tname: \"Default\",");
+                        yaz.WriteLine("\t\t\t\turl: \"{*anything}\",");
+                        yaz.WriteLine("\t\t\t\t// url: \"{controller}/{action}/{id}\",");
+                        yaz.WriteLine("\t\t\t\tdefaults: new { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional }");
                         yaz.WriteLine("\t\t\t);");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("\t}");
@@ -2517,33 +2620,33 @@ namespace TDFactory
                 }
             }
 
-            if (Directory.Exists(PathAddress + "\\" + projectFolder + "\\Areas\\Admin"))
+            if (Directory.Exists(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax"))
             {
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\AdminAreaRegistration.cs", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\AjaxAreaRegistration.cs", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
                         yaz.WriteLine("using System.Web.Mvc;");
                         yaz.WriteLine("");
-                        yaz.WriteLine("namespace " + projectName + ".Areas.Admin");
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Ajax");
                         yaz.WriteLine("{");
-                        yaz.WriteLine("\tpublic class AdminAreaRegistration : AreaRegistration");
+                        yaz.WriteLine("\tpublic class AjaxAreaRegistration : AreaRegistration");
                         yaz.WriteLine("\t{");
                         yaz.WriteLine("\t\tpublic override string AreaName");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\tget");
                         yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\treturn \"Admin\";");
+                        yaz.WriteLine("\t\t\t\treturn \"Ajax\";");
                         yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\tpublic override void RegisterArea(AreaRegistrationContext context)");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\tcontext.MapRoute(");
-                        yaz.WriteLine("\t\t\t\t\"Admin_default\",");
-                        yaz.WriteLine("\t\t\t\t\"Admin/{controller}/{action}/{id}\",");
+                        yaz.WriteLine("\t\t\t\t\"Ajax_default\",");
+                        yaz.WriteLine("\t\t\t\t\"Ajax/{controller}/{action}/{id}\",");
                         yaz.WriteLine("\t\t\t\tnew { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional },");
-                        yaz.WriteLine("\t\t\t\tnamespaces: new[] { \"" + projectName + ".Areas.Admin.Controllers\" }");
+                        yaz.WriteLine("\t\t\t\tnamespaces: new[] { \"" + projectName + ".Areas.Ajax.Controllers\" }");
                         yaz.WriteLine("\t\t\t);");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("\t}");
@@ -2745,46 +2848,21 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
+                    yaz.WriteLine("@using TDLibrary");
+                    yaz.WriteLine("");
                     yaz.WriteLine("<!DOCTYPE html>");
                     yaz.WriteLine("");
                     yaz.WriteLine("<html>");
                     yaz.WriteLine("<head>");
-                    yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=1\" />");
-                    yaz.WriteLine("\t<meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />");
-                    yaz.WriteLine("\t<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\" />");
+                    yaz.WriteLine("\t<link rel=\"shortcut icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
+                    yaz.WriteLine("\t<link rel=\"icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
                     yaz.WriteLine("\t<title>@ViewBag.Title</title>");
+                    yaz.WriteLine("</head>");
+                    yaz.WriteLine("<body>");
+                    yaz.WriteLine("\t@RenderBody()");
                     yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Views/Shared/Controls/_Scripts.cshtml\"); }");
-                    yaz.WriteLine("</head>");
-                    yaz.WriteLine("<body>");
-                    yaz.WriteLine("\t<div>");
-                    yaz.WriteLine("\t\t@RenderBody()");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("</body>");
-                    yaz.WriteLine("</html>");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("<!DOCTYPE html>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<html>");
-                    yaz.WriteLine("<head>");
-                    yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, user-scalable=1\" />");
-                    yaz.WriteLine("\t<meta name=\"apple-mobile-web-app-capable\" content=\"yes\" />");
-                    yaz.WriteLine("\t<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black\" />");
-                    yaz.WriteLine("\t<title>@ViewBag.Title</title>");
-                    yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Areas/Admin/Views/Shared/Controls/_Scripts.cshtml\"); }");
-                    yaz.WriteLine("</head>");
-                    yaz.WriteLine("<body>");
-                    yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Areas/Admin/Views/Shared/Controls/_Menu.cshtml\"); }");
-                    yaz.WriteLine("\t<div class=\"clear\"></div>");
-                    yaz.WriteLine("\t<div class=\"content\">");
-                    yaz.WriteLine("\t\t@RenderBody()");
-                    yaz.WriteLine("\t</div>");
                     yaz.WriteLine("</body>");
                     yaz.WriteLine("</html>");
                     yaz.Close();
@@ -2797,57 +2875,11 @@ namespace TDFactory
                 {
                     yaz.WriteLine("@using TDLibrary");
                     yaz.WriteLine("");
-                    yaz.WriteLine("<link rel=\"shortcut icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
-                    yaz.WriteLine("<link rel=\"icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/jquery/jquery.min.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/jquery/json2.js\"></script>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href=\"@AppMgr.StylePath/main.css\" />");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/pathscript.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/main.js\"></script>");
-
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\Shared\\Controls\\_Scriptler.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@using TDLibrary");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<link rel=\"shortcut icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
-                    yaz.WriteLine("<link rel=\"icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/jquery/jquery.min.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/jquery/json2.js\"></script>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href=\"@AppMgr.AdminStylePath/main.css\" />");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/pathscript.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/main.js\"></script>");
-
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\Shared\\Controls\\_Menu.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@using TDLibrary");
-                    yaz.WriteLine("");
-
-                    yaz.WriteLine("<ul class=\"topmenu\">");
-                    yaz.WriteLine("\t<li><a href=\"@AppMgr.AdminPath\">Ana Sayfa</a></li>");
-
-                    foreach (string table in selectedTables)
-                    {
-                        yaz.WriteLine("\t<li><a href=\"@AppMgr.AdminPath/" + table + "\">" + table + "</a></li>");
-                    }
-
-                    yaz.WriteLine("\t<li><a class=\"website\" target=\"_blank\" href=\"@AppMgr.MainPath\">Web Sitesine Git</a></li>");
-                    yaz.WriteLine("</ul>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/runtime-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/polyfills-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/styles-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/vendor-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/main-es2015.js\"></script>");
 
                     yaz.Close();
                 }
@@ -2882,9 +2914,9 @@ namespace TDFactory
                 }
 
                 //Index
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\" + Table + "\\Index.cshtml", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\index.html", FileMode.Create))
                 {
-                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         int tablewidth = 120;
                         int colcount = tableColumnNames.Where(a => a.TableName == Table).ToList().Count;
@@ -3019,9 +3051,9 @@ namespace TDFactory
                 }
 
                 //Ekle
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\" + Table + "\\Ekle.cshtml", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\ekle.html", FileMode.Create))
                 {
-                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("@model " + projectName + "." + Table);
                         yaz.WriteLine("");
@@ -3086,9 +3118,9 @@ namespace TDFactory
                 if (identityColumns.Count > 0)
                 {
                     //Duzenle
-                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\" + Table + "\\Duzenle.cshtml", FileMode.Create))
+                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\duzenle.html", FileMode.Create))
                     {
-                        using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                        using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
                             yaz.WriteLine("@model " + projectName + "." + Table);
                             yaz.WriteLine("");
@@ -3181,8 +3213,6 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                CreateAngularDirectories(Table);
-
                 if (i <= 0)
                 {
                     CreateAngularHomeController();
@@ -3190,7 +3220,7 @@ namespace TDFactory
                     i++;
                 }
 
-                StreamWriter yaz = File.CreateText(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Controllers\\" + Table + "Controller.cs");
+                StreamWriter yaz = File.CreateText(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\" + Table + "Controller.cs");
 
                 yaz.WriteLine("using System;");
                 yaz.WriteLine("using System.Linq;");
@@ -3200,7 +3230,7 @@ namespace TDFactory
                 yaz.WriteLine("using Models;");
 
                 yaz.WriteLine("");
-                yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");
+                yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
                 yaz.WriteLine("{");
                 yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
                 yaz.WriteLine("\t{");
@@ -3394,46 +3424,634 @@ namespace TDFactory
             }
         }
 
+        void CreateAngularTypeScriptLayer()
+        {
+            foreach (string Table in selectedTables)
+            {
+                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+
+                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
+
+                identityColumns = identityColumns.IdentityCheck(lstSeciliKolonlar);
+
+                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+
+                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
+                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
+
+                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
+                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
+                CreateAngularDirectories(Table);
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\index.ts", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                        yaz.WriteLine("");
+
+                        // Index
+                        string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
+
+                        yaz.WriteLine("\t\tpublic ViewResult Index(string conditions)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn View();");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+                        if (identityColumns.Count > 0)
+                        {
+                            string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
+
+                            // Ekle
+                            yaz.WriteLine("\t\tpublic ActionResult Ekle()");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
+                            yaz.WriteLine("\t\tpublic ActionResult Ekle(" + Table + " table)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity." + Table + ".Add(table);");
+                            yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(\"Ekle\", table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            //Duzenle
+                            yaz.WriteLine("\t\t[HttpGet]");
+                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
+                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + Table + " table)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\t" + Table + " _table = entity." + Table + ".Find(table." + id + ");");
+                            yaz.WriteLine("");
+
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            {
+                                yaz.WriteLine("\t\t\t\t_table." + column.ColumnName + " = table." + column.ColumnName + ";");
+                            }
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
+                            yaz.WriteLine("\t\t\t}");
+
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(\"Duzenle\", table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            //Sil
+                            yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " conditions)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(conditions);");
+                            yaz.WriteLine("\t\t\tentity." + Table + ".Remove(table);");
+                            yaz.WriteLine("\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn Json(true);");
+                            yaz.WriteLine("\t\t}");
+                        }
+
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+
+                        yaz.Close();
+                    }
+                }
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\ekle.ts", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                        yaz.WriteLine("");
+
+                        // Index
+                        string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
+
+                        yaz.WriteLine("\t\tpublic ViewResult Index(string conditions)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn View();");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+                        if (identityColumns.Count > 0)
+                        {
+                            string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
+
+                            // Ekle
+                            yaz.WriteLine("\t\tpublic ActionResult Ekle()");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
+                            yaz.WriteLine("\t\tpublic ActionResult Ekle(" + Table + " table)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity." + Table + ".Add(table);");
+                            yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(\"Ekle\", table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            //Duzenle
+                            yaz.WriteLine("\t\t[HttpGet]");
+                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
+                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + Table + " table)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\t" + Table + " _table = entity." + Table + ".Find(table." + id + ");");
+                            yaz.WriteLine("");
+
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            {
+                                yaz.WriteLine("\t\t\t\t_table." + column.ColumnName + " = table." + column.ColumnName + ";");
+                            }
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
+                            yaz.WriteLine("\t\t\t}");
+
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(\"Duzenle\", table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            //Sil
+                            yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " conditions)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(conditions);");
+                            yaz.WriteLine("\t\t\tentity." + Table + ".Remove(table);");
+                            yaz.WriteLine("\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn Json(true);");
+                            yaz.WriteLine("\t\t}");
+                        }
+
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+
+                        yaz.Close();
+                    }
+                }
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\duzenle.ts", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                        yaz.WriteLine("");
+
+                        // Index
+                        string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
+
+                        yaz.WriteLine("\t\tpublic ViewResult Index(string conditions)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn View();");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+                        if (identityColumns.Count > 0)
+                        {
+                            string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
+
+                            // Ekle
+                            yaz.WriteLine("\t\tpublic ActionResult Ekle()");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
+                            yaz.WriteLine("\t\tpublic ActionResult Ekle(" + Table + " table)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity." + Table + ".Add(table);");
+                            yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(\"Ekle\", table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            //Duzenle
+                            yaz.WriteLine("\t\t[HttpGet]");
+                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
+                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + Table + " table)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\t" + Table + " _table = entity." + Table + ".Find(table." + id + ");");
+                            yaz.WriteLine("");
+
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            {
+                                yaz.WriteLine("\t\t\t\t_table." + column.ColumnName + " = table." + column.ColumnName + ";");
+                            }
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
+                            yaz.WriteLine("\t\t\t}");
+
+                            yaz.WriteLine("");
+
+                            if (chkRTables.Checked == true)
+                            {
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                        yaz.WriteLine("\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                        yaz.WriteLine("\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(\"Duzenle\", table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            //Sil
+                            yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " conditions)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(conditions);");
+                            yaz.WriteLine("\t\t\tentity." + Table + ".Remove(table);");
+                            yaz.WriteLine("\t\t\tentity.SaveChanges();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn Json(true);");
+                            yaz.WriteLine("\t\t}");
+                        }
+
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+
+                        yaz.Close();
+                    }
+                }
+            }
+        }
+
         void CreateAngularHomePage()
         {
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Home\\Index.cshtml", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
-                    yaz.WriteLine("@using TDLibrary");
-                    yaz.WriteLine("");
                     yaz.WriteLine("@{");
                     yaz.WriteLine("\tViewBag.Title = \"" + projectName + " Ana Sayfa\";");
                     yaz.WriteLine("\tLayout = \"~/Views/Shared/_Layout.cshtml\";");
                     yaz.WriteLine("}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("<h2>" + projectName + " Ana Sayfa</h2>");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\Home\\Index.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@using TDLibrary");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("@{");
-                    yaz.WriteLine("\tViewBag.Title = \"" + projectName + " Admin Ana Sayfa\";");
-                    yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_Layout.cshtml\";");
-                    yaz.WriteLine("}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<h2>" + projectName + " Admin Ana Sayfa</h2>");
-                    yaz.WriteLine("");
-
-                    yaz.WriteLine("<ul class=\"mainmenu\">");
-
-                    foreach (string table in selectedTables)
-                    {
-                        yaz.WriteLine("\t<li><a href=\"@AppMgr.AdminPath/" + table + "\">" + table + "</a></li>");
-                    }
-
-                    yaz.WriteLine("</ul>");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToLower() + "-app></" + projectName.Substring(0, 3).ToLower() + "-app>");
                     yaz.Close();
                 }
             }
@@ -3452,30 +4070,6 @@ namespace TDFactory
                     yaz.WriteLine("using System.Web.Mvc;");
                     yaz.WriteLine("");
                     yaz.WriteLine("namespace " + projectName + ".Controllers");
-                    yaz.WriteLine("{");
-                    yaz.WriteLine("\tpublic class HomeController : Controller");
-                    yaz.WriteLine("\t{");
-                    yaz.WriteLine("\t\tpublic ActionResult Index()");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\treturn View();");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Controllers\\HomeController.cs", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("using System;");
-                    yaz.WriteLine("using System.Collections.Generic;");
-                    yaz.WriteLine("using System.Linq;");
-                    yaz.WriteLine("using System.Web;");
-                    yaz.WriteLine("using System.Web.Mvc;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");
                     yaz.WriteLine("{");
                     yaz.WriteLine("\tpublic class HomeController : Controller");
                     yaz.WriteLine("\t{");
@@ -4135,22 +4729,7 @@ namespace TDFactory
             }
         }
 
-        #endregion
-
-        #region Jquery
-
         void CreateJquery()
-        {
-            CreateJqueryFile();
-            CreateJqueryMap();
-
-            if (!chkAngular.Checked)
-            {
-                CreateJqueryJson();
-            }
-        }
-
-        void CreateJqueryFile()
         {
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\js\\jquery\\jquery.min.js", FileMode.Create))
             {
@@ -4166,10 +4745,7 @@ namespace TDFactory
                     yaz.Close();
                 }
             }
-        }
 
-        void CreateJqueryMap()
-        {
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\js\\jquery\\jquery.min.map", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
@@ -4178,501 +4754,501 @@ namespace TDFactory
                     yaz.Close();
                 }
             }
-        }
 
-        void CreateJqueryJson()
-        {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\js\\jquery\\json2.js", FileMode.Create))
+            if (!chkAngular.Checked)
             {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\js\\jquery\\json2.js", FileMode.Create))
                 {
-                    yaz.WriteLine("/*");
-                    yaz.WriteLine("\tjson2.js");
-                    yaz.WriteLine("\t2013-05-26");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tPublic Domain.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tNO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tSee http://www.JSON.org/js.html");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tThis code should be minified before deployment.");
-                    yaz.WriteLine("\tSee http://javascript.crockford.com/jsmin.html");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tUSE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO");
-                    yaz.WriteLine("\tNOT CONTROL.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tThis file creates a global JSON object containing two methods: stringify");
-                    yaz.WriteLine("\tand parse.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tJSON.stringify(value, replacer, space)");
-                    yaz.WriteLine("\t\t\tvalue\t   any JavaScript value, usually an object or array.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\treplacer\tan optional parameter that determines how object");
-                    yaz.WriteLine("\t\t\t\t\t\tvalues are stringified for objects. It can be a");
-                    yaz.WriteLine("\t\t\t\t\t\tfunction or an array of strings.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tspace\t   an optional parameter that specifies the indentation");
-                    yaz.WriteLine("\t\t\t\t\t\tof nested structures. If it is omitted, the text will");
-                    yaz.WriteLine("\t\t\t\t\t\tbe packed without extra whitespace. If it is a number,");
-                    yaz.WriteLine("\t\t\t\t\t\tit will specify the number of spaces to indent at each");
-                    yaz.WriteLine("\t\t\t\t\t\tlevel. If it is a string (such as \'\\t\' or \'&nbsp;\'),");
-                    yaz.WriteLine("\t\t\t\t\t\tit contains the characters used to indent at each level.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tThis method produces a JSON text from a JavaScript value.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tWhen an object value is found, if the object contains a toJSON");
-                    yaz.WriteLine("\t\t\tmethod, its toJSON method will be called and the result will be");
-                    yaz.WriteLine("\t\t\tstringified. A toJSON method does not serialize: it returns the");
-                    yaz.WriteLine("\t\t\tvalue represented by the name/value pair that should be serialized,");
-                    yaz.WriteLine("\t\t\tor undefined if nothing should be serialized. The toJSON method");
-                    yaz.WriteLine("\t\t\twill be passed the key associated with the value, and this will be");
-                    yaz.WriteLine("\t\t\tbound to the value");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tFor example, this would serialize Dates as ISO strings.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tDate.prototype.toJSON = function (key) {");
-                    yaz.WriteLine("\t\t\t\t\tfunction f(n) {");
-                    yaz.WriteLine("\t\t\t\t\t\t// Format integers to have at least two digits.");
-                    yaz.WriteLine("\t\t\t\t\t\treturn n < 10 ? \'0\' + n : n;");
-                    yaz.WriteLine("\t\t\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t\treturn this.getUTCFullYear()   + \'-\' +");
-                    yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCMonth() + 1) + \'-\' +");
-                    yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCDate())\t  + \'T\' +");
-                    yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCHours())\t + \':\' +");
-                    yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCMinutes())   + \':\' +");
-                    yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCSeconds())   + \'Z\';");
-                    yaz.WriteLine("\t\t\t\t};");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tYou can provide an optional replacer method. It will be passed the");
-                    yaz.WriteLine("\t\t\tkey and value of each member, with this bound to the containing");
-                    yaz.WriteLine("\t\t\tobject. The value that is returned from your method will be");
-                    yaz.WriteLine("\t\t\tserialized. If your method returns undefined, then the member will");
-                    yaz.WriteLine("\t\t\tbe excluded from the serialization.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tIf the replacer parameter is an array of strings, then it will be");
-                    yaz.WriteLine("\t\t\tused to select the members to be serialized. It filters the results");
-                    yaz.WriteLine("\t\t\tsuch that only members with keys listed in the replacer array are");
-                    yaz.WriteLine("\t\t\tstringified.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tValues that do not have JSON representations, such as undefined or");
-                    yaz.WriteLine("\t\t\tfunctions, will not be serialized. Such values in objects will be");
-                    yaz.WriteLine("\t\t\tdropped; in arrays they will be replaced with null. You can use");
-                    yaz.WriteLine("\t\t\ta replacer function to replace those with JSON values.");
-                    yaz.WriteLine("\t\t\tJSON.stringify(undefined) returns undefined.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tThe optional space parameter produces a stringification of the");
-                    yaz.WriteLine("\t\t\tvalue that is filled with line breaks and indentation to make it");
-                    yaz.WriteLine("\t\t\teasier to read.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tIf the space parameter is a non-empty string, then that string will");
-                    yaz.WriteLine("\t\t\tbe used for indentation. If the space parameter is a number, then");
-                    yaz.WriteLine("\t\t\tthe indentation will be that many spaces.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tExample:");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\ttext = JSON.stringify([\'e\', {pluribus: \'unum\'}]);");
-                    yaz.WriteLine("\t\t\t// text is \'[\"e\",{\"pluribus\":\"unum\"}]\'");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\ttext = JSON.stringify([\'e\', {pluribus: \'unum\'}], null, \'\\t\');");
-                    yaz.WriteLine("\t\t\t// text is \'[\\n\\t\"e\",\\n\\t{\\n\\t\\t\"pluribus\": \"unum\"\\n\\t}\\n]\'");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\ttext = JSON.stringify([new Date()], function (key, value) {");
-                    yaz.WriteLine("\t\t\t\treturn this[key] instanceof Date ?");
-                    yaz.WriteLine("\t\t\t\t\t\'Date(\' + this[key] + \')\' : value;");
-                    yaz.WriteLine("\t\t\t});");
-                    yaz.WriteLine("\t\t\t// text is \'[\"Date(---current time---)\"]\'");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tJSON.parse(text, reviver)");
-                    yaz.WriteLine("\t\t\tThis method parses a JSON text to produce an object or array.");
-                    yaz.WriteLine("\t\t\tIt can throw a SyntaxError exception.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tThe optional reviver parameter is a function that can filter and");
-                    yaz.WriteLine("\t\t\ttransform the results. It receives each of the keys and values,");
-                    yaz.WriteLine("\t\t\tand its return value is used instead of the original value.");
-                    yaz.WriteLine("\t\t\tIf it returns what it received, then the structure is not modified.");
-                    yaz.WriteLine("\t\t\tIf it returns undefined then the member is deleted.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tExample:");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// Parse the text. Values that look like ISO date strings will");
-                    yaz.WriteLine("\t\t\t// be converted to Date objects.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tmyData = JSON.parse(text, function (key, value) {");
-                    yaz.WriteLine("\t\t\t\tvar a;");
-                    yaz.WriteLine("\t\t\t\tif (typeof value === \'string\') {");
-                    yaz.WriteLine("\t\t\t\t\ta =");
-                    yaz.WriteLine("/^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2}(?:\\.\\d*)?)Z$/.exec(value);");
-                    yaz.WriteLine("\t\t\t\t\tif (a) {");
-                    yaz.WriteLine("\t\t\t\t\t\treturn new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],");
-                    yaz.WriteLine("\t\t\t\t\t\t\t+a[5], +a[6]));");
-                    yaz.WriteLine("\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\treturn value;");
-                    yaz.WriteLine("\t\t\t});");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tmyData = JSON.parse(\'[\"Date(09/09/2001)\"]\', function (key, value) {");
-                    yaz.WriteLine("\t\t\t\tvar d;");
-                    yaz.WriteLine("\t\t\t\tif (typeof value === \'string\' &&");
-                    yaz.WriteLine("\t\t\t\t\t\tvalue.slice(0, 5) === \'Date(\' &&");
-                    yaz.WriteLine("\t\t\t\t\t\tvalue.slice(-1) === \')\') {");
-                    yaz.WriteLine("\t\t\t\t\td = new Date(value.slice(5, -1));");
-                    yaz.WriteLine("\t\t\t\t\tif (d) {");
-                    yaz.WriteLine("\t\t\t\t\t\treturn d;");
-                    yaz.WriteLine("\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\treturn value;");
-                    yaz.WriteLine("\t\t\t});");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tThis is a reference implementation. You are free to copy, modify, or");
-                    yaz.WriteLine("\tredistribute.");
-                    yaz.WriteLine("*/");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("/*jslint evil: true, regexp: true */");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("/*members \"\", \"\\b\", \"\\t\", \"\\n\", \"\\f\", \"\\r\", \"\\\"\", JSON, \"\\\\\", apply,");
-                    yaz.WriteLine("\tcall, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,");
-                    yaz.WriteLine("\tgetUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join,");
-                    yaz.WriteLine("\tlastIndex, length, parse, prototype, push, replace, slice, stringify,");
-                    yaz.WriteLine("\ttest, toJSON, toString, valueOf");
-                    yaz.WriteLine("*/");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("// Create a JSON object only if one does not already exist. We create the");
-                    yaz.WriteLine("// methods in a closure to avoid creating global variables.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("if (typeof JSON !== \'object\') {");
-                    yaz.WriteLine("\tJSON = {};");
-                    yaz.WriteLine("}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("(function () {");
-                    yaz.WriteLine("\t\'use strict\';");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tfunction f(n) {");
-                    yaz.WriteLine("\t\t// Format integers to have at least two digits.");
-                    yaz.WriteLine("\t\treturn n < 10 ? \'0\' + n : n;");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif (typeof Date.prototype.toJSON !== \'function\') {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tDate.prototype.toJSON = function () {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\treturn isFinite(this.valueOf())");
-                    yaz.WriteLine("\t\t\t\t? this.getUTCFullYear() + \'-\' +");
-                    yaz.WriteLine("\t\t\t\t\tf(this.getUTCMonth() + 1) + \'-\' +");
-                    yaz.WriteLine("\t\t\t\t\tf(this.getUTCDate()) + \'T\' +");
-                    yaz.WriteLine("\t\t\t\t\tf(this.getUTCHours()) + \':\' +");
-                    yaz.WriteLine("\t\t\t\t\tf(this.getUTCMinutes()) + \':\' +");
-                    yaz.WriteLine("\t\t\t\t\tf(this.getUTCSeconds()) + \'Z\'");
-                    yaz.WriteLine("\t\t\t\t: null;");
-                    yaz.WriteLine("\t\t};");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tString.prototype.toJSON =");
-                    yaz.WriteLine("\t\t\tNumber.prototype.toJSON =");
-                    yaz.WriteLine("\t\t\tBoolean.prototype.toJSON = function () {");
-                    yaz.WriteLine("\t\t\t\treturn this.valueOf();");
-                    yaz.WriteLine("\t\t\t};");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tvar cx = /[\\u0000\\u00ad\\u0600-\\u0604\\u070f\\u17b4\\u17b5\\u200c-\\u200f\\u2028-\\u202f\\u2060-\\u206f\\ufeff\\ufff0-\\uffff]/g,");
-                    yaz.WriteLine("\t\tescapable = /[\\\\\\\"\\x00-\\x1f\\x7f-\\x9f\\u00ad\\u0600-\\u0604\\u070f\\u17b4\\u17b5\\u200c-\\u200f\\u2028-\\u202f\\u2060-\\u206f\\ufeff\\ufff0-\\uffff]/g,");
-                    yaz.WriteLine("\t\tgap,");
-                    yaz.WriteLine("\t\tindent,");
-                    yaz.WriteLine("\t\tmeta = {\t// table of character substitutions");
-                    yaz.WriteLine("\t\t\t\'\\b\': \'\\\\b\',");
-                    yaz.WriteLine("\t\t\t\'\\t\': \'\\\\t\',");
-                    yaz.WriteLine("\t\t\t\'\\n\': \'\\\\n\',");
-                    yaz.WriteLine("\t\t\t\'\\f\': \'\\\\f\',");
-                    yaz.WriteLine("\t\t\t\'\\r\': \'\\\\r\',");
-                    yaz.WriteLine("\t\t\t\'\"\': \'\\\\\"\',");
-                    yaz.WriteLine("\t\t\t\'\\\\\': \'\\\\\\\\\'");
-                    yaz.WriteLine("\t\t},");
-                    yaz.WriteLine("\t\trep;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tfunction quote(string) {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t// If the string contains no control characters, no quote characters, and no");
-                    yaz.WriteLine("\t\t// backslash characters, then we can safely slap some quotes around it.");
-                    yaz.WriteLine("\t\t// Otherwise we must also replace the offending characters with safe escape");
-                    yaz.WriteLine("\t\t// sequences.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tescapable.lastIndex = 0;");
-                    yaz.WriteLine("\t\treturn escapable.test(string) ? \'\"\' + string.replace(escapable, function (a) {");
-                    yaz.WriteLine("\t\t\tvar c = meta[a];");
-                    yaz.WriteLine("\t\t\treturn typeof c === \'string\'");
-                    yaz.WriteLine("\t\t\t\t? c");
-                    yaz.WriteLine("\t\t\t\t: \'\\\\u\' + (\'0000\' + a.charCodeAt(0).toString(16)).slice(-4);");
-                    yaz.WriteLine("\t\t}) + \'\"\' : \'\"\' + string + \'\"\';");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tfunction str(key, holder) {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t// Produce a string from holder[key].");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tvar i,\t\t  // The loop counter.");
-                    yaz.WriteLine("\t\t\tk,\t\t  // The member key.");
-                    yaz.WriteLine("\t\t\tv,\t\t  // The member value.");
-                    yaz.WriteLine("\t\t\tlength,");
-                    yaz.WriteLine("\t\t\tmind = gap,");
-                    yaz.WriteLine("\t\t\tpartial,");
-                    yaz.WriteLine("\t\t\tvalue = holder[key];");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t// If the value has a toJSON method, call it to obtain a replacement value.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tif (value && typeof value === \'object\' &&");
-                    yaz.WriteLine("\t\t\t\ttypeof value.toJSON === \'function\') {");
-                    yaz.WriteLine("\t\t\tvalue = value.toJSON(key);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t// If we were called with a replacer function, then call the replacer to");
-                    yaz.WriteLine("\t\t// obtain a replacement value.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tif (typeof rep === \'function\') {");
-                    yaz.WriteLine("\t\t\tvalue = rep.call(holder, key, value);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t// What happens next depends on the value\'s type.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tswitch (typeof value) {");
-                    yaz.WriteLine("\t\t\tcase \'string\':");
-                    yaz.WriteLine("\t\t\t\treturn quote(value);");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tcase \'number\':");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// JSON numbers must be finite. Encode non-finite numbers as null.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\treturn isFinite(value) ? String(value) : \'null\';");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tcase \'boolean\':");
-                    yaz.WriteLine("\t\t\tcase \'null\':");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// If the value is a boolean or null, convert it to a string. Note:");
-                    yaz.WriteLine("\t\t\t\t// typeof null does not produce \'null\'. The case is included here in");
-                    yaz.WriteLine("\t\t\t\t// the remote chance that this gets fixed someday.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\treturn String(value);");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// If the type is \'object\', we might be dealing with an object or an array or");
-                    yaz.WriteLine("\t\t\t\t// null.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tcase \'object\':");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// Due to a specification blunder in ECMAScript, typeof null is \'object\',");
-                    yaz.WriteLine("\t\t\t\t// so watch out for that case.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tif (!value) {");
-                    yaz.WriteLine("\t\t\t\t\treturn \'null\';");
-                    yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// Make an array to hold the partial results of stringifying this object value.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tgap += indent;");
-                    yaz.WriteLine("\t\t\t\tpartial = [];");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// Is the value an array?");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tif (Object.prototype.toString.apply(value) === \'[object Array]\') {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t\t// The value is an array. Stringify every element. Use null as a placeholder");
-                    yaz.WriteLine("\t\t\t\t\t// for non-JSON values.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t\tlength = value.length;");
-                    yaz.WriteLine("\t\t\t\t\tfor (i = 0; i < length; i += 1) {");
-                    yaz.WriteLine("\t\t\t\t\t\tpartial[i] = str(i, value) || \'null\';");
-                    yaz.WriteLine("\t\t\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t\t// Join all of the elements together, separated with commas, and wrap them in");
-                    yaz.WriteLine("\t\t\t\t\t// brackets.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t\tv = partial.length === 0");
-                    yaz.WriteLine("\t\t\t\t\t\t? \'[]\'");
-                    yaz.WriteLine("\t\t\t\t\t\t: gap");
-                    yaz.WriteLine("\t\t\t\t\t\t? \'[\\n\' + gap + partial.join(\',\\n\' + gap) + \'\\n\' + mind + \']\'");
-                    yaz.WriteLine("\t\t\t\t\t\t: \'[\' + partial.join(\',\') + \']\';");
-                    yaz.WriteLine("\t\t\t\t\tgap = mind;");
-                    yaz.WriteLine("\t\t\t\t\treturn v;");
-                    yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// If the replacer is an array, use it to select the members to be stringified.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tif (rep && typeof rep === \'object\') {");
-                    yaz.WriteLine("\t\t\t\t\tlength = rep.length;");
-                    yaz.WriteLine("\t\t\t\t\tfor (i = 0; i < length; i += 1) {");
-                    yaz.WriteLine("\t\t\t\t\t\tif (typeof rep[i] === \'string\') {");
-                    yaz.WriteLine("\t\t\t\t\t\t\tk = rep[i];");
-                    yaz.WriteLine("\t\t\t\t\t\t\tv = str(k, value);");
-                    yaz.WriteLine("\t\t\t\t\t\t\tif (v) {");
-                    yaz.WriteLine("\t\t\t\t\t\t\t\tpartial.push(quote(k) + (gap ? \': \' : \':\') + v);");
-                    yaz.WriteLine("\t\t\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t} else {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t\t// Otherwise, iterate through all of the keys in the object.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t\tfor (k in value) {");
-                    yaz.WriteLine("\t\t\t\t\t\tif (Object.prototype.hasOwnProperty.call(value, k)) {");
-                    yaz.WriteLine("\t\t\t\t\t\t\tv = str(k, value);");
-                    yaz.WriteLine("\t\t\t\t\t\t\tif (v) {");
-                    yaz.WriteLine("\t\t\t\t\t\t\t\tpartial.push(quote(k) + (gap ? \': \' : \':\') + v);");
-                    yaz.WriteLine("\t\t\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// Join all of the member texts together, separated with commas,");
-                    yaz.WriteLine("\t\t\t\t// and wrap them in braces.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tv = partial.length === 0");
-                    yaz.WriteLine("\t\t\t\t\t? \'{}\'");
-                    yaz.WriteLine("\t\t\t\t\t: gap");
-                    yaz.WriteLine("\t\t\t\t\t? \'{\\n\' + gap + partial.join(\',\\n\' + gap) + \'\\n\' + mind + \'}\'");
-                    yaz.WriteLine("\t\t\t\t\t: \'{\' + partial.join(\',\') + \'}\';");
-                    yaz.WriteLine("\t\t\t\tgap = mind;");
-                    yaz.WriteLine("\t\t\t\treturn v;");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t// If the JSON object does not yet have a stringify method, give it one.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif (typeof JSON.stringify !== \'function\') {");
-                    yaz.WriteLine("\t\tJSON.stringify = function (value, replacer, space) {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// The stringify method takes a value and an optional replacer, and an optional");
-                    yaz.WriteLine("\t\t\t// space parameter, and returns a JSON text. The replacer can be a function");
-                    yaz.WriteLine("\t\t\t// that can replace values, or an array of strings that will select the keys.");
-                    yaz.WriteLine("\t\t\t// A default replacer method can be provided. Use of the space parameter can");
-                    yaz.WriteLine("\t\t\t// produce text that is more easily readable.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tvar i;");
-                    yaz.WriteLine("\t\t\tgap = \'\';");
-                    yaz.WriteLine("\t\t\tindent = \'\';");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// If the space parameter is a number, make an indent string containing that");
-                    yaz.WriteLine("\t\t\t// many spaces.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tif (typeof space === \'number\') {");
-                    yaz.WriteLine("\t\t\t\tfor (i = 0; i < space; i += 1) {");
-                    yaz.WriteLine("\t\t\t\t\tindent += \' \';");
-                    yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// If the space parameter is a string, it will be used as the indent string.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t} else if (typeof space === \'string\') {");
-                    yaz.WriteLine("\t\t\t\tindent = space;");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// If there is a replacer, it must be a function or an array.");
-                    yaz.WriteLine("\t\t\t// Otherwise, throw an error.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\trep = replacer;");
-                    yaz.WriteLine("\t\t\tif (replacer && typeof replacer !== \'function\' &&");
-                    yaz.WriteLine("\t\t\t\t\t(typeof replacer !== \'object\' ||");
-                    yaz.WriteLine("\t\t\t\t\ttypeof replacer.length !== \'number\')) {");
-                    yaz.WriteLine("\t\t\t\tthrow new Error(\'JSON.stringify\');");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// Make a fake root object containing our value under the key of \'\'.");
-                    yaz.WriteLine("\t\t\t// Return the result of stringifying the value.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\treturn str(\'\', { \'\': value });");
-                    yaz.WriteLine("\t\t};");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t// If the JSON object does not yet have a parse method, give it one.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif (typeof JSON.parse !== \'function\') {");
-                    yaz.WriteLine("\t\tJSON.parse = function (text, reviver) {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// The parse method takes a text and an optional reviver function, and returns");
-                    yaz.WriteLine("\t\t\t// a JavaScript value if the text is a valid JSON text.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tvar j;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tfunction walk(holder, key) {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// The walk method is used to recursively walk the resulting structure so");
-                    yaz.WriteLine("\t\t\t\t// that modifications can be made.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tvar k, v, value = holder[key];");
-                    yaz.WriteLine("\t\t\t\tif (value && typeof value === \'object\') {");
-                    yaz.WriteLine("\t\t\t\t\tfor (k in value) {");
-                    yaz.WriteLine("\t\t\t\t\t\tif (Object.prototype.hasOwnProperty.call(value, k)) {");
-                    yaz.WriteLine("\t\t\t\t\t\t\tv = walk(value, k);");
-                    yaz.WriteLine("\t\t\t\t\t\t\tif (v !== undefined) {");
-                    yaz.WriteLine("\t\t\t\t\t\t\t\tvalue[k] = v;");
-                    yaz.WriteLine("\t\t\t\t\t\t\t} else {");
-                    yaz.WriteLine("\t\t\t\t\t\t\t\tdelete value[k];");
-                    yaz.WriteLine("\t\t\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\treturn reviver.call(holder, key, value);");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// Parsing happens in four stages. In the first stage, we replace certain");
-                    yaz.WriteLine("\t\t\t// Unicode characters with escape sequences. JavaScript handles many characters");
-                    yaz.WriteLine("\t\t\t// incorrectly, either silently deleting them, or treating them as line endings.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\ttext = String(text);");
-                    yaz.WriteLine("\t\t\tcx.lastIndex = 0;");
-                    yaz.WriteLine("\t\t\tif (cx.test(text)) {");
-                    yaz.WriteLine("\t\t\t\ttext = text.replace(cx, function (a) {");
-                    yaz.WriteLine("\t\t\t\t\treturn \'\\\\u\' +");
-                    yaz.WriteLine("\t\t\t\t\t\t(\'0000\' + a.charCodeAt(0).toString(16)).slice(-4);");
-                    yaz.WriteLine("\t\t\t\t});");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// In the second stage, we run the text against regular expressions that look");
-                    yaz.WriteLine("\t\t\t// for non-JSON patterns. We are especially concerned with \'()\' and \'new\'");
-                    yaz.WriteLine("\t\t\t// because they can cause invocation, and \'=\' because it can cause mutation.");
-                    yaz.WriteLine("\t\t\t// But just to be safe, we want to reject all unexpected forms.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// We split the second stage into 4 regexp operations in order to work around");
-                    yaz.WriteLine("\t\t\t// crippling inefficiencies in IE\'s and Safari\'s regexp engines. First we");
-                    yaz.WriteLine("\t\t\t// replace the JSON backslash pairs with \'@\' (a non-JSON character). Second, we");
-                    yaz.WriteLine("\t\t\t// replace all simple value tokens with \']\' characters. Third, we delete all");
-                    yaz.WriteLine("\t\t\t// open brackets that follow a colon or comma or that begin the text. Finally,");
-                    yaz.WriteLine("\t\t\t// we look to see that the remaining characters are only whitespace or \']\' or");
-                    yaz.WriteLine("\t\t\t// \',\' or \':\' or \'{\' or \'}\'. If that is so, then the text is safe for eval.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tif (/^[\\],:{}\\s]*$/");
-                    yaz.WriteLine("\t\t\t\t\t.test(text.replace(/\\\\(?:[\"\\\\\\/bfnrt]|u[0-9a-fA-F]{4})/g, \'@\')");
-                    yaz.WriteLine("\t\t\t\t\t\t.replace(/\"[^\"\\\\\\n\\r]*\"|true|false|null|-?\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?/g, \']\')");
-                    yaz.WriteLine("\t\t\t\t\t\t.replace(/(?:^|:|,)(?:\\s*\\[)+/g, \'\'))) {");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// In the third stage we use the eval function to compile the text into a");
-                    yaz.WriteLine("\t\t\t\t// JavaScript structure. The \'{\' operator is subject to a syntactic ambiguity");
-                    yaz.WriteLine("\t\t\t\t// in JavaScript: it can begin a block or an object literal. We wrap the text");
-                    yaz.WriteLine("\t\t\t\t// in parens to eliminate the ambiguity.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tj = eval(\'(\' + text + \')\');");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\t// In the optional fourth stage, we recursively walk the new structure, passing");
-                    yaz.WriteLine("\t\t\t\t// each name/value pair to a reviver function for possible transformation.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\treturn typeof reviver === \'function\'");
-                    yaz.WriteLine("\t\t\t\t\t? walk({ \'\': j }, \'\')");
-                    yaz.WriteLine("\t\t\t\t\t: j;");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t// If the text is not JSON parseable, then a SyntaxError is thrown.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tthrow new SyntaxError(\'JSON.parse\');");
-                    yaz.WriteLine("\t\t};");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}());");
-                    yaz.Close();
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                    {
+                        yaz.WriteLine("/*");
+                        yaz.WriteLine("\tjson2.js");
+                        yaz.WriteLine("\t2013-05-26");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tPublic Domain.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tNO WARRANTY EXPRESSED OR IMPLIED. USE AT YOUR OWN RISK.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tSee http://www.JSON.org/js.html");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tThis code should be minified before deployment.");
+                        yaz.WriteLine("\tSee http://javascript.crockford.com/jsmin.html");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tUSE YOUR OWN COPY. IT IS EXTREMELY UNWISE TO LOAD CODE FROM SERVERS YOU DO");
+                        yaz.WriteLine("\tNOT CONTROL.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tThis file creates a global JSON object containing two methods: stringify");
+                        yaz.WriteLine("\tand parse.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tJSON.stringify(value, replacer, space)");
+                        yaz.WriteLine("\t\t\tvalue\t   any JavaScript value, usually an object or array.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treplacer\tan optional parameter that determines how object");
+                        yaz.WriteLine("\t\t\t\t\t\tvalues are stringified for objects. It can be a");
+                        yaz.WriteLine("\t\t\t\t\t\tfunction or an array of strings.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tspace\t   an optional parameter that specifies the indentation");
+                        yaz.WriteLine("\t\t\t\t\t\tof nested structures. If it is omitted, the text will");
+                        yaz.WriteLine("\t\t\t\t\t\tbe packed without extra whitespace. If it is a number,");
+                        yaz.WriteLine("\t\t\t\t\t\tit will specify the number of spaces to indent at each");
+                        yaz.WriteLine("\t\t\t\t\t\tlevel. If it is a string (such as \'\\t\' or \'&nbsp;\'),");
+                        yaz.WriteLine("\t\t\t\t\t\tit contains the characters used to indent at each level.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tThis method produces a JSON text from a JavaScript value.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tWhen an object value is found, if the object contains a toJSON");
+                        yaz.WriteLine("\t\t\tmethod, its toJSON method will be called and the result will be");
+                        yaz.WriteLine("\t\t\tstringified. A toJSON method does not serialize: it returns the");
+                        yaz.WriteLine("\t\t\tvalue represented by the name/value pair that should be serialized,");
+                        yaz.WriteLine("\t\t\tor undefined if nothing should be serialized. The toJSON method");
+                        yaz.WriteLine("\t\t\twill be passed the key associated with the value, and this will be");
+                        yaz.WriteLine("\t\t\tbound to the value");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tFor example, this would serialize Dates as ISO strings.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tDate.prototype.toJSON = function (key) {");
+                        yaz.WriteLine("\t\t\t\t\tfunction f(n) {");
+                        yaz.WriteLine("\t\t\t\t\t\t// Format integers to have at least two digits.");
+                        yaz.WriteLine("\t\t\t\t\t\treturn n < 10 ? \'0\' + n : n;");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\treturn this.getUTCFullYear()   + \'-\' +");
+                        yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCMonth() + 1) + \'-\' +");
+                        yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCDate())\t  + \'T\' +");
+                        yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCHours())\t + \':\' +");
+                        yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCMinutes())   + \':\' +");
+                        yaz.WriteLine("\t\t\t\t\t\t f(this.getUTCSeconds())   + \'Z\';");
+                        yaz.WriteLine("\t\t\t\t};");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tYou can provide an optional replacer method. It will be passed the");
+                        yaz.WriteLine("\t\t\tkey and value of each member, with this bound to the containing");
+                        yaz.WriteLine("\t\t\tobject. The value that is returned from your method will be");
+                        yaz.WriteLine("\t\t\tserialized. If your method returns undefined, then the member will");
+                        yaz.WriteLine("\t\t\tbe excluded from the serialization.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tIf the replacer parameter is an array of strings, then it will be");
+                        yaz.WriteLine("\t\t\tused to select the members to be serialized. It filters the results");
+                        yaz.WriteLine("\t\t\tsuch that only members with keys listed in the replacer array are");
+                        yaz.WriteLine("\t\t\tstringified.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tValues that do not have JSON representations, such as undefined or");
+                        yaz.WriteLine("\t\t\tfunctions, will not be serialized. Such values in objects will be");
+                        yaz.WriteLine("\t\t\tdropped; in arrays they will be replaced with null. You can use");
+                        yaz.WriteLine("\t\t\ta replacer function to replace those with JSON values.");
+                        yaz.WriteLine("\t\t\tJSON.stringify(undefined) returns undefined.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tThe optional space parameter produces a stringification of the");
+                        yaz.WriteLine("\t\t\tvalue that is filled with line breaks and indentation to make it");
+                        yaz.WriteLine("\t\t\teasier to read.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tIf the space parameter is a non-empty string, then that string will");
+                        yaz.WriteLine("\t\t\tbe used for indentation. If the space parameter is a number, then");
+                        yaz.WriteLine("\t\t\tthe indentation will be that many spaces.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tExample:");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\ttext = JSON.stringify([\'e\', {pluribus: \'unum\'}]);");
+                        yaz.WriteLine("\t\t\t// text is \'[\"e\",{\"pluribus\":\"unum\"}]\'");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\ttext = JSON.stringify([\'e\', {pluribus: \'unum\'}], null, \'\\t\');");
+                        yaz.WriteLine("\t\t\t// text is \'[\\n\\t\"e\",\\n\\t{\\n\\t\\t\"pluribus\": \"unum\"\\n\\t}\\n]\'");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\ttext = JSON.stringify([new Date()], function (key, value) {");
+                        yaz.WriteLine("\t\t\t\treturn this[key] instanceof Date ?");
+                        yaz.WriteLine("\t\t\t\t\t\'Date(\' + this[key] + \')\' : value;");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("\t\t\t// text is \'[\"Date(---current time---)\"]\'");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tJSON.parse(text, reviver)");
+                        yaz.WriteLine("\t\t\tThis method parses a JSON text to produce an object or array.");
+                        yaz.WriteLine("\t\t\tIt can throw a SyntaxError exception.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tThe optional reviver parameter is a function that can filter and");
+                        yaz.WriteLine("\t\t\ttransform the results. It receives each of the keys and values,");
+                        yaz.WriteLine("\t\t\tand its return value is used instead of the original value.");
+                        yaz.WriteLine("\t\t\tIf it returns what it received, then the structure is not modified.");
+                        yaz.WriteLine("\t\t\tIf it returns undefined then the member is deleted.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tExample:");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// Parse the text. Values that look like ISO date strings will");
+                        yaz.WriteLine("\t\t\t// be converted to Date objects.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tmyData = JSON.parse(text, function (key, value) {");
+                        yaz.WriteLine("\t\t\t\tvar a;");
+                        yaz.WriteLine("\t\t\t\tif (typeof value === \'string\') {");
+                        yaz.WriteLine("\t\t\t\t\ta =");
+                        yaz.WriteLine("/^(\\d{4})-(\\d{2})-(\\d{2})T(\\d{2}):(\\d{2}):(\\d{2}(?:\\.\\d*)?)Z$/.exec(value);");
+                        yaz.WriteLine("\t\t\t\t\tif (a) {");
+                        yaz.WriteLine("\t\t\t\t\t\treturn new Date(Date.UTC(+a[1], +a[2] - 1, +a[3], +a[4],");
+                        yaz.WriteLine("\t\t\t\t\t\t\t+a[5], +a[6]));");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\treturn value;");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tmyData = JSON.parse(\'[\"Date(09/09/2001)\"]\', function (key, value) {");
+                        yaz.WriteLine("\t\t\t\tvar d;");
+                        yaz.WriteLine("\t\t\t\tif (typeof value === \'string\' &&");
+                        yaz.WriteLine("\t\t\t\t\t\tvalue.slice(0, 5) === \'Date(\' &&");
+                        yaz.WriteLine("\t\t\t\t\t\tvalue.slice(-1) === \')\') {");
+                        yaz.WriteLine("\t\t\t\t\td = new Date(value.slice(5, -1));");
+                        yaz.WriteLine("\t\t\t\t\tif (d) {");
+                        yaz.WriteLine("\t\t\t\t\t\treturn d;");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\treturn value;");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tThis is a reference implementation. You are free to copy, modify, or");
+                        yaz.WriteLine("\tredistribute.");
+                        yaz.WriteLine("*/");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("/*jslint evil: true, regexp: true */");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("/*members \"\", \"\\b\", \"\\t\", \"\\n\", \"\\f\", \"\\r\", \"\\\"\", JSON, \"\\\\\", apply,");
+                        yaz.WriteLine("\tcall, charCodeAt, getUTCDate, getUTCFullYear, getUTCHours,");
+                        yaz.WriteLine("\tgetUTCMinutes, getUTCMonth, getUTCSeconds, hasOwnProperty, join,");
+                        yaz.WriteLine("\tlastIndex, length, parse, prototype, push, replace, slice, stringify,");
+                        yaz.WriteLine("\ttest, toJSON, toString, valueOf");
+                        yaz.WriteLine("*/");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("// Create a JSON object only if one does not already exist. We create the");
+                        yaz.WriteLine("// methods in a closure to avoid creating global variables.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("if (typeof JSON !== \'object\') {");
+                        yaz.WriteLine("\tJSON = {};");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("(function () {");
+                        yaz.WriteLine("\t\'use strict\';");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tfunction f(n) {");
+                        yaz.WriteLine("\t\t// Format integers to have at least two digits.");
+                        yaz.WriteLine("\t\treturn n < 10 ? \'0\' + n : n;");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif (typeof Date.prototype.toJSON !== \'function\') {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tDate.prototype.toJSON = function () {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn isFinite(this.valueOf())");
+                        yaz.WriteLine("\t\t\t\t? this.getUTCFullYear() + \'-\' +");
+                        yaz.WriteLine("\t\t\t\t\tf(this.getUTCMonth() + 1) + \'-\' +");
+                        yaz.WriteLine("\t\t\t\t\tf(this.getUTCDate()) + \'T\' +");
+                        yaz.WriteLine("\t\t\t\t\tf(this.getUTCHours()) + \':\' +");
+                        yaz.WriteLine("\t\t\t\t\tf(this.getUTCMinutes()) + \':\' +");
+                        yaz.WriteLine("\t\t\t\t\tf(this.getUTCSeconds()) + \'Z\'");
+                        yaz.WriteLine("\t\t\t\t: null;");
+                        yaz.WriteLine("\t\t};");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tString.prototype.toJSON =");
+                        yaz.WriteLine("\t\t\tNumber.prototype.toJSON =");
+                        yaz.WriteLine("\t\t\tBoolean.prototype.toJSON = function () {");
+                        yaz.WriteLine("\t\t\t\treturn this.valueOf();");
+                        yaz.WriteLine("\t\t\t};");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tvar cx = /[\\u0000\\u00ad\\u0600-\\u0604\\u070f\\u17b4\\u17b5\\u200c-\\u200f\\u2028-\\u202f\\u2060-\\u206f\\ufeff\\ufff0-\\uffff]/g,");
+                        yaz.WriteLine("\t\tescapable = /[\\\\\\\"\\x00-\\x1f\\x7f-\\x9f\\u00ad\\u0600-\\u0604\\u070f\\u17b4\\u17b5\\u200c-\\u200f\\u2028-\\u202f\\u2060-\\u206f\\ufeff\\ufff0-\\uffff]/g,");
+                        yaz.WriteLine("\t\tgap,");
+                        yaz.WriteLine("\t\tindent,");
+                        yaz.WriteLine("\t\tmeta = {\t// table of character substitutions");
+                        yaz.WriteLine("\t\t\t\'\\b\': \'\\\\b\',");
+                        yaz.WriteLine("\t\t\t\'\\t\': \'\\\\t\',");
+                        yaz.WriteLine("\t\t\t\'\\n\': \'\\\\n\',");
+                        yaz.WriteLine("\t\t\t\'\\f\': \'\\\\f\',");
+                        yaz.WriteLine("\t\t\t\'\\r\': \'\\\\r\',");
+                        yaz.WriteLine("\t\t\t\'\"\': \'\\\\\"\',");
+                        yaz.WriteLine("\t\t\t\'\\\\\': \'\\\\\\\\\'");
+                        yaz.WriteLine("\t\t},");
+                        yaz.WriteLine("\t\trep;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tfunction quote(string) {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t// If the string contains no control characters, no quote characters, and no");
+                        yaz.WriteLine("\t\t// backslash characters, then we can safely slap some quotes around it.");
+                        yaz.WriteLine("\t\t// Otherwise we must also replace the offending characters with safe escape");
+                        yaz.WriteLine("\t\t// sequences.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tescapable.lastIndex = 0;");
+                        yaz.WriteLine("\t\treturn escapable.test(string) ? \'\"\' + string.replace(escapable, function (a) {");
+                        yaz.WriteLine("\t\t\tvar c = meta[a];");
+                        yaz.WriteLine("\t\t\treturn typeof c === \'string\'");
+                        yaz.WriteLine("\t\t\t\t? c");
+                        yaz.WriteLine("\t\t\t\t: \'\\\\u\' + (\'0000\' + a.charCodeAt(0).toString(16)).slice(-4);");
+                        yaz.WriteLine("\t\t}) + \'\"\' : \'\"\' + string + \'\"\';");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tfunction str(key, holder) {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t// Produce a string from holder[key].");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tvar i,\t\t  // The loop counter.");
+                        yaz.WriteLine("\t\t\tk,\t\t  // The member key.");
+                        yaz.WriteLine("\t\t\tv,\t\t  // The member value.");
+                        yaz.WriteLine("\t\t\tlength,");
+                        yaz.WriteLine("\t\t\tmind = gap,");
+                        yaz.WriteLine("\t\t\tpartial,");
+                        yaz.WriteLine("\t\t\tvalue = holder[key];");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t// If the value has a toJSON method, call it to obtain a replacement value.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tif (value && typeof value === \'object\' &&");
+                        yaz.WriteLine("\t\t\t\ttypeof value.toJSON === \'function\') {");
+                        yaz.WriteLine("\t\t\tvalue = value.toJSON(key);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t// If we were called with a replacer function, then call the replacer to");
+                        yaz.WriteLine("\t\t// obtain a replacement value.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tif (typeof rep === \'function\') {");
+                        yaz.WriteLine("\t\t\tvalue = rep.call(holder, key, value);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t// What happens next depends on the value\'s type.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tswitch (typeof value) {");
+                        yaz.WriteLine("\t\t\tcase \'string\':");
+                        yaz.WriteLine("\t\t\t\treturn quote(value);");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tcase \'number\':");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// JSON numbers must be finite. Encode non-finite numbers as null.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\treturn isFinite(value) ? String(value) : \'null\';");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tcase \'boolean\':");
+                        yaz.WriteLine("\t\t\tcase \'null\':");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// If the value is a boolean or null, convert it to a string. Note:");
+                        yaz.WriteLine("\t\t\t\t// typeof null does not produce \'null\'. The case is included here in");
+                        yaz.WriteLine("\t\t\t\t// the remote chance that this gets fixed someday.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\treturn String(value);");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// If the type is \'object\', we might be dealing with an object or an array or");
+                        yaz.WriteLine("\t\t\t\t// null.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tcase \'object\':");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// Due to a specification blunder in ECMAScript, typeof null is \'object\',");
+                        yaz.WriteLine("\t\t\t\t// so watch out for that case.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tif (!value) {");
+                        yaz.WriteLine("\t\t\t\t\treturn \'null\';");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// Make an array to hold the partial results of stringifying this object value.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tgap += indent;");
+                        yaz.WriteLine("\t\t\t\tpartial = [];");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// Is the value an array?");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tif (Object.prototype.toString.apply(value) === \'[object Array]\') {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\t// The value is an array. Stringify every element. Use null as a placeholder");
+                        yaz.WriteLine("\t\t\t\t\t// for non-JSON values.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\tlength = value.length;");
+                        yaz.WriteLine("\t\t\t\t\tfor (i = 0; i < length; i += 1) {");
+                        yaz.WriteLine("\t\t\t\t\t\tpartial[i] = str(i, value) || \'null\';");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\t// Join all of the elements together, separated with commas, and wrap them in");
+                        yaz.WriteLine("\t\t\t\t\t// brackets.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\tv = partial.length === 0");
+                        yaz.WriteLine("\t\t\t\t\t\t? \'[]\'");
+                        yaz.WriteLine("\t\t\t\t\t\t: gap");
+                        yaz.WriteLine("\t\t\t\t\t\t? \'[\\n\' + gap + partial.join(\',\\n\' + gap) + \'\\n\' + mind + \']\'");
+                        yaz.WriteLine("\t\t\t\t\t\t: \'[\' + partial.join(\',\') + \']\';");
+                        yaz.WriteLine("\t\t\t\t\tgap = mind;");
+                        yaz.WriteLine("\t\t\t\t\treturn v;");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// If the replacer is an array, use it to select the members to be stringified.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tif (rep && typeof rep === \'object\') {");
+                        yaz.WriteLine("\t\t\t\t\tlength = rep.length;");
+                        yaz.WriteLine("\t\t\t\t\tfor (i = 0; i < length; i += 1) {");
+                        yaz.WriteLine("\t\t\t\t\t\tif (typeof rep[i] === \'string\') {");
+                        yaz.WriteLine("\t\t\t\t\t\t\tk = rep[i];");
+                        yaz.WriteLine("\t\t\t\t\t\t\tv = str(k, value);");
+                        yaz.WriteLine("\t\t\t\t\t\t\tif (v) {");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\tpartial.push(quote(k) + (gap ? \': \' : \':\') + v);");
+                        yaz.WriteLine("\t\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t} else {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\t// Otherwise, iterate through all of the keys in the object.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\tfor (k in value) {");
+                        yaz.WriteLine("\t\t\t\t\t\tif (Object.prototype.hasOwnProperty.call(value, k)) {");
+                        yaz.WriteLine("\t\t\t\t\t\t\tv = str(k, value);");
+                        yaz.WriteLine("\t\t\t\t\t\t\tif (v) {");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\tpartial.push(quote(k) + (gap ? \': \' : \':\') + v);");
+                        yaz.WriteLine("\t\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// Join all of the member texts together, separated with commas,");
+                        yaz.WriteLine("\t\t\t\t// and wrap them in braces.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tv = partial.length === 0");
+                        yaz.WriteLine("\t\t\t\t\t? \'{}\'");
+                        yaz.WriteLine("\t\t\t\t\t: gap");
+                        yaz.WriteLine("\t\t\t\t\t? \'{\\n\' + gap + partial.join(\',\\n\' + gap) + \'\\n\' + mind + \'}\'");
+                        yaz.WriteLine("\t\t\t\t\t: \'{\' + partial.join(\',\') + \'}\';");
+                        yaz.WriteLine("\t\t\t\tgap = mind;");
+                        yaz.WriteLine("\t\t\t\treturn v;");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t// If the JSON object does not yet have a stringify method, give it one.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif (typeof JSON.stringify !== \'function\') {");
+                        yaz.WriteLine("\t\tJSON.stringify = function (value, replacer, space) {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// The stringify method takes a value and an optional replacer, and an optional");
+                        yaz.WriteLine("\t\t\t// space parameter, and returns a JSON text. The replacer can be a function");
+                        yaz.WriteLine("\t\t\t// that can replace values, or an array of strings that will select the keys.");
+                        yaz.WriteLine("\t\t\t// A default replacer method can be provided. Use of the space parameter can");
+                        yaz.WriteLine("\t\t\t// produce text that is more easily readable.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tvar i;");
+                        yaz.WriteLine("\t\t\tgap = \'\';");
+                        yaz.WriteLine("\t\t\tindent = \'\';");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// If the space parameter is a number, make an indent string containing that");
+                        yaz.WriteLine("\t\t\t// many spaces.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tif (typeof space === \'number\') {");
+                        yaz.WriteLine("\t\t\t\tfor (i = 0; i < space; i += 1) {");
+                        yaz.WriteLine("\t\t\t\t\tindent += \' \';");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// If the space parameter is a string, it will be used as the indent string.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t} else if (typeof space === \'string\') {");
+                        yaz.WriteLine("\t\t\t\tindent = space;");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// If there is a replacer, it must be a function or an array.");
+                        yaz.WriteLine("\t\t\t// Otherwise, throw an error.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\trep = replacer;");
+                        yaz.WriteLine("\t\t\tif (replacer && typeof replacer !== \'function\' &&");
+                        yaz.WriteLine("\t\t\t\t\t(typeof replacer !== \'object\' ||");
+                        yaz.WriteLine("\t\t\t\t\ttypeof replacer.length !== \'number\')) {");
+                        yaz.WriteLine("\t\t\t\tthrow new Error(\'JSON.stringify\');");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// Make a fake root object containing our value under the key of \'\'.");
+                        yaz.WriteLine("\t\t\t// Return the result of stringifying the value.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn str(\'\', { \'\': value });");
+                        yaz.WriteLine("\t\t};");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t// If the JSON object does not yet have a parse method, give it one.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif (typeof JSON.parse !== \'function\') {");
+                        yaz.WriteLine("\t\tJSON.parse = function (text, reviver) {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// The parse method takes a text and an optional reviver function, and returns");
+                        yaz.WriteLine("\t\t\t// a JavaScript value if the text is a valid JSON text.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tvar j;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tfunction walk(holder, key) {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// The walk method is used to recursively walk the resulting structure so");
+                        yaz.WriteLine("\t\t\t\t// that modifications can be made.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tvar k, v, value = holder[key];");
+                        yaz.WriteLine("\t\t\t\tif (value && typeof value === \'object\') {");
+                        yaz.WriteLine("\t\t\t\t\tfor (k in value) {");
+                        yaz.WriteLine("\t\t\t\t\t\tif (Object.prototype.hasOwnProperty.call(value, k)) {");
+                        yaz.WriteLine("\t\t\t\t\t\t\tv = walk(value, k);");
+                        yaz.WriteLine("\t\t\t\t\t\t\tif (v !== undefined) {");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\tvalue[k] = v;");
+                        yaz.WriteLine("\t\t\t\t\t\t\t} else {");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\tdelete value[k];");
+                        yaz.WriteLine("\t\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\treturn reviver.call(holder, key, value);");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// Parsing happens in four stages. In the first stage, we replace certain");
+                        yaz.WriteLine("\t\t\t// Unicode characters with escape sequences. JavaScript handles many characters");
+                        yaz.WriteLine("\t\t\t// incorrectly, either silently deleting them, or treating them as line endings.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\ttext = String(text);");
+                        yaz.WriteLine("\t\t\tcx.lastIndex = 0;");
+                        yaz.WriteLine("\t\t\tif (cx.test(text)) {");
+                        yaz.WriteLine("\t\t\t\ttext = text.replace(cx, function (a) {");
+                        yaz.WriteLine("\t\t\t\t\treturn \'\\\\u\' +");
+                        yaz.WriteLine("\t\t\t\t\t\t(\'0000\' + a.charCodeAt(0).toString(16)).slice(-4);");
+                        yaz.WriteLine("\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// In the second stage, we run the text against regular expressions that look");
+                        yaz.WriteLine("\t\t\t// for non-JSON patterns. We are especially concerned with \'()\' and \'new\'");
+                        yaz.WriteLine("\t\t\t// because they can cause invocation, and \'=\' because it can cause mutation.");
+                        yaz.WriteLine("\t\t\t// But just to be safe, we want to reject all unexpected forms.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// We split the second stage into 4 regexp operations in order to work around");
+                        yaz.WriteLine("\t\t\t// crippling inefficiencies in IE\'s and Safari\'s regexp engines. First we");
+                        yaz.WriteLine("\t\t\t// replace the JSON backslash pairs with \'@\' (a non-JSON character). Second, we");
+                        yaz.WriteLine("\t\t\t// replace all simple value tokens with \']\' characters. Third, we delete all");
+                        yaz.WriteLine("\t\t\t// open brackets that follow a colon or comma or that begin the text. Finally,");
+                        yaz.WriteLine("\t\t\t// we look to see that the remaining characters are only whitespace or \']\' or");
+                        yaz.WriteLine("\t\t\t// \',\' or \':\' or \'{\' or \'}\'. If that is so, then the text is safe for eval.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tif (/^[\\],:{}\\s]*$/");
+                        yaz.WriteLine("\t\t\t\t\t.test(text.replace(/\\\\(?:[\"\\\\\\/bfnrt]|u[0-9a-fA-F]{4})/g, \'@\')");
+                        yaz.WriteLine("\t\t\t\t\t\t.replace(/\"[^\"\\\\\\n\\r]*\"|true|false|null|-?\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d+)?/g, \']\')");
+                        yaz.WriteLine("\t\t\t\t\t\t.replace(/(?:^|:|,)(?:\\s*\\[)+/g, \'\'))) {");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// In the third stage we use the eval function to compile the text into a");
+                        yaz.WriteLine("\t\t\t\t// JavaScript structure. The \'{\' operator is subject to a syntactic ambiguity");
+                        yaz.WriteLine("\t\t\t\t// in JavaScript: it can begin a block or an object literal. We wrap the text");
+                        yaz.WriteLine("\t\t\t\t// in parens to eliminate the ambiguity.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tj = eval(\'(\' + text + \')\');");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t// In the optional fourth stage, we recursively walk the new structure, passing");
+                        yaz.WriteLine("\t\t\t\t// each name/value pair to a reviver function for possible transformation.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\treturn typeof reviver === \'function\'");
+                        yaz.WriteLine("\t\t\t\t\t? walk({ \'\': j }, \'\')");
+                        yaz.WriteLine("\t\t\t\t\t: j;");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t// If the text is not JSON parseable, then a SyntaxError is thrown.");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tthrow new SyntaxError(\'JSON.parse\');");
+                        yaz.WriteLine("\t\t};");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}());");
+                        yaz.Close();
+                    }
                 }
             }
         }
