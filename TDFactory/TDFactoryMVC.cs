@@ -529,28 +529,26 @@ namespace TDFactory
                         yaz.WriteLine("\t\tpublic " + Table + "()");
                         yaz.WriteLine("\t\t{");
 
-                        if (chkRTables.Checked == true)
+                        if (fkcList.Count > 0)
                         {
-                            if (fkcList.Count > 0)
+
+                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                             {
+                                string ForeignTableName = fkc.ForeignTableName;
+                                yaz.WriteLine("\t\t\t" + ForeignTableName + "List = new List<" + ForeignTableName + ">();");
 
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    yaz.WriteLine("\t\t\t" + ForeignTableName + "List = new List<" + ForeignTableName + ">();");
-
-                                }
-                            }
-
-                            if (fkcListForeign.Count > 0)
-                            {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    yaz.WriteLine("\t\t\t" + PrimaryTableName + "List = new List<SelectListItem>();");
-                                }
                             }
                         }
+
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                yaz.WriteLine("\t\t\t" + PrimaryTableName + "List = new List<SelectListItem>();");
+                            }
+                        }
+
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
@@ -630,28 +628,33 @@ namespace TDFactory
                         yaz.WriteLine("\t\tpublic string Mesaj { get; set; }");
 
 
-                        if (chkRTables.Checked == true)
+                        if (fkcList.Count > 0)
                         {
-                            if (fkcList.Count > 0)
-                            {
-                                yaz.WriteLine("");
+                            yaz.WriteLine("");
 
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    yaz.WriteLine("\t\tpublic List<" + ForeignTableName + "> " + ForeignTableName + "List { get; set; }");
-                                }
+                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                            {
+                                string ForeignTableName = fkc.ForeignTableName;
+                                yaz.WriteLine("\t\tpublic List<" + ForeignTableName + "> " + ForeignTableName + "List { get; set; }");
+                            }
+                        }
+
+                        if (fkcListForeign.Count > 0)
+                        {
+                            yaz.WriteLine("");
+
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                yaz.WriteLine("\t\tpublic List<SelectListItem> " + PrimaryTableName + "List { get; set; }");
                             }
 
-                            if (fkcListForeign.Count > 0)
-                            {
-                                yaz.WriteLine("");
+                            yaz.WriteLine("");
 
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    yaz.WriteLine("\t\tpublic List<SelectListItem> " + PrimaryTableName + "List { get; set; }");
-                                }
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                yaz.WriteLine("\t\tpublic string " + PrimaryTableName + "Adi { get; set; }");
                             }
                         }
 
@@ -1150,24 +1153,21 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
+                            string PrimaryTableName = fkc.PrimaryTableName;
 
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -1187,24 +1187,21 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
+                            string PrimaryTableName = fkc.PrimaryTableName;
 
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -1219,30 +1216,27 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string PrimaryTableName = fkc.PrimaryTableName;
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t\telse");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t\telse");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -1269,30 +1263,27 @@ namespace TDFactory
 
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string PrimaryTableName = fkc.PrimaryTableName;
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t\telse");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t\telse");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -2892,38 +2883,35 @@ namespace TDFactory
                         yaz.WriteLine("\tpublic class " + Table + "Model");
                         yaz.WriteLine("\t{");
 
-                        if (chkRTables.Checked == true)
+                        if (fkcList.Count > 0 || fkcListForeign.Count > 0)
                         {
-                            if (fkcList.Count > 0 || fkcListForeign.Count > 0)
-                            {
-                                yaz.WriteLine("\t\tpublic " + Table + "Model()");
-                                yaz.WriteLine("\t\t{");
-                            }
+                            yaz.WriteLine("\t\tpublic " + Table + "Model()");
+                            yaz.WriteLine("\t\t{");
+                        }
 
-                            if (fkcList.Count > 0)
+                        if (fkcList.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                             {
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    yaz.WriteLine("\t\t\t" + ForeignTableName + "List = new List<" + ForeignTableName + ">();");
+                                string ForeignTableName = fkc.ForeignTableName;
+                                yaz.WriteLine("\t\t\t" + ForeignTableName + "List = new List<" + ForeignTableName + "Model>();");
 
-                                }
                             }
+                        }
 
-                            if (fkcListForeign.Count > 0)
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    yaz.WriteLine("\t\t\t" + PrimaryTableName + "List = new List<SelectListItem>();");
-                                }
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                yaz.WriteLine("\t\t\t" + PrimaryTableName + "List = new List<SelectListItem>();");
                             }
+                        }
 
-                            if (fkcList.Count > 0 || fkcListForeign.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t}");
-                                yaz.WriteLine("");
-                            }
+                        if (fkcList.Count > 0 || fkcListForeign.Count > 0)
+                        {
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
                         }
 
                         int counter = columnNames.Count;
@@ -2994,28 +2982,33 @@ namespace TDFactory
                         yaz.WriteLine("\t\tpublic string Mesaj { get; set; }");
 
 
-                        if (chkRTables.Checked == true)
+                        if (fkcList.Count > 0)
                         {
-                            if (fkcList.Count > 0)
-                            {
-                                yaz.WriteLine("");
+                            yaz.WriteLine("");
 
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    yaz.WriteLine("\t\tpublic List<" + ForeignTableName + "> " + ForeignTableName + "List { get; set; }");
-                                }
+                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                            {
+                                string ForeignTableName = fkc.ForeignTableName;
+                                yaz.WriteLine("\t\tpublic List<" + ForeignTableName + "Model> " + ForeignTableName + "List { get; set; }");
+                            }
+                        }
+
+                        if (fkcListForeign.Count > 0)
+                        {
+                            yaz.WriteLine("");
+
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                yaz.WriteLine("\t\tpublic List<SelectListItem> " + PrimaryTableName + "List { get; set; }");
                             }
 
-                            if (fkcListForeign.Count > 0)
-                            {
-                                yaz.WriteLine("");
+                            yaz.WriteLine("");
 
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    yaz.WriteLine("\t\tpublic List<SelectListItem> " + PrimaryTableName + "List { get; set; }");
-                                }
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                yaz.WriteLine("\t\tpublic string " + PrimaryTableName + "Adi { get; set; }");
                             }
                         }
 
@@ -3075,28 +3068,33 @@ namespace TDFactory
                         yaz.WriteLine("\tMesaj : string,");
 
 
-                        if (chkRTables.Checked == true)
+                        if (fkcList.Count > 0)
                         {
-                            if (fkcList.Count > 0)
-                            {
-                                yaz.WriteLine("");
+                            yaz.WriteLine("");
 
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    yaz.WriteLine("\t" + ForeignTableName + "List : Array<" + ForeignTableName + ">,");
-                                }
+                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                            {
+                                string ForeignTableName = fkc.ForeignTableName;
+                                yaz.WriteLine("\t" + ForeignTableName + "List : Array<" + ForeignTableName + ">,");
+                            }
+                        }
+
+                        if (fkcListForeign.Count > 0)
+                        {
+                            yaz.WriteLine("");
+
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                yaz.WriteLine("\t" + PrimaryTableName + "List : any[],");
                             }
 
-                            if (fkcListForeign.Count > 0)
-                            {
-                                yaz.WriteLine("");
+                            yaz.WriteLine("");
 
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    yaz.WriteLine("\t" + PrimaryTableName + "List : any[],");
-                                }
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                yaz.WriteLine("\t" + PrimaryTableName + "Adi : string,");
                             }
                         }
 
@@ -3118,6 +3116,7 @@ namespace TDFactory
                 string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
 
                 SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+
                 List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
                 fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
 
@@ -3160,14 +3159,27 @@ namespace TDFactory
 
                         foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
                         {
+                            List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+
                             string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + column.ColumnName + "</th>");
+                            if (frchkForeignLst2.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst2.FirstOrDefault().PrimaryTableName + "</th>");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + column.ColumnName + "</th>");
+                            }
 
                             i++;
                         }
 
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
+                        if (identityColumns.Count > 0)
+                        {
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
+                        }
+
                         yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
                         yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
                         yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
@@ -3177,11 +3189,20 @@ namespace TDFactory
 
                         foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
                         {
+                            List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+
                             string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
-                            if (column.TypeName != typeof(bool))
+                            if (column.TypeName.Name != "Boolean")
                             {
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + column.ColumnName + " }}</td>");
+                                if (frchkForeignLst2.Count > 0)
+                                {
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + frchkForeignLst2.FirstOrDefault().PrimaryTableName + "Adi }}</td>");
+                                }
+                                else
+                                {
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + column.ColumnName + " }}</td>");
+                                }
                             }
                             else
                             {
@@ -3191,22 +3212,22 @@ namespace TDFactory
                             i++;
                         }
 
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
 
                         if (identityColumns.Count > 0)
                         {
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" *ngIf=\"updateShow\" [routerLink]=\"['/Admin/" + Table + "/Duzenle/' + item?." + id + "]\">Düzenle</a></li>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" *ngIf=\"copyShow\" data-toggle=\"modal\" href=\"#cpyData\" [attr.data-id]=\"item?." + id + "\">Kopyala</a></li>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" *ngIf=\"deleteShow\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-id]=\"item?." + id + "\">Sil</a></li>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rdltLink\" *ngIf=\"realDeleteShow\" data-toggle=\"modal\" href=\"#rdltData\" [attr.data-id]=\"item?." + id + "\">Kaldır</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
                         }
 
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
                         yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
                         yaz.WriteLine("\t\t\t\t\t\t\t</tbody>");
                         yaz.WriteLine("\t\t\t\t\t\t</table>");
@@ -3233,62 +3254,89 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        yaz.WriteLine("@model " + projectName + "." + Table);
-                        yaz.WriteLine("");
-                        yaz.WriteLine("@{");
-                        yaz.WriteLine("\tViewBag.Title = \"" + Table + " Ekle\";");
-                        yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_Layout.cshtml\";");
-                        yaz.WriteLine("}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("@using (Html.BeginForm()) {");
-                        yaz.WriteLine("\t@Html.ValidationSummary(true)");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t<fieldset>");
-                        yaz.WriteLine("\t\t<legend>" + Table + " Ekle</legend>");
+                        yaz.WriteLine("<div id=\"content\">");
+                        yaz.WriteLine("\t<div id=\"content-header\">");
+                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + " Ekle</a></div>");
+                        yaz.WriteLine("\t</div>");
+                        yaz.WriteLine("\t<div class=\"container-fluid\">");
+                        yaz.WriteLine("\t\t<form [formGroup]=\"ekleForm\" (ngSubmit)=\"onSubmit()\">");
+                        yaz.WriteLine("\t\t\t<fieldset>");
+
                         foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                         {
                             if (!identityColumns.Contains(column.ColumnName))
                             {
                                 List<ForeignKeyChecker> frchkLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
+                                yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+
                                 if (frchkLst.Count > 0)
                                 {
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                    yaz.WriteLine("\t\t\t" + frchkLst.FirstOrDefault().PrimaryTableName + "Adi");
-                                    yaz.WriteLine("\t\t</div>");
-                                    yaz.WriteLine("\t\t<div class=\"clear\"></div>");
-                                    yaz.WriteLine("\t\t<div class=\"editor-field\">");
-                                    yaz.WriteLine("\t\t\t@Html.DropDownListFor(model => model." + column.ColumnName + ", (List<SelectListItem>)Model." + frchkLst.FirstOrDefault().PrimaryTableName + "List)");
-                                    yaz.WriteLine("\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName);
+                                    yaz.WriteLine("\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                    yaz.WriteLine("\t\t\t\t\t<select id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\"><option *ngFor=\"let item of model?." + frchkLst.FirstOrDefault().PrimaryTableName + "List\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
                                 }
                                 else
                                 {
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                    yaz.WriteLine("\t\t\t@Html.LabelFor(model => model." + column.ColumnName + ")");
-                                    yaz.WriteLine("\t\t</div>");
-                                    yaz.WriteLine("\t\t<div class=\"clear\"></div>");
-                                    yaz.WriteLine("\t\t<div class=\"editor-field\">");
-                                    yaz.WriteLine("\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
-                                    yaz.WriteLine("\t\t\t@Html.ValidationMessageFor(model => model." + column.ColumnName + ")");
-                                    yaz.WriteLine("\t\t</div>");
+                                    if (column.TypeName.Name == "Boolean")
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
+                                        yaz.WriteLine("\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                        yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"checkbox\" />");
+                                    }
+                                    else if (column.TypeName.Name == "Int16" ||
+                                             column.TypeName.Name == "Int32" ||
+                                             column.TypeName.Name == "Int64")
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
+                                        yaz.WriteLine("\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                        yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"number\" />");
+                                    }
+                                    else if (column.TypeName.Name == "String" &&
+                                             column.CharLength == "")
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
+                                        yaz.WriteLine("\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                        yaz.WriteLine("\t\t\t\t\t<textarea id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\"></textarea>");
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
+                                        yaz.WriteLine("\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                        yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"text\" />");
+                                    }
                                 }
-                                yaz.WriteLine("\t\t<div class=\"clear\"></div>");
+
+                                yaz.WriteLine("\t\t\t\t\t<br />");
+                                yaz.WriteLine("\t\t\t\t\t<!-- " + column.ColumnName + " -->");
+
+                                yaz.WriteLine("\t\t\t\t</div>");
+                                yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                yaz.WriteLine("");
                             }
                         }
 
+                        yaz.WriteLine("\t\t\t\t<p>");
+                        yaz.WriteLine("\t\t\t\t\t<div class=\"alert alert-error\">");
+                        yaz.WriteLine("\t\t\t\t\t\t<strong>Hata! </strong> <span class=\"alertMessage\">{{ model?.Mesaj }}</span>");
+                        yaz.WriteLine("\t\t\t\t\t</div>");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t<p>");
-                        yaz.WriteLine("\t\t\t<input type=\"submit\" value=\"Kaydet\" />");
-                        yaz.WriteLine("\t\t</p>");
-                        yaz.WriteLine("\t</fieldset>");
-                        yaz.WriteLine("}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("<div class=\"pagelinks\">");
-                        yaz.WriteLine("\t@Html.ActionLink(\"Listeye Git\", \"Index\", \"" + Table + "\")");
+                        yaz.WriteLine("\t\t\t\t\t<input type=\"submit\" value=\"Kaydet\" class=\"btn btn-success btn-save\" [disabled]=\"!ekleForm.valid\" />");
+                        yaz.WriteLine("\t\t\t\t\t<a routerLink=\"/Admin/" + Table + "\" class=\"btn btn-danger btn-cancel\">İptal</a>");
+                        yaz.WriteLine("\t\t\t</fieldset>");
+                        yaz.WriteLine("\t\t</form>");
+                        yaz.WriteLine("\t</div>");
                         yaz.WriteLine("</div>");
-
                         yaz.Close();
                     }
                 }
@@ -3300,134 +3348,216 @@ namespace TDFactory
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
-                            yaz.WriteLine("@model " + projectName + "." + Table);
-                            yaz.WriteLine("");
-                            yaz.WriteLine("@{");
-                            yaz.WriteLine("\tViewBag.Title = \"" + Table + " Düzenle\";");
-                            yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_Layout.cshtml\";");
-                            yaz.WriteLine("}");
-                            yaz.WriteLine("");
+                            yaz.WriteLine("<div id=\"content\">");
+                            yaz.WriteLine("\t<div id=\"content-header\">");
+                            yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + " Düzenle</a></div>");
+                            yaz.WriteLine("\t</div>");
+                            yaz.WriteLine("\t<div class=\"container-fluid\">");
+                            yaz.WriteLine("\t\t<form [formGroup]=\"duzenleForm\" (ngSubmit)=\"onSubmit()\">");
+                            yaz.WriteLine("\t\t\t<fieldset>");
 
-                            yaz.WriteLine("@using (Html.BeginForm()) {");
-                            yaz.WriteLine("\t@Html.ValidationSummary(true)");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t<fieldset>");
-                            yaz.WriteLine("\t\t<legend>" + Table + " Düzenle</legend>");
                             foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                             {
                                 if (identityColumns.Contains(column.ColumnName))
                                 {
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                    yaz.WriteLine("\t\t\t@Html.HiddenFor(model => model." + column.ColumnName + ")");
-                                    yaz.WriteLine("\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+                                    yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"hidden\" value=\"{{ model?." + column.ColumnName + " }}\" />");
+                                    yaz.WriteLine("\t\t\t\t</div>");
                                 }
                                 else
                                 {
                                     List<ForeignKeyChecker> frchkLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
+                                    yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+
                                     if (frchkLst.Count > 0)
                                     {
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                        yaz.WriteLine("\t\t\t" + frchkLst.FirstOrDefault().PrimaryTableName + "Adi");
-                                        yaz.WriteLine("\t\t</div>");
-                                        yaz.WriteLine("\t\t<div class=\"clear\"></div>");
-                                        yaz.WriteLine("\t\t<div class=\"editor-field\">");
-                                        yaz.WriteLine("\t\t\t@Html.DropDownListFor(model => model." + column.ColumnName + ", (List<SelectListItem>)Model." + frchkLst.FirstOrDefault().PrimaryTableName + "List)");
-                                        yaz.WriteLine("\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName);
+                                        yaz.WriteLine("\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                        yaz.WriteLine("\t\t\t\t\t<select id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\"><option *ngFor=\"let item of model?." + frchkLst.FirstOrDefault().PrimaryTableName + "List\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
                                     }
                                     else
                                     {
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                        yaz.WriteLine("\t\t\t@Html.LabelFor(model => model." + column.ColumnName + ")");
-                                        yaz.WriteLine("\t\t</div>");
-                                        yaz.WriteLine("\t\t<div class=\"clear\"></div>");
-                                        yaz.WriteLine("\t\t<div class=\"editor-field\">");
-                                        yaz.WriteLine("\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
-                                        yaz.WriteLine("\t\t\t@Html.ValidationMessageFor(model => model." + column.ColumnName + ")");
-                                        yaz.WriteLine("\t\t</div>");
+                                        if (column.TypeName.Name == "Boolean")
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
+                                            yaz.WriteLine("\t\t\t\t</div>");
+                                            yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                            yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                            yaz.WriteLine("\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"checkbox\" checked=\"checked\" *ngIf=\"model?." + column.ColumnName + "\" />");
+                                            yaz.WriteLine("\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"checkbox\" *ngIf=\"!model?." + column.ColumnName + "\" />");
+                                        }
+                                        else if (column.TypeName.Name == "Int16" ||
+                                                 column.TypeName.Name == "Int32" ||
+                                                 column.TypeName.Name == "Int64")
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
+                                            yaz.WriteLine("\t\t\t\t</div>");
+                                            yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                            yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                            yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"number\" value=\"{{ model?." + column.ColumnName + " }}\" />");
+                                        }
+                                        else if (column.TypeName.Name == "String" &&
+                                                 column.CharLength.ToLower() == "")
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
+                                            yaz.WriteLine("\t\t\t\t</div>");
+                                            yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                            yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                            yaz.WriteLine("\t\t\t\t\t<textarea id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\">{{ model?." + column.ColumnName + " }}</textarea>");
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
+                                            yaz.WriteLine("\t\t\t\t</div>");
+                                            yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                            yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                            yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"text\" value=\"{{ model?." + column.ColumnName + " }}\" />");
+                                        }
                                     }
-                                    yaz.WriteLine("\t\t<div class=\"clear\"></div>");
+
+                                    yaz.WriteLine("\t\t\t\t\t<br />");
+                                    yaz.WriteLine("\t\t\t\t\t<!-- " + column.ColumnName + " -->");
+
+                                    yaz.WriteLine("\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                    yaz.WriteLine("");
                                 }
                             }
 
+                            yaz.WriteLine("\t\t\t\t<p>");
+                            yaz.WriteLine("\t\t\t\t\t<div class=\"alert alert-error\">");
+                            yaz.WriteLine("\t\t\t\t\t\t<strong>Hata! </strong> <span class=\"alertMessage\">{{ model?.Mesaj }}</span>");
+                            yaz.WriteLine("\t\t\t\t\t</div>");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\t<p>");
-                            yaz.WriteLine("\t\t\t<input type=\"submit\" value=\"Kaydet\" />");
-                            yaz.WriteLine("\t\t</p>");
-                            yaz.WriteLine("\t</fieldset>");
-                            yaz.WriteLine("}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("<div class=\"pagelinks\">");
-                            yaz.WriteLine("\t@Html.ActionLink(\"Listeye Git\", \"Index\", \"" + Table + "\")");
+                            yaz.WriteLine("\t\t\t\t\t<input type=\"submit\" value=\"Kaydet\" class=\"btn btn-success btn-save\" [disabled]=\"!duzenleForm.valid\" />");
+                            yaz.WriteLine("\t\t\t\t\t<a routerLink=\"/Admin/" + Table + "\" class=\"btn btn-danger btn-cancel\">İptal</a>");
+                            yaz.WriteLine("\t\t\t</fieldset>");
+                            yaz.WriteLine("\t\t</form>");
+
+                            if (fkcList.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+
+                                    List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
+                                    string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
+
+                                    List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName).Take(4).ToList();
+
+                                    List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
+                                    fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
+
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t<div class=\"row-fluid\">");
+                                    yaz.WriteLine("\t\t\t<div class=\"span12\">");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
+                                    yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
+                                    yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
+                                    yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + ForeignTableName + "</h5>");
+                                    yaz.WriteLine("\t\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
+                                    yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t<thead>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t<tr>");
+
+                                    i = 0;
+
+                                    foreach (TableColumnNames item in foreignColumns)
+                                    {
+                                        List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
+
+                                        string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                                        if (frchkForeignLst.Count > 0)
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst.FirstOrDefault().PrimaryTableName + "</th>");
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + item.ColumnName + "</th>");
+                                        }
+
+                                        i++;
+                                    }
+
+                                    if (identityForeignColumns.Count > 0)
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
+                                    }
+
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t<tr *ngFor=\"let item of model?." + ForeignTableName + "List\">");
+
+                                    i = 0;
+
+                                    foreach (TableColumnNames item in foreignColumns)
+                                    {
+                                        List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
+
+                                        string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                                        if (frchkForeignLst.Count > 0)
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + frchkForeignLst.FirstOrDefault().PrimaryTableName + "Adi }}</td>");
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + item.ColumnName + " }}</td>");
+                                        }
+
+                                        i++;
+                                    }
+
+                                    if (identityForeignColumns.Count > 0)
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" *ngIf=\"updateShow\" [routerLink]=\"['/Admin/" + ForeignTableName + "/Duzenle/' + item?." + idFrgn + "]\">Düzenle</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" *ngIf=\"copyShow\" data-toggle=\"modal\" href=\"#cpyData\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kopyala</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" *ngIf=\"deleteShow\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Sil</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rdltLink\" *ngIf=\"realDeleteShow\" data-toggle=\"modal\" href=\"#rdltData\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kaldır</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
+                                    }
+
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t</tbody>");
+                                    yaz.WriteLine("\t\t\t\t\t\t</table>");
+                                    yaz.WriteLine("\t\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t</div>");
+                                    yaz.WriteLine("\t\t</div>");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t<div class=\"pagelinks\">");
+                                    yaz.WriteLine("\t\t\t<a [routerLink]=\"['/Admin/" + ForeignTableName + "/Ekle/' + model?." + idFrgn + "]\" class=\"btn btn-primary btn-add\" *ngIf=\"insertShow\">" + ForeignTableName + " Ekle</a>");
+                                    yaz.WriteLine("\t\t</div>");
+                                }
+
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t<input id=\"hdnModel\" type=\"hidden\" value=\"" + Table + "\" />");
+                            }
+
+                            yaz.WriteLine("\t</div>");
                             yaz.WriteLine("</div>");
+
+                            if (fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("<admin-copydelete></admin-copydelete>");
+                            }
 
                             yaz.Close();
                         }
                     }
-                }
-            }
-        }
-
-        void CreateAngularLayout()
-        {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\_Layout.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@using TDLibrary");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<!DOCTYPE html>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<html>");
-                    yaz.WriteLine("<head>");
-                    yaz.WriteLine("\t<link rel=\"shortcut icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
-                    yaz.WriteLine("\t<link rel=\"icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
-                    yaz.WriteLine("\t<title>@ViewBag.Title</title>");
-                    yaz.WriteLine("</head>");
-                    yaz.WriteLine("<body>");
-                    yaz.WriteLine("\t@RenderBody()");
-                    yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Views/Shared/Controls/_Scripts.cshtml\"); }");
-                    yaz.WriteLine("</body>");
-                    yaz.WriteLine("</html>");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\Controls\\_Scripts.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@using TDLibrary");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/runtime-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/polyfills-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/styles-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/vendor-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/main-es2015.js\"></script>");
-
-                    yaz.Close();
-                }
-            }
-        }
-
-        void CreateAngularHomePage()
-        {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Home\\Index.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("@{");
-                    yaz.WriteLine("\tViewBag.Title = \"" + projectName + " Ana Sayfa\";");
-                    yaz.WriteLine("\tLayout = \"~/Views/Shared/_Layout.cshtml\";");
-                    yaz.WriteLine("}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToLower() + "-app></" + projectName.Substring(0, 3).ToLower() + "-app>");
-                    yaz.Close();
                 }
             }
         }
@@ -3495,24 +3625,21 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
+                            string PrimaryTableName = fkc.PrimaryTableName;
 
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -3532,24 +3659,21 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
+                            string PrimaryTableName = fkc.PrimaryTableName;
 
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -3564,30 +3688,27 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string PrimaryTableName = fkc.PrimaryTableName;
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t\telse");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t\telse");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -3614,30 +3735,27 @@ namespace TDFactory
 
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string PrimaryTableName = fkc.PrimaryTableName;
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t\telse");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t\telse");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -3726,24 +3844,21 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
+                            string PrimaryTableName = fkc.PrimaryTableName;
 
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -3763,24 +3878,21 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
+                            string PrimaryTableName = fkc.PrimaryTableName;
 
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -3795,30 +3907,27 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string PrimaryTableName = fkc.PrimaryTableName;
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t\telse");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t\telse");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -3845,30 +3954,27 @@ namespace TDFactory
 
                     yaz.WriteLine("");
 
-                    if (chkRTables.Checked == true)
+                    if (fkcListForeign.Count > 0)
                     {
-                        if (fkcListForeign.Count > 0)
+                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            string PrimaryTableName = fkc.PrimaryTableName;
+                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t\telse");
-                                yaz.WriteLine("\t\t\t\t{");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                yaz.WriteLine("\t\t\t\t}");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t\telse");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
                         }
                     }
 
@@ -3944,24 +4050,21 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                    string PrimaryTableName = fkc.PrimaryTableName;
 
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -3981,24 +4084,21 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                    string PrimaryTableName = fkc.PrimaryTableName;
 
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4013,30 +4113,27 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t\telse");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4063,30 +4160,27 @@ namespace TDFactory
 
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t\telse");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4142,24 +4236,21 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                    string PrimaryTableName = fkc.PrimaryTableName;
 
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4179,24 +4270,21 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                    string PrimaryTableName = fkc.PrimaryTableName;
 
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4211,30 +4299,27 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t\telse");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4261,30 +4346,27 @@ namespace TDFactory
 
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t\telse");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4340,24 +4422,21 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                    string PrimaryTableName = fkc.PrimaryTableName;
 
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4377,24 +4456,21 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                    string PrimaryTableName = fkc.PrimaryTableName;
 
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4409,30 +4485,27 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t\telse");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4459,30 +4532,27 @@ namespace TDFactory
 
                             yaz.WriteLine("");
 
-                            if (chkRTables.Checked == true)
+                            if (fkcListForeign.Count > 0)
                             {
-                                if (fkcListForeign.Count > 0)
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
-                                        string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                                        yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                        yaz.WriteLine("\t\t\t{");
-                                        yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t\telse");
-                                        yaz.WriteLine("\t\t\t\t{");
-                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                        yaz.WriteLine("\t\t\t\t}");
-                                        yaz.WriteLine("\t\t\t}");
-                                        yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4506,6 +4576,67 @@ namespace TDFactory
 
                         yaz.Close();
                     }
+                }
+            }
+        }
+
+        void CreateAngularLayout()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\_Layout.cshtml", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("@using TDLibrary");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<!DOCTYPE html>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<html>");
+                    yaz.WriteLine("<head>");
+                    yaz.WriteLine("\t<link rel=\"shortcut icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
+                    yaz.WriteLine("\t<link rel=\"icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
+                    yaz.WriteLine("\t<title>@ViewBag.Title</title>");
+                    yaz.WriteLine("</head>");
+                    yaz.WriteLine("<body>");
+                    yaz.WriteLine("\t@RenderBody()");
+                    yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Views/Shared/Controls/_Scripts.cshtml\"); }");
+                    yaz.WriteLine("</body>");
+                    yaz.WriteLine("</html>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\Controls\\_Scripts.cshtml", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("@using TDLibrary");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/runtime-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/polyfills-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/styles-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/vendor-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/main-es2015.js\"></script>");
+
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateAngularHomePage()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Home\\Index.cshtml", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("@{");
+                    yaz.WriteLine("\tViewBag.Title = \"" + projectName + " Ana Sayfa\";");
+                    yaz.WriteLine("\tLayout = \"~/Views/Shared/_Layout.cshtml\";");
+                    yaz.WriteLine("}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToLower() + "-app></" + projectName.Substring(0, 3).ToLower() + "-app>");
+                    yaz.Close();
                 }
             }
         }

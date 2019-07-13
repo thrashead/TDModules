@@ -139,7 +139,6 @@
             this.chkMVCWebConfig = new System.Windows.Forms.CheckBox();
             this.chkMVCStoredProc = new System.Windows.Forms.CheckBox();
             this.chkMVCController = new System.Windows.Forms.CheckBox();
-            this.chkRTables = new System.Windows.Forms.CheckBox();
             this.txtProjectName = new System.Windows.Forms.TextBox();
             this.btnAndroidBaslat = new System.Windows.Forms.Button();
             this.btnBaslat = new System.Windows.Forms.Button();
@@ -1287,7 +1286,6 @@
             this.pnlKaydet.Controls.Add(this.chkMVCWebConfig);
             this.pnlKaydet.Controls.Add(this.chkMVCStoredProc);
             this.pnlKaydet.Controls.Add(this.chkMVCController);
-            this.pnlKaydet.Controls.Add(this.chkRTables);
             this.pnlKaydet.Controls.Add(this.txtProjectName);
             this.pnlKaydet.Controls.Add(this.btnAndroidBaslat);
             this.pnlKaydet.Controls.Add(this.btnBaslat);
@@ -1304,9 +1302,8 @@
             // chkAngular
             // 
             this.chkAngular.AutoSize = true;
-            this.chkAngular.Location = new System.Drawing.Point(6, 218);
+            this.chkAngular.Location = new System.Drawing.Point(7, 67);
             this.chkAngular.Name = "chkAngular";
-            this.chkAngular.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.chkAngular.Size = new System.Drawing.Size(62, 17);
             this.chkAngular.TabIndex = 88;
             this.chkAngular.Text = "Angular";
@@ -1546,7 +1543,7 @@
             // 
             this.lblMVCKatmanlar.AutoSize = true;
             this.lblMVCKatmanlar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblMVCKatmanlar.Location = new System.Drawing.Point(6, 40);
+            this.lblMVCKatmanlar.Location = new System.Drawing.Point(4, 40);
             this.lblMVCKatmanlar.Name = "lblMVCKatmanlar";
             this.lblMVCKatmanlar.Size = new System.Drawing.Size(104, 13);
             this.lblMVCKatmanlar.TabIndex = 5;
@@ -1728,19 +1725,6 @@
             this.chkMVCController.UseVisualStyleBackColor = true;
             this.chkMVCController.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
             // 
-            // chkRTables
-            // 
-            this.chkRTables.AutoSize = true;
-            this.chkRTables.Checked = true;
-            this.chkRTables.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkRTables.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.chkRTables.Location = new System.Drawing.Point(6, 83);
-            this.chkRTables.Name = "chkRTables";
-            this.chkRTables.Size = new System.Drawing.Size(90, 17);
-            this.chkRTables.TabIndex = 71;
-            this.chkRTables.Text = "Bağlı Tablolar";
-            this.chkRTables.UseVisualStyleBackColor = true;
-            // 
             // txtProjectName
             // 
             this.txtProjectName.Location = new System.Drawing.Point(79, 11);
@@ -1764,9 +1748,9 @@
             // btnBaslat
             // 
             this.btnBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnBaslat.Location = new System.Drawing.Point(70, 214);
+            this.btnBaslat.Location = new System.Drawing.Point(6, 214);
             this.btnBaslat.Name = "btnBaslat";
-            this.btnBaslat.Size = new System.Drawing.Size(294, 23);
+            this.btnBaslat.Size = new System.Drawing.Size(358, 23);
             this.btnBaslat.TabIndex = 27;
             this.btnBaslat.Text = "Web Katmanları Oluştur";
             this.btnBaslat.UseVisualStyleBackColor = true;
@@ -2273,7 +2257,6 @@
         private System.Windows.Forms.CheckBox chkMVCController;
         private System.Windows.Forms.TextBox txtProjectName;
         private System.Windows.Forms.Label lblProjectName;
-        private System.Windows.Forms.CheckBox chkRTables;
         private System.Windows.Forms.CheckBox chkMVCModel;
         private System.Windows.Forms.CheckBox chkMVCWebConfig;
         private System.Windows.Forms.CheckBox chkMVCStilScript;
