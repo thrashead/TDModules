@@ -2744,16 +2744,6 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "', component: Admin" + Table + "IndexComponent },");
                         yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Index', component: Admin" + Table + "IndexComponent },");
                         yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Ekle', component: Admin" + Table + "EkleComponent },");
-
-                        SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-                        List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                        fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Ekle/:linkID', component: Admin" + Table + "EkleComponent },");
-                        }
-
                         yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Duzenle/:id', component: Admin" + Table + "DuzenleComponent },");
                     }
 
@@ -3238,8 +3228,6 @@ namespace TDFactory
                         yaz.WriteLine("\t\t<div class=\"pagelinks\">");
                         yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "/Ekle\" class=\"btn btn-primary btn-add\" *ngIf=\"insertShow\">" + Table + " Ekle</a>");
                         yaz.WriteLine("\t\t</div>");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t<input id=\"hdnModel\" type=\"hidden\" value=\"" + Table + "\" />");
                         yaz.WriteLine("\t</div>");
                         yaz.WriteLine("</div>");
                         yaz.WriteLine("");
@@ -3340,9 +3328,9 @@ namespace TDFactory
                     }
                 }
 
+                //Duzenle
                 if (identityColumns.Count > 0)
                 {
-                    //Duzenle
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\duzenle.html", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
@@ -3535,12 +3523,9 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t</div>");
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"pagelinks\">");
-                                    yaz.WriteLine("\t\t\t<a [routerLink]=\"['/Admin/" + ForeignTableName + "/Ekle/' + model?." + idFrgn + "]\" class=\"btn btn-primary btn-add\" *ngIf=\"insertShow\">" + ForeignTableName + " Ekle</a>");
+                                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + ForeignTableName + "/Ekle\" class=\"btn btn-primary btn-add\" *ngIf=\"insertShow\">" + ForeignTableName + " Ekle</a>");
                                     yaz.WriteLine("\t\t</div>");
                                 }
-
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t<input id=\"hdnModel\" type=\"hidden\" value=\"" + Table + "\" />");
                             }
 
                             yaz.WriteLine("\t</div>");
@@ -3615,20 +3600,18 @@ namespace TDFactory
                 yaz.WriteLine("\t\t}");
                 yaz.WriteLine("");
 
+                // Ekle
                 if (identityColumns.Count > 0)
                 {
                     string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
 
                     if (fkcListForeign.Count > 0)
                     {
-                        // Ekle
                         yaz.WriteLine("\t\t[HttpGet]");
-                        yaz.WriteLine("\t\tpublic JsonResult Ekle(int? linkID)");
+                        yaz.WriteLine("\t\tpublic JsonResult Ekle()");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\t" + Table + "Model table = new " + Table + "Model();");
                         yaz.WriteLine("");
-
-                        i = 0;
 
                         foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                         {
@@ -3636,13 +3619,9 @@ namespace TDFactory
 
                             string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                            string linkidtext = i == 0 ? ", linkID" : "";
-
                             yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\"" + linkidtext + ");");
+                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
                             yaz.WriteLine("");
-
-                            i++;
                         }
 
                         yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
@@ -3650,6 +3629,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                     }
 
+                    // Ekle
                     yaz.WriteLine("\t\t[HttpPost]");
                     yaz.WriteLine("\t\tpublic JsonResult Ekle([System.Web.Http.FromBody] " + Table + "Model table)");
                     yaz.WriteLine("\t\t{");
@@ -3719,6 +3699,8 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("");
+
+                    //Duzenle
                     yaz.WriteLine("\t\t[HttpPost]");
                     yaz.WriteLine("\t\tpublic JsonResult Duzenle([System.Web.Http.FromBody] " + Table + "Model table)");
                     yaz.WriteLine("\t\t{");
@@ -3838,9 +3820,8 @@ namespace TDFactory
 
                         if (fkcListForeign.Count > 0)
                         {
-                            yaz.WriteLine("\tgetEkle(linkID: string): Observable<I" + Table + "> {");
-                            yaz.WriteLine("\t\tlet params = new HttpParams().set(\"linkID\", linkID);");
-                            yaz.WriteLine("\t\treturn this.http.get<I" + Table + ">(this.linkEkle, { params: params });");
+                            yaz.WriteLine("\tgetEkle(): Observable<I" + Table + "> {");
+                            yaz.WriteLine("\t\treturn this.http.get<I" + Table + ">(this.linkEkle);");
                             yaz.WriteLine("\t}");
                             yaz.WriteLine("");
                         }
@@ -3889,188 +3870,111 @@ namespace TDFactory
 
                 CreateAngularDirectories(Table);
 
+                //Index
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\index.ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("import { Component } from \"@angular/core\";");
                         yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToLower() + "\";");
-
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("import { ActivatedRoute, Params, Router } from '@angular/router';");
-                        }
-                        else
-                        {
-                            yaz.WriteLine("import { Router } from '@angular/router';");
-                        }
-
-                        yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
-                        yaz.WriteLine("import ClassicEditor from '../../../../../Content/admin/js/ckeditor/ckeditor.js';");
                         yaz.WriteLine("");
                         yaz.WriteLine("@Component({");
-                        yaz.WriteLine("\ttemplateUrl: './ekle.html',");
+                        yaz.WriteLine("\ttemplateUrl: './index.html',");
                         yaz.WriteLine("\tproviders: [" + Table + "Service]");
                         yaz.WriteLine("})");
                         yaz.WriteLine("");
-                        yaz.WriteLine("export class Admin" + Table + "EkleComponent {");
+                        yaz.WriteLine("export class Admin" + Table + "IndexComponent {");
                         yaz.WriteLine("\terrorMsg: string;");
-
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("\tlinkID: string;");
-                        }
-
+                        yaz.WriteLine("\t" + Table + "List: any;");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\tekleForm: FormGroup;");
-                        yaz.WriteLine("\tdata: any;");
+                        yaz.WriteLine("\tcallTable: boolean;");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\tmodel: any;");
-                        yaz.WriteLine("");
-
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("\tconstructor(private service: " + Table + "Service, private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute) {");
-                        }
-                        else
-                        {
-                            yaz.WriteLine("\tconstructor(private service: " + Table + "Service, private formBuilder: FormBuilder, private router: Router) {");
-                        }
-
+                        yaz.WriteLine("\tconstructor(private service: " + Table + "Service) {");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tngOnInit() {");
-
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("\t\tthis.route.params.subscribe(() => {");
-                            yaz.WriteLine("\t\t\tthis.route.params.subscribe((params: Params) => {");
-                            yaz.WriteLine("\t\t\t\tthis.linkID = params['linkID'];");
-                            yaz.WriteLine("\t\t\t\tthis.service.getEkle(this.linkID).subscribe((resData) => {");
-                            yaz.WriteLine("\t\t\t\t\tthis.model = resData;");
-                            yaz.WriteLine("\t\t\t\t}, resError => this.errorMsg = resError);");
-                            yaz.WriteLine("\t\t\t});");
-                            yaz.WriteLine("\t\t});");
-                            yaz.WriteLine("");
-                        }
-
-
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                        {
-                            if (column.TypeName.Name == "String" && column.CharLength == "")
-                            {
-                                yaz.WriteLine("\t\tsetTimeout(function () {");
-                                yaz.WriteLine("\t\t\tClassicEditor");
-                                yaz.WriteLine("\t\t\t\t.create(document.querySelector('#" + column.ColumnName + "'), {");
-                                yaz.WriteLine("\t\t\t\t\t//toolbar: ['bold', 'italic']");
-                                yaz.WriteLine("\t\t\t\t})");
-                                yaz.WriteLine("\t\t\t\t.then(editor => {");
-                                yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
-                                yaz.WriteLine("\t\t\t\t})");
-                                yaz.WriteLine("\t\t\t\t.catch(err => {");
-                                yaz.WriteLine("\t\t\t\t\tconsole.error(err.stack);");
-                                yaz.WriteLine("\t\t\t\t});");
-                                yaz.WriteLine("\t\t}, 1000);");
-                                yaz.WriteLine("");
-                            }
-                        }
-
-                        yaz.WriteLine("\t\tthis.ekleForm = this.formBuilder.group({");
-
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                        {
-                            if (column.TypeName.Name == "Boolean")
-                            {
-                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
-                            }
-                            else
-                            {
-                                if (column.IsNullable)
-                                {
-                                    yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
-                                }
-                                else
-                                {
-                                    if (column.TypeName.Name.In(new string[] { "Int16", "Int32", "Int64" }))
-                                    {
-                                        yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(1)]),");
-                                    }
-                                    else if (column.TypeName.Name == "String")
-                                    {
-                                        if (column.TypeName.Name == "String" && column.CharLength == "")
-                                        {
-                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(3)]),");
-                                        }
-                                        else
-                                        {
-                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(3), Validators.maxLength(255)]),");
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("\t\tthis.callTable = true;");
+                        yaz.WriteLine("\t\tthis.FillData();");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\tonSubmit() {");
-                        yaz.WriteLine("\t\tthis.data = new Object();");
-
-                        int tcCount = tableColumnNames.Where(a => a.TableName == Table).ToList().Count;
-
-                        int i = 1;
-
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                        {
-                            if (column.TypeName.Name == "String" && column.CharLength == "")
-                            {
-                                yaz.WriteLine("\t\tthis.data." + column.ColumnName + " = $(\".ck-content\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
-                            }
-                            else
-                            {
-                                yaz.WriteLine("\t\tthis.data." + column.ColumnName + " = this.ekleForm.get(\"" + column.ColumnName + "\").value;");
-                            }
-
-                            i++;
-
-                            if (i == tcCount)
-                            {
-                                yaz.WriteLine("");
-                            }
-                        }
-
-                        yaz.WriteLine("\t\tthis.service.postEkle(this.data)");
-                        yaz.WriteLine("\t\t\t.subscribe((answer) => {");
-                        yaz.WriteLine("\t\t\t\tif (answer.Mesaj == null) {");
-                        yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t\telse {");
-                        yaz.WriteLine("\t\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
-                        yaz.WriteLine("\t\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t},");
-                        yaz.WriteLine("\t\t\t\tresError => this.errorMsg = resError);");
+                        yaz.WriteLine("\tFillData() {");
+                        yaz.WriteLine("\t\tif (this.callTable == true) {");
+                        yaz.WriteLine("\t\t\tthis.service.getIndex().subscribe((resData) => {");
+                        yaz.WriteLine("\t\t\t\tthis." + Table + "List = resData;");
+                        yaz.WriteLine("\t\t\t\tthis.callTable = false;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tsetTimeout(() => {");
+                        yaz.WriteLine("\t\t\t\t\t$(\".data-table\").dataTable({");
+                        yaz.WriteLine("\t\t\t\t\t\t\"bJQueryUI\": true,");
+                        yaz.WriteLine("\t\t\t\t\t\t\"sPaginationType\": \"full_numbers\",");
+                        yaz.WriteLine("\t\t\t\t\t\t\"sDom\": '<\"\"l>t<\"F\"fp>'");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\tif ($(\".dropdown-menu\").first().find(\"a\").length <= 0) {");
+                        yaz.WriteLine("\t\t\t\t\t\t$(\".btn-group\").remove();");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \".fg-button\", () => {");
+                        yaz.WriteLine("\t\t\t\t\t\tsetTimeout(() => {");
+                        yaz.WriteLine("\t\t\t\t\t\t\tthis.FillData();");
+                        yaz.WriteLine("\t\t\t\t\t\t}, 1);");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.dltLink\", function () {");
+                        yaz.WriteLine("\t\t\t\t\t\t$(this).addClass(\"active-dlt\");");
+                        yaz.WriteLine("\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.dlt-yes\", () => {");
+                        yaz.WriteLine("\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
+                        yaz.WriteLine("\t\t\t\t\t\tthis.onDelete(id);");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t}, 1);");
+                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tsetTimeout(() => {");
+                        yaz.WriteLine("\t\t\tif ($(\".dropdown-menu\").first().find(\"a\").length <= 0) {");
+                        yaz.WriteLine("\t\t\t\t$(\".btn-group\").remove();");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}, 1);");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tonDelete(id) {");
+                        yaz.WriteLine("\t\tthis.service.getSil(id).subscribe((resData) => {");
+                        yaz.WriteLine("\t\t\tif (resData == true) {");
+                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Delete\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t$(\"a.dltLink.active-dlt\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                        yaz.WriteLine("\t\t\t\t\t$(this).remove();");
+                        yaz.WriteLine("\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\telse {");
+                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"DeleteNot\");");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tShowAlert(type: string) {");
+                        yaz.WriteLine("\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeIn(\"slow\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tsetInterval(function () {");
+                        yaz.WriteLine("\t\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeOut(\"slow\");");
+                        yaz.WriteLine("\t\t}, 2000);");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("}");
                         yaz.Close();
                     }
                 }
 
+                //Ekle
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\ekle.ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("import { Component } from \"@angular/core\";");
                         yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToLower() + "\";");
-
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("import { ActivatedRoute, Params, Router } from '@angular/router';");
-                        }
-                        else
-                        {
-                            yaz.WriteLine("import { Router } from '@angular/router';");
-                        }
+                        yaz.WriteLine("import { Router } from '@angular/router';");
 
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
@@ -4089,11 +3993,6 @@ namespace TDFactory
                         yaz.WriteLine("export class Admin" + Table + "EkleComponent {");
                         yaz.WriteLine("\terrorMsg: string;");
 
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("\tlinkID: string;");
-                        }
-
                         yaz.WriteLine("");
                         yaz.WriteLine("\tekleForm: FormGroup;");
                         yaz.WriteLine("\tdata: any;");
@@ -4101,14 +4000,7 @@ namespace TDFactory
                         yaz.WriteLine("\tmodel: any;");
                         yaz.WriteLine("");
 
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("\tconstructor(private service: " + Table + "Service, private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute) {");
-                        }
-                        else
-                        {
-                            yaz.WriteLine("\tconstructor(private service: " + Table + "Service, private formBuilder: FormBuilder, private router: Router) {");
-                        }
+                        yaz.WriteLine("\tconstructor(private service: " + Table + "Service, private formBuilder: FormBuilder, private router: Router) {");
 
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
@@ -4116,20 +4008,16 @@ namespace TDFactory
 
                         if (fkcListForeign.Count > 0)
                         {
-                            yaz.WriteLine("\t\tthis.route.params.subscribe(() => {");
-                            yaz.WriteLine("\t\t\tthis.route.params.subscribe((params: Params) => {");
-                            yaz.WriteLine("\t\t\t\tthis.linkID = params['linkID'];");
-                            yaz.WriteLine("\t\t\t\tthis.service.getEkle(this.linkID).subscribe((resData) => {");
-                            yaz.WriteLine("\t\t\t\t\tthis.model = resData;");
-                            yaz.WriteLine("\t\t\t\t}, resError => this.errorMsg = resError);");
-                            yaz.WriteLine("\t\t\t});");
-                            yaz.WriteLine("\t\t});");
+                            yaz.WriteLine("\t\tthis.service.getEkle().subscribe((resData) => {");
+                            yaz.WriteLine("\t\t\tthis.model = resData;");
+                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                             yaz.WriteLine("");
                         }
 
                         int i = 0;
+                        List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "").ToList();
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "").ToList())
+                        foreach (TableColumnNames column in tempTableColumns)
                         {
                             if (i == 0)
                             {
@@ -4152,9 +4040,12 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\t\t}, 1000);");
                             }
-                        }
 
-                        yaz.WriteLine("");
+                            if (tempTableColumns.Count == i + 1)
+                            {
+                                yaz.WriteLine("");
+                            }
+                        }
 
                         yaz.WriteLine("\t\tthis.ekleForm = this.formBuilder.group({");
 
@@ -4182,11 +4073,11 @@ namespace TDFactory
                                         {
                                             if (column.TypeName.Name == "String" && column.CharLength == "")
                                             {
-                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(3)]),");
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1)]),");
                                             }
                                             else
                                             {
-                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(3), Validators.maxLength(255)]),");
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(255)]),");
                                             }
                                         }
                                     }
@@ -4243,189 +4134,290 @@ namespace TDFactory
                     }
                 }
 
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\duzenle.ts", FileMode.Create))
+                //Duzenle
+                if (identityColumns.Count > 0)
                 {
-                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\duzenle.ts", FileMode.Create))
                     {
-                        yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");
-                        yaz.WriteLine("{");
-                        yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
-                        yaz.WriteLine("\t{");
-                        yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
-                        yaz.WriteLine("");
-
-                        // Index
-                        string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
-
-                        yaz.WriteLine("\t\tpublic ViewResult Index(string conditions)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\treturn View();");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        if (identityColumns.Count > 0)
+                        using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
-                            string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
+                            yaz.WriteLine("import { Component } from \"@angular/core\";");
+                            yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToLower() + "\";");
 
-                            // Ekle
-                            yaz.WriteLine("\t\tpublic ActionResult Ekle()");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
+                            if (fkcList.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.ForeignTableName;
+
+                                    yaz.WriteLine("import { " + PrimaryTableName + "Service } from '../../services/" + PrimaryTableName.ToLower() + "';");
+                                }
+                            }
+
+                            yaz.WriteLine("import { ActivatedRoute, Params, Router } from '@angular/router';");
+                            yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
+
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "").ToList())
+                            {
+                                yaz.WriteLine("import ClassicEditor from '../../../../../Content/admin/js/ckeditor/ckeditor.js';");
+                                break;
+                            }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("@Component({");
+                            yaz.WriteLine("\ttemplateUrl: './duzenle.html',");
+
+                            string providers = "providers: [" + Table + "Service";
+                            if (fkcList.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+
+                                    providers += ", " + ForeignTableName;
+                                }
+                            }
+                            providers += "]";
+
+                            yaz.WriteLine("\t" + providers);
+                            yaz.WriteLine("})");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("export class Admin" + Table + "DuzenleComponent {");
+                            yaz.WriteLine("\terrorMsg: string;");
+                            yaz.WriteLine("\tid: string;");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tduzenleForm: FormGroup;");
+                            yaz.WriteLine("\tdata: any;");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tmodel: any;");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tcallTable: boolean;");
                             yaz.WriteLine("");
 
-                            if (fkcListForeign.Count > 0)
+                            string constructor = "constructor(private service: " + Table + "Service, private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute";
+                            if (fkcList.Count > 0)
                             {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string ForeignTableName = fkc.ForeignTableName;
+                                    constructor += ", private service" + ForeignTableName + ": " + ForeignTableName + "Service";
+                                }
+                            }
+                            constructor += ") {";
 
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            yaz.WriteLine("\t" + constructor);
+                            yaz.WriteLine("\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tngOnInit() {");
+                            yaz.WriteLine("\t\tthis.callTable = true;");
+                            yaz.WriteLine("\t\tthis.FillData();");
+                            yaz.WriteLine("");
 
-                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                    yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                    yaz.WriteLine("\t\t\t}");
+                            int i = 0;
+                            List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "").ToList();
+
+                            foreach (TableColumnNames column in tempTableColumns)
+                            {
+                                if (i == 0)
+                                {
+                                    yaz.WriteLine("\t\tsetTimeout(function () {");
+                                }
+
+                                yaz.WriteLine("\t\t\tClassicEditor");
+                                yaz.WriteLine("\t\t\t\t.create(document.querySelector('#" + column.ColumnName + "'), {");
+                                yaz.WriteLine("\t\t\t\t\t//toolbar: ['bold', 'italic']");
+                                yaz.WriteLine("\t\t\t\t})");
+                                yaz.WriteLine("\t\t\t\t.then(editor => {");
+                                yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
+                                yaz.WriteLine("\t\t\t\t})");
+                                yaz.WriteLine("\t\t\t\t.catch(err => {");
+                                yaz.WriteLine("\t\t\t\t\tconsole.error(err.stack);");
+                                yaz.WriteLine("\t\t\t\t});");
+                                yaz.WriteLine("");
+
+                                if (i == 0)
+                                {
+                                    yaz.WriteLine("\t\t}, 1000);");
+                                }
+
+                                if (tempTableColumns.Count == i + 1)
+                                {
                                     yaz.WriteLine("");
                                 }
                             }
 
-                            yaz.WriteLine("\t\t\treturn View(table);");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-
-                            yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
-                            yaz.WriteLine("\t\tpublic ActionResult Ekle(" + Table + " table)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity." + Table + ".Add(table);");
-                            yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("");
-
-                            if (fkcListForeign.Count > 0)
-                            {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                                    yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                                    yaz.WriteLine("\t\t\t}");
-                                    yaz.WriteLine("");
-                                }
-                            }
-
-                            yaz.WriteLine("\t\t\treturn View(\"Ekle\", table);");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-
-                            //Duzenle
-                            yaz.WriteLine("\t\t[HttpGet]");
-                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
-                            yaz.WriteLine("");
-
-                            if (fkcListForeign.Count > 0)
-                            {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                    yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                    yaz.WriteLine("\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                    yaz.WriteLine("\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t}");
-                                    yaz.WriteLine("");
-                                }
-                            }
-
-                            yaz.WriteLine("\t\t\treturn View(table);");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
-                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + Table + " table)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\t" + Table + " _table = entity." + Table + ".Find(table." + id + ");");
-                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\tthis.duzenleForm = this.formBuilder.group({");
 
                             foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                             {
-                                yaz.WriteLine("\t\t\t\t_table." + column.ColumnName + " = table." + column.ColumnName + ";");
-                            }
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
-                            yaz.WriteLine("\t\t\t}");
-
-                            yaz.WriteLine("");
-
-                            if (fkcListForeign.Count > 0)
-                            {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                if (column.TypeName.Name == "Boolean")
                                 {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
+                                }
+                                else
+                                {
+                                    if (column.IsNullable)
+                                    {
+                                        yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
+                                    }
+                                    else
+                                    {
+                                        if (column.TypeName.Name.In(new string[] { "Int16", "Int32", "Int64" }))
+                                        {
+                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(1)]),");
+                                        }
+                                        else if (column.TypeName.Name == "String")
+                                        {
+                                            if (column.TypeName.Name == "String" && column.CharLength == "")
+                                            {
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1)]),");
+                                            }
+                                            else
+                                            {
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(255)]),");
+                                            }
+                                        }
+                                    }
+                                }
+                            }
 
-                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
-                                    yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                                    yaz.WriteLine("\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                                    yaz.WriteLine("\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t});");
+                            yaz.WriteLine("\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tFillData() {");
+                            yaz.WriteLine("\t\tif (this.callTable == true) {");
+                            yaz.WriteLine("\t\t\tthis.route.params.subscribe((params: Params) => {");
+                            yaz.WriteLine("\t\t\t\tthis.id = params['id'];");
+                            yaz.WriteLine("\t\t\t\tthis.service.getDuzenle(this.id).subscribe((resData) => {");
+                            yaz.WriteLine("\t\t\t\t\tthis.model = resData;");
+                            yaz.WriteLine("\t\t\t\t\tthis.callTable = false;");
+
+                            if (fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\tsetTimeout(() => {");
+                                yaz.WriteLine("\t\t\t\t\t\t$(\".data-table\").dataTable({");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\"bJQueryUI\": true,");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\"sPaginationType\": \"full_numbers\",");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\"sDom\": '<\"\"l>t<\"F\"fp>'");
+                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\t\tif ($(\".dropdown-menu\").first().find(\"a\").length <= 0) {");
+                                yaz.WriteLine("\t\t\t\t\t\t\t$(\".btn-group\").remove();");
+                                yaz.WriteLine("\t\t\t\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \".fg-button\", () => {");
+                                yaz.WriteLine("\t\t\t\t\t\t\tsetTimeout(() => {");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\tthis.FillData();");
+                                yaz.WriteLine("\t\t\t\t\t\t\t}, 1);");
+                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.dltLink\", function () {");
+                                yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-dlt\");");
+                                yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.dlt-yes\", () => {");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
+                                yaz.WriteLine("\t\t\t\t\t\t\tthis.onGalleryTDelete(id);");
+                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("\t\t\t\t\t}, 1);");
+                            }
+
+                            yaz.WriteLine("\t\t\t\t}, resError => this.errorMsg = resError);");
+                            yaz.WriteLine("\t\t\t});");
+                            yaz.WriteLine("\t\t}");
+
+                            if (fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tsetTimeout(() => {");
+                                yaz.WriteLine("\t\t\tif ($(\".dropdown-menu\").first().find(\"a\").length <= 0) {");
+                                yaz.WriteLine("\t\t\t\t$(\".btn-group\").remove();");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}, 1);");
+                            }
+
+                            yaz.WriteLine("\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tonSubmit() {");
+                            yaz.WriteLine("\t\tthis.data = new Object();");
+
+                            int tcCount = tableColumnNames.Where(a => a.TableName == Table).ToList().Count;
+
+                            i = 0;
+
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    if (column.TypeName.Name == "String" && column.CharLength == "")
+                                    {
+                                        yaz.WriteLine("\t\tthis.data." + column.ColumnName + " = $(\".ck-content\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\tthis.data." + column.ColumnName + " = this.ekleForm.get(\"" + column.ColumnName + "\").value;");
+                                    }
+                                }
+
+                                i++;
+
+                                if (i == tcCount)
+                                {
                                     yaz.WriteLine("");
                                 }
                             }
 
-                            yaz.WriteLine("\t\t\treturn View(\"Duzenle\", table);");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\tthis.service.postDuzenle(this.data)");
+                            yaz.WriteLine("\t\t\t.subscribe((answer) => {");
+                            yaz.WriteLine("\t\t\t\tif (answer.Mesaj == null) {");
+                            yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t\telse {");
+                            yaz.WriteLine("\t\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
+                            yaz.WriteLine("\t\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t},");
+                            yaz.WriteLine("\t\t\t\tresError => this.errorMsg = resError);");
+                            yaz.WriteLine("\t}");
 
-                            //Sil
-                            yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " conditions)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(conditions);");
-                            yaz.WriteLine("\t\t\tentity." + Table + ".Remove(table);");
-                            yaz.WriteLine("\t\t\tentity.SaveChanges();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\treturn Json(true);");
-                            yaz.WriteLine("\t\t}");
+                            if (fkcList.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\ton" + ForeignTableName + "Delete(id) {");
+                                    yaz.WriteLine("\t\tthis.service" + ForeignTableName + ".getSil(id).subscribe((resData) => {");
+                                    yaz.WriteLine("\t\t\tif (resData == true) {");
+                                    yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Delete\");");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t$(\"a.dltLink.active-dlt\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                                    yaz.WriteLine("\t\t\t\t\t$(this).remove();");
+                                    yaz.WriteLine("\t\t\t\t});");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t\telse {");
+                                    yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"DeleteNot\");");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                                    yaz.WriteLine("\t}");
+                                }
+
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tShowAlert(type: string) {");
+                                yaz.WriteLine("\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeIn(\"slow\");");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tsetInterval(function () {");
+                                yaz.WriteLine("\t\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeOut(\"slow\");");
+                                yaz.WriteLine("\t\t}, 2000);");
+                                yaz.WriteLine("\t}");
+                            }
+
+                            yaz.WriteLine("}");
+                            yaz.Close();
                         }
-
-                        yaz.WriteLine("\t}");
-                        yaz.WriteLine("}");
-
-                        yaz.Close();
                     }
                 }
             }
