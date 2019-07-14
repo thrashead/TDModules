@@ -2124,6 +2124,7 @@ namespace TDFactory
                 CreateAngularViewLayer();
                 CreateAngularControllerLayer();
                 CreateAngularServiceLayer();
+                CreateAngularSharedService();
                 CreateAngularTypeScriptLayer();
                 CreateWebConfig();
                 CreateStilScript();
@@ -2146,6 +2147,7 @@ namespace TDFactory
                 {
                     CreateAngularControllerLayer();
                     CreateAngularServiceLayer();
+                    CreateAngularSharedService();
                     CreateAngularTypeScriptLayer();
                 }
 
@@ -2192,70 +2194,70 @@ namespace TDFactory
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app");
             }
 
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\home"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\home");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\models"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\models");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\services"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\services");
+            }
+
             if (_tableName == null)
             {
                 if (chkMVCHepsi.Checked)
                 {
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\home"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\home");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\models"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\models");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\services"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\services");
-                    }
-
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\App_Start"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\App_Start");
@@ -2369,21 +2371,6 @@ namespace TDFactory
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Models");
                         }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\models");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\models"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\models");
-                        }
                     }
 
                     if (chkMVCView.Checked)
@@ -2412,46 +2399,6 @@ namespace TDFactory
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Views\\Home");
                         }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\home"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\home");
-                        }
                     }
 
                     if (chkMVCController.Checked)
@@ -2479,26 +2426,6 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\services"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\services");
                         }
                     }
 
@@ -2553,22 +2480,9 @@ namespace TDFactory
             }
             else
             {
-                if (chkMVCHepsi.Checked || chkMVCView.Checked)
+                if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName.ToHyperLinkText(true)))
                 {
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName);
-                    }
+                    Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName.ToHyperLinkText(true));
                 }
             }
         }
@@ -2592,11 +2506,13 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("declare global {");
                     yaz.WriteLine("\tinterface JQuery {");
+                    yaz.WriteLine("\tdataTable(obj: any): JQuery;");
+                    yaz.WriteLine("\ttypeahead(obj: any): JQuery;");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
-                    yaz.WriteLine("\tselector: \"" + projectName.Substring(0, 3).ToLower() + "-app\",");
+                    yaz.WriteLine("\tselector: \"" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-app\",");
                     yaz.WriteLine("\ttemplateUrl: './app.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
@@ -2608,9 +2524,818 @@ namespace TDFactory
                 }
             }
 
-            CreateAngularAppModule();
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\layout.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<router-outlet></router-outlet>");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-scripts></" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-scripts>");
+                    yaz.Close();
+                }
+            }
 
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\layout.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-layout',");
+                    yaz.WriteLine("\ttemplateUrl: './layout.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class LayoutComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls\\scripts.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
+                    yaz.WriteLine("import '../../../../Content/js/jquery/jquery.min.js';");
+                    yaz.WriteLine("import '../../../../Content/js/pathscript.js';");
+                    yaz.WriteLine("import '../../../../Content/js/main.js';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-scripts',");
+                    yaz.WriteLine("\ttemplate: '',");
+                    yaz.WriteLine("\tstyleUrls: [");
+                    yaz.WriteLine("\t\t'../../../../Content/css/main.css'");
+                    yaz.WriteLine("\t],");
+                    yaz.WriteLine("\tencapsulation: ViewEncapsulation.None");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class ScriptsComponent {");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\home\\index.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("Giriş Sayfası");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\home\\index.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\ttemplateUrl: './index.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class HomeComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            CreateAngularAppModule();
             CreateAngularRoutingModule();
+            CreateAngularAdminFiles();
+        }
+
+        void CreateAngularAdminFiles()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\layoutAdmin.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<admin-header></admin-header>");
+                    yaz.WriteLine("<admin-leftmenu></admin-leftmenu>");
+                    yaz.WriteLine("<router-outlet></router-outlet>");
+                    yaz.WriteLine("<admin-footer></admin-footer>");
+                    yaz.WriteLine("<admin-scripts></admin-scripts>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\layoutAdmin.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("import { SharedService } from '../../services/shared';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: 'admin-layout',");
+                    yaz.WriteLine("\ttemplateUrl: './layoutAdmin.html',");
+                    yaz.WriteLine("\tproviders: [SharedService]");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminLayoutComponent {");
+                    yaz.WriteLine("\terrorMsg: string;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tconstructor(private service: SharedService) {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t\tthis.service.getLoginControl().subscribe((resData) => {");
+                    yaz.WriteLine("\t\t\tif (resData == false) {");
+                    yaz.WriteLine("\t\t\t\twindow.location.href = '/" + projectName + "/';");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\copydelete.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<div id=\"cpyData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
+                    yaz.WriteLine("\t<div class=\"modal-header\">");
+                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
+                    yaz.WriteLine("\t\t<h3>Kopyala</h3>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-body\">");
+                    yaz.WriteLine("\t\t<p>İlgili veriyi kopyalamak istediğinize emin misiniz?</p>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-footer\">");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary cpy-yes\" href=\"javascript:;\">Evet</a>");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn cpy-no\" href=\"javascript:;\">Hayır</a>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<div id=\"dltData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
+                    yaz.WriteLine("\t<div class=\"modal-header\">");
+                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
+                    yaz.WriteLine("\t\t<h3>Sil</h3>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-body\">");
+                    yaz.WriteLine("\t\t<p>İlgili veriyi silmek istediğinize emin misiniz?</p>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-footer\">");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary dlt-yes\" href=\"javascript:;\">Evet</a>");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn dlt-no\" href=\"javascript:;\">Hayır</a>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<div id=\"rdltData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
+                    yaz.WriteLine("\t<div class=\"modal-header\">");
+                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
+                    yaz.WriteLine("\t\t<h3>Kaldır</h3>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-body\">");
+                    yaz.WriteLine("\t\t<p>İlgili veriyi kaldırmak istediğinize emin misiniz?</p>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-footer\">");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary rdlt-yes\" href=\"javascript:;\">Evet</a>");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn rdlt-no\" href=\"javascript:;\">Hayır</a>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<div id=\"clrData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
+                    yaz.WriteLine("\t<div class=\"modal-header\">");
+                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
+                    yaz.WriteLine("\t\t<h3>Temizle</h3>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-body\">");
+                    yaz.WriteLine("\t\t<p>İlgili verileri temizlemek istediğinize emin misiniz?</p>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-footer\">");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary clr-yes\" href=\"javascript:;\">Evet</a>");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn clr-no\" href=\"javascript:;\">Hayır</a>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<ul id=\"tdAlertMessage\" class=\"tdAlert\">");
+                    yaz.WriteLine("\t<li class=\"tdAlertDelete\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri silindi.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertDeleteNot\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri silinemedi.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertRealDelete\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kaldırıldı.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertRealDeleteNot\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kaldırılamadı.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertCopy\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kopyalandı.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertCopyNot\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kopyalanamadı.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertClear\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veriler temizlendi.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertClearNot\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veriler temizlenemedi.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("</ul>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\copydelete.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: 'admin-copydelete',");
+                    yaz.WriteLine("\ttemplateUrl: './copydelete.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminCopyDeleteComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\footer.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<div class=\"row-fluid\">");
+                    yaz.WriteLine("\t<div id=\"footer\" class=\"span12\"> Developed by <a target=\"_blank\" href=\"http://www.sinasalik.net\">Sina SALIK</a> </div>");
+                    yaz.WriteLine("</div>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\footer.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: 'admin-footer',");
+                    yaz.WriteLine("\ttemplateUrl: './footer.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminFooterComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\header.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<div id=\"header\">");
+                    yaz.WriteLine("\t<h1><a><img src=\"Content/admin/img/logo.png\" /></a></h1>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<div id=\"user-nav\" class=\"navbar navbar-inverse\">");
+                    yaz.WriteLine("\t<ul class=\"nav\">");
+                    yaz.WriteLine("\t\t<li class=\"\"><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"/Admin/Home\"><i class=\"icon icon-user\"></i>  <span class=\"text\">Hoşgeldiniz (Kullanıcı Adı)</span></a></li>");
+                    yaz.WriteLine("\t\t<li class=\"\"><a class=\"logout\" (click)=\"onLogout()\"><i class=\"icon icon-share-alt\"></i> <span class=\"text\">Çıkış</span></a></li>");
+                    yaz.WriteLine("\t</ul>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<div id=\"search\">");
+                    yaz.WriteLine("\t<input id=\"txtMainSearch\" type=\"text\" placeholder=\"Kelime...\" (keypress)=\"onKeyPress($event)\" />");
+                    yaz.WriteLine("\t<button id=\"btnMainSearch\" type=\"button\" class=\"tip-bottom\" title=\"Ara\" (click)=\"onClick()\"><i class=\"icon-search icon-white\"></i></button>");
+                    yaz.WriteLine("</div>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\header.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("import { SharedService } from '../../../services/shared';");
+                    yaz.WriteLine("import { Router } from '@angular/router';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: 'admin-header',");
+                    yaz.WriteLine("\ttemplateUrl: './header.html',");
+                    yaz.WriteLine("\tproviders: [SharedService]'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminHeaderComponent {");
+                    yaz.WriteLine("\tconstructor(private service: SharedService, private router: Router) {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t\t$('#txtMainSearch').typeahead({");
+                    yaz.WriteLine("\t\t\tsource: [");
+
+                    int i = 0;
+                    foreach (string Table in selectedTables)
+                    {
+                        if (selectedTables.Count == i + 1)
+                        {
+                            yaz.WriteLine("\t\t\t\t'" + Table + "'");
+                        }
+                        else
+                        {
+                            yaz.WriteLine("\t\t\t\t'" + Table + "',");
+                        }
+
+                        i++;
+                    }
+
+                    yaz.WriteLine("\t\t\t],");
+                    yaz.WriteLine("\t\t\titems: 4");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tonClick() {");
+                    yaz.WriteLine("\t\tvar txtValue = $(\"#txtMainSearch\").val();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tswitch (txtValue) {");
+
+                    foreach (string Table in selectedTables)
+                    {
+                        yaz.WriteLine("\t\t\tcase \"" + Table + "\":");
+                        yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
+                        yaz.WriteLine("\t\t\t\tbreak;");
+                    }
+
+                    yaz.WriteLine("\t\t\tdefault:");
+                    yaz.WriteLine("\t\t\t\talert(\"Aradığınız kelimeye uygun sonuç bulunamadı...\");");
+                    yaz.WriteLine("\t\t\t\tbreak;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tonLogout() {");
+                    yaz.WriteLine("\t\tthis.service.getLogout().subscribe((resData) => {");
+                    yaz.WriteLine("\t\t\tif (resData == true) {");
+                    yaz.WriteLine("\t\t\t\twindow.location.href = '/" + projectName + "/';");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tonKeyPress(event: any) {");
+                    yaz.WriteLine("\t\tif (event.keyCode == \"13\") {");
+                    yaz.WriteLine("\t\t\tthis.onClick();");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\leftmenu.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<div id=\"sidebar\">");
+                    yaz.WriteLine("\t<a href=\"javascript:;\" class=\"visible-phone\"><i class=\"icon icon-reorder\"></i> Menü</a>");
+                    yaz.WriteLine("\t<ul>");
+                    yaz.WriteLine("\t\t<li data-url=\"AnaSayfa\" class=\"active\">");
+                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/Home\"><i class=\"icon icon-home\"></i> <span>Ana Sayfa</span></a>");
+                    yaz.WriteLine("\t\t</li>");
+
+                    List<string> addedTables = new List<string>();
+
+                    foreach (string Table in selectedTables)
+                    {
+                        if (!addedTables.Contains(Table))
+                        {
+                            List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+
+                            SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+
+                            List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
+                            fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
+
+                            List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
+                            fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
+                            if (fkcList.Count <= 0)
+                            {
+                                yaz.WriteLine("\t\t<li data-url=\"" + Table + "\">");
+                                yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "\"><i class=\"icon icon-home\"></i> <span>" + Table + "</span></a>");
+                                yaz.WriteLine("\t\t</li>");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t\t<li class=\"submenu\">");
+                                yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + Table + "</span></a>");
+                                yaz.WriteLine("\t\t\t<ul>");
+                                yaz.WriteLine("\t\t\t\t<li data-url=\"" + Table + "\"><a routerLink=\"/Admin/" + Table + "\">" + Table + "</a></li>");
+
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+
+                                    if (!addedTables.Contains(ForeignTableName))
+                                    {
+                                        yaz.WriteLine("\t\t\t\t<li data-url=\"" + ForeignTableName + "\"><a routerLink=\"/Admin/" + ForeignTableName + "\">" + ForeignTableName + "</a></li>");
+                                        addedTables.Add(ForeignTableName);
+                                    }
+                                }
+
+                                yaz.WriteLine("\t\t\t</ul>");
+                                yaz.WriteLine("\t\t</li>");
+                            }
+
+                            addedTables.Add(Table);
+                        }
+                    }
+
+                    yaz.WriteLine("\t</ul>");
+                    yaz.WriteLine("</div>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\leftmenu.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("import { Router, RouterEvent, ActivationEnd } from '@angular/router';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: 'admin-leftmenu',");
+                    yaz.WriteLine("\ttemplateUrl: './leftmenu.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminLeftMenuComponent {");
+                    yaz.WriteLine("\terrorMsg: string;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tconstructor(private router: Router) {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tngAfterContentInit() {");
+                    yaz.WriteLine("\t\tthis.LeftMenuClick();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tthis.router.events.subscribe((event: RouterEvent) => {");
+                    yaz.WriteLine("\t\t\tif (event instanceof ActivationEnd) {");
+                    yaz.WriteLine("\t\t\t\tthis.LeftMenuClick();");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tLeftMenuClick() {");
+                    yaz.WriteLine("\t\t$(\"#hdnUrl\").val(location.href);");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tvar AdminPath = \"http://localhost/" + projectName + "/Admin\";");
+                    yaz.WriteLine("\t\tvar Url = location.href;");
+                    yaz.WriteLine("\t\tvar Urling = Object();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (Url != undefined) {");
+                    yaz.WriteLine("\t\t\tvar tempurl = Url.replace(AdminPath + \"/\", \"\");");
+                    yaz.WriteLine("\t\t\tvar extParams = tempurl.split('?')[1];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\ttempurl = tempurl.replace(\"?\" + extParams, \"\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tUrling.path = tempurl;");
+                    yaz.WriteLine("\t\t\tUrling.controller = tempurl.split('/')[0];");
+                    yaz.WriteLine("\t\t\tUrling.action = tempurl.split('/')[1];");
+                    yaz.WriteLine("\t\t\tUrling.parameter = tempurl.split('/')[2];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (extParams != undefined)");
+                    yaz.WriteLine("\t\t\t\tUrling.parameters = extParams.split('&');");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (Urling.controller != undefined) {");
+                    yaz.WriteLine("\t\t\tvar activeLi = $(\"#sidebar li[data-url='\" + Urling.controller + \"']\");");
+                    yaz.WriteLine("\t\t\tvar passiveSubmenuLi = $(\"#sidebar li.submenu\");");
+                    yaz.WriteLine("\t\t\tvar submenuLi = activeLi.parent(\"ul\").parent(\"li\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t$(\"#sidebar li\").removeClass(\"active\");");
+                    yaz.WriteLine("\t\t\t$(\"#sidebar li\").removeClass(\"open\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tactiveLi.addClass(\"active\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (submenuLi.hasClass(\"submenu\")) {");
+                    yaz.WriteLine("\t\t\t\tif ($(\"body\").width() > 970 || $(\"body\").width() <= 480) {");
+                    yaz.WriteLine("\t\t\t\t\tsubmenuLi.addClass(\"open\");");
+                    yaz.WriteLine("\t\t\t\t}");
+                    yaz.WriteLine("\t\t\t\tsubmenuLi.addClass(\"active\");");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tsetTimeout(function () {");
+                    yaz.WriteLine("\t\t\t\tpassiveSubmenuLi.each(function () {");
+                    yaz.WriteLine("\t\t\t\t\tif (!$(this).hasClass(\"open\")) {");
+                    yaz.WriteLine("\t\t\t\t\t\t$(this).children(\"ul\").slideUp();");
+                    yaz.WriteLine("\t\t\t\t\t}");
+                    yaz.WriteLine("\t\t\t\t\telse {");
+                    yaz.WriteLine("\t\t\t\t\t\t$(this).children(\"ul\").slideDown();");
+                    yaz.WriteLine("\t\t\t\t\t}");
+                    yaz.WriteLine("\t\t\t\t});");
+                    yaz.WriteLine("\t\t\t}, 1);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\scripts.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
+                    yaz.WriteLine("import '../../../../../../Content/admin/js/jquery.dataTables.min.js';");
+                    yaz.WriteLine("import '../../../../../../Content/admin/js/bootstrap.min.js';");
+                    yaz.WriteLine("import '../../../../../../Content/admin/js/matrix.js';");
+                    yaz.WriteLine("import '../../../../../../Content/admin/js/matrix.popover.js';");
+                    yaz.WriteLine("import '../../../../../../Content/admin/js/select2.min.js';");
+                    yaz.WriteLine("import '../../../../../../Content/admin/js/ckeditor/ckeditor.js';");
+                    yaz.WriteLine("import '../../../../../../Content/admin/js/pathscript.js';");
+                    yaz.WriteLine("import '../../../../../../Content/admin/js/main.js';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: 'admin-scripts',");
+                    yaz.WriteLine("\ttemplate: '',");
+                    yaz.WriteLine("\tstyleUrls: [");
+                    yaz.WriteLine("\t\t'../../../../../../Content/admin/css/bootstrap.min.css',");
+                    yaz.WriteLine("\t\t'../../../../../../Content/admin/css/bootstrap-responsive.min.css',");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t'../../../../../../Content/admin/css/select2.css',");
+                    yaz.WriteLine("\t\t'../../../../../../Content/admin/css/matrix-style.css',");
+                    yaz.WriteLine("\t\t'../../../../../../Content/admin/css/matrix-media.css',");
+                    yaz.WriteLine("\t\t'../../../../../../Content/admin/css/font-awesome/css/font-awesome.css',");
+                    yaz.WriteLine("\t\t'../../../../../../Content/admin/css/main.css'");
+                    yaz.WriteLine("\t],");
+                    yaz.WriteLine("\tencapsulation: ViewEncapsulation.None");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminScriptsComponent {");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home\\index.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<div id=\"content\">");
+                    yaz.WriteLine("\t<div id=\"content-header\">");
+                    yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a href=\"javascript:;\" class=\"tip-bottom\"><i class=\"icon-home\"></i> Ana Sayfa</a></div>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t<div class=\"container-fluid\">");
+                    yaz.WriteLine("\t\t<div class=\"quick-actions_homepage\">");
+                    yaz.WriteLine("\t\t\t<ul class=\"quick-actions\">");
+
+                    string[] colors = new string[] { "bg_lb", "bg_lg", "bg_ly", "bg_lo", "bg_ls", "bg_lr", "bg_lv" };
+                    List<string> addedTables = new List<string>();
+                    int i = 0;
+
+                    foreach (string Table in selectedTables)
+                    {
+                        if (!addedTables.Contains(Table))
+                        {
+                            List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+
+                            SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+
+                            List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
+                            fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
+
+                            if (fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a routerLink=\"/Admin/" + Table + "\"> <i class=\"icon-home\"></i> " + Table + "</a> </li>");
+                                i++;
+                            }
+
+                            addedTables.Add(Table);
+                        }
+                    }
+
+                    yaz.WriteLine("\t\t\t</ul>");
+                    yaz.WriteLine("\t\t</div>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home\\index.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\ttemplateUrl: './index.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class HomeComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home\\login.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<form [formGroup]=\"girisForm\" (ngSubmit)=\"onSubmit()\">");
+                    yaz.WriteLine("\t<div id=\"loginbox\">");
+                    yaz.WriteLine("\t\t<div class=\"control-group normal_text\"> <h3><img src=\"Content/admin/img/logo.png\" alt=\"Logo\" /></h3></div>");
+                    yaz.WriteLine("\t\t<div class=\"control-group\">");
+                    yaz.WriteLine("\t\t\t<div class=\"controls\">");
+                    yaz.WriteLine("\t\t\t\t<div class=\"main_input_box\">");
+                    yaz.WriteLine("\t\t\t\t\t<span class=\"add-on bg_lg\"><i class=\"icon-user\"> </i></span><input id=\"username\" type=\"text\" formControlName=\"username\" placeholder=\"Kullanıcı Adı\" (keypress)=\"onKeyPress($event)\" />");
+                    yaz.WriteLine("\t\t\t\t</div>");
+                    yaz.WriteLine("\t\t\t</div>");
+                    yaz.WriteLine("\t\t</div>");
+                    yaz.WriteLine("\t\t<div class=\"control-group\">");
+                    yaz.WriteLine("\t\t\t<div class=\"controls\">");
+                    yaz.WriteLine("\t\t\t\t<div class=\"main_input_box\">");
+                    yaz.WriteLine("\t\t\t\t\t<span class=\"add-on bg_ly\"><i class=\"icon-lock\"></i></span><input id=\"password\" type=\"password\" formControlName=\"password\" placeholder=\"Şifre\" (keypress)=\"onKeyPress($event)\" />");
+                    yaz.WriteLine("\t\t\t\t</div>");
+                    yaz.WriteLine("\t\t\t</div>");
+                    yaz.WriteLine("\t\t</div>");
+                    yaz.WriteLine("\t\t<div class=\"alert alert-error\" style=\"display:none;\">");
+                    yaz.WriteLine("\t\t\t<strong>Hata! </strong> <span id=\"hataMesaj\">{{ hataMesaj }}</span>");
+                    yaz.WriteLine("\t\t</div>");
+                    yaz.WriteLine("\t\t<div class=\"form-actions\">");
+                    yaz.WriteLine("\t\t\t<span class=\"pull-right\"><img id=\"imgLoading\" src=\"Content/admin/img/loading.gif\" /><input id=\"btnGiris\" type=\"submit\" class=\"btn btn-success\" value=\"Giriş Yap\" [disabled]=\"!girisForm.valid\" /></span>");
+                    yaz.WriteLine("\t\t</div>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</form>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home\\login.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component, ViewEncapsulation } from \"@angular/core\";");
+                    yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
+                    yaz.WriteLine("import { SharedService } from '../../services/shared.js';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("import '../../../../../Content/admin/js/jquery.min.js';");
+                    yaz.WriteLine("import { Router } from '@angular/router';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\ttemplateUrl: './login.html',");
+                    yaz.WriteLine("\tproviders: [SharedService],");
+                    yaz.WriteLine("\tstyleUrls: [");
+                    yaz.WriteLine("\t\t'../../../../../Content/admin/css/bootstrap.min.css',");
+                    yaz.WriteLine("\t\t'../../../../../Content/admin/css/bootstrap-responsive.min.css',");
+                    yaz.WriteLine("\t\t'../../../../../Content/admin/css/matrix-login.css',");
+                    yaz.WriteLine("\t\t'../../../../../Content/admin/css/font-awesome/css/font-awesome.css'");
+                    yaz.WriteLine("\t],");
+                    yaz.WriteLine("\tstyles: [");
+                    yaz.WriteLine("\t\t'#imgLoading { float: left; margin: 5px 5px 0px 0px; height: 20px; display: none; }'");
+                    yaz.WriteLine("\t],");
+                    yaz.WriteLine("\tencapsulation: ViewEncapsulation.None");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminLoginComponent {");
+                    yaz.WriteLine("\terrorMsg: string;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tgirisForm: FormGroup;");
+                    yaz.WriteLine("\tloginData: any;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\thataMesaj: string;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tconstructor(private service: SharedService, private formBuilder: FormBuilder, private router: Router) {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t\tthis.girisForm = this.formBuilder.group({");
+                    yaz.WriteLine("\t\t\tusername: new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(25)]),");
+                    yaz.WriteLine("\t\t\tpassword: new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(25)])");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tonSubmit() {");
+                    yaz.WriteLine("\t\t$(\"#imgLoading\").fadeIn(\"slow\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tthis.loginData = new Object();");
+                    yaz.WriteLine("\t\tthis.loginData.Username = this.girisForm.get(\"username\").value;");
+                    yaz.WriteLine("\t\tthis.loginData.Password = this.girisForm.get(\"password\").value;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tthis.service.postLogin(this.loginData)");
+                    yaz.WriteLine("\t\t\t.subscribe((answer) => {");
+                    yaz.WriteLine("\t\t\t\tif (answer == true) {");
+                    yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/AnaSayfa']);");
+                    yaz.WriteLine("\t\t\t\t}");
+                    yaz.WriteLine("\t\t\t\telse {");
+                    yaz.WriteLine("\t\t\t\t\tthis.hataMesaj = \"Lütfen kullanıcı adı ve şifrenizi kontrol ediniz.\";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\t\t$(\"#imgLoading\").fadeOut(\"slow\");");
+                    yaz.WriteLine("\t\t\t\t}");
+                    yaz.WriteLine("\t\t\t},");
+                    yaz.WriteLine("\t\t\t\tresError => this.errorMsg = resError);");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tonKeyPress(event: any) {");
+                    yaz.WriteLine("\t\tif (event.keyCode == \"13\") {");
+                    yaz.WriteLine("\t\t\tthis.onSubmit();");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            CreateAngularAppModule();
+            CreateAngularRoutingModule();
+        }
+
+        void CreateAngularSharedService()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services\\shared.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
+                    yaz.WriteLine("import { HttpClient, HttpParams } from '@angular/common/http';");
+                    yaz.WriteLine("import { Observable } from 'rxjs';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Injectable()");
+                    yaz.WriteLine("export class SharedService {");
+                    yaz.WriteLine("\tprivate linkLogin: string = \"Ajax/Shared/Login\";");
+                    yaz.WriteLine("\tprivate linkLogout: string = \"Ajax/Shared/Logout\";");
+                    yaz.WriteLine("\tprivate linkLoginControl: string = \"Ajax/Shared/LoginControl\";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tconstructor(private http: HttpClient) {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tpostLogin(user: any): Observable<boolean> {");
+                    yaz.WriteLine("\t\treturn this.http.post<boolean>(this.linkLogin, user);");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tgetLogout(): Observable<boolean> {");
+                    yaz.WriteLine("\t\treturn this.http.get<boolean>(this.linkLogout);");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tgetLoginControl(): Observable<boolean> {");
+                    yaz.WriteLine("\t\treturn this.http.get<boolean>(this.linkLoginControl);");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\SharedController.cs", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("using System.Web.Mvc;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
+                    yaz.WriteLine("{");
+                    yaz.WriteLine("\tpublic class SharedController : Controller");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\t[HttpPost]");
+                    yaz.WriteLine("\t\tpublic JsonResult Login([System.Web.Http.FromBody] dynamic user)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = user;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn Json(true);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t[HttpGet]");
+                    yaz.WriteLine("\t\tpublic JsonResult Logout()");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = null;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t[HttpGet]");
+                    yaz.WriteLine("\t\tpublic JsonResult LoginControl()");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tif (Session[\"CurrentUser\"] == null)");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t\telse");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
         }
 
         void CreateAngularAppModule()
@@ -2644,9 +3369,9 @@ namespace TDFactory
 
                     foreach (string Table in selectedTables)
                     {
-                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToLower() + "';");
-                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToLower() + "/ekle';");
-                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToLower() + "/duzenle';");
+                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "';");
+                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "/ekle';");
+                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "/duzenle';");
                         yaz.WriteLine("");
                     }
 
@@ -2704,7 +3429,7 @@ namespace TDFactory
                     yaz.WriteLine("import { Routes, RouterModule } from '@angular/router';");
                     yaz.WriteLine("");
                     yaz.WriteLine("import { LayoutComponent } from './shared/layout';");
-                    yaz.WriteLine("import { HomeComponent } from './home/home';");
+                    yaz.WriteLine("import { HomeComponent } from './home/index';");
                     yaz.WriteLine("");
                     yaz.WriteLine("import { AdminLayoutComponent } from './admin/views/shared/layoutAdmin';");
                     yaz.WriteLine("import { AdminHomeComponent } from './admin/views/home/index';");
@@ -2713,9 +3438,9 @@ namespace TDFactory
 
                     foreach (string Table in selectedTables)
                     {
-                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToLower() + "';");
-                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToLower() + "/ekle';");
-                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToLower() + "/duzenle';");
+                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "';");
+                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "/ekle';");
+                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "/duzenle';");
                         yaz.WriteLine("");
                     }
 
@@ -2781,13 +3506,6 @@ namespace TDFactory
                         yaz.WriteLine("\t\tpublic static void RegisterRoutes(RouteCollection routes)");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\troutes.IgnoreRoute(\"{resource}.axd/{*pathInfo}\");");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\troutes.MapRoute(");
-                        yaz.WriteLine("\t\t\t\tname: \"Shared\",");
-                        yaz.WriteLine("\t\t\t\turl: \"Shared/{action}/{id}\",");
-                        yaz.WriteLine("\t\t\t\tdefaults: new { controller = \"Shared\", action = \"Index\", id = UrlParameter.Optional },");
-                        yaz.WriteLine("\t\t\t\tnamespaces: new[] { \"" + projectName + ".Controllers\" }");
-                        yaz.WriteLine("\t\t\t);");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\troutes.MapRoute(");
                         yaz.WriteLine("\t\t\t\tname: \"Default\",");
@@ -3125,7 +3843,7 @@ namespace TDFactory
                 }
 
                 //Index
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\index.html", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\index.html", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
@@ -3237,7 +3955,7 @@ namespace TDFactory
                 }
 
                 //Ekle
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\ekle.html", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\ekle.html", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
@@ -3331,7 +4049,7 @@ namespace TDFactory
                 //Duzenle
                 if (identityColumns.Count > 0)
                 {
-                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\duzenle.html", FileMode.Create))
+                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\duzenle.html", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
@@ -3793,7 +4511,7 @@ namespace TDFactory
                     i++;
                 }
 
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services\\" + Table.ToLower() + ".ts", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services\\" + Table.ToHyperLinkText(true) + ".ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
@@ -3871,12 +4589,12 @@ namespace TDFactory
                 CreateAngularDirectories(Table);
 
                 //Index
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\index.ts", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\index.ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("import { Component } from \"@angular/core\";");
-                        yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToLower() + "\";");
+                        yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToHyperLinkText(true) + "\";");
                         yaz.WriteLine("");
                         yaz.WriteLine("@Component({");
                         yaz.WriteLine("\ttemplateUrl: './index.html',");
@@ -3968,12 +4686,12 @@ namespace TDFactory
                 }
 
                 //Ekle
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\ekle.ts", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\ekle.ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("import { Component } from \"@angular/core\";");
-                        yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToLower() + "\";");
+                        yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToHyperLinkText(true) + "\";");
                         yaz.WriteLine("import { Router } from '@angular/router';");
 
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
@@ -4137,12 +4855,12 @@ namespace TDFactory
                 //Duzenle
                 if (identityColumns.Count > 0)
                 {
-                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToLower() + "\\duzenle.ts", FileMode.Create))
+                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\duzenle.ts", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
                             yaz.WriteLine("import { Component } from \"@angular/core\";");
-                            yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToLower() + "\";");
+                            yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToHyperLinkText(true) + "\";");
 
                             if (fkcList.Count > 0)
                             {
@@ -4150,7 +4868,7 @@ namespace TDFactory
                                 {
                                     string PrimaryTableName = fkc.ForeignTableName;
 
-                                    yaz.WriteLine("import { " + PrimaryTableName + "Service } from '../../services/" + PrimaryTableName.ToLower() + "';");
+                                    yaz.WriteLine("import { " + PrimaryTableName + "Service } from '../../services/" + PrimaryTableName.ToHyperLinkText(true) + "';");
                                 }
                             }
 
@@ -4478,7 +5196,7 @@ namespace TDFactory
                     yaz.WriteLine("\tLayout = \"~/Views/Shared/_Layout.cshtml\";");
                     yaz.WriteLine("}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToLower() + "-app></" + projectName.Substring(0, 3).ToLower() + "-app>");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-app></" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-app>");
                     yaz.Close();
                 }
             }
