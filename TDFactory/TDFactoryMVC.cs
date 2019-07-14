@@ -5067,24 +5067,21 @@ namespace TDFactory
 
                             foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                             {
-                                if (!column.IsIdentity)
+                                if (column.TypeName.Name == "String" && column.CharLength == "")
                                 {
-                                    if (column.TypeName.Name == "String" && column.CharLength == "")
-                                    {
-                                        yaz.WriteLine("\t\tthis.data." + column.ColumnName + " = $(\".ck-content\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
-                                    }
-                                    else
-                                    {
-                                        yaz.WriteLine("\t\tthis.data." + column.ColumnName + " = this.ekleForm.get(\"" + column.ColumnName + "\").value;");
-                                    }
+                                    yaz.WriteLine("\t\tthis.data." + column.ColumnName + " = $(\".ck-content\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
                                 }
-
-                                i++;
-
-                                if (i == tcCount)
+                                else
                                 {
-                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\tthis.data." + column.ColumnName + " = this.ekleForm.get(\"" + column.ColumnName + "\").value;");
                                 }
+                            }
+
+                            i++;
+
+                            if (i == tcCount - 1)
+                            {
+                                yaz.WriteLine("");
                             }
 
                             yaz.WriteLine("\t\tthis.service.postDuzenle(this.data)");
