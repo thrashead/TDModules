@@ -2513,6 +2513,7 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component } from \"@angular/core\";");
+                    yaz.WriteLine("import '../../Content/js/jquery/jquery.min.js';");
                     yaz.WriteLine("");
                     yaz.WriteLine("declare global {");
                     yaz.WriteLine("\tinterface JQuery {");
@@ -2568,7 +2569,6 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
-                    yaz.WriteLine("import '../../../../Content/js/jquery/jquery.min.js';");
                     yaz.WriteLine("import '../../../../Content/js/pathscript.js';");
                     yaz.WriteLine("import '../../../../Content/js/main.js';");
                     yaz.WriteLine("");
@@ -2640,6 +2640,7 @@ namespace TDFactory
                 {
                     yaz.WriteLine("import { Component } from '@angular/core';");
                     yaz.WriteLine("import { SharedService } from '../../services/shared';");
+                    yaz.WriteLine("import { Router } from '@angular/router';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\tselector: 'admin-layout',");
@@ -2650,13 +2651,13 @@ namespace TDFactory
                     yaz.WriteLine("export class AdminLayoutComponent {");
                     yaz.WriteLine("\terrorMsg: string;");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\tconstructor(private service: SharedService) {");
+                    yaz.WriteLine("\tconstructor(private service: SharedService, private router: Router) {");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tngOnInit() {");
                     yaz.WriteLine("\t\tthis.service.getLoginControl().subscribe((resData) => {");
                     yaz.WriteLine("\t\t\tif (resData == false) {");
-                    yaz.WriteLine("\t\t\t\twindow.location.href = '/" + projectName + "/';");
+                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin']);");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                     yaz.WriteLine("\t}");
@@ -3061,7 +3062,6 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
-                    yaz.WriteLine("//import '../../../../../../Content/js/jquery/jquery.min.js';");
                     yaz.WriteLine("import '../../../../../../Content/admin/js/jquery.dataTables.min.js';");
                     yaz.WriteLine("import '../../../../../../Content/admin/js/bootstrap.min.js';");
                     yaz.WriteLine("import '../../../../../../Content/admin/js/matrix.js';");
@@ -3134,7 +3134,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t</ul>");
                     yaz.WriteLine("\t\t</div>");
                     yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("</div");
+                    yaz.WriteLine("</div>");
                     yaz.Close();
                 }
             }
@@ -3198,7 +3198,6 @@ namespace TDFactory
                     yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
                     yaz.WriteLine("import { Router } from '@angular/router';");
                     yaz.WriteLine("import { SharedService } from '../../services/shared.js';");
-                    yaz.WriteLine("import '../../../../../Content/js/jquery/jquery.min.js';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\ttemplateUrl: './login.html',");
@@ -3243,7 +3242,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\tthis.service.postLogin(this.loginData)");
                     yaz.WriteLine("\t\t\t.subscribe((answer) => {");
                     yaz.WriteLine("\t\t\t\tif (answer == true) {");
-                    yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/AnaSayfa']);");
+                    yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/Home']);");
                     yaz.WriteLine("\t\t\t\t}");
                     yaz.WriteLine("\t\t\t\telse {");
                     yaz.WriteLine("\t\t\t\t\tthis.hataMesaj = \"Lütfen kullanıcı adı ve şifrenizi kontrol ediniz.\";");
@@ -4313,198 +4312,202 @@ namespace TDFactory
                     i++;
                 }
 
-                StreamWriter yaz = File.CreateText(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\" + Table + "Controller.cs");
-
-                yaz.WriteLine("using System.Linq;");
-                yaz.WriteLine("using System.Web.Mvc;");
-                yaz.WriteLine("using System.Collections.Generic;");
-                yaz.WriteLine("using " + projectName + ".Data;");
-                yaz.WriteLine("using TDLibrary;");
-                yaz.WriteLine("using Models;");
-
-                yaz.WriteLine("");
-                yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
-                yaz.WriteLine("{");
-                yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
-                yaz.WriteLine("\t{");
-                yaz.WriteLine("\t\treadonly " + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
-                yaz.WriteLine("");
-
-                // Index
-                string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
-
-                yaz.WriteLine("\t\t[HttpGet]");
-                yaz.WriteLine("\t\tpublic JsonResult Index()");
-                yaz.WriteLine("\t\t{");
-                yaz.WriteLine("\t\t\tList<usp_" + Table + "Select_Result> table = entity.usp_" + Table + "Select(null).ToList();");
-                yaz.WriteLine("\t\t\t");
-                yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
-                yaz.WriteLine("\t\t}");
-                yaz.WriteLine("");
-
-                // Ekle
-                if (identityColumns.Count > 0)
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\" + Table + "Controller.cs", FileMode.Create))
                 {
-                    string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
-
-                    if (fkcListForeign.Count > 0)
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        yaz.WriteLine("\t\t[HttpGet]");
-                        yaz.WriteLine("\t\tpublic JsonResult Ekle()");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\t" + Table + "Model table = new " + Table + "Model();");
+                        yaz.WriteLine("using System.Linq;");
+                        yaz.WriteLine("using System.Web.Mvc;");
+                        yaz.WriteLine("using System.Collections.Generic;");
+                        yaz.WriteLine("using " + projectName + ".Data;");
+                        yaz.WriteLine("using TDLibrary;");
+                        yaz.WriteLine("using Models;");
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\treadonly " + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
                         yaz.WriteLine("");
 
-                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                        {
-                            string PrimaryTableName = fkc.PrimaryTableName;
+                        // Index
+                        string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
 
-                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                            yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
-                            yaz.WriteLine("");
-                        }
-
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult Index()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tList<usp_" + Table + "Select_Result> table = entity.usp_" + Table + "Select(null).ToList();");
+                        yaz.WriteLine("\t\t\t");
                         yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
-                    }
 
-                    // Ekle
-                    yaz.WriteLine("\t\t[HttpPost]");
-                    yaz.WriteLine("\t\tpublic JsonResult Ekle([System.Web.Http.FromBody] " + Table + "Model table)");
-                    yaz.WriteLine("\t\t{");
-
-                    string insertSql = "var result = entity.usp_" + Table + "Insert(";
-                    foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                    {
-                        if (!column.IsIdentity)
+                        // Ekle
+                        if (identityColumns.Count > 0)
                         {
-                            insertSql += "table." + column.ColumnName + ", ";
-                        }
-                    }
-                    insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
-                    insertSql += ").FirstOrDefault();";
+                            string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
 
-                    yaz.WriteLine("\t\t\t" + insertSql);
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tif (result != null)");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\treturn Json(table);");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t\telse");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt eklenemedi.\";");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("");
+                            if (fkcListForeign.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t[HttpGet]");
+                                yaz.WriteLine("\t\tpublic JsonResult Ekle()");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\t" + Table + "Model table = new " + Table + "Model();");
+                                yaz.WriteLine("");
 
-                    if (fkcListForeign.Count > 0)
-                    {
-                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                        {
-                            string PrimaryTableName = fkc.PrimaryTableName;
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
 
-                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                            yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
+                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
+                                    yaz.WriteLine("");
+                                }
+
+                                yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                            }
+
+                            // Ekle
+                            yaz.WriteLine("\t\t[HttpPost]");
+                            yaz.WriteLine("\t\tpublic JsonResult Ekle([System.Web.Http.FromBody] " + Table + "Model table)");
+                            yaz.WriteLine("\t\t{");
+
+                            string insertSql = "var result = entity.usp_" + Table + "Insert(";
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    insertSql += "table." + column.ColumnName + ", ";
+                                }
+                            }
+                            insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
+                            insertSql += ").FirstOrDefault();";
+
+                            yaz.WriteLine("\t\t\t" + insertSql);
                             yaz.WriteLine("");
-                        }
-                    }
-
-                    yaz.WriteLine("\t\t\treturn Json(table);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-
-                    //Duzenle
-                    yaz.WriteLine("\t\t[HttpGet]");
-                    yaz.WriteLine("\t\tpublic JsonResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tusp_" + Table + "SelectTop_Result uspTable = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
-                    yaz.WriteLine("\t\t\t" + Table + "Model table = uspTable.ChangeModel<" + Table + "Model>();");
-                    yaz.WriteLine("");
-
-                    if (fkcListForeign.Count > 0)
-                    {
-                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                        {
-                            string PrimaryTableName = fkc.PrimaryTableName;
-                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                            yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                            yaz.WriteLine("\t\t\tif (result != null)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn Json(table);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\telse");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt eklenemedi.\";");
+                            yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
-                        }
-                    }
 
-                    yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
+                            if (fkcListForeign.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
 
-                    //Duzenle
-                    yaz.WriteLine("\t\t[HttpPost]");
-                    yaz.WriteLine("\t\tpublic JsonResult Duzenle([System.Web.Http.FromBody] " + Table + "Model table)");
-                    yaz.WriteLine("\t\t{");
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                    string updateSql = "var result = entity.usp_" + Table + "Update(";
-                    foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                    {
-                        updateSql += "table." + column.ColumnName + ", ";
-                    }
-                    updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
-                    updateSql += ").FirstOrDefault();";
+                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
+                                    yaz.WriteLine("");
+                                }
+                            }
 
-                    yaz.WriteLine("\t\t\t" + updateSql);
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tif (result != null)");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\treturn Json(table);");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t\telse");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("");
-
-                    if (fkcListForeign.Count > 0)
-                    {
-                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                        {
-                            string PrimaryTableName = fkc.PrimaryTableName;
-                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                            yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                            yaz.WriteLine("\t\t\treturn Json(table);");
+                            yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
+
+                            //Duzenle
+                            yaz.WriteLine("\t\t[HttpGet]");
+                            yaz.WriteLine("\t\tpublic JsonResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectTop_Result uspTable = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                            yaz.WriteLine("\t\t\t" + Table + "Model table = uspTable.ChangeModel<" + Table + "Model>();");
+                            yaz.WriteLine("");
+
+                            if (fkcListForeign.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            //Duzenle
+                            yaz.WriteLine("\t\t[HttpPost]");
+                            yaz.WriteLine("\t\tpublic JsonResult Duzenle([System.Web.Http.FromBody] " + Table + "Model table)");
+                            yaz.WriteLine("\t\t{");
+
+                            string updateSql = "var result = entity.usp_" + Table + "Update(";
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            {
+                                updateSql += "table." + column.ColumnName + ", ";
+                            }
+                            updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
+                            updateSql += ").FirstOrDefault();";
+
+                            yaz.WriteLine("\t\t\t" + updateSql);
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (result != null)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn Json(table);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\telse");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+
+                            if (fkcListForeign.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn Json(table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+                            //Sil
+                            yaz.WriteLine("\t\t[HttpGet]");
+                            yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\ttry");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\tcatch");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t}");
                         }
+
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+
+                        yaz.Close();
                     }
-
-                    yaz.WriteLine("\t\t\treturn Json(table);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-
-                    //Sil
-                    yaz.WriteLine("\t\t[HttpGet]");
-                    yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\ttry");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t\tcatch");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t}");
                 }
-
-                yaz.WriteLine("\t}");
-                yaz.WriteLine("}");
-
-                yaz.Close();
             }
         }
 
@@ -5185,6 +5188,8 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
                     yaz.WriteLine("\t<title>@ViewBag.Title</title>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t<base href=\"/" + projectName + "/\" />");
                     yaz.WriteLine("</head>");
                     yaz.WriteLine("<body>");
                     yaz.WriteLine("\t@RenderBody()");
@@ -5904,58 +5909,121 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    yaz.WriteLine("* {outline: none;}");
-                    yaz.WriteLine("body {margin:0px 0px 0px 0px;font-family: Verdana;font-size: 12px;color: black;height:100%;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("img {border: none;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("a {font-family: Verdana;font-size: 12px;color: black;text-decoration: none;cursor:pointer;}");
-                    yaz.WriteLine("a:hover {color: gray;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("input[type=checkbox] {cursor:pointer;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine(".clear {clear:both;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("ul {list-style-type:none;padding: 0px 0px 0px 0px;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("ul.topmenu {float: left;margin: 20px 0px 0px 20px;}");
-                    yaz.WriteLine("ul.topmenu li {float: left;margin: 0px 0px 20px 0px;}");
-                    yaz.WriteLine("ul.topmenu li a {padding: 5px 10px 5px 10px;background-color:#0A246A;color:#fff;border: 1px solid #0A246A;margin-left: -1px;}");
-                    yaz.WriteLine("ul.topmenu li a:hover {background-color:#fff;color:#0A246A;}");
-                    yaz.WriteLine("ul.topmenu li a:active {background-color:#000ad9;color:#fff;}");
-                    yaz.WriteLine("ul.topmenu li a.website {background-color:#732794;border-color: #732794;margin-left: 5px;}");
-                    yaz.WriteLine("ul.topmenu li a.website:hover {background-color:#fff;color:#732794;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("ul.mainmenu {float: left;margin: 20px 0px 0px 20px;width: 840px;}");
-                    yaz.WriteLine("ul.mainmenu li {float: left;margin: 0px 0px 0px 0px;width: 200px;padding: 5px;}");
-                    yaz.WriteLine("ul.mainmenu li a {padding: 5px 5px 5px 5px;background-color:#0A246A;color:#fff;border: 1px solid #0A246A;margin-left: -1px;width: 188px;");
-                    yaz.WriteLine("height: 78px;float: left;text-align: center;line-height: 80px;vertical-align: middle;white-space: nowrap;overflow: hidden;");
-                    yaz.WriteLine("text-overflow: ellipsis;font-size: 20px;}");
-                    yaz.WriteLine("ul.mainmenu li a:hover {background-color:#fff;color:#0A246A;}");
-                    yaz.WriteLine("ul.mainmenu li a:active {background-color:#000ad9;color:#fff;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine(".content {float: left;margin: 20px 0px 0px 20px;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("fieldset {border: 1px solid #0A246A!important;min-width: 600px;}");
-                    yaz.WriteLine("fieldset legend {color: #0A246A;font-size:18px;}");
-                    yaz.WriteLine("fieldset select {border: 1px solid #0A246A;width: 598px;padding: 5px 5px 5px 5px;}");
-                    yaz.WriteLine("fieldset input[type=text] {border: 1px solid #0A246A;width: 588px;padding: 5px 5px 5px 5px;}");
-                    yaz.WriteLine("fieldset input[type=password] {border: 1px solid #0A246A;width: 588px;padding: 5px 5px 5px 5px;}");
-                    yaz.WriteLine("fieldset input[type=number] {border: 1px solid #0A246A;width: 588px;padding: 5px 5px 5px 5px;}");
-                    yaz.WriteLine("fieldset input[type=datetime] {border: 1px solid #0A246A;width: 588px;padding: 5px 5px 5px 5px;}");
-                    yaz.WriteLine("fieldset textarea {border: 1px solid #0A246A;width: 588px;height: 100px;}");
-                    yaz.WriteLine("fieldset input[type=button] {border: 1px solid #0A246A;background-color: #0A246A;color: #fff;padding: 5px 10px 5px 10px;cursor: pointer;}");
-                    yaz.WriteLine("fieldset input[type=button]:hover {background-color:#fff;color:#0A246A;}");
-                    yaz.WriteLine("fieldset input[type=button]:active {background-color:#000ad9;color:#fff;}");
-                    yaz.WriteLine("fieldset input[type=submit] {border: 1px solid #0A246A;background-color: #0A246A;color: #fff;padding: 5px 10px 5px 10px;cursor: pointer;}");
-                    yaz.WriteLine("fieldset input[type=submit]:hover {background-color:#fff;color:#0A246A;}");
-                    yaz.WriteLine("fieldset input[type=submit]:active {background-color:#000ad9;color:#fff;}");
-                    yaz.WriteLine("fieldset .editor-label, fieldset .display-label {font-size: 14px;color: #0A246A;margin: 10px 0px 5px 0px;float: left;}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine(".pagelinks {float: left;margin: 10px 0px 10px 0px;}");
-                    yaz.WriteLine(".pagelinks a {font-family: Verdana;font-size: 13px;color: #0A246A;text-decoration: none;cursor:pointer;float: left;margin: 0px 0px 0px 10px;}");
-                    yaz.WriteLine(".pagelinks a:hover {color: #000ad9;}");
-                    yaz.WriteLine(".pagelinks a:active {color: #373fdc;}");
+                    if (!chkAngular.Checked)
+                    {
+                        yaz.WriteLine("* {outline: none;}");
+                        yaz.WriteLine("body {margin:0px 0px 0px 0px;font-family: Verdana;font-size: 12px;color: black;height:100%;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("img {border: none;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("a {font-family: Verdana;font-size: 12px;color: black;text-decoration: none;cursor:pointer;}");
+                        yaz.WriteLine("a:hover {color: gray;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("input[type=checkbox] {cursor:pointer;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".clear {clear:both;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("ul {list-style-type:none;padding: 0px 0px 0px 0px;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("ul.topmenu {float: left;margin: 20px 0px 0px 20px;}");
+                        yaz.WriteLine("ul.topmenu li {float: left;margin: 0px 0px 20px 0px;}");
+                        yaz.WriteLine("ul.topmenu li a {padding: 5px 10px 5px 10px;background-color:#0A246A;color:#fff;border: 1px solid #0A246A;margin-left: -1px;}");
+                        yaz.WriteLine("ul.topmenu li a:hover {background-color:#fff;color:#0A246A;}");
+                        yaz.WriteLine("ul.topmenu li a:active {background-color:#000ad9;color:#fff;}");
+                        yaz.WriteLine("ul.topmenu li a.website {background-color:#732794;border-color: #732794;margin-left: 5px;}");
+                        yaz.WriteLine("ul.topmenu li a.website:hover {background-color:#fff;color:#732794;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("ul.mainmenu {float: left;margin: 20px 0px 0px 20px;width: 840px;}");
+                        yaz.WriteLine("ul.mainmenu li {float: left;margin: 0px 0px 0px 0px;width: 200px;padding: 5px;}");
+                        yaz.WriteLine("ul.mainmenu li a {padding: 5px 5px 5px 5px;background-color:#0A246A;color:#fff;border: 1px solid #0A246A;margin-left: -1px;width: 188px;");
+                        yaz.WriteLine("height: 78px;float: left;text-align: center;line-height: 80px;vertical-align: middle;white-space: nowrap;overflow: hidden;");
+                        yaz.WriteLine("text-overflow: ellipsis;font-size: 20px;}");
+                        yaz.WriteLine("ul.mainmenu li a:hover {background-color:#fff;color:#0A246A;}");
+                        yaz.WriteLine("ul.mainmenu li a:active {background-color:#000ad9;color:#fff;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".content {float: left;margin: 20px 0px 0px 20px;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("fieldset {border: 1px solid #0A246A!important;min-width: 600px;}");
+                        yaz.WriteLine("fieldset legend {color: #0A246A;font-size:18px;}");
+                        yaz.WriteLine("fieldset select {border: 1px solid #0A246A;width: 598px;padding: 5px 5px 5px 5px;}");
+                        yaz.WriteLine("fieldset input[type=text] {border: 1px solid #0A246A;width: 588px;padding: 5px 5px 5px 5px;}");
+                        yaz.WriteLine("fieldset input[type=password] {border: 1px solid #0A246A;width: 588px;padding: 5px 5px 5px 5px;}");
+                        yaz.WriteLine("fieldset input[type=number] {border: 1px solid #0A246A;width: 588px;padding: 5px 5px 5px 5px;}");
+                        yaz.WriteLine("fieldset input[type=datetime] {border: 1px solid #0A246A;width: 588px;padding: 5px 5px 5px 5px;}");
+                        yaz.WriteLine("fieldset textarea {border: 1px solid #0A246A;width: 588px;height: 100px;}");
+                        yaz.WriteLine("fieldset input[type=button] {border: 1px solid #0A246A;background-color: #0A246A;color: #fff;padding: 5px 10px 5px 10px;cursor: pointer;}");
+                        yaz.WriteLine("fieldset input[type=button]:hover {background-color:#fff;color:#0A246A;}");
+                        yaz.WriteLine("fieldset input[type=button]:active {background-color:#000ad9;color:#fff;}");
+                        yaz.WriteLine("fieldset input[type=submit] {border: 1px solid #0A246A;background-color: #0A246A;color: #fff;padding: 5px 10px 5px 10px;cursor: pointer;}");
+                        yaz.WriteLine("fieldset input[type=submit]:hover {background-color:#fff;color:#0A246A;}");
+                        yaz.WriteLine("fieldset input[type=submit]:active {background-color:#000ad9;color:#fff;}");
+                        yaz.WriteLine("fieldset .editor-label, fieldset .display-label {font-size: 14px;color: #0A246A;margin: 10px 0px 5px 0px;float: left;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".pagelinks {float: left;margin: 10px 0px 10px 0px;}");
+                        yaz.WriteLine(".pagelinks a {font-family: Verdana;font-size: 13px;color: #0A246A;text-decoration: none;cursor:pointer;float: left;margin: 0px 0px 0px 10px;}");
+                        yaz.WriteLine(".pagelinks a:hover {color: #000ad9;}");
+                        yaz.WriteLine(".pagelinks a:active {color: #373fdc;}");
+                    }
+                    else
+                    {
+                        yaz.WriteLine("fieldset {width: 546px;text-align: center;margin: 20px auto 0px auto;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("fieldset > p {margin-top: 50px;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".field-validation-error {color: #ff0000;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".editor-label {font-weight: bold;padding-bottom: 5px;}");
+                        yaz.WriteLine(".editor-field {padding-bottom: 10px;}");
+                        yaz.WriteLine(".editor-field > input[type='text'][disabled='disabled'] {display: inline-block;font-size: 11.844px;font-weight: bold;line-height: 14px;color: #fff;text-shadow: 0 -1px 0 rgba(0,0,0,0.25);");
+                        yaz.WriteLine("\twhite-space: nowrap;vertical-align: baseline;background-color: #3a87ad;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".ck-content {text-align: left;height: 400px;width: 530px;}");
+                        yaz.WriteLine("input[type='text'],input[type='password'] {text-align: left;width: 530px;}");
+                        yaz.WriteLine("input[type='file'] {width: 220px;}");
+                        yaz.WriteLine("input[type='number'] {width: 100px;}");
+                        yaz.WriteLine("select {width: 546px;}");
+                        yaz.WriteLine("label > select {width: auto!important; }");
+                        yaz.WriteLine("label > input[type='text'] {width: auto!important; }");
+                        yaz.WriteLine("input[type='checkbox'] {-webkit-appearance: none;height: 30px;width: 30px;background-image: url(/Emlak/Content/admin/img/passive.png);background-size: 30px 30px;}");
+                        yaz.WriteLine("input[type='checkbox']:hover {opacity:0.7;}");
+                        yaz.WriteLine("input[type='checkbox']:checked {background-image: url(/Emlak/Content/admin/img/active.png);}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".pagelinks {width: 220px;margin: 20px auto 0px auto;text-align: center;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("img.active {background-image:url(/Emlak/Content/admin/img/active.png);width:20px;height:20px;background-size: 20px 20px;background-repeat: no-repeat;}");
+                        yaz.WriteLine("img.passive {background-image:url(/Emlak/Content/admin/img/passive.png);width:20px;height:20px;background-size: 20px 20px;background-repeat: no-repeat;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".tdAlert {position:fixed;top:10px;right:10px;list-style-type:none;padding: 0px 0px 0px 0px;z-index:9999;top: 10px; right: 10px;}");
+                        yaz.WriteLine(".tdAlert li {margin: 0px 0px 20px 0px;padding: 5px 5px 5px 5px;background-color: red; border-color: red;display:none;width:200px;");
+                        yaz.WriteLine("\t\t  -webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;}");
+                        yaz.WriteLine(".tdAlert li .tdAlertMessage {margin-top: 5px;color: white; background-color: red;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@media only screen and (min-width: 414px) and (max-width: 600px) {");
+                        yaz.WriteLine("\tfieldset {width: 378px;}");
+                        yaz.WriteLine("\t.ck-content {width: 362px;}");
+                        yaz.WriteLine("\tinput[type='text'],input[type='password'] {width: 360px;}");
+                        yaz.WriteLine("\tselect {width: 370px; }");
+                        yaz.WriteLine("\tlabel > select {width: auto!important; }");
+                        yaz.WriteLine("\tlabel > input[type='text'] {width: auto!important; }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@media only screen and (max-width: 413px) {");
+                        yaz.WriteLine("\tfieldset {width: 228px;}");
+                        yaz.WriteLine("\t.ck-content {width: 212px;}");
+                        yaz.WriteLine("\tinput[type='text'],input[type='password'] {width: 210px;}");
+                        yaz.WriteLine("\tselect {width: 220px; }");
+                        yaz.WriteLine("\tlabel > select {width: auto!important; }");
+                        yaz.WriteLine("\tlabel > input[type='text'] {width: auto!important; }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@media (max-width: 375px) {");
+                        yaz.WriteLine("\t.hideColumn2 { display: none; }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@media (max-width: 480px) {");
+                        yaz.WriteLine("\t.hideColumn {display: none;}");
+                        yaz.WriteLine("}");
+                    }
 
                     yaz.Close();
                 }
