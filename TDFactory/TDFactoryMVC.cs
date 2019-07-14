@@ -4892,7 +4892,7 @@ namespace TDFactory
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
 
-                                    providers += ", " + ForeignTableName;
+                                    providers += ", " + ForeignTableName + "Service";
                                 }
                             }
                             providers += "]";
