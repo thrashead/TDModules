@@ -2895,7 +2895,7 @@ namespace TDFactory
                     yaz.WriteLine("\tonLogout() {");
                     yaz.WriteLine("\t\tthis.service.getLogout().subscribe((resData) => {");
                     yaz.WriteLine("\t\t\tif (resData == true) {");
-                    yaz.WriteLine("\t\t\t\twindow.location.href = '/" + projectName + "/';");
+                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/']);");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                     yaz.WriteLine("\t}");
@@ -2917,7 +2917,7 @@ namespace TDFactory
                     yaz.WriteLine("<div id=\"sidebar\">");
                     yaz.WriteLine("\t<a href=\"javascript:;\" class=\"visible-phone\"><i class=\"icon icon-reorder\"></i> Menü</a>");
                     yaz.WriteLine("\t<ul>");
-                    yaz.WriteLine("\t\t<li data-url=\"AnaSayfa\" class=\"active\">");
+                    yaz.WriteLine("\t\t<li data-url=\"Home\" class=\"active\">");
                     yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/Home\"><i class=\"icon icon-home\"></i> <span>Ana Sayfa</span></a>");
                     yaz.WriteLine("\t\t</li>");
 
@@ -3388,8 +3388,6 @@ namespace TDFactory
                         yaz.WriteLine("");
                     }
 
-                    yaz.WriteLine("import * as $ from \"jquery\";");
-                    yaz.WriteLine("");
                     yaz.WriteLine("@NgModule({");
                     yaz.WriteLine("\tdeclarations: [");
                     yaz.WriteLine("\t\tAppComponent,");
@@ -3952,8 +3950,8 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" *ngIf=\"updateShow\" [routerLink]=\"['/Admin/" + Table + "/Duzenle/' + item?." + id + "]\">Düzenle</a></li>");
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" *ngIf=\"deleteShow\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-id]=\"item?." + id + "\">Sil</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + Table + "/Duzenle/' + item?." + id + "]\">Düzenle</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-id]=\"item?." + id + "\">Sil</a></li>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -3968,7 +3966,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t</div>");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t<div class=\"pagelinks\">");
-                        yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "/Ekle\" class=\"btn btn-primary btn-add\" *ngIf=\"insertShow\">" + Table + " Ekle</a>");
+                        yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "/Ekle\" class=\"btn btn-primary btn-add\">" + Table + " Ekle</a>");
                         yaz.WriteLine("\t\t</div>");
                         yaz.WriteLine("\t</div>");
                         yaz.WriteLine("</div>");
@@ -4249,8 +4247,8 @@ namespace TDFactory
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" *ngIf=\"updateShow\" [routerLink]=\"['/Admin/" + ForeignTableName + "/Duzenle/' + item?." + idFrgn + "]\">Düzenle</a></li>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" *ngIf=\"deleteShow\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Sil</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + ForeignTableName + "/Duzenle/' + item?." + idFrgn + "]\">Düzenle</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Sil</a></li>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -4265,7 +4263,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t</div>");
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"pagelinks\">");
-                                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + ForeignTableName + "/Ekle\" class=\"btn btn-primary btn-add\" *ngIf=\"insertShow\">" + ForeignTableName + " Ekle</a>");
+                                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + ForeignTableName + "/Ekle\" class=\"btn btn-primary btn-add\">" + ForeignTableName + " Ekle</a>");
                                     yaz.WriteLine("\t\t</div>");
                                 }
                             }
@@ -4624,6 +4622,7 @@ namespace TDFactory
                     {
                         yaz.WriteLine("import { Component } from \"@angular/core\";");
                         yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToHyperLinkText(true) + "\";");
+                        yaz.WriteLine("import * as $ from \"jquery\";");
                         yaz.WriteLine("");
                         yaz.WriteLine("@Component({");
                         yaz.WriteLine("\ttemplateUrl: './index.html',");
@@ -4908,6 +4907,11 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("import ClassicEditor from '../../../../../Content/admin/js/ckeditor/ckeditor.js';");
                                 break;
+                            }
+
+                            if (fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("import * as $ from \"jquery\";");
                             }
 
                             yaz.WriteLine("");
@@ -5195,6 +5199,9 @@ namespace TDFactory
                     yaz.WriteLine("</head>");
                     yaz.WriteLine("<body>");
                     yaz.WriteLine("\t@RenderBody()");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t<input id=\"hdnUrl\" type=\"hidden\" value=\"@Urling.FullURL\" />");
+                    yaz.WriteLine("");
                     yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Views/Shared/Controls/_Scripts.cshtml\"); }");
                     yaz.WriteLine("</body>");
                     yaz.WriteLine("</html>");
@@ -5290,8 +5297,6 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t\t});");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tint i = 0;");
-                    yaz.WriteLine("");
                     yaz.WriteLine("\t\t\tforeach (var item in itemList)");
                     yaz.WriteLine("\t\t\t{");
                     yaz.WriteLine("\t\t\t\tstring _value = item.GetType().GetProperties().Where(a => a.Name == value).FirstOrDefault().GetValue(item).ToString();");
@@ -5306,13 +5311,8 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t\t}");
                     yaz.WriteLine("\t\t\t\telse");
                     yaz.WriteLine("\t\t\t\t{");
-                    yaz.WriteLine("\t\t\t\t\tif (i == 0)");
-                    yaz.WriteLine("\t\t\t\t\t\tlist.Add(new SelectListItem() { Value = _value.ToString(), Text = _text, Selected = true });");
-                    yaz.WriteLine("\t\t\t\t\telse");
-                    yaz.WriteLine("\t\t\t\t\t\tlist.Add(new SelectListItem() { Value = _value.ToString(), Text = _text });");
+                    yaz.WriteLine("\t\t\t\t\tlist.Add(new SelectListItem() { Value = _value.ToString(), Text = _text });");
                     yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\ti++;");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\t\treturn list;");
@@ -5870,8 +5870,76 @@ namespace TDFactory
                     yaz.WriteLine("});");
                     yaz.WriteLine("");
                     yaz.WriteLine("$(function () {");
+                    yaz.WriteLine("\t$(document).on(\"click\", \".dropdown-toggle\", function () {");
+                    yaz.WriteLine("\t\t$(this).parent().addClass(\"open\");");
+                    yaz.WriteLine("\t});");
                     yaz.WriteLine("");
+                    yaz.WriteLine("\t$(document).on(\"click\", '.submenu > a', function () {");
+                    yaz.WriteLine("\t\tvar submenu = $(this).siblings('ul');");
+                    yaz.WriteLine("\t\tvar li = $(this).parents('li');");
+                    yaz.WriteLine("\t\tvar submenus = $('#sidebar li.submenu ul');");
+                    yaz.WriteLine("\t\tif (li.hasClass('open')) {");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (($(window).width() > 768) || ($(window).width() < 479)) {");
+                    yaz.WriteLine("\t\t\t\tsubmenu.slideUp();");
+                    yaz.WriteLine("\t\t\t\tli.removeClass('open');");
+                    yaz.WriteLine("\t\t\t} else {");
+                    yaz.WriteLine("\t\t\t\tsubmenu.fadeOut(250);");
+                    yaz.WriteLine("\t\t\t\tli.removeClass('open');");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t} else {");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (($(window).width() > 768) || ($(window).width() < 479)) {");
+                    yaz.WriteLine("\t\t\t\tsubmenus.slideUp();");
+                    yaz.WriteLine("\t\t\t\tsubmenu.slideDown();");
+                    yaz.WriteLine("\t\t\t\tli.addClass('open');");
+                    yaz.WriteLine("\t\t\t} else {");
+                    yaz.WriteLine("\t\t\t\tsubmenus.fadeOut(250);");
+                    yaz.WriteLine("\t\t\t\tsubmenu.fadeIn(250);");
+                    yaz.WriteLine("\t\t\t\tli.addClass('open');");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t});");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t$(document).on(\"click\", '.submenu ul li a', function () {");
+                    yaz.WriteLine("\t\t$('.submenu ul li a').removeClass(\"active\");");
+                    yaz.WriteLine("\t\t$(this).addClass(\"active\");");
+                    yaz.WriteLine("\t});");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tvar ul = $('#sidebar > ul');");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t$(document).on(\"click\", '#sidebar > a', function (e) {");
+                    yaz.WriteLine("\t\te.preventDefault();");
+                    yaz.WriteLine("\t\tvar sidebar = $('#sidebar');");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (sidebar.hasClass('open')) {");
+                    yaz.WriteLine("\t\t\tsidebar.removeClass('open');");
+                    yaz.WriteLine("\t\t\tul.slideUp(250);");
+                    yaz.WriteLine("\t\t\tsidebar.find(\"ul\").fadeOut(\"slow\");");
+                    yaz.WriteLine("\t\t} else {");
+                    yaz.WriteLine("\t\t\tsidebar.addClass('open');");
+                    yaz.WriteLine("\t\t\tul.slideDown(250);");
+                    yaz.WriteLine("\t\t\tsidebar.find(\"ul\").fadeIn(\"slow\");");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t});");
                     yaz.WriteLine("});");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("function goPage(newURL) {");
+                    yaz.WriteLine("\tif (newURL != \"\") {");
+                    yaz.WriteLine("\t\tif (newURL == \"-\") {");
+                    yaz.WriteLine("\t\t\tresetMenu();");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse {");
+                    yaz.WriteLine("\t\t\tdocument.location.href = newURL;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("function resetMenu() {");
+                    yaz.WriteLine("\tdocument.gomenu.selector.selectedIndex = 2;");
+                    yaz.WriteLine("}");
 
                     yaz.Close();
                 }
