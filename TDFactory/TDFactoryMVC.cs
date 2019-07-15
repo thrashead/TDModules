@@ -2815,8 +2815,9 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("<div id=\"user-nav\" class=\"navbar navbar-inverse\">");
                     yaz.WriteLine("\t<ul class=\"nav\">");
-                    yaz.WriteLine("\t\t<li class=\"\"><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"/Admin/Home\"><i class=\"icon icon-user\"></i>  <span class=\"text\">Hoşgeldiniz (Kullanıcı Adı)</span></a></li>");
-                    yaz.WriteLine("\t\t<li class=\"\"><a class=\"logout\" (click)=\"onLogout()\"><i class=\"icon icon-share-alt\"></i> <span class=\"text\">Çıkış</span></a></li>");
+                    yaz.WriteLine("\t\t<li><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"/Admin/Home\"><i class=\"icon icon-user\"></i> <span class=\"text\"> Hoşgeldiniz (Kullanıcı Adı)</span></a></li>");
+                    yaz.WriteLine("\t\t<li><a class=\"logout\" (click)=\"onLogout()\"><i class=\"icon icon-share-alt\"></i> <span class=\"text\"> Çıkış</span></a></li>");
+                    yaz.WriteLine("\t\t<li><a target=\"_blank\" href=\"{{ website }}\" ><i class=\"icon icon-home\"></i> <span class=\"text\"> Web Sitesine Git</span></a></li>");
                     yaz.WriteLine("\t</ul>");
                     yaz.WriteLine("</div>");
                     yaz.WriteLine("");
@@ -2844,6 +2845,7 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("export class AdminHeaderComponent {");
                     yaz.WriteLine("\terrorMsg: string;");
+                    yaz.WriteLine("\twebsite: string = \"http://localhost/" + projectName + "/\";");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tconstructor(private service: SharedService, private router: Router) {");
                     yaz.WriteLine("\t}");
