@@ -5,8 +5,6 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Security.AccessControl;
-using System.Security.Principal;
 using System.Text;
 using System.Windows.Forms;
 using TDFactory.Helper;
@@ -20,6 +18,7 @@ namespace TDFactory
         void CreateMVC()
         {
             CreateDirectories();
+            CreateReadMe();
 
             if (chkMVCHepsi.Checked == true)
             {
@@ -27,8 +26,8 @@ namespace TDFactory
                 CreateViewLayer();
                 CreateControllerLayer();
                 CreateWebConfig();
-                CreateWcfServis();
-                CreateStilScript();
+                CreateWcfService();
+                CreateStylelScript();
 
                 CreateStoredProcedure();
             }
@@ -56,7 +55,7 @@ namespace TDFactory
 
                 if (chkMVCWcfServis.Checked == true)
                 {
-                    CreateWcfServis();
+                    CreateWcfService();
                 }
 
                 if (chkMVCStoredProc.Checked == true)
@@ -66,7 +65,7 @@ namespace TDFactory
 
                 if (chkMVCStilScript.Checked == true)
                 {
-                    CreateStilScript();
+                    CreateStylelScript();
                 }
             }
 
@@ -206,14 +205,9 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js");
                     }
 
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Servis"))
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Service"))
                     {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Servis");
-                    }
-
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Servis\\Condition"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Servis\\Condition");
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Service");
                     }
                 }
                 else
@@ -367,14 +361,9 @@ namespace TDFactory
 
                     if (chkMVCWcfServis.Checked)
                     {
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Servis"))
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Service"))
                         {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Servis");
-                        }
-
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Servis\\Condition"))
-                        {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Servis\\Condition");
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Service");
                         }
                     }
                 }
@@ -1408,710 +1397,6 @@ namespace TDFactory
             }
         }
 
-        void CreateWcfServis()
-        {
-            CreateDirectories();
-
-            //SELECT
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Servis\\Condition\\SELECT.cs", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("using System.Runtime.Serialization;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("namespace " + projectName + ".Servis.Condition");
-                    yaz.WriteLine("{");
-                    yaz.WriteLine("\t[DataContract]");
-                    yaz.WriteLine("\tpublic class SELECT");
-                    yaz.WriteLine("\t{");
-                    yaz.WriteLine("\t\tpublic SELECT()");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\ttop = 0;");
-                    yaz.WriteLine("\t\t\torderBy = \"Asc\";");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic int? top { get; set; }");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic string orderColumn { get; set; }");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic string orderBy { get; set; }");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-
-                    yaz.Close();
-                }
-            }
-
-            //WHERE
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Servis\\Condition\\WHERE.cs", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("using System.Collections.Generic;");
-                    yaz.WriteLine("using System.Runtime.Serialization;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("namespace " + projectName + ".Servis.Condition");
-                    yaz.WriteLine("{");
-                    yaz.WriteLine("\t[DataContract]");
-                    yaz.WriteLine("\tpublic class WHERE");
-                    yaz.WriteLine("\t{");
-                    yaz.WriteLine("\t\tpublic WHERE()");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\toperators = \"Equal\";");
-                    yaz.WriteLine("\t\t\tknots = \"And\";");
-                    yaz.WriteLine("\t\t\topenPharanthesis = \"\";");
-                    yaz.WriteLine("\t\t\tclosePharanthesis = \"\";");
-                    yaz.WriteLine("\t\t\tvalues = new List<string>();");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic string column { get; set; }");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic List<string> values { get; set; }");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic string openPharanthesis { get; set; }");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic string closePharanthesis { get; set; }");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic string operators { get; set; }");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[DataMember]");
-                    yaz.WriteLine("\t\tpublic string knots { get; set; }");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-
-                    yaz.Close();
-                }
-            }
-
-            //ConditionTools
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Servis\\Condition\\ConditionTools.cs", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("using TDLibrary;");
-                    yaz.WriteLine("using TDFramework.Common;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("namespace " + projectName + ".Servis.Condition");
-                    yaz.WriteLine("{");
-                    yaz.WriteLine("\tpublic class ConditionTools");
-                    yaz.WriteLine("\t{");
-                    yaz.WriteLine("\t\tpublic static Knots ReturnKnot(string knot)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tswitch (knot)");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\tcase \"And\": return Knots.AND;");
-                    yaz.WriteLine("\t\t\t\tcase \"Or\": return Knots.OR;");
-                    yaz.WriteLine("\t\t\t\tdefault: return Knots.AND;");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tpublic static OrderBy ReturnOrderBy(string knot)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tswitch (knot)");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\tcase \"Asc\": return OrderBy.ASC;");
-                    yaz.WriteLine("\t\t\t\tcase \"Desc\": return OrderBy.DESC;");
-                    yaz.WriteLine("\t\t\t\tdefault: return OrderBy.ASC;");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tpublic static Operators ReturnOperator(string operators)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tswitch (operators)");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\tcase \"Equal\": return Operators.EQUAL;");
-                    yaz.WriteLine("\t\t\t\tcase \"Greater\": return Operators.GREATER;");
-                    yaz.WriteLine("\t\t\t\tcase \"GreaterEqual\": return Operators.GREATEREQUAL;");
-                    yaz.WriteLine("\t\t\t\tcase \"Smaller\": return Operators.SMALLER;");
-                    yaz.WriteLine("\t\t\t\tcase \"SmallerEqual\": return Operators.SMALLEREQUAL;");
-                    yaz.WriteLine("\t\t\t\tcase \"Like\": return Operators.LIKE;");
-                    yaz.WriteLine("\t\t\t\tcase \"StartLike\": return Operators.STARTLIKE;");
-                    yaz.WriteLine("\t\t\t\tcase \"EndLike\": return Operators.ENDLIKE;");
-                    yaz.WriteLine("\t\t\t\tcase \"ExactLike\": return Operators.EXACTLIKE;");
-                    yaz.WriteLine("\t\t\t\tcase \"Between\": return Operators.BETWEEN;");
-                    yaz.WriteLine("\t\t\t\tcase \"In\": return Operators.IN;");
-                    yaz.WriteLine("\t\t\t\tdefault: return Operators.EQUAL;");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tpublic static Parantheses ReturnParantheses(string openParanthesis, string closeParanthesis)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tParantheses parantheses = new Parantheses();");
-                    yaz.WriteLine("\t\t\tparantheses.OpenCount = openParanthesis.LetterCount('(');");
-                    yaz.WriteLine("\t\t\tparantheses.ClosedCount = openParanthesis.LetterCount(')');");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\treturn parantheses;");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-
-                    yaz.Close();
-                }
-            }
-
-            /* Service */
-            foreach (string Table in selectedTables)
-            {
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
-
-                List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
-
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Servis\\I" + Table + "Service.cs", FileMode.Create))
-                {
-                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                    {
-                        yaz.WriteLine("using System.Collections.Generic;");
-                        yaz.WriteLine("using System.Runtime.Serialization;");
-                        yaz.WriteLine("using System.ServiceModel;");
-                        yaz.WriteLine("using System.ServiceModel.Web;");
-                        yaz.WriteLine("using " + projectName + ".Servis.Condition;");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("namespace " + projectName + ".Servis");
-                        yaz.WriteLine("{");
-                        yaz.WriteLine("\t[ServiceContract]");
-                        yaz.WriteLine("\tpublic interface I" + Table + "Service");
-                        yaz.WriteLine("\t{");
-                        yaz.WriteLine("\t\t[OperationContract]");
-                        yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Select/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                        yaz.WriteLine("\t\tList<" + Table + "Data> Select(SELECT select, List<WHERE> whereList);");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t[OperationContract]");
-                        yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/SelectSingle/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                        yaz.WriteLine("\t\t" + Table + "Data SelectSingle(SELECT select, List<WHERE> whereList);");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t[OperationContract]");
-                        yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                        yaz.WriteLine("\t\tbool Insert(" + Table + "Data " + Table + "Data);");
-
-                        if (identityColumns.Count > 0)
-                        {
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t[OperationContract]");
-                            yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                            yaz.WriteLine("\t\tbool Update(" + Table + "Data " + Table + "Data, SELECT select, List<WHERE> whereList);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t[OperationContract]");
-                            yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Delete/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                            yaz.WriteLine("\t\tbool Delete(List<WHERE> whereList);");
-                        }
-
-                        yaz.WriteLine("\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t[DataContract]");
-                        yaz.WriteLine("\tpublic class " + Table + "Data");
-                        yaz.WriteLine("\t{");
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                yaz.WriteLine("\t\t[DataMember]");
-                                yaz.WriteLine("\t\tpublic string " + column.ColumnName + " { get; set; }");
-                            }
-                            else
-                            {
-                                yaz.WriteLine("\t\t//" + column.ColumnName + " isimli kolonun veri tipi bu programda tanumlı değil.");
-                            }
-                        }
-
-                        yaz.WriteLine("\t}");
-                        yaz.WriteLine("}");
-
-                        yaz.Close();
-                    }
-                }
-
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Servis\\" + Table + "Service.svc", FileMode.Create))
-                {
-                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                    {
-                        yaz.WriteLine("<%@ ServiceHost Language=\"C#\" Debug=\"true\" Service=\"" + projectName + ".Servis." + Table + "Service\" CodeBehind=\"" + Table + "Service.svc.cs\" %>");
-
-                        yaz.Close();
-                    }
-                }
-
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Servis\\" + Table + "Service.svc.cs", FileMode.Create))
-                {
-                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                    {
-                        yaz.WriteLine("using System;");
-                        yaz.WriteLine("using System.Linq;");
-                        yaz.WriteLine("using System.Collections.Generic;");
-                        yaz.WriteLine("using TDLibrary;");
-                        yaz.WriteLine("using " + projectName + ".Servis.Condition;");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("namespace " + projectName + ".Servis");
-                        yaz.WriteLine("{");
-                        yaz.WriteLine("\tpublic class " + Table + "Service : I" + Table + "Service");
-                        yaz.WriteLine("\t{");
-                        yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
-                        yaz.WriteLine("");
-
-                        //Select
-                        yaz.WriteLine("\t\tpublic List<" + Table + "Data> Select(SELECT select, List<WHERE> whereList)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tList<" + Table + "> table = entity." + Table + ".ToList();");
-                        yaz.WriteLine("\t\t\tSelect tdSelect = ReturnSelect(select);");
-                        yaz.WriteLine("\t\t\tList<Where> tdWhereList = ReturnWhereList(whereList);");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (tdSelect != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\ttable.SelectSettings = tdSelect;");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (tdWhereList != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\tif (tdWhereList.Count > 0)");
-                        yaz.WriteLine("\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\ttable.WhereList.AddRange(tdWhereList);");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (select != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\tif (select.columns != null)");
-                        yaz.WriteLine("\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\tif (select.columns.Length > 0)");
-                        yaz.WriteLine("\t\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\t\ttable.Columns = ReturnColumns(select.columns);");
-                        yaz.WriteLine("\t\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\ttable.Select();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tList<" + Table + "> " + Table + "List = new List<" + Table + ">();");
-                        yaz.WriteLine("\t\t\tList<" + Table + "Data> " + Table + "DataList = new List<" + Table + "Data>();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (table.HasData)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t" + Table + "List = table.Data as List<" + Table + ">;");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\tforeach (" + Table + " item in " + Table + "List)");
-                        yaz.WriteLine("\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\t" + Table + "DataList.Add(new " + Table + "Data()");
-                        yaz.WriteLine("\t\t\t\t\t{");
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                yaz.WriteLine("\t\t\t\t\t\t" + column.ColumnName + " = item." + column.ColumnName + " != null ? item." + column.ColumnName + ".ToString() : null,");
-                            }
-                        }
-
-                        yaz.WriteLine("\t\t\t\t\t});");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn " + Table + "DataList;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        //SelectSingle
-                        yaz.WriteLine("\t\tpublic " + Table + "Data SelectSingle(SELECT select, List<WHERE> whereList)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tTable<" + Table + "> table = new Table<" + Table + ">();");
-                        yaz.WriteLine("\t\t\tSelect tdSelectSettings = ReturnSelect(select);");
-                        yaz.WriteLine("\t\t\tList<Where> tdWhereList = ReturnWhereList(whereList);");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (tdSelectSettings != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\ttable.SelectSettings = tdSelectSettings;");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (tdWhereList.Count > 0)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\ttable.WhereList.AddRange(tdWhereList);");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (select != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\tif (select.columns != null)");
-                        yaz.WriteLine("\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\tif (select.columns.Length > 0)");
-                        yaz.WriteLine("\t\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\t\ttable.Columns = ReturnColumns(select.columns);");
-                        yaz.WriteLine("\t\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\ttable.SelectSettings.Top = 1;");
-                        yaz.WriteLine("\t\t\ttable.Select();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t" + Table + " " + Table + " = new " + Table + "();");
-                        yaz.WriteLine("\t\t\t" + Table + "Data " + Table + "Data = new " + Table + "Data();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (table.HasData)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t" + Table + " = (table.Data as List<" + Table + ">).FirstOrDefault();");
-                        yaz.WriteLine("");
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                yaz.WriteLine("\t\t\t\t" + Table + "Data." + column.ColumnName + " = " + Table + "Data." + column.ColumnName + " != null ? " + Table + "." + column.ColumnName + ".ToString() : null;");
-                            }
-                        }
-
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn " + Table + "Data;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        //Insert
-                        yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data " + Table + "Data)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tif (" + Table + "Data != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\tTable<" + Table + "> table = new Table<" + Table + ">();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t" + Table + " " + Table + " = ReturnData(" + Table + "Data);");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\ttable.Values = " + Table + ";");
-                        yaz.WriteLine("\t\t\t\ttable.Insert();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\tif (table.Error == null)");
-                        yaz.WriteLine("\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\treturn true;");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn false;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        if (identityColumns.Count > 0)
-                        {
-                            //Update
-                            yaz.WriteLine("\t\tpublic bool Update(" + Table + "Data " + Table + "Data, SELECT select, List<WHERE> whereList)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tif (" + Table + "Data != null)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tTable<" + Table + "> table = new Table<" + Table + ">();");
-                            yaz.WriteLine("\t\t\t\tList<Where> tdWhereList = ReturnWhereList(whereList);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\tif (select != null)");
-                            yaz.WriteLine("\t\t\t\t{");
-                            yaz.WriteLine("\t\t\t\t\tif (select.columns != null)");
-                            yaz.WriteLine("\t\t\t\t\t{");
-                            yaz.WriteLine("\t\t\t\t\t\tif (select.columns.Length > 0)");
-                            yaz.WriteLine("\t\t\t\t\t\t{");
-                            yaz.WriteLine("\t\t\t\t\t\t\ttable.Columns = ReturnColumns(select.columns);");
-                            yaz.WriteLine("\t\t\t\t\t\t}");
-                            yaz.WriteLine("\t\t\t\t\t}");
-                            yaz.WriteLine("\t\t\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\tif (tdWhereList.Count > 0)");
-                            yaz.WriteLine("\t\t\t\t{");
-                            yaz.WriteLine("\t\t\t\t\ttable.WhereList.AddRange(tdWhereList);");
-                            yaz.WriteLine("\t\t\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\t" + Table + " " + Table + " = ReturnData(" + Table + "Data, table.Columns);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\ttable.Values = " + Table + ";");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\ttable.Update();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\tif (table.Error == null)");
-                            yaz.WriteLine("\t\t\t\t{");
-                            yaz.WriteLine("\t\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\t\t}");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\treturn false;");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-
-                            //Delete
-                            yaz.WriteLine("\t\tpublic bool Delete(List<WHERE> whereList)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tTable<" + Table + "> table = new Table<" + Table + ">();");
-                            yaz.WriteLine("\t\t\tList<Where> tdWhereList = ReturnWhereList(whereList);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tif (tdWhereList.Count > 0)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\ttable.WhereList.AddRange(tdWhereList);");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\ttable.Delete();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tif (table.Error == null)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\treturn false;");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-                        }
-
-                        //ReturnSelect
-                        yaz.WriteLine("\t\tprivate Select ReturnSelect(SELECT select)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tSelect returnSelect = null;");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (select != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\tif (select != null)");
-                        yaz.WriteLine("\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\treturnSelect = new Select();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\tif (select.top > 0)");
-                        yaz.WriteLine("\t\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\t\treturnSelect.Top = select.top;");
-                        yaz.WriteLine("\t\t\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\tif (select.orderColumn != null)");
-                        yaz.WriteLine("\t\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\t\treturnSelect.OrderColumn = ReturnOrderColumnByName(select.orderColumn);");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\t\treturnSelect.OrderBy = ConditionTools.ReturnOrderBy(select.orderBy);");
-                        yaz.WriteLine("\t\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn returnSelect;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        //ReturnWhereList
-                        yaz.WriteLine("\t\tprivate List<Where> ReturnWhereList(List<WHERE> whereList)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tList<Where> returnList = null;");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (whereList != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\treturnList = new List<Where>();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\tforeach (WHERE item in whereList)");
-                        yaz.WriteLine("\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\tWhere tdwhere = new Where();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\ttdwhere.Knot = ConditionTools.ReturnKnot(item.knots);");
-                        yaz.WriteLine("\t\t\t\t\ttdwhere.Operator = ConditionTools.ReturnOperator(item.operators);");
-                        yaz.WriteLine("\t\t\t\t\ttdwhere.Parantheses = ConditionTools.ReturnParantheses(item.openPharanthesis, item.closePharanthesis);");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\tif (tdwhere.Operator != Operators.BETWEEN && tdwhere.Operator != Operators.IN)");
-                        yaz.WriteLine("\t\t\t\t\t{");
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                yaz.WriteLine("\t\t\t\t\t\tif (item.column == \"" + column.ColumnName + "\")");
-                                yaz.WriteLine("\t\t\t\t\t\t{");
-                                yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Column = " + Table + "Columns." + column.ColumnName + ";");
-
-                                switch (column.TypeName.Name)
-                                {
-                                    case "Int16": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Int16.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Int32": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Int32.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Int64": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Int64.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Decimal": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Decimal.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Double": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Double.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Char": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Char.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Chars": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Char.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "String": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { item.values.FirstOrDefault() };"); break;
-                                    case "Byte": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Byte.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Bytes": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Byte.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Boolean": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Boolean.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "DateTime": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { DateTime.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "DateTimeOffset": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { DateTimeOffset.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "TimeSpan": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { TimeSpan.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Single": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Single.Parse(item.values.FirstOrDefault()) };"); break;
-                                    case "Object": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { item.values.FirstOrDefault() };"); break;
-                                    case "Guid": yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { Guid.Parse(item.values.FirstOrDefault()) };"); break;
-                                    default: yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = new List<dynamic> { item.values.FirstOrDefault() };"); break;
-                                }
-
-                                yaz.WriteLine("\t\t\t\t\t\t}");
-                                yaz.WriteLine("");
-                            }
-                        }
-
-
-                        yaz.WriteLine("\t\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t\t\telse");
-                        yaz.WriteLine("\t\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\t\tList<dynamic> listCon = new List<dynamic>();");
-                        yaz.WriteLine("");
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                yaz.WriteLine("\t\t\t\t\t\tif (item.column == \"" + column.ColumnName + "\")");
-                                yaz.WriteLine("\t\t\t\t\t\t{");
-                                yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Column = " + Table + "Columns." + column.ColumnName + ";");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\t\t\t\t\tforeach (string s in item.values)");
-                                yaz.WriteLine("\t\t\t\t\t\t\t{");
-
-                                switch (column.TypeName.Name)
-                                {
-                                    case "Int16": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Int16.Parse(s));"); break;
-                                    case "Int32": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Int32.Parse(s));"); break;
-                                    case "Int64": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Int64.Parse(s));"); break;
-                                    case "Decimal": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Decimal.Parse(s));"); break;
-                                    case "Double": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Double.Parse(s));"); break;
-                                    case "Char": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Char.Parse(s));"); break;
-                                    case "Chars": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Char.Parse(s));"); break;
-                                    case "String": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(s);"); break;
-                                    case "Byte": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Byte.Parse(s));"); break;
-                                    case "Bytes": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Byte.Parse(s));"); break;
-                                    case "Boolean": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Boolean.Parse(s));"); break;
-                                    case "DateTime": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(DateTime.Parse(s));"); break;
-                                    case "DateTimeOffset": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(DateTimeOffset.Parse(s));"); break;
-                                    case "TimeSpan": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(TimeSpan.Parse(s));"); break;
-                                    case "Single": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Single.Parse(s));"); break;
-                                    case "Object": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(s);"); break;
-                                    case "Guid": yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(Guid.Parse(s));"); break;
-                                    default: yaz.WriteLine("\t\t\t\t\t\t\t\tlistCon.Add(s);"); break;
-                                }
-
-                                yaz.WriteLine("\t\t\t\t\t\t\t}");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\t\t\t\t\ttdwhere.Values = listCon;");
-                                yaz.WriteLine("\t\t\t\t\t\t}");
-                                yaz.WriteLine("");
-                            }
-                        }
-
-                        yaz.WriteLine("\t\t\t\t\t}");
-                        yaz.WriteLine("");
-
-                        yaz.WriteLine("\t\t\t\t\treturnList.Add(tdwhere);");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn returnList;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        //ReturnColumns
-                        yaz.WriteLine("\t\tprivate List<" + Table + "Columns> ReturnColumns(string[] columns)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tList<" + Table + "Columns> returnColumns = new List<" + Table + "Columns>();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tforeach (string column in columns)");
-                        yaz.WriteLine("\t\t\t{");
-
-                        int i = 0;
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                string elseText = i == 0 ? "" : "else ";
-
-                                yaz.WriteLine("\t\t\t\t" + elseText + "if (column.ToHyperLinkText(true) == \"" + column.ColumnName + "\".ToHyperLinkText(true)) { returnColumns.Add(" + Table + "Columns." + column.ColumnName + "); }");
-
-                                i++;
-                            }
-                        }
-
-
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn returnColumns;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\tprivate " + Table + "Columns ReturnOrderColumnByName(string orderColumn)");
-                        yaz.WriteLine("\t\t{");
-
-                        i = 0;
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                string elseText = i == 0 ? "" : "else ";
-
-                                yaz.WriteLine("\t\t\t" + elseText + "if (orderColumn.ToHyperLinkText(true) == \"" + column.ColumnName + "\".ToHyperLinkText(true)) { return " + Table + "Columns." + column.ColumnName + "; }");
-
-                                i++;
-                            }
-                        }
-                        yaz.WriteLine("\t\t\telse { return " + Table + "Columns." + id + "; }");
-
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        //ReturnData
-                        yaz.WriteLine("\t\tprivate " + Table + " ReturnData(" + Table + "Data " + Table + "Data, List<" + Table + "Columns> Columns = null)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\t" + Table + " " + Table + " = new " + Table + "();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (Columns == null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\tColumns = new List<" + Table + "Columns>();");
-                        yaz.WriteLine("");
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                yaz.WriteLine("\t\t\t\tColumns.Add(" + Table + "Columns." + column.ColumnName + ");");
-                            }
-                        }
-
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-
-                        foreach (TableColumnNames column in columnNames)
-                        {
-                            if (column.TypeName != null)
-                            {
-                                switch (column.TypeName.Name)
-                                {
-                                    case "Int16": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Int16.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Int32": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Int32.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Int64": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Int64.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Decimal": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Decimal.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Double": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Double.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Char": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Char.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Chars": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Char.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "String": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = " + Table + "Data." + column.ColumnName + "; } catch { }"); break;
-                                    case "Byte": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Byte.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Bytes": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Byte.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Boolean": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Boolean.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "DateTime": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = DateTime.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "DateTimeOffset": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = DateTimeOffset.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "TimeSpan": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = TimeSpan.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Single": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Single.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    case "Object": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = " + Table + "Data." + column.ColumnName + "; } catch { }"); break;
-                                    case "Guid": yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = Guid.Parse(" + Table + "Data." + column.ColumnName + "); } catch { }"); break;
-                                    default: yaz.WriteLine("\t\t\ttry { " + Table + "." + column.ColumnName + " = " + Table + "Data." + column.ColumnName + "; } catch { }"); break;
-                                }
-                            }
-                        }
-
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn " + Table + ";");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("\t}");
-                        yaz.WriteLine("}");
-
-                        yaz.Close();
-                    }
-                }
-            }
-        }
-
         #endregion
 
         #region Angular
@@ -2119,6 +1404,7 @@ namespace TDFactory
         void CreateAngular()
         {
             CreateAngularDirectories();
+            CreateReadMe();
             CreateAngularFiles();
 
             if (chkMVCHepsi.Checked == true)
@@ -2129,8 +1415,9 @@ namespace TDFactory
                 CreateAngularServiceLayer();
                 CreateAngularSharedService();
                 CreateAngularTypeScriptLayer();
+                CreateWcfService();
                 CreateWebConfig();
-                CreateStilScript();
+                CreateStylelScript();
 
                 CreateStoredProcedure();
             }
@@ -2161,7 +1448,7 @@ namespace TDFactory
 
                 if (chkMVCWcfServis.Checked == true)
                 {
-                    CreateWcfServis();
+                    CreateWcfService();
                 }
 
                 if (chkMVCStoredProc.Checked == true)
@@ -2171,7 +1458,7 @@ namespace TDFactory
 
                 if (chkMVCStilScript.Checked == true)
                 {
-                    CreateStilScript();
+                    CreateStylelScript();
                 }
             }
 
@@ -4347,7 +3634,7 @@ namespace TDFactory
                 if (i <= 0)
                 {
                     CreateAngularHomeController();
-                    CreateAngularLib();
+                    CreateLib();
 
                     i++;
                 }
@@ -5310,7 +4597,379 @@ namespace TDFactory
             }
         }
 
-        void CreateAngularLib()
+        #endregion
+
+        #region Common
+
+        void CreateReadMe()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\readme.txt", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("---------------------");
+                    yaz.WriteLine("-- Angular Kurulum --");
+                    yaz.WriteLine("---------------------");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("- Önce projenin ana dizininde cmd'yi çalıştırıp \"ng new ngClient --routing\" diyip node_modules'ü indireceksin.");
+                    yaz.WriteLine("Yukarıdaki komut yerine \"ng new ngClient --routing --skip-install\" dersen node_modules klasörü hariç dosyaları indirir. (Hızlı)");
+                    yaz.WriteLine("- Bunu yapınca seçeneklerden CSS'i seçeceksin ve uzunca kurulumu bekleyeceksin.");
+                    yaz.WriteLine("- İlgili dosyalar ngClient klasörüne kopyalandıktan sonra aşağıdaki dosyaları Kes/Yapıştır ile ana dizine atacaksın;");
+                    yaz.WriteLine("\tnode_modules (klasör)");
+                    yaz.WriteLine("\tsrc (klasör)");
+                    yaz.WriteLine("\tangular.json");
+                    yaz.WriteLine("\tpackage.json");
+                    yaz.WriteLine("\ttsconfig.app.json");
+                    yaz.WriteLine("\ttsconfig.json");
+                    yaz.WriteLine("\ttslint.json");
+                    yaz.WriteLine("- Visual Studio içinde \"Show All files\" diyip \"node_modules\" klasörü hariç bu dosyalar projeye dahil edeceksin.");
+                    yaz.WriteLine("- \"npm install --save rxjs-compat\" diyerek rxjs tipini yükleyeceksin.");
+                    yaz.WriteLine("- \"npm install --save @types/jquery\" diyerek jquery tipini yükleyeceksin.");
+                    yaz.WriteLine("- \"npm install --save @types/jest\" diyerek jest tipini yükleyeceksin.");
+                    yaz.WriteLine("- tsconfig.json dosyası içine \"types\": [ \"jquery\", \"jest\" ] tanımlamasını gireceksin.");
+                    yaz.WriteLine("- Views\\Home\\Index.cshtml içine <app-root></app-root> tagini ekleyeceksin. (Başka bir şey olmasın)");
+                    yaz.WriteLine("- Scripts klasörü içine libs adında klasör açacaksın. Scripts yerine kendi scriptlerini sakladığın klasör içine açacaksın.");
+                    yaz.WriteLine("- angular.json içinde \"options\": { \"outputPath\": \"Content/js/libs\", şeklinde libs yolunu belirteceksin.");
+                    yaz.WriteLine("- app.module.ts içinde \"import * as $ from \"jquery\";\" tanımlamasını yapacaksın.");
+                    yaz.WriteLine("- libs klasörü içindeki *.js dosyalarını _Scripts partial view'inde aşağıdaki şekilde çağıracaksın;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t<script type=\"text/javascript\" src=\"/Content/js/libs/runtime-es2015.js\"></script>");
+                    yaz.WriteLine("\t<script type=\"text/javascript\" src=\"/Content/js/libs/polyfills-es2015.js\"></script>");
+                    yaz.WriteLine("\t<script type=\"text/javascript\" src=\"/Content/js/libs/styles-es2015.js\"></script>");
+                    yaz.WriteLine("\t<script type=\"text/javascript\" src=\"/Content/js/libs/vendor-es2015.js\"></script>");
+                    yaz.WriteLine("\t<script type=\"text/javascript\" src=\"/Content/js/libs/main-es2015.js\"></script>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("  Bu kısımda dikkat etmen gereken bu scriptler <app-root></app-root> taginin altında yer almalı.");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("- Aşağıdaki kodu RouteConfig.cs dosyasına Default olarak ekleyebilirsin;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\troutes.MapRoute(");
+                    yaz.WriteLine("\t\tname: \"Default\",");
+                    yaz.WriteLine("\t\turl: \"{*anything}\",");
+                    yaz.WriteLine("\t\t// url: \"{controller}/{action}/{id}\",");
+                    yaz.WriteLine("\t\tdefaults: new { controller = \"Home\", action = \"Index\", id = UrlParameter.Optional }");
+                    yaz.WriteLine("\t);");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("- Proje ana dizininde cmd çalıştırıp \"ng build\" komutunu çalıştıracaksın. Bu komutu projede yaptığın her değişiklik sonrası çalıştıracaksın. Yoksa değişiklikler");
+                    yaz.WriteLine("çalışmaz. cmd arkada çalışır durumda kalsın ikide bir açmak zorunda kalma.");
+                    yaz.WriteLine("- Projeye yeni component eklediğinde bunu routing ve app.module.ts içinde declarations kısmında belirtmelisin.");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("- \"ng build --prod\" diyerek publish olacak şekilde libs klasörü içini hazırlarsın. (daha küçük boyutta oluyor)");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("Not: package.json içinde değişiklik yapıp Restore Package deme asla. Nasıl yüklendiyse o çalışsın.");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("-------------");
+                    yaz.WriteLine("-- Hatalar --");
+                    yaz.WriteLine("-------------");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("Hata 1 : The type or namespace name 'Http' does not exist in the namespace 'System.Web'");
+                    yaz.WriteLine("Çözüm 1 : Package Manager Console üzerinden \"Install-Package Microsoft.AspNet.WebApi.Core\" kodunu çalıştır.");
+
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateWebConfig()
+        {
+            string wcKullanici = String.IsNullOrEmpty(txtWCKullanici.Text) ? "user" : txtWCKullanici.Text;
+            string wcSifre = String.IsNullOrEmpty(txtWCSifre.Text) ? "123456" : txtWCSifre.Text;
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Web.config.txt", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("<add key=\"SystemUser\" value=\"admin\" />");
+                    yaz.WriteLine("<add key=\"MainPath\" value=\"http://localhost/" + projectName + "\" />");
+                    yaz.WriteLine("<add key=\"ScriptPath\" value=\"/Content/js\" />");
+                    yaz.WriteLine("<add key=\"StylePath\" value=\"/Content/css\" />");
+                    yaz.WriteLine("<add key=\"ImagePath\" value=\"/Content/img\" />");
+                    yaz.WriteLine("<add key=\"AjaxPath\" value=\"/Ajax\" />");
+                    yaz.WriteLine("<add key=\"AdminPath\" value=\"http://localhost/" + projectName + "/Admin\" />");
+                    yaz.WriteLine("<add key=\"AdminScriptPath\" value=\"/Content/admin/js\" />");
+                    yaz.WriteLine("<add key=\"AdminStylePath\" value=\"/Content/admin/css\" />");
+                    yaz.WriteLine("<add key=\"AdminImagePath\" value=\"/Content/admin/img\" />");
+                    yaz.WriteLine("<add key=\"AdminAjaxPath\" value=\"/Ajax/Ajax\" />");
+                    yaz.WriteLine("<add key=\"UploadPath\" value=\"/Uploads\" />");
+                    yaz.WriteLine("<add key=\"MaxFileSize\" value=\"1024000\" />");
+                    yaz.WriteLine("<add key=\"MaxPictureSize\" value=\"1024000\" />");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<system.webServer>");
+                    yaz.WriteLine("\t<validation validateIntegratedModeConfiguration=\"false\"/>");
+                    yaz.WriteLine("\t<modules runAllManagedModulesForAllRequests=\"true\"/>");
+                    yaz.WriteLine("</system.webServer>");
+
+                    if (chkMVCWcfServis.Checked || chkMVCHepsi.Checked)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("<system.serviceModel>");
+                        yaz.WriteLine("\t<behaviors>");
+                        yaz.WriteLine("\t\t<serviceBehaviors>");
+                        yaz.WriteLine("\t\t\t<behavior name=\"\">");
+                        yaz.WriteLine("\t\t\t\t<serviceMetadata httpGetEnabled=\"true\" />");
+                        yaz.WriteLine("\t\t\t\t<serviceDebug includeExceptionDetailInFaults=\"false\" />");
+                        yaz.WriteLine("\t\t\t</behavior>");
+                        yaz.WriteLine("\t\t</serviceBehaviors>");
+                        yaz.WriteLine("\t</behaviors>");
+                        yaz.WriteLine("\t<serviceHostingEnvironment multipleSiteBindingsEnabled=\"true\" minFreeMemoryPercentageToActivateService=\"0\" />");
+                        yaz.WriteLine("\t<services>");
+
+                        foreach (string table in selectedTables)
+                        {
+                            yaz.WriteLine("\t\t<service name=\"" + projectName + ".Service." + table + "Service\">");
+                            yaz.WriteLine("\t\t\t<endpoint kind=\"webHttpEndpoint\" contract=\"" + projectName + ".Service.I" + table + "Service\" />");
+                            yaz.WriteLine("\t\t</service>");
+                        }
+
+                        yaz.WriteLine("\t</services>");
+                        yaz.WriteLine("</system.serviceModel>");
+                    }
+
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateWcfService()
+        {
+            CreateDirectories();
+
+            foreach (string Table in selectedTables)
+            {
+                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+
+                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
+
+                List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Service\\I" + Table + "Service.cs", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                    {
+                        yaz.WriteLine("using System;");
+                        yaz.WriteLine("using System.Collections.Generic;");
+                        yaz.WriteLine("using System.Runtime.Serialization;");
+                        yaz.WriteLine("using System.ServiceModel;");
+                        yaz.WriteLine("using System.ServiceModel.Web;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("namespace " + projectName + ".Service");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\t[ServiceContract]");
+                        yaz.WriteLine("\tpublic interface I" + Table + "Service");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\t[OperationContract]");
+                        yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Select/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                        yaz.WriteLine("\t\tList<" + Table + "Data> Select(int? top);");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[OperationContract]");
+                        yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                        yaz.WriteLine("\t\tbool Insert(" + Table + "Data " + Table + "Data);");
+
+                        if (identityColumns.Count > 0)
+                        {
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t[OperationContract]");
+                            yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\tbool Update(" + Table + "Data " + Table + "Data);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t[OperationContract]");
+                            yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Delete/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\tbool Delete(int? id);");
+                        }
+
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t[DataContract]");
+                        yaz.WriteLine("\tpublic class " + Table + "Data");
+                        yaz.WriteLine("\t{");
+
+                        foreach (TableColumnNames column in columnNames)
+                        {
+                            if (column.TypeName != null)
+                            {
+                                yaz.WriteLine("\t\t[DataMember]");
+
+                                if (column.IsNullable)
+                                {
+                                    switch (column.TypeName.Name)
+                                    {
+                                        case "Int16": yaz.WriteLine("\t\tpublic int? " + column.ColumnName + " { get; set; }"); break;
+                                        case "Int32": yaz.WriteLine("\t\tpublic int? " + column.ColumnName + " { get; set; }"); break;
+                                        case "Int64": yaz.WriteLine("\t\tpublic Int64? " + column.ColumnName + " { get; set; }"); break;
+                                        case "Decimal": yaz.WriteLine("\t\tpublic decimal? " + column.ColumnName + " { get; set; }"); break;
+                                        case "Double": yaz.WriteLine("\t\tpublic double? " + column.ColumnName + " { get; set; }"); break;
+                                        case "Char": yaz.WriteLine("\t\tpublic char " + column.ColumnName + " { get; set; }"); break;
+                                        case "Chars": yaz.WriteLine("\t\tpublic char[] " + column.ColumnName + " { get; set; }"); break;
+                                        case "String": yaz.WriteLine("\t\tpublic string " + column.ColumnName + " { get; set; }"); break;
+                                        case "Byte": yaz.WriteLine("\t\tpublic byte " + column.ColumnName + " { get; set; }"); break;
+                                        case "Bytes": yaz.WriteLine("\t\tpublic byte[] " + column.ColumnName + " { get; set; }"); break;
+                                        case "Boolean": yaz.WriteLine("\t\tpublic bool? " + column.ColumnName + " { get; set; }"); break;
+                                        case "DateTime": yaz.WriteLine("\t\tpublic DateTime? " + column.ColumnName + " { get; set; }"); break;
+                                        case "DateTimeOffset": yaz.WriteLine("\t\tpublic DateTimeOffset? " + column.ColumnName + " { get; set; }"); break;
+                                        case "TimeSpan": yaz.WriteLine("\t\tpublic TimeSpan? " + column.ColumnName + " { get; set; }"); break;
+                                        case "Single": yaz.WriteLine("\t\tpublic Single? " + column.ColumnName + " { get; set; }"); break;
+                                        case "Object": yaz.WriteLine("\t\tpublic object " + column.ColumnName + " { get; set; }"); break;
+                                        case "Guid": yaz.WriteLine("\t\tpublic Guid? " + column.ColumnName + " { get; set; }"); break;
+                                        default: yaz.WriteLine("\t\tpublic string " + column.ColumnName + " { get; set; }"); break;
+                                    }
+                                }
+                                else
+                                {
+                                    switch (column.TypeName.Name)
+                                    {
+                                        case "Int16": yaz.WriteLine("\t\tpublic int " + column.ColumnName + " { get; set; }"); break;
+                                        case "Int32": yaz.WriteLine("\t\tpublic int " + column.ColumnName + " { get; set; }"); break;
+                                        case "Int64": yaz.WriteLine("\t\tpublic Int64 " + column.ColumnName + " { get; set; }"); break;
+                                        case "Decimal": yaz.WriteLine("\t\tpublic decimal " + column.ColumnName + " { get; set; }"); break;
+                                        case "Double": yaz.WriteLine("\t\tpublic double " + column.ColumnName + " { get; set; }"); break;
+                                        case "Char": yaz.WriteLine("\t\tpublic char " + column.ColumnName + " { get; set; }"); break;
+                                        case "Chars": yaz.WriteLine("\t\tpublic char[] " + column.ColumnName + " { get; set; }"); break;
+                                        case "String": yaz.WriteLine("\t\tpublic string " + column.ColumnName + " { get; set; }"); break;
+                                        case "Byte": yaz.WriteLine("\t\tpublic byte " + column.ColumnName + " { get; set; }"); break;
+                                        case "Bytes": yaz.WriteLine("\t\tpublic byte[] " + column.ColumnName + " { get; set; }"); break;
+                                        case "Boolean": yaz.WriteLine("\t\tpublic bool " + column.ColumnName + " { get; set; }"); break;
+                                        case "DateTime": yaz.WriteLine("\t\tpublic DateTime " + column.ColumnName + " { get; set; }"); break;
+                                        case "DateTimeOffset": yaz.WriteLine("\t\tpublic DateTimeOffset " + column.ColumnName + " { get; set; }"); break;
+                                        case "TimeSpan": yaz.WriteLine("\t\tpublic TimeSpan " + column.ColumnName + " { get; set; }"); break;
+                                        case "Single": yaz.WriteLine("\t\tpublic Single " + column.ColumnName + " { get; set; }"); break;
+                                        case "Object": yaz.WriteLine("\t\tpublic object " + column.ColumnName + " { get; set; }"); break;
+                                        case "Guid": yaz.WriteLine("\t\tpublic Guid " + column.ColumnName + " { get; set; }"); break;
+                                        default: yaz.WriteLine("\t\tpublic string " + column.ColumnName + " { get; set; }"); break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t\t//" + column.ColumnName + " isimli kolonun veri tipi bu programda tanumlı değil.");
+                            }
+                        }
+
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+
+                        yaz.Close();
+                    }
+                }
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Service\\" + Table + "Service.svc", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                    {
+                        yaz.WriteLine("<%@ ServiceHost Language=\"C#\" Debug=\"true\" Service=\"" + projectName + ".Service." + Table + "Service\" CodeBehind=\"" + Table + "Service.svc.cs\" %>");
+
+                        yaz.Close();
+                    }
+                }
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Service\\" + Table + "Service.svc.cs", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                    {
+                        string columns = "";
+                        string idcolumns = "";
+
+                        foreach (TableColumnNames column in columnNames)
+                        {
+                            if (column.TypeName != null)
+                            {
+                                if (!column.IsIdentity)
+                                    columns += Table + "Data." + column.ColumnName + ", ";
+                                else
+                                    idcolumns = Table + "Data." + column.ColumnName + ", ";
+                            }
+                        }
+
+                        columns = columns.TrimEnd(' ').TrimEnd(',');
+
+                        yaz.WriteLine("using System.Linq;");
+                        yaz.WriteLine("using System.Collections.Generic;");
+                        yaz.WriteLine("using " + projectName + ".Data;");
+                        yaz.WriteLine("using TDLibrary;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("namespace " + projectName + ".Service");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class " + Table + "Service : I" + Table + "Service");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                        yaz.WriteLine("");
+
+                        yaz.WriteLine("\t\tpublic List<" + Table + "Data> Select(int? top)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tList<" + Table + "Data> table;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tif (top > 0)");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\ttable = entity.usp_" + Table + "SelectTop(null, (int)top).ToList().ChangeModelList<" + Table + "Data, usp_" + Table + "SelectTop_Result>();");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\telse");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\ttable = entity.usp_" + Table + "Select(null).ToList().ChangeModelList<" + Table + "Data, usp_" + Table + "Select_Result>();");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn table;");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+                        yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data " + Table + "Data)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tif (" + Table + "Data != null)");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\tvar result = entity.usp_" + Table + "Insert(" + columns + ").FirstOrDefault();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tif (result != null)");
+                        yaz.WriteLine("\t\t\t\t{");
+                        yaz.WriteLine("\t\t\t\t\treturn true;");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn false;");
+                        yaz.WriteLine("\t\t}");
+
+                        if (identityColumns.Count > 0)
+                        {
+                            //Update
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\tpublic bool Update(" + Table + "Data " + Table + "Data)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (" + Table + "Data != null)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tvar result = entity.usp_" + Table + "Update(" + idcolumns + columns + ").FirstOrDefault();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\tif (result != null)");
+                            yaz.WriteLine("\t\t\t\t{");
+                            yaz.WriteLine("\t\t\t\t\treturn true;");
+                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn false;");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\tpublic bool Delete(int? id)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\ttry");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn true;");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\tcatch");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn false;");
+                            yaz.WriteLine("\t\t\t}");
+                        }
+
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+
+                        yaz.Close();
+                    }
+                }
+            }
+        }
+
+        void CreateLib()
         {
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Lib\\ExtMethods.cs", FileMode.Create))
             {
@@ -5359,70 +5018,6 @@ namespace TDFactory
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
-                    yaz.Close();
-                }
-            }
-        }
-
-        #endregion
-
-        #region Common
-
-        void CreateWebConfig()
-        {
-            string wcKullanici = String.IsNullOrEmpty(txtWCKullanici.Text) ? "user" : txtWCKullanici.Text;
-            string wcSifre = String.IsNullOrEmpty(txtWCSifre.Text) ? "123456" : txtWCSifre.Text;
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Web.config.txt", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("\t\t<add key=\"SystemUser\" value=\"admin\" />");
-                    yaz.WriteLine("\t\t<add key=\"MainPath\" value=\"http://localhost/" + projectName + "\" />");
-                    yaz.WriteLine("\t\t<add key=\"ScriptPath\" value=\"/Content/js\" />");
-                    yaz.WriteLine("\t\t<add key=\"StylePath\" value=\"/Content/css\" />");
-                    yaz.WriteLine("\t\t<add key=\"ImagePath\" value=\"/Content/img\" />");
-                    yaz.WriteLine("\t\t<add key=\"AjaxPath\" value=\"/Ajax\" />");
-                    yaz.WriteLine("\t\t<add key=\"AdminPath\" value=\"http://localhost/" + projectName + "/Admin\" />");
-                    yaz.WriteLine("\t\t<add key=\"AdminScriptPath\" value=\"/Content/admin/js\" />");
-                    yaz.WriteLine("\t\t<add key=\"AdminStylePath\" value=\"/Content/admin/css\" />");
-                    yaz.WriteLine("\t\t<add key=\"AdminImagePath\" value=\"/Content/admin/img\" />");
-                    yaz.WriteLine("\t\t<add key=\"AdminAjaxPath\" value=\"/Ajax/Ajax\" />");
-                    yaz.WriteLine("\t\t<add key=\"UploadPath\" value=\"/Uploads\" />");
-                    yaz.WriteLine("\t\t<add key=\"MaxFileSize\" value=\"1024000\" />");
-                    yaz.WriteLine("\t\t<add key=\"MaxPictureSize\" value=\"1024000\" />");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t<system.webServer>");
-                    yaz.WriteLine("\t\t<validation validateIntegratedModeConfiguration=\"false\"/>");
-                    yaz.WriteLine("\t\t<modules runAllManagedModulesForAllRequests=\"true\"/>");
-                    yaz.WriteLine("\t</system.webServer>");
-
-                    if (chkMVCWcfServis.Checked || chkMVCHepsi.Checked)
-                    {
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t<system.serviceModel>");
-                        yaz.WriteLine("\t\t<behaviors>");
-                        yaz.WriteLine("\t\t\t<serviceBehaviors>");
-                        yaz.WriteLine("\t\t\t\t<behavior name=\"\">");
-                        yaz.WriteLine("\t\t\t\t\t<serviceMetadata httpGetEnabled=\"true\" />");
-                        yaz.WriteLine("\t\t\t\t\t<serviceDebug includeExceptionDetailInFaults=\"false\" />");
-                        yaz.WriteLine("\t\t\t\t</behavior>");
-                        yaz.WriteLine("\t\t\t</serviceBehaviors>");
-                        yaz.WriteLine("\t\t</behaviors>");
-                        yaz.WriteLine("\t\t<serviceHostingEnvironment multipleSiteBindingsEnabled=\"true\" minFreeMemoryPercentageToActivateService=\"0\" />");
-                        yaz.WriteLine("\t\t<services>");
-
-                        foreach (string table in selectedTables)
-                        {
-                            yaz.WriteLine("\t\t\t<service name=\"" + projectName + ".Servis." + table + "Service\">");
-                            yaz.WriteLine("\t\t\t\t<endpoint kind=\"webHttpEndpoint\" contract=\"" + projectName + ".Servis.I" + table + "Service\" />");
-                            yaz.WriteLine("\t\t\t</service>");
-                        }
-
-                        yaz.WriteLine("\t\t</services>");
-                        yaz.WriteLine("\t</system.serviceModel>");
-                    }
-
                     yaz.Close();
                 }
             }
@@ -5757,7 +5352,7 @@ namespace TDFactory
             }
         }
 
-        void CreateStilScript()
+        void CreateStylelScript()
         {
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\js\\pathscript.js", FileMode.Create))
             {
@@ -5892,8 +5487,8 @@ namespace TDFactory
 
             if (chkAngular.Checked)
             {
-                CreateAngularStilScripts();
-                CreateAngularImages();
+                CreateAngularStylelScripts();
+                CreateImages();
             }
 
             CopyFromResource(StringToByteArray(Properties.Resources.Content_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\css\\main.css");
@@ -5910,7 +5505,7 @@ namespace TDFactory
             }
         }
 
-        void CreateAngularImages()
+        void CreateImages()
         {
             CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_active_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\active.png");
             CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_breadcrumb_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\breadcrumb.png");
@@ -5922,7 +5517,7 @@ namespace TDFactory
             CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_loading_gif), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\loading.gif");
         }
 
-        void CreateAngularStilScripts()
+        void CreateAngularStylelScripts()
         {
             CreateCKEditor();
 

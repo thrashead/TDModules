@@ -260,6 +260,7 @@ namespace TDFramework.Library
         {
             return ToDynamicList(ToDictionary(dataTable), GetNewObject(dataTable.Columns, className));
         }
+
         #region ToDynamicList
 
         private static List<Dictionary<string, object>> ToDictionary(DataTable dataTable)
