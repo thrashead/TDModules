@@ -10,6 +10,7 @@ TDModelCreator/*
 TestProjectV2/*
 TestProjectV3/*
 */Properties/*
+*/Resources/*
 *.csproj
 *.csproj*
 *.sln
