@@ -105,6 +105,11 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax");
                     }
 
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Lib"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Lib");
+                    }
+
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Models"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Models");
@@ -393,6 +398,11 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Lib"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Lib");
                         }
                     }
 
@@ -696,6 +706,7 @@ namespace TDFactory
                                 {
                                     if (String.IsNullOrEmpty(column.CharLength))
                                     {
+                                        yaz.WriteLine("\t\t[AllowHtml]");
                                         yaz.WriteLine("\t\t[DataType(DataType.MultilineText)]");
                                     }
                                 }
@@ -869,7 +880,7 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\Shared\\_Layout.cshtml", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Views\\Shared\\_LayoutAdmin.cshtml", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
@@ -882,6 +893,13 @@ namespace TDFactory
                     yaz.WriteLine("\t<meta charset=\"UTF-8\" />");
                     yaz.WriteLine("\t<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />");
                     yaz.WriteLine("\t<title>" + projectName + " Admin Panel</title>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t@{");
+                    yaz.WriteLine("\t\tif (Session[\"CurrentUser\"] == null)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tResponse.Redirect(AppMgr.AdminPath + \"/Home/Login\");");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t@{ Html.RenderPartial(\"~/Areas/Admin/Views/Shared/Controls/_Scripts.cshtml\"); }");
                     yaz.WriteLine("</head>");
@@ -937,7 +955,7 @@ namespace TDFactory
                     yaz.WriteLine("@using TDLibrary");
                     yaz.WriteLine("");
                     yaz.WriteLine("<div id=\"header\">");
-                    yaz.WriteLine("\t<h1><a><img src=\"@AppMgr.ImagePath/logo.png\" /></a></h1>");
+                    yaz.WriteLine("\t<h1><a><img src=\"@AppMgr.AdminImagePath/logo.png\" /></a></h1>");
                     yaz.WriteLine("</div>");
                     yaz.WriteLine("");
                     yaz.WriteLine("<div id=\"user-nav\" class=\"navbar navbar-inverse\">");
@@ -1131,11 +1149,9 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        string linked = fkcListForeign.Count > 0 ? "Linked" : "";
-
-                        yaz.WriteLine("@model List<usp_" + Table + linked + "Select_Result>");
-                        yaz.WriteLine("@using " + projectName + ".Data");
+                        yaz.WriteLine("@model List<Models." + Table + "Model>");
                         yaz.WriteLine("@using TDLibrary");
+                        yaz.WriteLine("@using Models");
                         yaz.WriteLine("");
                         yaz.WriteLine("@{");
                         yaz.WriteLine("\tViewBag.Title = \"" + Table + "\";");
@@ -1188,7 +1204,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
                         yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
                         yaz.WriteLine("\t\t\t\t\t\t\t\t@{");
-                        yaz.WriteLine("\t\t\t\t\t\t\t\t\tforeach (usp_" + Table + "Select_Result item in Model)");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\tforeach (" + Table + "Model item in Model)");
                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t{");
                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<tr>");
 
@@ -1484,7 +1500,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
 
                                     yaz.WriteLine("\t\t\t\t\t\t\t@{");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\tforeach (" + ForeignTableName + " item in Model." + ForeignTableName + "List)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\tforeach (" + ForeignTableName + "Model item in Model." + ForeignTableName + "List)");
                                     yaz.WriteLine("\t\t\t\t\t\t\t\t{");
                                     yaz.WriteLine("\t\t\t\t\t\t\t\t\t<tr>");
 
@@ -1539,8 +1555,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t</div>");
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"pagelinks\">");
-                                    yaz.WriteLine("\t\t\t<a href=\"@AppMgr.AdminPath/" + ForeignTableName + "/Ekle\" class=\"btn btn-primary btn-add\"> Ekle</a>");
-                                    yaz.WriteLine("\t\t\t@Html.ActionLink(\"" + ForeignTableName + " Ekle\", \"Ekle\", \"" + ForeignTableName + "\", new { linkID = Model." + id + " }, new { @class = \"btn btn-primary btn-add\", data_type = \"" + ForeignTableName + "\" })");
+                                    yaz.WriteLine("\t\t\t@Html.ActionLink(\"" + ForeignTableName + " Ekle\", \"Ekle\", \"" + ForeignTableName + "\", null, new { @class = \"btn btn-primary btn-add\", data_type = \"" + ForeignTableName + "\" })");
                                     yaz.WriteLine("\t\t</div>");
                                 }
                             }
@@ -1586,6 +1601,7 @@ namespace TDFactory
                 if (i <= 0)
                 {
                     CreateHomeController();
+                    CreateLib();
 
                     i++;
                 }
@@ -1618,25 +1634,16 @@ namespace TDFactory
 
                         string linked = fkcListForeign.Count > 0 ? "Linked" : "";
 
-                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> table = entity.usp_" + Table + linked + "LinkedSelect(null).ToList();");
+                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> tableTemp = entity.usp_" + Table + linked + "Select(null).ToList();");
+                        yaz.WriteLine("\t\t\tList<" + Table + "Model> table = tableTemp.ChangeModelList<" + Table + "Model, usp_" + Table + linked + "Select_Result>();");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\treturn View(table);");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-
-                        string linkID = fkcListForeign.Count > 0 ? "string linkID" : "";
-
                         // Ekle
-                        yaz.WriteLine("\t\tpublic ActionResult Ekle(" + linkID + ")");
+                        yaz.WriteLine("\t\tpublic ActionResult Ekle()");
                         yaz.WriteLine("\t\t{");
-
-                        if (fkcListForeign.Count > 0)
-                        {
-                            yaz.WriteLine("\t\t\tint _linkID = linkID == null ? 0 : linkID.ToInteger();");
-                            yaz.WriteLine("");
-                        }
-
                         yaz.WriteLine("\t\t\t" + Table + "Model table = new " + Table + "Model();");
                         yaz.WriteLine("");
 
@@ -1648,7 +1655,7 @@ namespace TDFactory
                                 string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
                                 yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(item." + fkc.PrimaryColumnName + ".ToString(), item." + columnText + ", _linkID);");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
                                 yaz.WriteLine("");
                             }
                         }
@@ -1693,7 +1700,7 @@ namespace TDFactory
                                 string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
                                 yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(item." + fkc.PrimaryColumnName + ".ToString(), item." + columnText + ", _linkID);");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
                                 yaz.WriteLine("");
                             }
                         }
@@ -1709,7 +1716,7 @@ namespace TDFactory
                             //Duzenle
                             yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
                             yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectTop_Result tableTemp = _entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectTop_Result tableTemp = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
                             yaz.WriteLine("\t\t\t" + Table + "Model table = tableTemp.ChangeModel<" + Table + "Model>();");
                             yaz.WriteLine("");
 
@@ -1721,7 +1728,7 @@ namespace TDFactory
                                     string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
                                     yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + searchText + "\", table." + fkc.ForeignColumnName + ");");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
                                     yaz.WriteLine("");
                                 }
                             }
@@ -1735,7 +1742,7 @@ namespace TDFactory
                                     string ForeignTableName = fkc.ForeignTableName;
                                     string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
 
-                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = _entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
+                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
 
                                     int j = 0;
 
@@ -1803,7 +1810,7 @@ namespace TDFactory
                                     string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
                                     yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + searchText + "\", table." + fkc.ForeignColumnName + ");");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
                                     yaz.WriteLine("");
                                 }
                             }
@@ -1817,7 +1824,7 @@ namespace TDFactory
                                     string ForeignTableName = fkc.ForeignTableName;
                                     string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
 
-                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = _entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
+                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
 
                                     int j = 0;
 
@@ -1930,7 +1937,7 @@ namespace TDFactory
                     yaz.WriteLine("\t<script src=\"@AppMgr.ScriptPath/jquery/jquery.min.js\"></script>");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t<script src=\"@AppMgr.AdminScriptPath/pathscript.js\"></script>");
-                    yaz.WriteLine("\t<script src=\"@AppMgr.AdminScriptPath/login.js\"></script");
+                    yaz.WriteLine("\t<script src=\"@AppMgr.AdminScriptPath/script.js\"></script>");
                     yaz.WriteLine("</head>");
                     yaz.WriteLine("<body>");
                     yaz.WriteLine("\t<input id=\"hdnUrl\" type=\"hidden\" value=\"@Urling.FullURL\" />");
@@ -2081,11 +2088,43 @@ namespace TDFactory
                     yaz.WriteLine("\t\t{");
                     yaz.WriteLine("\t\t\treturn View();");
                     yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tpublic ActionResult Login()");
                     yaz.WriteLine("\t\t{");
                     yaz.WriteLine("\t\t\treturn View();");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\AjaxController.cs", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+
+                    yaz.WriteLine("using System.Linq;");
+                    yaz.WriteLine("using System.Web.Mvc;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
+                    yaz.WriteLine("{");
+                    yaz.WriteLine("\tpublic class AjaxController : Controller");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\t[HttpPost]");
+                    yaz.WriteLine("\t\tpublic JsonResult Login(string login)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = 1;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn Json(true);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t[HttpGet]");
+                    yaz.WriteLine("\t\tpublic JsonResult Logout()");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = null;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
@@ -2654,8 +2693,6 @@ namespace TDFactory
                 }
             }
 
-            CreateAngularAppModule();
-            CreateAngularRoutingModule();
             CreateAngularAdminFiles();
         }
 
@@ -5578,14 +5615,14 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t[OperationContract]");
                         yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                        yaz.WriteLine("\t\tbool Insert(" + Table + "Data " + Table + "Data);");
+                        yaz.WriteLine("\t\tbool Insert(" + Table + "Data table);");
 
                         if (identityColumns.Count > 0)
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                            yaz.WriteLine("\t\tbool Update(" + Table + "Data " + Table + "Data);");
+                            yaz.WriteLine("\t\tbool Update(" + Table + "Data table);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Delete/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
@@ -5688,9 +5725,9 @@ namespace TDFactory
                             if (column.TypeName != null)
                             {
                                 if (!column.IsIdentity)
-                                    columns += Table + "Data." + column.ColumnName + ", ";
+                                    columns += "table." + column.ColumnName + ", ";
                                 else
-                                    idcolumns = Table + "Data." + column.ColumnName + ", ";
+                                    idcolumns = "table." + column.ColumnName + ", ";
                             }
                         }
 
@@ -5725,9 +5762,9 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-                        yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data " + Table + "Data)");
+                        yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data table)");
                         yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tif (" + Table + "Data != null)");
+                        yaz.WriteLine("\t\t\tif (table != null)");
                         yaz.WriteLine("\t\t\t{");
                         yaz.WriteLine("\t\t\t\tvar result = entity.usp_" + Table + "Insert(" + columns + ").FirstOrDefault();");
                         yaz.WriteLine("");
@@ -5744,9 +5781,9 @@ namespace TDFactory
                         {
                             //Update
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\tpublic bool Update(" + Table + "Data " + Table + "Data)");
+                            yaz.WriteLine("\t\tpublic bool Update(" + Table + "Data table)");
                             yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tif (" + Table + "Data != null)");
+                            yaz.WriteLine("\t\t\tif (table != null)");
                             yaz.WriteLine("\t\t\t{");
                             yaz.WriteLine("\t\t\t\tvar result = entity.usp_" + Table + "Update(" + idcolumns + columns + ").FirstOrDefault();");
                             yaz.WriteLine("");
@@ -5793,7 +5830,7 @@ namespace TDFactory
                     yaz.WriteLine("using System.Linq;");
                     yaz.WriteLine("using System.Web.Mvc;");
                     yaz.WriteLine("");
-                    yaz.WriteLine("namespace RentACar");
+                    yaz.WriteLine("namespace " + projectName);
                     yaz.WriteLine("{");
                     yaz.WriteLine("\tpublic static class ExtMethods");
                     yaz.WriteLine("\t{");
@@ -6017,7 +6054,7 @@ namespace TDFactory
                                 sqlText = "";
 
                                 string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList()).Replace(".ToString()", "");
 
                                 sqlText += "\t\t(SELECT " + aliases[i % 10] + "." + columnText + " FROM " + PrimaryTableName + " " + aliases[i % 10] + " WHERE " + aliases[i % 10] + "." + fkc.PrimaryColumnName + " = " + fkc.ForeignColumnName + ") as " + PrimaryTableName + "Adi,";
 
@@ -6055,7 +6092,7 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
                                 string ForeignTableName = fkc.ForeignTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
 
                                 List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
 
@@ -6096,7 +6133,7 @@ namespace TDFactory
 
                                     sqlText = "\tSELECT ";
 
-                                    foreach (ColumnInfo column in columnNames)
+                                    foreach (ColumnInfo column in fColumnNames)
                                     {
                                         sqlText += "[" + column.ColumnName + "],";
                                     }
@@ -6479,6 +6516,7 @@ namespace TDFactory
                 CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\main.js");
                 CopyFromResource(StringToByteArray(Properties.Resources.Angular_Content_admin_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\main.css");
                 CopyFromResource(StringToByteArray(Properties.Resources.Angular_Content_admin_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\main.js");
+                CopyFromResource(StringToByteArray(Properties.Resources.Angular_Content_admin_js_matrix_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\matrix.js");
 
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-style.css", FileMode.Create))
                 {
@@ -6515,19 +6553,84 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
+                        ckEditors = new List<string>();
+
+                        foreach (string Table in selectedTables)
+                        {
+                            List<TableColumnNames> colNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
+
+                            foreach (TableColumnNames column in colNames)
+                            {
+                                if (column.TypeName != null)
+                                {
+                                    if (column.TypeName.Name == "String")
+                                    {
+                                        if (String.IsNullOrEmpty(column.CharLength))
+                                        {
+                                            if (!ckEditors.Contains(column.ColumnName))
+                                            {
+                                                ckEditors.Add(column.ColumnName);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         yaz.WriteLine("$(document).ready(function () {");
-                        yaz.WriteLine("\tif ($(\"#Description\").length > 0) {");
-                        yaz.WriteLine("\t\tClassicEditor");
-                        yaz.WriteLine("\t\t\t.create(document.querySelector('#Description'), {");
-                        yaz.WriteLine("\t\t\t\t//toolbar: ['bold', 'italic']");
-                        yaz.WriteLine("\t\t\t})");
-                        yaz.WriteLine("\t\t\t.then(editor => {");
-                        yaz.WriteLine("\t\t\t\twindow.editor = editor;");
-                        yaz.WriteLine("\t\t\t})");
-                        yaz.WriteLine("\t\t\t.catch(err => {");
-                        yaz.WriteLine("\t\t\t\tconsole.error(err.stack);");
-                        yaz.WriteLine("\t\t\t});");
+
+                        foreach (string item in ckEditors)
+                        {
+                            yaz.WriteLine("\tif ($(\"#" + item + "\").length > 0) {");
+                            yaz.WriteLine("\t\tClassicEditor");
+                            yaz.WriteLine("\t\t\t.create(document.querySelector('#" + item + "'), {");
+                            yaz.WriteLine("\t\t\t\t//toolbar: ['bold', 'italic']");
+                            yaz.WriteLine("\t\t\t})");
+                            yaz.WriteLine("\t\t\t.then(editor => {");
+                            yaz.WriteLine("\t\t\t\twindow.editor = editor;");
+                            yaz.WriteLine("\t\t\t})");
+                            yaz.WriteLine("\t\t\t.catch(err => {");
+                            yaz.WriteLine("\t\t\t\tconsole.error(err.stack);");
+                            yaz.WriteLine("\t\t\t});");
+                            yaz.WriteLine("\t}");
+                            yaz.WriteLine("");
+                        }
+
+                        yaz.WriteLine("\t/* Login Sayfası*/");
+                        yaz.WriteLine("\tif ($(\"#loginbox\").length > 0) {");
+                        yaz.WriteLine("\t\t$(\"#txtUserName\").focus();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t$(\"#btnGiris\").click(function () {");
+                        yaz.WriteLine("\t\t\tGirisYap();");
+                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t$(\"button.close\").click(function () {");
+                        yaz.WriteLine("\t\t\t$(\".alert-error\").fadeOut(\"slow\");");
+                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t$(\"#txtUserName, #txtPassword\").keyup(function (event) {");
+                        yaz.WriteLine("\t\t\tif (event.keyCode == 13) {");
+                        yaz.WriteLine("\t\t\t\tGirisYap();");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t});");
                         yaz.WriteLine("\t}");
+                        yaz.WriteLine("\t/* Login Sayfası*/");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t/* Logout Olayı*/");
+                        yaz.WriteLine("\tif ($(\"a.logout\").length > 0) {");
+                        yaz.WriteLine("\t\t$(\"a.logout\").click(function () {");
+                        yaz.WriteLine("\t\t\t$.ajax({");
+                        yaz.WriteLine("\t\t\t\ttype: 'GET',");
+                        yaz.WriteLine("\t\t\t\turl: AdminAjaxPath + \"/Logout\",");
+                        yaz.WriteLine("\t\t\t\tsuccess: function (answer) {");
+                        yaz.WriteLine("\t\t\t\t\tif (answer == true) {");
+                        yaz.WriteLine("\t\t\t\t\t\twindow.location = AdminPath + \"/Home/Login\";");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("\t/* Logout Olayı*/");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tif (Urling.controller != undefined) {");
                         yaz.WriteLine("\t\tvar activeLi = $(\"#sidebar li[data-url='\" + Urling.controller + \"']\");");
@@ -6545,27 +6648,108 @@ namespace TDFactory
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("});");
                         yaz.WriteLine("");
-                        yaz.WriteLine("$(function () {");
-                        yaz.WriteLine("\t$(document).on(\"click\", \"#btnMainSearch\", function () {");
-                        yaz.WriteLine("\t\tvar txtValue = $(\"#txtMainSearch\").val();");
+                        yaz.WriteLine("function GirisYap() {");
+                        yaz.WriteLine("\t$(\"#imgLoading\").fadeIn(\"slow\");");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\tswitch (txtValue) {");
-
+                        yaz.WriteLine("\tvar username = $(\"#txtUserName\").val();");
+                        yaz.WriteLine("\tvar password = $(\"#txtPassword\").val();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif (!isValid(username, \"username\")) {");
+                        yaz.WriteLine("\t\t$(\"#hataMesaj\").text(\"Lütfen geçerli bir kullanıcı adı giriniz.\");");
+                        yaz.WriteLine("\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t$(\"#imgLoading\").fadeOut(\"slow\");");
+                        yaz.WriteLine("\t\treturn false;");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif (!isValid(password, \"password\")) {");
+                        yaz.WriteLine("\t\t$(\"#hataMesaj\").text(\"Lütfen geçerli bir şifre giriniz.\");");
+                        yaz.WriteLine("\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t$(\"#imgLoading\").fadeOut(\"slow\");");
+                        yaz.WriteLine("\t\treturn false;");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tvar loginInfo = new Object();");
+                        yaz.WriteLine("\tloginInfo.Username = username;");
+                        yaz.WriteLine("\tloginInfo.Password = password;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$.ajax({");
+                        yaz.WriteLine("\t\ttype: \"POST\",");
+                        yaz.WriteLine("\t\turl: AdminAjaxPath + \"/Login\",");
+                        yaz.WriteLine("\t\tdata: \"{ login: '\" + JSON.stringify(loginInfo) + \"' }\",");
+                        yaz.WriteLine("\t\tdataType: \"json\",");
+                        yaz.WriteLine("\t\tcontentType: \"application/json; charset=utf-8\",");
+                        yaz.WriteLine("\t\tsuccess: function (answer) {");
+                        yaz.WriteLine("\t\t\tif (answer == true) {");
+                        yaz.WriteLine("\t\t\t\twindow.location = AdminPath;");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\telse {");
+                        yaz.WriteLine("\t\t\t\t$(\"#hataMesaj\").text(\"Lütfen kullanıcı adı ve şifrenizi kontrol ediniz.\");");
+                        yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t$(\"#imgLoading\").fadeOut(\"slow\");");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("/* Validation Control */");
+                        yaz.WriteLine("function isValid(text, type) {");
+                        yaz.WriteLine("\tvar pattern;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tswitch (type) {");
+                        yaz.WriteLine("\t\tcase \"username\": pattern = new RegExp(/^[a-z0-9_-]{3,16}$/); break;");
+                        yaz.WriteLine("\t\tcase \"password\": pattern = new RegExp(/^[a-z0-9_-]{3,18}$/); break;");
+                        yaz.WriteLine("\t\tcase \"hex\": pattern = new RegExp(/^#?([a-f0-9]{6}|[a-f0-9]{3})$/); break;");
+                        yaz.WriteLine("\t\tcase \"rewrite\": pattern = new RegExp(/^[a-z0-9-]+$/); break;");
+                        yaz.WriteLine("\t\tcase \"email\": pattern = new RegExp(/^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$/); break;");
+                        yaz.WriteLine("\t\tcase \"url\": pattern = new RegExp(/^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$/); break;");
+                        yaz.WriteLine("\t\tcase \"ipaddress\": pattern = new RegExp(/^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/); break;");
+                        yaz.WriteLine("\t\tcase \"htmltag\": pattern = new RegExp(/^<([a-z]+)([^<]+)*(?:>(.*)<\\/\\1>|\\s+\\/>)$/); break;");
+                        yaz.WriteLine("\t\tdefault: pattern = new RegExp(/^([a-z0-9_\\.-]+)@([\\da-z\\.-]+)\\.([a-z\\.]{2,6})$/); break;");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\treturn pattern.test(text);");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("function KelimeAra(txtValue) {");
+                        yaz.WriteLine("\tswitch (txtValue) {");
                         foreach (string Table in selectedTables)
                         {
-                            yaz.WriteLine("\t\t\tcase \"" + Table + "\":");
-                            yaz.WriteLine("\t\t\t\twindow.location.href = AdminPath + \"/" + Table + "\";");
-                            yaz.WriteLine("\t\t\t\tbreak;");
+                            yaz.WriteLine("\t\tcase \"" + Table + "\":");
+                            yaz.WriteLine("\t\t\twindow.location.href = AdminPath + \"/" + Table + "\";");
+                            yaz.WriteLine("\t\t\tbreak;");
                         }
-
-                        yaz.WriteLine("\t\t\tdefault:");
-                        yaz.WriteLine("\t\t\t\t$.gritter.add({");
-                        yaz.WriteLine("\t\t\t\t\ttitle: 'Arama Sonuç',");
-                        yaz.WriteLine("\t\t\t\t\ttext: 'Aradığınız kelimeye uygun sonuç bulunamadı...',");
-                        yaz.WriteLine("\t\t\t\t\tsticky: false");
-                        yaz.WriteLine("\t\t\t\t});");
-                        yaz.WriteLine("\t\t\t\tbreak;");
+                        yaz.WriteLine("\t\tdefault:");
+                        yaz.WriteLine("\t\t\t$.gritter.add({");
+                        yaz.WriteLine("\t\t\t\ttitle: 'Arama Sonuç',");
+                        yaz.WriteLine("\t\t\t\ttext: 'Aradığınız kelimeye uygun sonuç bulunamadı...',");
+                        yaz.WriteLine("\t\t\t\tsticky: false");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("\t\t\tbreak;");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("$(function () {");
+                        yaz.WriteLine("\t$('#search input[type=text]').typeahead({");
+                        yaz.WriteLine("\t\tsource: [");
+                        foreach (string Table in selectedTables)
+                        {
+                            yaz.WriteLine("\t\t\t'" + Table + "',");
+                        }
+                        yaz.WriteLine("\t\t],");
+                        yaz.WriteLine("\t\titems: 4");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"keyup\", \"#txtMainSearch\", function () {");
+                        yaz.WriteLine("\t\tif (event.keyCode == 13) {");
+                        yaz.WriteLine("\t\t\tKelimeAra($(\"#txtMainSearch\").val());");
                         yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"click\", \"#btnMainSearch\", function () {");
+                        yaz.WriteLine("\t\tKelimeAra($(\"#txtMainSearch\").val());");
                         yaz.WriteLine("\t});");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t$(document).on(\"click\", \"a.dltLink\", function () {");
@@ -6626,7 +6810,6 @@ namespace TDFactory
 
             CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_bootstrap_min_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\bootstrap.min.js");
             CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_jquery_dataTables_min_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\jquery.dataTables.min.js");
-            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_matrix_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\matrix.js");
             CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_css_bootstrap_min_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\bootstrap.min.css");
             CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_css_bootstrap_responsive_min_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\bootstrap-responsive.min.css");
             CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_css_matrix_login_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-login.css");
@@ -6679,7 +6862,7 @@ namespace TDFactory
 
         byte[] StringToByteArray(string file)
         {
-            return Encoding.ASCII.GetBytes(file);
+            return Encoding.UTF8.GetBytes(file);
         }
 
         byte[] BitmapToByteArray(Bitmap file)

@@ -31,6 +31,7 @@ namespace TDFactory
         List<string> foreignTables;
         List<string> tableNames;
         List<string> selectedTables;
+        List<string> ckEditors;
 
         int tableindex, columnindex, selectedtableindex;
         bool tableselected = false, columnselected = false;
