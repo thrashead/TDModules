@@ -15,7 +15,6 @@ namespace TDFactory
     {
         #region MVC
 
-        //
         void CreateMVC()
         {
             CreateDirectories();
@@ -73,7 +72,6 @@ namespace TDFactory
             CreateRegistrar();
         }
 
-        //
         void CreateDirectories(string _tableName = null)
         {
             projectFolder = projectName;
@@ -222,6 +220,16 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css");
                     }
 
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\css"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\css");
+                    }
+
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\img"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\img");
@@ -230,6 +238,16 @@ namespace TDFactory
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations");
                     }
 
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Service"))
@@ -415,6 +433,16 @@ namespace TDFactory
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css");
                         }
 
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\css"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\css");
+                        }
+
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\img"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\img");
@@ -423,6 +451,16 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor");
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations");
                         }
                     }
 
@@ -462,7 +500,6 @@ namespace TDFactory
             }
         }
 
-        //
         void CreateRegistrar()
         {
             if (Directory.Exists(PathAddress + "\\" + projectFolder + "\\App_Start"))
@@ -574,7 +611,6 @@ namespace TDFactory
             }
         }
 
-        //
         void CreateModelLayer()
         {
             foreach (string Table in selectedTables)
@@ -621,9 +657,9 @@ namespace TDFactory
                         yaz.WriteLine("namespace Models");
                         yaz.WriteLine("{");
 
-                        yaz.WriteLine("\tpublic class " + Table);
+                        yaz.WriteLine("\tpublic class " + Table + "Model");
                         yaz.WriteLine("\t{");
-                        yaz.WriteLine("\t\tpublic " + Table + "()");
+                        yaz.WriteLine("\t\tpublic " + Table + "Model()");
                         yaz.WriteLine("\t\t{");
 
                         if (fkcList.Count > 0)
@@ -632,7 +668,7 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                             {
                                 string ForeignTableName = fkc.ForeignTableName;
-                                yaz.WriteLine("\t\t\t" + ForeignTableName + "List = new List<" + ForeignTableName + ">();");
+                                yaz.WriteLine("\t\t\t" + ForeignTableName + "List = new List<" + ForeignTableName + "Model>();");
 
                             }
                         }
@@ -732,7 +768,7 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                             {
                                 string ForeignTableName = fkc.ForeignTableName;
-                                yaz.WriteLine("\t\tpublic List<" + ForeignTableName + "> " + ForeignTableName + "List { get; set; }");
+                                yaz.WriteLine("\t\tpublic List<" + ForeignTableName + "Model> " + ForeignTableName + "List { get; set; }");
                             }
                         }
 
@@ -763,7 +799,6 @@ namespace TDFactory
             }
         }
 
-        //
         void CreateLayout()
         {
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\_Layout.cshtml", FileMode.Create))
@@ -806,11 +841,12 @@ namespace TDFactory
                     yaz.WriteLine("<link rel=\"shortcut icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
                     yaz.WriteLine("<link rel=\"icon\" href=\"@AppMgr.MainPath/favicon.ico\" type=\"image/x-icon\">");
                     yaz.WriteLine("");
-                    yaz.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href=\"@AppMgr.StylePath/main.css\" />");
+                    yaz.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href=\"@AppMgr.StylePath/style.css\" />");
                     yaz.WriteLine("");
                     yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/jquery/jquery.min.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/jquery/json2.js\"></script>");
                     yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/pathscript.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/main.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/script.js\"></script>");
                     yaz.Close();
                 }
             }
@@ -874,23 +910,21 @@ namespace TDFactory
                     yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/bootstrap.min.css\" rel=\"stylesheet\" />");
                     yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/bootstrap-responsive.min.css\" rel=\"stylesheet\" />");
                     yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/jquery.gritter.css\" rel=\"stylesheet\" />");
-                    yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/select2.css\" rel=\"stylesheet\" />");
                     yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/matrix-style.css\" rel=\"stylesheet\" />");
                     yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/matrix-media.css\" rel=\"stylesheet\" />");
                     yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/font-awesome/css/font-awesome.css\" rel=\"stylesheet\" />");
-                    yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/main.css\" rel=\"stylesheet\" />");
+                    yaz.WriteLine("<link href=\"@AppMgr.AdminStylePath/style.css\" rel=\"stylesheet\" />");
                     yaz.WriteLine("");
-                    yaz.WriteLine("<script src=\"@AppMgr.ScriptPath/jquery/jquery.min.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/jquery.gritter.min.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/jquery.dataTables.min.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/bootstrap.min.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/matrix.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/matrix.popover.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/matrix.tables.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/select2.min.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/ckeditor/ckeditor.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/pathscript.js\"></script>");
-                    yaz.WriteLine("<script src=\"@AppMgr.AdminScriptPath/main.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/jquery/jquery.min.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/jquery/json2.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/jquery.gritter.min.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/jquery.dataTables.min.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/bootstrap.min.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/matrix.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/matrix.tables.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/ckeditor/ckeditor.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/pathscript.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.AdminScriptPath/script.js\"></script>");
 
                     yaz.Close();
                 }
@@ -1097,134 +1131,124 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        int tablewidth = 120;
-                        int colcount = tableColumnNames.Where(a => a.TableName == Table).ToList().Count;
+                        string linked = fkcListForeign.Count > 0 ? "Linked" : "";
 
-                        switch (colcount)
-                        {
-                            case 1:
-                                tablewidth = tablewidth + 50;
-                                break;
-                            case 2:
-                                tablewidth = tablewidth + 50 + 230;
-                                break;
-                            case 3:
-                                tablewidth = tablewidth + 50 + 230 + 240;
-                                break;
-                            case 4:
-                                tablewidth = tablewidth + 50 + 230 + 240 + 138;
-                                break;
-                            default:
-                                tablewidth = tablewidth + 50 + 230 + 240 + 138;
-                                tablewidth = tablewidth + ((colcount - 4) * 138);
-                                break;
-                        }
-
+                        yaz.WriteLine("@model List<usp_" + Table + linked + "Select_Result>");
+                        yaz.WriteLine("@using " + projectName + ".Data");
                         yaz.WriteLine("@using TDLibrary");
                         yaz.WriteLine("");
                         yaz.WriteLine("@{");
                         yaz.WriteLine("\tViewBag.Title = \"" + Table + "\";");
-                        yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_Layout.cshtml\";");
+                        yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml\";");
                         yaz.WriteLine("}");
                         yaz.WriteLine("");
-                        yaz.WriteLine("<div id=\"tablo" + Table + "\">");
-                        yaz.WriteLine("</div>");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("<link rel=\"stylesheet\" type=\"text/css\" href=\"@AppMgr.ScriptPath/tdTable/tdTable.css\" />");
-                        yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/tdTable/tdTable.js\"></script>");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("<script>");
-                        yaz.WriteLine("\t$(\"#tablo" + Table + "\").tdTable(");
-                        yaz.WriteLine("\t{");
-                        yaz.WriteLine("\t\trootfolder: \"@AppMgr.ScriptPath/tdTable\",");
-                        yaz.WriteLine("\t\ttitle: \"" + Table + "\",");
-                        yaz.WriteLine("\t\tlistmethod: \"@AppMgr.AdminPath/" + Table + "/" + Table + "Index\",");
+                        yaz.WriteLine("<div id=\"content\">");
+                        yaz.WriteLine("\t<div id=\"content-header\">");
+                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + "</a></div>");
+                        yaz.WriteLine("\t</div>");
+                        yaz.WriteLine("\t<div class=\"container-fluid\">");
+                        yaz.WriteLine("\t\t<div class=\"row-fluid\">");
+                        yaz.WriteLine("\t\t\t<div class=\"span12\">");
+                        yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
+                        yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
+                        yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
+                        yaz.WriteLine("\t\t\t\t\t\t<h5>" + Table + "</h5>");
+                        yaz.WriteLine("\t\t\t\t\t</div>");
+                        yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
+                        yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
+                        yaz.WriteLine("\t\t\t\t\t\t\t<thead>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t<tr>");
 
-                        if (identityColumns.Count > 0)
+                        i = 0;
+
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
                         {
-                            yaz.WriteLine("\t\tdeletemethod: \"@AppMgr.AdminPath/" + Table + "/Sil\",");
-                        }
+                            List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
-                        yaz.WriteLine("\t\titemperpage: 10,");
-                        yaz.WriteLine("\t\ttablewidth: " + tablewidth + ",");
-                        yaz.WriteLine("\t\tenablesorting: true,");
-                        yaz.WriteLine("\t\tshowfooter: true,");
-                        yaz.WriteLine("\t\tshowcommands: true,");
-                        yaz.WriteLine("\t\ttheme: \"blue\",");
-                        yaz.WriteLine("\t\tconditions: {");
+                            string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
-                        if (identityColumns.Count > 0)
-                        {
-                            yaz.WriteLine("\t\t\tOrderBy: \"" + id + "\",");
-                        }
-
-                        yaz.WriteLine("\t\t\tFields: {");
-
-                        int cssSayac = 1;
-                        string cssClass = "first";
-
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                        {
-                            switch (cssSayac)
+                            if (frchkForeignLst2.Count > 0)
                             {
-                                case 1:
-                                    cssClass = "first";
-                                    break;
-                                case 2:
-                                    cssClass = "second";
-                                    break;
-                                case 3:
-                                    cssClass = "third";
-                                    break;
-                                case 4:
-                                    cssClass = "fourth";
-                                    break;
-                                default:
-                                    cssClass = "fourth";
-                                    break;
-                            }
-                            List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
-
-                            if (foreLst.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t\t\t" + foreLst.FirstOrDefault().PrimaryTableName + "Adi: {");
-                                yaz.WriteLine("\t\t\t\t\tTitle: \"" + foreLst.FirstOrDefault().PrimaryTableName + "Adi\",");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst2.FirstOrDefault().PrimaryTableName + "</th>");
                             }
                             else
                             {
-                                yaz.WriteLine("\t\t\t\t" + column.ColumnName + ": {");
-                                yaz.WriteLine("\t\t\t\t\tTitle: \"" + column.ColumnName + "\",");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + column.ColumnName + "</th>");
                             }
-                            yaz.WriteLine("\t\t\t\t\tCssClass: \"" + cssClass + "\"");
 
-                            yaz.WriteLine("\t\t\t\t},");
-
-                            cssSayac++;
+                            i++;
                         }
-
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("\t\t},");
-                        yaz.WriteLine("\t\tcommands: {");
-                        yaz.WriteLine("\t\t\tAddText: \"Ekle\",");
-                        yaz.WriteLine("\t\t\tAddLink: \"" + Table + "/Ekle\",");
 
                         if (identityColumns.Count > 0)
                         {
-                            yaz.WriteLine("\t\t\tDetailLink: \"" + Table + "/Detay/{" + id + "}\",");
-                            yaz.WriteLine("\t\t\tUpdateLink: \"" + Table + "/Duzenle/{" + id + "}\",");
-                            yaz.WriteLine("\t\t\tDeleteLink: \"javascript:;\"");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
                         }
-                        else
+
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t@{");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\tforeach (usp_" + Table + "Select_Result item in Model)");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t{");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<tr>");
+
+                        i = 0;
+
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
                         {
-                            yaz.WriteLine("\t\t\tShowDetailLink: false,");
-                            yaz.WriteLine("\t\t\tShowUpdateLink: false,");
-                            yaz.WriteLine("\t\t\tShowDeleteLink: false");
+                            List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+
+                            string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                            if (column.TypeName.Name != "Boolean")
+                            {
+                                if (frchkForeignLst2.Count > 0)
+                                {
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + frchkForeignLst2.FirstOrDefault().PrimaryTableName + "Adi</td>");
+                                }
+                                else
+                                {
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + column.ColumnName + "</td>");
+                                }
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + " style=\"text-align:center;\">@(item." + column.ColumnName + " == true ? Html.Raw(\"<img class='active' />\") : Html.Raw(\"<img class='passive' />\"))</td>");
+                            }
+
+                            i++;
                         }
 
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("\t});");
-                        yaz.WriteLine("</script>");
+                        if (identityColumns.Count > 0)
+                        {
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" href=\"@AppMgr.AdminPath/" + Table + "/Duzenle/@item." + id + "\">Düzenle</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-type=\"" + Table + "\" data-id=\"@item." + id + "\" data-link=\"" + Table + "\" data-toggle=\"modal\" href=\"#dltData\">Sil</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t</ul>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t</div>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</td>");
+                        }
 
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</tr>");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t\t\t</tbody>");
+                        yaz.WriteLine("\t\t\t\t\t\t</table>");
+                        yaz.WriteLine("\t\t\t\t\t</div>");
+                        yaz.WriteLine("\t\t\t\t</div>");
+                        yaz.WriteLine("\t\t\t</div>");
+                        yaz.WriteLine("\t\t</div>");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t<div class=\"pagelinks\">");
+                        yaz.WriteLine("\t\t\t@Html.ActionLink(\"" + Table + " Ekle\", \"Ekle\", \"" + Table + "\", null, new { @class = \"btn btn-primary btn-add\", data_type = \"" + Table + "\" })");
+                        yaz.WriteLine("\t\t</div>");
+                        yaz.WriteLine("\t</div>");
+                        yaz.WriteLine("</div>");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@{ Html.RenderPartial(\"~/Areas/Admin/Views/Shared/Controls/_CopyDelete.cshtml\"); }");
                         yaz.Close();
                     }
                 }
@@ -1234,18 +1258,24 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        yaz.WriteLine("@model " + projectName + "." + Table);
+                        yaz.WriteLine("@model Models." + Table + "Model");
                         yaz.WriteLine("");
                         yaz.WriteLine("@{");
                         yaz.WriteLine("\tViewBag.Title = \"" + Table + " Ekle\";");
-                        yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_Layout.cshtml\";");
+                        yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml\";");
                         yaz.WriteLine("}");
                         yaz.WriteLine("");
-                        yaz.WriteLine("@using (Html.BeginForm()) {");
-                        yaz.WriteLine("\t@Html.ValidationSummary(true)");
+                        yaz.WriteLine("<div id=\"content\">");
+                        yaz.WriteLine("\t<div id=\"content-header\">");
+                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + " Ekle</a></div>");
+                        yaz.WriteLine("\t</div>");
+                        yaz.WriteLine("\t<div class=\"container-fluid\">");
+                        yaz.WriteLine("\t\t@using (Html.BeginForm())");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\t@Html.ValidationSummary(true)");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t<fieldset>");
-                        yaz.WriteLine("\t\t<legend>" + Table + " Ekle</legend>");
+                        yaz.WriteLine("\t\t\t<fieldset>");
+
                         foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                         {
                             if (!identityColumns.Contains(column.ColumnName))
@@ -1254,42 +1284,53 @@ namespace TDFactory
 
                                 if (frchkLst.Count > 0)
                                 {
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                    yaz.WriteLine("\t\t\t" + frchkLst.FirstOrDefault().PrimaryTableName + "Adi");
-                                    yaz.WriteLine("\t\t</div>");
-                                    yaz.WriteLine("\t\t<div class=\"clear\"></div>");
-                                    yaz.WriteLine("\t\t<div class=\"editor-field\">");
-                                    yaz.WriteLine("\t\t\t@Html.DropDownListFor(model => model." + column.ColumnName + ", (List<SelectListItem>)Model." + frchkLst.FirstOrDefault().PrimaryTableName + "List)");
-                                    yaz.WriteLine("\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+                                    yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName);
+                                    yaz.WriteLine("\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                    yaz.WriteLine("\t\t\t\t\t@Html.DropDownListFor(model => model." + column.ColumnName + ", (List<SelectListItem>)Model." + frchkLst.FirstOrDefault().PrimaryTableName + "List)");
+                                    yaz.WriteLine("\t\t\t\t</div>");
                                 }
                                 else
                                 {
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                    yaz.WriteLine("\t\t\t@Html.LabelFor(model => model." + column.ColumnName + ")");
-                                    yaz.WriteLine("\t\t</div>");
-                                    yaz.WriteLine("\t\t<div class=\"clear\"></div>");
-                                    yaz.WriteLine("\t\t<div class=\"editor-field\">");
-                                    yaz.WriteLine("\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
-                                    yaz.WriteLine("\t\t\t@Html.ValidationMessageFor(model => model." + column.ColumnName + ")");
-                                    yaz.WriteLine("\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+                                    yaz.WriteLine("\t\t\t\t\t@Html.LabelFor(model => model." + column.ColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+
+                                    if (column.TypeName.Name == "String" && column.CharLength != "")
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ")");
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
+                                    }
+
+                                    yaz.WriteLine("\t\t\t\t\t@Html.ValidationMessageFor(model => model." + column.ColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t</div>");
                                 }
-                                yaz.WriteLine("\t\t<div class=\"clear\"></div>");
+
+                                yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                yaz.WriteLine("");
                             }
                         }
 
+                        yaz.WriteLine("\t\t\t\t<p>");
+                        yaz.WriteLine("\t\t\t\t\t<div class=\"alert alert-error\" style=\"display:@(String.IsNullOrEmpty(Model.Mesaj) ? \"none;\" : \"block;\")\">");
+                        yaz.WriteLine("\t\t\t\t\t\t<button class=\"close\" data-dismiss=\"alert\">×</button>");
+                        yaz.WriteLine("\t\t\t\t\t\t<strong>Hata!</strong> @Model.Mesaj");
+                        yaz.WriteLine("\t\t\t\t\t</div>");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t<p>");
-                        yaz.WriteLine("\t\t\t<input type=\"submit\" value=\"Kaydet\" />");
-                        yaz.WriteLine("\t\t</p>");
-                        yaz.WriteLine("\t</fieldset>");
-                        yaz.WriteLine("}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("<div class=\"pagelinks\">");
-                        yaz.WriteLine("\t@Html.ActionLink(\"Listeye Git\", \"Index\", \"" + Table + "\")");
+                        yaz.WriteLine("\t\t\t\t\t<input type=\"submit\" value=\"Kaydet\" class=\"btn btn-success btn-save\" />");
+                        yaz.WriteLine("\t\t\t\t\t@Html.ActionLink(\"İptal\", \"Index\", \"" + Table + "\", null, new { @class = \"btn btn-danger btn-cancel\", data_controller=\"" + Table + "\" })");
+                        yaz.WriteLine("\t\t\t\t</p>");
+                        yaz.WriteLine("\t\t\t</fieldset>");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t</div>");
                         yaz.WriteLine("</div>");
-
                         yaz.Close();
                     }
                 }
@@ -1301,69 +1342,217 @@ namespace TDFactory
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                         {
-                            yaz.WriteLine("@model " + projectName + "." + Table);
+                            yaz.WriteLine("@model Models." + Table + "Model");
+
+                            if (fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("@using TDLibrary");
+                                yaz.WriteLine("@using Models");
+                            }
+
                             yaz.WriteLine("");
                             yaz.WriteLine("@{");
                             yaz.WriteLine("\tViewBag.Title = \"" + Table + " Düzenle\";");
-                            yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_Layout.cshtml\";");
+                            yaz.WriteLine("\tLayout = \"~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml\";");
                             yaz.WriteLine("}");
                             yaz.WriteLine("");
-
-                            yaz.WriteLine("@using (Html.BeginForm()) {");
-                            yaz.WriteLine("\t@Html.ValidationSummary(true)");
+                            yaz.WriteLine("<div id=\"content\">");
+                            yaz.WriteLine("\t<div id=\"content-header\">");
+                            yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + " Düzenle</a></div>");
+                            yaz.WriteLine("\t</div>");
+                            yaz.WriteLine("\t<div class=\"container-fluid\">");
+                            yaz.WriteLine("\t\t@using (Html.BeginForm())");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\t@Html.ValidationSummary(true)");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t<fieldset>");
-                            yaz.WriteLine("\t\t<legend>" + Table + " Düzenle</legend>");
+                            yaz.WriteLine("\t\t\t<fieldset>");
+
                             foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                             {
-                                if (identityColumns.Contains(column.ColumnName))
-                                {
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                    yaz.WriteLine("\t\t\t@Html.HiddenFor(model => model." + column.ColumnName + ")");
-                                    yaz.WriteLine("\t\t</div>");
-                                }
-                                else
+                                if (!identityColumns.Contains(column.ColumnName))
                                 {
                                     List<ForeignKeyChecker> frchkLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                     if (frchkLst.Count > 0)
                                     {
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                        yaz.WriteLine("\t\t\t" + frchkLst.FirstOrDefault().PrimaryTableName + "Adi");
-                                        yaz.WriteLine("\t\t</div>");
-                                        yaz.WriteLine("\t\t<div class=\"clear\"></div>");
-                                        yaz.WriteLine("\t\t<div class=\"editor-field\">");
-                                        yaz.WriteLine("\t\t\t@Html.DropDownListFor(model => model." + column.ColumnName + ", (List<SelectListItem>)Model." + frchkLst.FirstOrDefault().PrimaryTableName + "List)");
-                                        yaz.WriteLine("\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+                                        yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName);
+                                        yaz.WriteLine("\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                        yaz.WriteLine("\t\t\t\t\t@Html.DropDownListFor(model => model." + column.ColumnName + ", (List<SelectListItem>)Model." + frchkLst.FirstOrDefault().PrimaryTableName + "List)");
+                                        yaz.WriteLine("\t\t\t\t</div>");
                                     }
                                     else
                                     {
-                                        yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t<div class=\"editor-label\">");
-                                        yaz.WriteLine("\t\t\t@Html.LabelFor(model => model." + column.ColumnName + ")");
-                                        yaz.WriteLine("\t\t</div>");
-                                        yaz.WriteLine("\t\t<div class=\"clear\"></div>");
-                                        yaz.WriteLine("\t\t<div class=\"editor-field\">");
-                                        yaz.WriteLine("\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
-                                        yaz.WriteLine("\t\t\t@Html.ValidationMessageFor(model => model." + column.ColumnName + ")");
-                                        yaz.WriteLine("\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+                                        yaz.WriteLine("\t\t\t\t\t@Html.LabelFor(model => model." + column.ColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+
+                                        if (column.TypeName.Name == "String" && column.CharLength != "")
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ")");
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
+                                        }
+
+                                        yaz.WriteLine("\t\t\t\t\t@Html.ValidationMessageFor(model => model." + column.ColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t</div>");
                                     }
-                                    yaz.WriteLine("\t\t<div class=\"clear\"></div>");
+
+                                    yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                    yaz.WriteLine("");
+                                }
+                                else
+                                {
+                                    yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+                                    yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model." + id + ")");
+                                    yaz.WriteLine("\t\t\t\t</div>");
                                 }
                             }
 
+                            yaz.WriteLine("\t\t\t\t<p>");
+                            yaz.WriteLine("\t\t\t\t\t<div class=\"alert alert-error\" style=\"display:@(String.IsNullOrEmpty(Model.Mesaj) ? \"none;\" : \"block;\")\">");
+                            yaz.WriteLine("\t\t\t\t\t\t<button class=\"close\" data-dismiss=\"alert\">×</button>");
+                            yaz.WriteLine("\t\t\t\t\t\t<strong>Hata!</strong> @Model.Mesaj");
+                            yaz.WriteLine("\t\t\t\t\t</div>");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\t<p>");
-                            yaz.WriteLine("\t\t\t<input type=\"submit\" value=\"Kaydet\" />");
-                            yaz.WriteLine("\t\t</p>");
-                            yaz.WriteLine("\t</fieldset>");
-                            yaz.WriteLine("}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("<div class=\"pagelinks\">");
-                            yaz.WriteLine("\t@Html.ActionLink(\"Listeye Git\", \"Index\", \"" + Table + "\")");
+                            yaz.WriteLine("\t\t\t\t\t<input type=\"submit\" value=\"Kaydet\" class=\"btn btn-success btn-save\" />");
+                            yaz.WriteLine("\t\t\t\t\t@Html.ActionLink(\"İptal\", \"Index\", \"" + Table + "\", null, new { @class = \"btn btn-danger btn-cancel\", data_controller=\"" + Table + "\" })");
+                            yaz.WriteLine("\t\t\t\t</p>");
+                            yaz.WriteLine("\t\t\t</fieldset>");
+                            yaz.WriteLine("\t\t}");
+
+                            if (fkcList.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+
+                                    List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
+                                    string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
+
+                                    List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName).Take(4).ToList();
+
+                                    List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
+                                    fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
+
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t<div class=\"row-fluid\">");
+                                    yaz.WriteLine("\t\t\t<div class=\"span12\">");
+                                    yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
+                                    yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
+                                    yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
+                                    yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + ForeignTableName + "</h5>");
+                                    yaz.WriteLine("\t\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
+                                    yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t<thead>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t<tr>");
+
+                                    i = 0;
+
+                                    foreach (TableColumnNames item in foreignColumns)
+                                    {
+                                        List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
+
+                                        string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                                        if (frchkForeignLst.Count > 0)
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst.FirstOrDefault().PrimaryTableName + "</th>");
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + item.ColumnName + "</th>");
+                                        }
+
+                                        i++;
+                                    }
+
+                                    if (identityForeignColumns.Count > 0)
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
+                                    }
+
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
+
+                                    yaz.WriteLine("\t\t\t\t\t\t\t@{");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\tforeach (" + ForeignTableName + " item in Model." + ForeignTableName + "List)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<tr>");
+
+                                    i = 0;
+
+                                    foreach (TableColumnNames item in foreignColumns)
+                                    {
+                                        List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
+
+                                        string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                                        if (item.TypeName.Name != "Boolean")
+                                        {
+                                            if (frchkForeignLst.Count > 0)
+                                            {
+                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + frchkForeignLst.FirstOrDefault().PrimaryTableName + "Adi</td>");
+                                            }
+                                            else
+                                            {
+                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + item.ColumnName + "</td>");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + " style=\"text-align:center;\">@(item." + item.ColumnName + " == true ? Html.Raw(\"<img class='active' />\") : Html.Raw(\"<img class='passive' />\"))</td>");
+                                        }
+
+                                        i++;
+                                    }
+
+                                    if (identityForeignColumns.Count > 0)
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" href=\"@AppMgr.AdminPath/" + ForeignTableName + "/Duzenle/@item." + idFrgn + "\">Düzenle</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-toggle=\"modal\" href=\"#dltData\" data-link=\"" + ForeignTableName + "\" data-id=\"@item." + idFrgn + "\">Sil</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t</ul>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</td>");
+                                    }
+
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t</tr>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t</tbody>");
+                                    yaz.WriteLine("\t\t\t\t\t\t</table>");
+                                    yaz.WriteLine("\t\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t\t</div>");
+                                    yaz.WriteLine("\t\t\t</div>");
+                                    yaz.WriteLine("\t\t</div>");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t<div class=\"pagelinks\">");
+                                    yaz.WriteLine("\t\t\t<a href=\"@AppMgr.AdminPath/" + ForeignTableName + "/Ekle\" class=\"btn btn-primary btn-add\"> Ekle</a>");
+                                    yaz.WriteLine("\t\t\t@Html.ActionLink(\"" + ForeignTableName + " Ekle\", \"Ekle\", \"" + ForeignTableName + "\", new { linkID = Model." + id + " }, new { @class = \"btn btn-primary btn-add\", data_type = \"" + ForeignTableName + "\" })");
+                                    yaz.WriteLine("\t\t</div>");
+                                }
+                            }
+
+                            yaz.WriteLine("\t</div>");
                             yaz.WriteLine("</div>");
+
+                            if (fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("@{ Html.RenderPartial(\"~/Areas/Admin/Views/Shared/Controls/_CopyDelete.cshtml\"); }");
+                            }
 
                             yaz.Close();
                         }
@@ -1401,199 +1590,293 @@ namespace TDFactory
                     i++;
                 }
 
-                StreamWriter yaz = File.CreateText(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Controllers\\" + Table + "Controller.cs");
-
-                yaz.WriteLine("using System;");
-                yaz.WriteLine("using System.Linq;");
-                yaz.WriteLine("using System.Web.Mvc;");
-                yaz.WriteLine("using System.Collections.Generic;");
-                yaz.WriteLine("using TDLibrary;");
-                yaz.WriteLine("using Models;");
-
-                yaz.WriteLine("");
-                yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");
-                yaz.WriteLine("{");
-                yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
-                yaz.WriteLine("\t{");
-                yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
-                yaz.WriteLine("");
-
-                // Index
-                string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
-
-                yaz.WriteLine("\t\tpublic ViewResult Index(string conditions)");
-                yaz.WriteLine("\t\t{");
-                yaz.WriteLine("\t\t\treturn View();");
-                yaz.WriteLine("\t\t}");
-                yaz.WriteLine("");
-
-                if (identityColumns.Count > 0)
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Controllers\\" + Table + "Controller.cs", FileMode.Create))
                 {
-                    string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
-
-                    // Ekle
-                    yaz.WriteLine("\t\tpublic ActionResult Ekle()");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\t" + Table + " table = new " + Table + "();");
-                    yaz.WriteLine("");
-
-                    if (fkcListForeign.Count > 0)
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                        yaz.WriteLine("using System;");
+                        yaz.WriteLine("using System.Linq;");
+                        yaz.WriteLine("using System.Web.Mvc;");
+                        yaz.WriteLine("using System.Collections.Generic;");
+                        yaz.WriteLine("using " + projectName + ".Data;");
+                        yaz.WriteLine("using TDLibrary;");
+                        yaz.WriteLine("using Models;");
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                        yaz.WriteLine("");
+
+                        // Index
+                        string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
+
+                        yaz.WriteLine("\t\tpublic ViewResult Index()");
+                        yaz.WriteLine("\t\t{");
+
+                        string linked = fkcListForeign.Count > 0 ? "Linked" : "";
+
+                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> table = entity.usp_" + Table + linked + "LinkedSelect(null).ToList();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn View(table);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+
+                        string linkID = fkcListForeign.Count > 0 ? "string linkID" : "";
+
+                        // Ekle
+                        yaz.WriteLine("\t\tpublic ActionResult Ekle(" + linkID + ")");
+                        yaz.WriteLine("\t\t{");
+
+                        if (fkcListForeign.Count > 0)
                         {
-                            string PrimaryTableName = fkc.PrimaryTableName;
-
-                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\tint _linkID = linkID == null ? 0 : linkID.ToInteger();");
                             yaz.WriteLine("");
                         }
-                    }
 
-                    yaz.WriteLine("\t\t\treturn View(table);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t" + Table + "Model table = new " + Table + "Model();");
+                        yaz.WriteLine("");
 
-                    yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
-                    yaz.WriteLine("\t\tpublic ActionResult Ekle(" + Table + " table)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\tentity." + Table + ".Add(table);");
-                    yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("");
-
-                    if (fkcListForeign.Count > 0)
-                    {
-                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                        if (fkcListForeign.Count > 0)
                         {
-                            string PrimaryTableName = fkc.PrimaryTableName;
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tforeach (" + PrimaryTableName + " item in table" + PrimaryTableName + ")");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + " });");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(item." + fkc.PrimaryColumnName + ".ToString(), item." + columnText + ", _linkID);");
+                                yaz.WriteLine("");
+                            }
                         }
-                    }
 
-                    yaz.WriteLine("\t\t\treturn View(\"Ekle\", table);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn View(table);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
 
-                    //Duzenle
-                    yaz.WriteLine("\t\t[HttpGet]");
-                    yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(id);");
-                    yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpPost]");
+                        yaz.WriteLine("\t\tpublic ActionResult Ekle(" + Table + "Model table)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
+                        yaz.WriteLine("\t\t\t{");
 
-                    if (fkcListForeign.Count > 0)
-                    {
-                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+
+                        string insertSql = "var result = entity.usp_" + Table + "Insert(";
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                         {
-                            string PrimaryTableName = fkc.PrimaryTableName;
-                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                            if (!column.IsIdentity)
+                            {
+                                insertSql += "table." + column.ColumnName + ", ";
+                            }
+                        }
+                        insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
+                        insertSql += ").FirstOrDefault();";
 
-                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                        yaz.WriteLine("\t\t\t\t" + insertSql);
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tif(result != null)");
+                        yaz.WriteLine("\t\t\t\t\treturn RedirectToAction(\"Index\");");
+                        yaz.WriteLine("\t\t\t\telse");
+                        yaz.WriteLine("\t\t\t\t\ttable.Mesaj = \"Kayıt eklenemedi.\";");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(item." + fkc.PrimaryColumnName + ".ToString(), item." + columnText + ", _linkID);");
+                                yaz.WriteLine("");
+                            }
+                        }
+
+                        yaz.WriteLine("\t\t\treturn View(\"Ekle\", table);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+                        if (identityColumns.Count > 0)
+                        {
+                            string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
+
+                            //Duzenle
+                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectTop_Result tableTemp = _entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                            yaz.WriteLine("\t\t\t" + Table + "Model table = tableTemp.ChangeModel<" + Table + "Model>();");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+
+                            if (fkcListForeign.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + searchText + "\", table." + fkc.ForeignColumnName + ");");
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            if (fkcList.Count > 0)
+                            {
+                                i = 0;
+
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
+
+                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = _entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
+
+                                    int j = 0;
+
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        if (i == j)
+                                        {
+                                            linkedby += "id,";
+                                        }
+                                        else
+                                        {
+                                            linkedby += "null,";
+                                        }
+
+                                        j++;
+                                    }
+
+                                    i++;
+
+                                    linkedby = linkedby.TrimEnd(',');
+                                    linkedby += ").ToList();";
+
+                                    yaz.WriteLine(linkedby);
+
+                                    yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "ByLinkedIDSelect_Result>());");
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(table);");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t[HttpPost]");
+                            yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + Table + "Model table)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
                             yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                            yaz.WriteLine("\t\t\t\t{");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                            yaz.WriteLine("\t\t\t\t}");
+
+                            string updateSql = "var result = entity.usp_" + Table + "Update(";
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            {
+                                updateSql += "table." + column.ColumnName + ", ";
+                            }
+                            updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
+                            updateSql += ").FirstOrDefault();";
+
+                            yaz.WriteLine("\t\t\t\t" + updateSql);
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\t\t\t\tif(result != null)");
+                            yaz.WriteLine("\t\t\t\t\treturn RedirectToAction(\"Index\");");
                             yaz.WriteLine("\t\t\t\telse");
-                            yaz.WriteLine("\t\t\t\t{");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                            yaz.WriteLine("\t\t\t\t}");
+                            yaz.WriteLine("\t\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
+
                             yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\telse");
+                            yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Model uygun değil.\";");
                             yaz.WriteLine("");
-                        }
-                    }
 
-                    yaz.WriteLine("\t\t\treturn View(table);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[HttpPost, ValidateInput(false)]");
-                    yaz.WriteLine("\t\tpublic ActionResult Duzenle(" + Table + " table)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\t" + Table + " _table = entity." + Table + ".Find(table." + id + ");");
-                    yaz.WriteLine("");
+                            if (fkcListForeign.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
 
-                    foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                    {
-                        yaz.WriteLine("\t\t\t\t_table." + column.ColumnName + " = table." + column.ColumnName + ";");
-                    }
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\tentity.SaveChanges();");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t\treturn RedirectToAction(\"Index\");");
-                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + searchText + "\", table." + fkc.ForeignColumnName + ");");
+                                    yaz.WriteLine("");
+                                }
+                            }
 
-                    yaz.WriteLine("");
+                            if (fkcList.Count > 0)
+                            {
+                                i = 0;
 
-                    if (fkcListForeign.Count > 0)
-                    {
-                        foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                        {
-                            string PrimaryTableName = fkc.PrimaryTableName;
-                            string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
 
-                            yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
+                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = _entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
+
+                                    int j = 0;
+
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        if (i == j)
+                                        {
+                                            linkedby += "table." + id + ",";
+                                        }
+                                        else
+                                        {
+                                            linkedby += "null,";
+                                        }
+
+                                        j++;
+                                    }
+
+                                    i++;
+
+                                    linkedby = linkedby.TrimEnd(',');
+                                    linkedby += ").ToList();";
+
+                                    yaz.WriteLine(linkedby);
+
+                                    yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "ByLinkedIDSelect_Result>());");
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(\"Duzenle\", table);");
+                            yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tforeach (var item in table" + PrimaryTableName + ")");
+
+                            //Sil
+                            yaz.WriteLine("\t\t[HttpPost]");
+                            yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\ttry");
                             yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tif(item." + fkc.PrimaryColumnName + " == table." + fkc.ForeignColumnName + ")");
-                            yaz.WriteLine("\t\t\t\t{");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = true });");
-                            yaz.WriteLine("\t\t\t\t}");
-                            yaz.WriteLine("\t\t\t\telse");
-                            yaz.WriteLine("\t\t\t\t{");
-                            yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List.Add(new SelectListItem() { Value = item." + fkc.PrimaryColumnName + ".ToString(), Text = item." + columnText + ", Selected = false });");
-                            yaz.WriteLine("\t\t\t\t}");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
                             yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn Json(true);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\tcatch");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn Json(false);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t}");
                         }
+
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+
+                        yaz.Close();
                     }
-
-                    yaz.WriteLine("\t\t\treturn View(\"Duzenle\", table);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-
-                    //Sil
-                    yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " conditions)");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\t" + Table + " table = entity." + Table + ".Find(conditions);");
-                    yaz.WriteLine("\t\t\tentity." + Table + ".Remove(table);");
-                    yaz.WriteLine("\t\t\tentity.SaveChanges();");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\treturn Json(true);");
-                    yaz.WriteLine("\t\t}");
                 }
-
-                yaz.WriteLine("\t}");
-                yaz.WriteLine("}");
-
-                yaz.Close();
             }
         }
 
-        //
         void CreateHomePage()
         {
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Home\\Index.cshtml", FileMode.Create))
@@ -1754,7 +2037,6 @@ namespace TDFactory
             }
         }
 
-        //
         void CreateHomeController()
         {
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Controllers\\HomeController.cs", FileMode.Create))
@@ -1819,7 +2101,7 @@ namespace TDFactory
         void CreateAngular()
         {
             CreateAngularDirectories();
-            CreateReadMe();
+            CreateAngularReadMe();
             CreateAngularFiles();
 
             if (chkMVCHepsi.Checked == true)
@@ -2092,6 +2374,11 @@ namespace TDFactory
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations");
                     }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Service"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Service");
+                    }
                 }
                 else
                 {
@@ -2229,6 +2516,14 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations");
+                        }
+                    }
+
+                    if (chkMVCWcfServis.Checked)
+                    {
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Service"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Service");
                         }
                     }
                 }
@@ -4087,89 +4382,89 @@ namespace TDFactory
                         // Index
                         string searchText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
 
+                        string linked = fkcListForeign.Count > 0 ? "Linked" : "";
+
                         yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic JsonResult Index()");
                         yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tList<usp_" + Table + "Select_Result> table = entity.usp_" + Table + "Select(null).ToList();");
+                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> table = entity.usp_" + Table + linked + "Select(null).ToList();");
                         yaz.WriteLine("\t\t\t");
                         yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
                         // Ekle
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult Ekle()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\t" + Table + "Model table = new " + Table + "Model();");
+                        yaz.WriteLine("");
+
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
+                                yaz.WriteLine("");
+                            }
+                        }
+
+                        yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+                        // Ekle
+                        yaz.WriteLine("\t\t[HttpPost]");
+                        yaz.WriteLine("\t\tpublic JsonResult Ekle([System.Web.Http.FromBody] " + Table + "Model table)");
+                        yaz.WriteLine("\t\t{");
+
+                        string insertSql = "var result = entity.usp_" + Table + "Insert(";
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                        {
+                            if (!column.IsIdentity)
+                            {
+                                insertSql += "table." + column.ColumnName + ", ";
+                            }
+                        }
+                        insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
+                        insertSql += ").FirstOrDefault();";
+
+                        yaz.WriteLine("\t\t\t" + insertSql);
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tif (result != null)");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\treturn Json(table);");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\telse");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt eklenemedi.\";");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
+                                yaz.WriteLine("");
+                            }
+                        }
+
+                        yaz.WriteLine("\t\t\treturn Json(table);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
                         if (identityColumns.Count > 0)
                         {
                             string columntype = tableColumnNames.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().TypeName.Name.ToString();
-
-                            if (fkcListForeign.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t[HttpGet]");
-                                yaz.WriteLine("\t\tpublic JsonResult Ekle()");
-                                yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\t" + Table + "Model table = new " + Table + "Model();");
-                                yaz.WriteLine("");
-
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
-                                    yaz.WriteLine("");
-                                }
-
-                                yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
-                                yaz.WriteLine("\t\t}");
-                                yaz.WriteLine("");
-                            }
-
-                            // Ekle
-                            yaz.WriteLine("\t\t[HttpPost]");
-                            yaz.WriteLine("\t\tpublic JsonResult Ekle([System.Web.Http.FromBody] " + Table + "Model table)");
-                            yaz.WriteLine("\t\t{");
-
-                            string insertSql = "var result = entity.usp_" + Table + "Insert(";
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
-                            {
-                                if (!column.IsIdentity)
-                                {
-                                    insertSql += "table." + column.ColumnName + ", ";
-                                }
-                            }
-                            insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
-                            insertSql += ").FirstOrDefault();";
-
-                            yaz.WriteLine("\t\t\t" + insertSql);
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tif (result != null)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn Json(table);");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\telse");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt eklenemedi.\";");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("");
-
-                            if (fkcListForeign.Count > 0)
-                            {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
-
-                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
-                                    yaz.WriteLine("");
-                                }
-                            }
-
-                            yaz.WriteLine("\t\t\treturn Json(table);");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
 
                             //Duzenle
                             yaz.WriteLine("\t\t[HttpGet]");
@@ -4188,6 +4483,45 @@ namespace TDFactory
 
                                     yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
                                     yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            if (fkcList.Count > 0)
+                            {
+                                i = 0;
+
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
+
+                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = _entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
+
+                                    int j = 0;
+
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        if (i == j)
+                                        {
+                                            linkedby += "id,";
+                                        }
+                                        else
+                                        {
+                                            linkedby += "null,";
+                                        }
+
+                                        j++;
+                                    }
+
+                                    i++;
+
+                                    linkedby = linkedby.TrimEnd(',');
+                                    linkedby += ").ToList();";
+
+                                    yaz.WriteLine(linkedby);
+
+                                    yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "ByLinkedIDSelect_Result>());");
                                     yaz.WriteLine("");
                                 }
                             }
@@ -4230,6 +4564,45 @@ namespace TDFactory
 
                                     yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
                                     yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            if (fkcList.Count > 0)
+                            {
+                                i = 0;
+
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string ForeignTableName = fkc.ForeignTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
+
+                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = _entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
+
+                                    int j = 0;
+
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        if (i == j)
+                                        {
+                                            linkedby += "table." + id + ",";
+                                        }
+                                        else
+                                        {
+                                            linkedby += "null,";
+                                        }
+
+                                        j++;
+                                    }
+
+                                    i++;
+
+                                    linkedby = linkedby.TrimEnd(',');
+                                    linkedby += ").ToList();";
+
+                                    yaz.WriteLine(linkedby);
+
+                                    yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "ByLinkedIDSelect_Result>());");
                                     yaz.WriteLine("");
                                 }
                             }
@@ -5033,6 +5406,18 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
+                    yaz.WriteLine("");
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateAngularReadMe()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\readme.txt", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
                     yaz.WriteLine("---------------------");
                     yaz.WriteLine("-- Angular Kurulum --");
                     yaz.WriteLine("---------------------");
@@ -5159,7 +5544,10 @@ namespace TDFactory
 
         void CreateWcfService()
         {
-            CreateDirectories();
+            if (chkAngular.Checked)
+                CreateAngularDirectories();
+            else
+                CreateDirectories();
 
             foreach (string Table in selectedTables)
             {
@@ -5464,7 +5852,16 @@ namespace TDFactory
 
                     foreach (string Table in selectedTables)
                     {
-                        string idColumn = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table).FirstOrDefault();
+                        List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+                        string idColumn = identityColumns.FirstOrDefault();
+
+                        SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                        List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
+                        fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
+
+                        List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
+                        fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
                         string[] dizi = new string[lstSeciliKolonlar.Items.Count];
                         string[] diziML = new string[] { "nvarchar", "varchar", "binary", "char", "nchar", "varbinary" };
 
@@ -5579,6 +5976,171 @@ namespace TDFactory
                         yaz.WriteLine("GO");
                         yaz.WriteLine("");
                         //SelectTop//
+
+                        //LinkedSelect//
+                        if (fkcListForeign.Count > 0)
+                        {
+                            yaz.WriteLine("/* LinkedSelect */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "LinkedSelect]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "LinkedSelect]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "LinkedSelect]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + idColumn + " " + idType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                sqlText += "[" + column.ColumnName + "],";
+                            }
+
+                            yaz.WriteLine(sqlText);
+
+                            i = 0;
+                            int fkcCount = fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList().Count;
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                sqlText = "";
+
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+
+                                sqlText += "\t\t(SELECT " + aliases[i % 10] + "." + columnText + " FROM " + PrimaryTableName + " " + aliases[i % 10] + " WHERE " + aliases[i % 10] + "." + fkc.PrimaryColumnName + " = " + fkc.ForeignColumnName + ") as " + PrimaryTableName + "Adi,";
+
+                                if (fkcCount == i + 1)
+                                {
+                                    sqlText = sqlText.Remove(sqlText.Length - 1);
+                                    sqlText = sqlText.Replace(",", ", ");
+                                }
+
+                                yaz.WriteLine(sqlText);
+
+                                i++;
+                            }
+
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)");
+                            }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                        }
+                        //LinkedSelect//
+
+                        //ByLinkedIDSelect//
+                        if (fkcList.Count > 0)
+                        {
+                            i = 0;
+                            int fkcCount = fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList().Count;
+
+                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string ForeignTableName = fkc.ForeignTableName;
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
+
+                                List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
+
+                                if (i == 0)
+                                {
+                                    yaz.WriteLine("/* ByLinkedIDSelect */");
+                                    yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + ForeignTableName + "ByLinkedIDSelect]') IS NOT NULL");
+                                    yaz.WriteLine("BEGIN");
+                                    yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + ForeignTableName + "ByLinkedIDSelect]");
+                                    yaz.WriteLine("END");
+                                    yaz.WriteLine("GO");
+
+                                    yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + ForeignTableName + "ByLinkedIDSelect]");
+
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string fidType = null;
+                                        try
+                                        {
+                                            fidType = fColumnNames.Where(a => a.ColumnName == fkc2.ForeignColumnName).FirstOrDefault().DataType;
+                                        }
+                                        catch
+                                        {
+                                        }
+
+                                        if (fidType != null)
+                                        {
+                                            yaz.WriteLine("\t@" + fkc2.ForeignColumnName + " " + fidType);
+                                        }
+                                    }
+
+                                    yaz.WriteLine("AS");
+                                    yaz.WriteLine("\tSET NOCOUNT ON");
+                                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\tBEGIN TRAN");
+                                    yaz.WriteLine("");
+
+                                    sqlText = "\tSELECT ";
+
+                                    foreach (ColumnInfo column in columnNames)
+                                    {
+                                        sqlText += "[" + column.ColumnName + "],";
+                                    }
+
+                                    yaz.WriteLine(sqlText);
+                                }
+
+                                sqlText = "";
+
+                                sqlText += "\t(SELECT " + aliases[i % 10] + "." + columnText + " FROM " + Table + " " + aliases[i % 10] + " WHERE " + aliases[i % 10] + "." + fkc.PrimaryColumnName + " = " + fkc.ForeignColumnName + ") as " + Table + "Adi,";
+
+                                if (fkcCount == i + 1)
+                                {
+                                    sqlText = sqlText.Remove(sqlText.Length - 1);
+                                    sqlText = sqlText.Replace(",", ", ");
+                                }
+
+                                yaz.WriteLine(sqlText);
+
+                                if (i == 0)
+                                {
+                                    yaz.WriteLine("\tFROM " + schema + ".[" + ForeignTableName + "]");
+
+                                    sqlText = "\tWHERE";
+
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        sqlText += " ([" + fkc2.ForeignColumnName + "] = @" + fkc2.ForeignColumnName + " OR @" + fkc2.ForeignColumnName + " IS NULL) AND";
+                                    }
+
+                                    sqlText = sqlText.TrimEnd('D').TrimEnd('N').TrimEnd('A').TrimEnd(' ');
+
+                                    yaz.WriteLine(sqlText);
+
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\tCOMMIT");
+                                    yaz.WriteLine("GO");
+                                    yaz.WriteLine("");
+                                }
+
+                                i++;
+                            }
+                        }
+                        //ByLinkedIDSelect//
 
                         ////Insert//
                         yaz.WriteLine("/* Insert */");
@@ -5906,91 +6468,208 @@ namespace TDFactory
                 }
             }
 
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\main.js");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\main.js");
-
             CreateJquery();
+            CreateImages();
+            CreateCKEditor();
+            CreateFontAwesome();
 
             if (chkAngular.Checked)
             {
-                CreateAngularStylelScripts();
-                CreateImages();
+                CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\css\\main.css");
+                CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\main.js");
+                CopyFromResource(StringToByteArray(Properties.Resources.Angular_Content_admin_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\main.css");
+                CopyFromResource(StringToByteArray(Properties.Resources.Angular_Content_admin_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\main.js");
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-style.css", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        yaz.WriteLine("*{outline:0!important;-moz-outline:none!important}body,html{height:100%;margin-top:-5px!important}body{overflow-x:hidden;margin-top:-10px;font-family:'Open Sans',sans-serif;font-size:12px;color:#666}a{color:#666}a:focus,a:hover{text-decoration:none;color:#28b779}tr.odd{background-color:#fff}.dropdown-menu .divider{margin:4px 0}.dropdown-menu{min-width:65px}.dropdown-menu>li>a{padding:3px 10px;color:#666;font-size:12px}.dropdown-menu>li>a i{padding-right:3px}.userphoto img{width:19px;height:19px}.alert{display:none}.alert,.btn,.btn-group>.btn:first-child,.btn-group>.btn:last-child,.btn-group>.dropdown-toggle,.dropdown-menu,.label,.progress,.table-bordered,.uneditable-input,.well,input[type=color],input[type=date],input[type=datetime-local],input[type=datetime],input[type=email],input[type=month],input[type=number],input[type=password],input[type=search],input[type=tel],input[type=text],input[type=time],input[type=url],input[type=week],select,textarea{border-radius:0}.btn,.uneditable-input,input[type=color],input[type=date],input[type=datetime-local],input[type=datetime],input[type=email],input[type=month],input[type=number],input[type=password],input[type=search],input[type=tel],input[type=text],input[type=time],input[type=url],input[type=week],textarea{box-shadow:none}.btn,.btn-primary,.progress,.progress .bar-danger,.progress .bar-info,.progress .bar-success,.progress .bar-warning,.progress-danger .bar,.progress-info .bar,.progress-success .bar,.progress-warning .bar{background-image:none}.accordion-heading h5{width:70%}.form-horizontal .form-actions{padding-left:20px}#footer{padding:10px;text-align:center}hr{border-top-color:#dadada}.carousel{margin-bottom:0}.fl{float:left}.fr{float:right}.badge-important,.label-important{background:#f74d4d}.bg_lb{background:#27a9e3}.bg_db{background:#2295c9}.bg_lg{background:#28b779}.bg_dg{background:#28b779}.bg_ly{background:#ffb848}.bg_dy{background:#da9628}.bg_ls{background:#2255a4}.bg_lo{background:#da542e}.bg_lr{background:#f74d4d}.bg_lv{background:#603bbc}.bg_lh{background:#b6b3b3}#header{height:77px;position:relative;width:100%;z-index:-9}#header h1{height:67px;left:0;overflow:hidden;position:relative;top:5px;width:211px;margin:0}#header h1 a{display:block;text-align:center}#header h1 a img{height:67px;vertical-align:top}#search{position:absolute;z-index:25;top:6px;right:10px}#search input[type=text]{padding:4px 10px 5px;border:0;width:100px}#search button{border:0;margin-left:-3px;margin-top:-11px;padding:5px 10px 4px}#search button i{opacity:.8;color:#fff}#search button:active i,#search button:hover i{opacity:1}#user-nav{position:absolute;left:220px;top:0;z-index:20;margin:0}#user-nav>ul{margin:0;padding:0;list-style:none;border-right:1px solid #2e363f;border-left:1px solid #000}#user-nav>ul>li{float:left;list-style-type:none;margin:0;position:relative;padding:0;border-left:1px solid #2e363f;border-right:1px solid #000}#user-nav>ul>li>a{padding:9px 10px;display:block;font-size:11px;cursor:pointer}#user-nav>ul>li.open>a,#user-nav>ul>li>a:hover{color:#fff;background:#000}#sidebar li a i,#user-nav>ul>li>a>i{opacity:.5;margin-top:2px}#user-nav>ul>li.open>a>i,#user-nav>ul>li>a:hover>i{opacity:1}#user-nav>ul>li>a>.label{vertical-align:middle;padding:1px 4px 1px;margin:-2px 4px 0;display:inline-block}#user-nav>ul ul>li>a{text-align:left}#sidebar{display:block;float:left;position:relative;width:220px;z-index:16}#sidebar>ul{list-style:none;margin:0 0 0;padding:0;position:absolute;width:220px}#sidebar>ul>li{display:block;position:relative}#sidebar>ul>li>a{padding:10px 0 10px 15px;display:block;color:#939da8}#sidebar>ul>li>a>i{margin-right:10px}#sidebar>ul>li.active>a{background:url(/" + projectName + "/Content/admin/img/menu-active.png) no-repeat scroll right center transparent!important;text-decoration:none}#sidebar>ul>li>a>.label{margin:0 20px 0 0;float:right;padding:3px 5px 2px}#sidebar>ul li ul{display:none;margin:0;padding:0}#sidebar>ul li.open ul{display:block}#sidebar>ul li ul li a{padding:10px 0 10px 25px;display:block;color:#777}#sidebar>ul li ul li:first-child a{border-top:0}#sidebar>ul li ul li:last-child a{border-bottom:0}#content{background:none repeat scroll 0 0 #eee;margin-left:220px;margin-right:0;padding-bottom:25px;position:relative;min-height:100%;width:auto}#content-header{position:abslute;width:100%;margin-top:-38px;z-index:20}#content-header h1{color:#555;font-size:28px;font-weight:400;float:none;text-shadow:0 1px 0 #fff;margin-left:20px;position:relative}#content-header .btn-group{float:right;right:20px;position:absolute}#content-header .btn-group,#content-header h1{margin-top:20px}#content-header .btn-group .btn{padding:11px 14px 9px}#content-header .btn-group .btn .label{position:absolute;top:-7px}.container-fluid .row-fluid:first-child{margin-top:20px}#breadcrumb{background-color:#fff;border-bottom:1px solid #e3ebed;text-align:center}#breadcrumb a{padding:8px 20px 8px 10px;display:inline-block;background-image:url(/../img/breadcrumb.png);background-position:center right;background-repeat:no-repeat;font-size:16px;font-weight:700;color:#2255a4;cursor:pointer}#breadcrumb a:hover{color:#333}#breadcrumb a:last-child{background-image:none}#breadcrumb a.current{font-weight:700;color:#444}#breadcrumb a i{margin-right:5px;opacity:.6}#breadcrumb a:hover i{margin-right:5px;opacity:.8}.todo ul{list-style:none outside none;margin:0}.todo li{border-bottom:1px solid #ebebeb;margin-bottom:0;padding:10px 0}.todo li:hover{background:none repeat scroll 0 0 #fcfcfc;border-color:#d9d9d9}.todo li:last-child{border-bottom:0}.todo li .txt{float:left}.todo li .by{margin-left:10px;margin-right:10px}.todo li .date{margin-right:10px}.quick-actions_homepage{width:100%;text-align:center;position:relative;float:left;margin-top:10px}.quick-actions,.quick-actions-horizontal,.stat-boxes,.stats-plain{display:block;list-style:none outside none;margin:15px 0;text-align:center}.stat-boxes2{display:inline-block;list-style:none outside none;margin:0;text-align:center}.stat-boxes2 li{display:inline-block;line-height:18px;margin:0 10px 10px;padding:0 10px;background:#fff;border:1px solid #dcdcdc}.stat-boxes2 li:hover{background:#f6f6f6}.stat-boxes .right,.stat-boxes2 .left{text-shadow:0 1px 0 #fff;float:left}.stat-boxes2 .left{border-right:1px solid #dcdcdc;box-shadow:1px 0 0 0 #fff;font-size:10px;font-weight:700;margin-right:10px;padding:10px 14px 6px 4px}.stat-boxes2 .right{color:#666;font-size:12px;padding:9px 10px 7px 0;text-align:center;min-width:70px;float:left}.stat-boxes2 .left span,.stat-boxes2 .right strong{display:block}.stat-boxes2 .right strong{font-size:26px;margin-bottom:3px;margin-top:6px}.quick-actions_homepage .quick-actions li{position:relative}.quick-actions_homepage .quick-actions li .label{position:absolute;padding:5px;top:-10px;right:-5px}.stats-plain{width:100%}.quick-actions li,.quick-actions-horizontal li,.stat-boxes li{float:left;line-height:18px;margin:0 10px 10px 0;padding:0 10px}.quick-actions li a:hover,.quick-actions li:hover,.quick-actions-horizontal li a:hover,.quick-actions-horizontal li:hover,.stat-boxes li a:hover,.stat-boxes li:hover{background:#2e363f}.quick-actions li{height:124px;width:210px}.quick-actions_homepage .quick-actions .span3{width:30%}.quick-actions li,.quick-actions-horizontal li{padding:0}.stats-plain li{padding:0 30px;display:inline-block;margin:0 10px 20px}.quick-actions li a{padding:20px 10px}.stats-plain li h4{font-size:40px;margin-bottom:15px}.stats-plain li span{font-size:14px;color:#fff}.quick-actions-horizontal li a span{padding:10px 12px 10px 10px;display:inline-block}.quick-actions li a,.quick-actions-horizontal li a{display:block;color:#fff;font-size:14px;font-weight:lighter}.quick-actions li a i[class*=\" icon-\"],.quick-actions li a i[class^=icon-]{font-size:60px;display:block;margin:0 auto 5px}.quick-actions-horizontal li a i[class*=\" icon-\"],.quick-actions-horizontal li a i[class^=icon-]{background-repeat:no-repeat;background-attachment:scroll;background-position:center;background-color:transparent;width:16px;height:16px;display:inline-block;margin:-2px 0 0!important;border-right:1px solid #ddd;margin-right:10px;padding:10px;vertical-align:middle}.quick-actions li:active,.quick-actions-horizontal li:active{background-image:-webkit-gradient(linear,0 0,0 100%,from(#eee),to(#f4f4f4));background-image:-webkit-linear-gradient(top,#eee 0,#f4f4f4 100%);background-image:-moz-linear-gradient(top,#eee 0,#f4f4f4 100%);background-image:-ms-linear-gradient(top,#eee 0,#f4f4f4 100%);background-image:-o-linear-gradient(top,#eee 0,#f4f4f4 100%);background-image:linear-gradient(top,#eee 0,#f4f4f4 100%);box-shadow:0 1px 4px 0 rgba(0,0,0,.2) inset,0 1px 0 rgba(255,255,255,.4)}.stat-boxes .left,.stat-boxes .right{text-shadow:0 1px 0 #fff;float:left}.stat-boxes .left{border-right:1px solid #dcdcdc;box-shadow:1px 0 0 0 #fff;font-size:10px;font-weight:700;margin-right:10px;padding:10px 14px 6px 4px}.stat-boxes .right{color:#666;font-size:12px;padding:9px 10px 7px 0;text-align:center;min-width:70px}.stat-boxes .left span,.stat-boxes .right strong{display:block}.stat-boxes .right strong{font-size:26px;margin-bottom:3px;margin-top:6px},.stat-boxes .peity_bar_good,.stat-boxes .peity_line_good{color:#459d1c}.stat-boxes .peity_bar_neutral,.stat-boxes .peity_line_neutral{color:#757575}.stat-boxes .peity_bar_bad,.stat-boxes .peity_line_bad{color:#ba1e20}.site-stats{margin:0;padding:0;text-align:center;list-style:none}.site-stats li{cursor:pointer;display:inline-block;margin:0 5px 10px;text-align:center;width:42%;padding:10px 0;color:#fff;position:relative}.site-stats li i{font-size:24px;clear:both}.site-stats li:hover{background:#2e363f}.site-stats li i{vertical-align:baseline}.site-stats li strong{font-weight:700;font-size:20px;width:100%;float:left;margin-left:0}.site-stats li small{margin-left:0;font-size:11px;width:100%;float:left}#donut,#interactive,#placeholder,#placeholder2,.bars,.chart,.pie{height:300px;max-width:100%}#choices{border-top:1px solid #dcdcdc;margin:10px 0;padding:10px}#choices br{display:none}#choices input{margin:-5px 5px 0 0}#choices label{display:inline-block;padding-right:20px}#tooltip{position:absolute;display:none;border:none;padding:3px 8px;border-radius:3px;font-size:10px;background-color:#222;color:#fff;z-index:25}.widget-box{background:none repeat scroll 0 0 #f9f9f9;border-left:1px solid #cdcdcd;border-top:1px solid #cdcdcd;border-right:1px solid #cdcdcd;clear:both;margin-top:16px;margin-bottom:16px;position:relative}.widget-box.widget-calendar,.widget-box.widget-chat{overflow:hidden!important}.accordion .widget-box{margin-top:-2px;margin-bottom:0;border-radius:0}.widget-box.widget-plain{background:0 0;border:none;margin-top:0;margin-bottom:0}.modal-header,.table th,.widget-title,div.dataTables_wrapper .ui-widget-header{background:#efefef;border-bottom:1px solid #cdcdcd;height:36px}.widget-title .nav-tabs{border-bottom:0 none}.widget-title .nav-tabs li a{border-bottom:medium none!important;border-left:1px solid #ddd;border-radius:0;border-right:1px solid #ddd;border-top:medium none;color:#999;margin:0;outline:medium none;padding:9px 10px 8px;font-weight:700;text-shadow:0 1px 0 #fff}.widget-title .nav-tabs li:first-child a{border-left:medium none!important}.widget-title .nav-tabs li a:hover{background-color:transparent!important;border-color:#d6d6d6;border-width:0 1px;color:#2b2b2b}.widget-title .nav-tabs li.active a{background-color:#f9f9f9!important;color:#444}.widget-title span.icon{padding:9px 10px 7px 11px;float:left;border-right:1px solid #dadada}.widget-title h5{color:#666;float:left;font-size:12px;font-weight:700;padding:12px;line-height:12px;margin:0}.widget-title .buttons{float:right;margin:8px 10px 0 0}.widget-title .label{padding:3px 5px 2px;float:right;margin:9px 11px 0 0;box-shadow:0 1px 2px rgba(0,0,0,.3) inset,0 1px 0 #fff}.widget-calendar .widget-title .label{margin-right:190px}.widget-content{padding:15px;border-bottom:1px solid #cdcdcd}.widget-box.widget-plain .widget-content{padding:12px 0 0}.widget-box.collapsible .collapse.in .widget-content{border-bottom:1px solid #cdcdcd}.recent-comments,.recent-posts,.recent-users{margin:0;padding:0}.article-post li,.recent-comments li,.recent-posts li,.recent-users li{border-bottom:1px dotted #aebdc8;list-style:none outside none;padding:10px}.recent-comments li.viewall,.recent-posts li.viewall,.recent-users li.viewall{padding:0}.recent-comments li.viewall a,.recent-posts li.viewall a,.recent-users li.viewall a{padding:5px;text-align:center;display:block;color:#888}.recent-comments li.viewall a:hover,.recent-posts li.viewall a:hover,.recent-users li.viewall a:hover{background-color:#eee}.recent-comments li:last-child,.recent-posts li:last-child,.recent-users li:last-child{border-bottom:none!important}.user-thumb{background:none repeat scroll 0 0 #fff;float:left;height:40px;margin-right:10px;margin-top:5px;padding:2px;width:40px}.user-info{color:#666;font-size:11px}.invoice-content{padding:20px}.invoice-action{margin-bottom:30px}.invoice-head{clear:both;margin-bottom:40px;overflow:hidden;width:auto}.invoice-meta{font-size:18px;margin-bottom:40px}.invoice-date{float:right;font-size:80%}.invoice-content h5{color:#333;font-size:16px;font-weight:400;margin-bottom:10px}.invoice-content ul{list-style:none;margin:0;padding:0}.invoice-to{float:left;width:370px}.invoice-from{float:right;width:300px}.invoice-from li,.invoice-to li{clear:left}.invoice-from li span,.invoice-to li span{display:block}.invoice-content th.total-label{text-align:right}.invoice-content th.total-amount{text-align:left}.amount-word{color:#666;margin-bottom:40px;margin-top:40px}.amount-word span{color:#5476a6;font-weight:700;padding-left:20px}.panel-left{margin-top:103px}.panel-left2{margin-left:176px}.panel-right{width:100%;background-color:#fff;border-bottom:1px solid #ddd;position:absolute;right:0;overflow:auto;top:38px;height:76px}.panel-right2{width:100%;background-color:#fff;border-right:1px solid #ddd;position:absolute;left:0;overflow:auto;top:0;height:94%;width:175px}.panel-right .panel-title,.panel-right2 .panel-title{width:100%;background-color:#ececec;border-bottom:1px solid #ddd}.panel-right .panel-title h5,.panel-right2 .panel-title h5{font-size:12px;color:#777;text-shadow:0 1px 0 #fff;padding:6px 10px 5px;margin:0}.panel-right .panel-content{padding:10px}.chat-content{height:470px;padding:15px}.chat-messages{height:420px;overflow:auto;position:relative}.chat-message{padding:7px 15px;margin:7px 0 0}.chat-message input[type=text]{margin-bottom:0!important;width:100%}.chat-message .input-box{display:block;margin-right:90px}.chat-message button{float:right}#chat-messages-inner p{padding:0;margin:10px 0 0 0}#chat-messages-inner p img{display:inline-block;float:left;vertical-align:middle;width:28px;height:28px;margin-top:-1px;margin-right:10px}#chat-messages-inner .msg-block,#chat-messages-inner p.offline span{background:none repeat scroll 0 0 #fff;border:1px solid #ccc;box-shadow:1px 1px 0 1px rgba(0,0,0,.05);display:block;margin-left:0;padding:10px;position:relative}#chat-messages-inner p.offline span{background:none repeat scroll 0 0 #fff5f5}#chat-messages-inner .time{color:#999;font-size:11px;float:right}#chat-messages-inner .msg{display:block;margin-top:13px;border-top:1px solid #dadada}#chat-messages-inner .msg-block:before{border-right:7px solid rgba(0,0,0,.1);border-top:7px solid transparent;border-bottom:7px solid transparent;content:\"\";display:none;left:-7px;position:absolute;top:11px}#chat-messages-inner .msg-block:after{border-right:6px solid #fff;border-top:6px solid transparent;border-bottom:6px solid transparent;content:\"\";display:none;left:-6px;position:absolute;top:12px}.chat-users{padding:0 0 30px}.chat-users .contact-list{line-height:21px;list-style:none outside none;margin:0;padding:0;font-size:10px}.chat-users .contact-list li{border:1px solid #dadada;margin:5px 5px;padding:1px;position:relative}.chat-users .contact-list li:hover{background-color:#efefef}.chat-users .contact-list li a{color:#666;display:block;padding:8px 5px}.chat-users .contact-list li.online a{font-weight:700}.chat-users .contact-list li.new{background-color:#eaeaea}.chat-users .contact-list li.offline{background-color:#ede0e0}.chat-users .contact-list li a img{display:inline-block;margin-right:10px;vertical-align:middle;width:28px;height:28px}.chat-users .contact-list li .msg-count{padding:3px 5px;position:absolute;right:10px;top:12px}.taskDesc i{margin:1px 5px 0}.taskOptions,.taskStatus{text-align:center!important}.taskStatus .in-progress{color:#64909e}.taskStatus .pending{color:#ac6363}.taskStatus .done{color:#75b468}.activity-list{list-style:none outside none;margin:0}.activity-list li{border-bottom:1px solid #eee;display:block}.activity-list li:last-child{border-bottom:medium none}.activity-list li a{display:block;padding:7px 10px}.activity-list li a:hover{background-color:#fbfbfb}.activity-list li a span{color:#aaa;font-size:11px;font-style:italic}.activity-list li a i{margin-right:10px;opacity:.6;vertical-align:middle}.new-update{border-top:1px solid #ddd;padding:10px 12px}.new-update:first-child{border-top:medium none}.new-update span{display:block}.new-update i{float:left;margin-top:3px;margin-right:13px}.new-update .update-date{color:#bbb;float:right;margin:4px -2px 0 0;text-align:center;width:30px}.new-update .update-date .update-day{display:block;font-size:20px;font-weight:700;margin-bottom:-4px}.update-alert,.update-done,.update-notice{display:block;float:left;max-width:76%}tr:hover{background:#f6f6f6}span.icon .checker{margin-top:-5px;margin-right:0}.dataTables_length{color:#878787;margin:7px 5px 0;position:relative;left:5px;width:50%;top:-2px}.dataTables_length div{vertical-align:middle}.dataTables_paginate{line-height:16px;text-align:right;margin-top:5px;margin-right:10px}.dataTables_paginate{line-height:16px;text-align:right;margin-top:5px;margin-right:10px}.dataTables_paginate .ui-button,.pagination.alternate li a{font-size:12px;padding:4px 10px!important;border-style:solid;border-width:1px;border-color:#ddd #ddd #ccc;border-color:rgba(0,0,0,.1) rgba(0,0,0,.1) rgba(0,0,0,.25);display:inline-block;line-height:16px;background:#f5f5f5;color:#333;text-shadow:0 1px 0 #fff}.dataTables_paginate .ui-button:hover,.pagination.alternate li a:hover{background:#e8e8e8;color:#222;text-shadow:0 1px 0 #fff;cursor:pointer}.dataTables_paginate .first{border-radius:4px 0 0 4px}.dataTables_paginate .last{border-radius:0 4px 4px 0}.dataTables_paginate .ui-state-disabled,.fc-state-disabled,.pagination.alternate li.disabled a{color:#aaa!important}.dataTables_paginate .ui-state-disabled:hover,.fc-state-disabled:hover,.pagination.alternate li.disabled a:hover{background:#f5f5f5;cursor:default!important}.dataTables_paginate span .ui-state-disabled,.pagination.alternate li.active a{background:#41bedd!important;color:#fff!important;cursor:default!important}div.dataTables_wrapper .ui-widget-header{border-right:medium none;border-top:1px solid #d5d5d5;font-weight:400;margin-top:-1px}.dataTables_wrapper .ui-toolbar{padding:5px}.dataTables_filter{color:#878787;font-size:11px;right:0;top:37px;margin:4px 8px 2px 10px;position:absolute;text-align:left}.dataTables_filter input{margin-bottom:0}.table th{height:auto;font-size:10px;padding:5px 10px 2px;border-bottom:0;text-align:center;color:#666}.table.with-check tr td:first-child,.table.with-check tr th:first-child{width:10px}.table.with-check tr th:first-child i{margin-top:-2px;opacity:.6}.table.with-check tr td:first-child .checker{margin-right:0}.table tr.checked td{background-color:#ffffe3!important}.nopadding{padding:0!important}.nopadding .table{margin-bottom:0}.nopadding .table-bordered{border:0}.thumbnails{margin-left:-2.12766%!important}.thumbnails [class*=span]{margin-left:2.12766%!important;position:relative}.thumbnails .actions{width:auto;height:16px;background-color:#000;padding:4px 8px 8px 8px;position:absolute;bottom:0;left:50%;margin-top:-13px;margin-left:-24px;opacity:0;top:10%;transition:1s ease-out;-moz-transition:opacity .3s ease-in-out}.thumbnails li:hover .actions,.thumbnails li:hover .actions a:hover{opacity:1;color:#fff;top:50%;transition:1s ease-out}.line{background:url(/../img/line.png) repeat-x scroll 0 0 transparent;display:block;height:8px}.modal{z-index:99999!important}.modal-backdrop{z-index:999!important}.modal-header{height:auto;padding:8px 15px 5px}.modal-header h3{font-size:12px;text-shadow:0 1px 0 #fff}.notify-ui ul{list-style:none;margin:0;padding:0}.notify-ui li{background:#eee;margin-bottom:5px;padding:5px 10px;text-align:center;border:1px solid #ddd}.notify-ui li:hover{cursor:pointer;color:#777}form{margin-bottom:0}.form-horizontal .control-group{border-top:1px solid #fff;border-bottom:1px solid #eee;margin-bottom:0}.form-horizontal .control-group:last-child{border-bottom:0}.form-horizontal .control-label{padding-top:15px;width:180px}.form-horizontal .controls{margin-left:200px;padding:10px 0}.row-fluid .span20{width:97.8%}.form-horizontal .form-actions{margin-top:0;margin-bottom:0}.help-block,.help-inline{color:#999}#lightbox{position:fixed;top:0;left:0;width:100%;height:100%;background:url(/overlay.png) repeat #000;text-align:center;z-index:9999}#lightbox p{position:absolute;top:10px;right:10px;width:22px;height:22px;cursor:pointer;z-index:22;border:1px solid #fff;border-radius:100%;padding:2px;text-align:center;transition:.5s}#lightbox p:hover{transform:rotate(180deg)}#imgbox{position:absolute;left:0;top:0;width:100%;height:100%;background:url(/overlay.png) repeat #000;text-align:center;z-index:21}#imgbox img{margin-top:100px;border:10px solid #fff}.error_ex{text-align:center}.error_ex h1{font-size:140px;font-weight:700;padding:50px 0;color:#28b779}#sidebar .content{padding:10px;position:relative;color:#939da8}#sidebar .percent{font-weight:700;position:absolute;right:10px;top:25px}#sidebar .progress{margin-bottom:2px;margin-top:2px;width:70%}#sidebar .progress-mini{height:6px}#sidebar .stat{font-size:11px}.btn-icon-pg ul{margin:0;padding:0}.btn-icon-pg ul li{margin:5px;padding:5px;list-style:none;display:inline-block;border:1px solid #dadada;min-width:187px;cursor:pointer}.btn-icon-pg ul li:hover i{transition:.3s;-moz-transition:.3s;-webkit-transition:.3s;-o-transition:.3s;margin-left:8px}.accordion{margin-top:16px}.fix_hgt{height:115px;overflow-x:auto}.input-append .add-on:last-child,.input-append .btn:last-child{border-radius:0;padding:6px 5px 2px}.input-append input,.input-append input[class*=span],.input-prepend input,.input-prepend input[class*=span]{width:none}.input-append input,.input-append select,.input-prepend input,.input-prepend span{border-radius:0!important}.bs-docs-tooltip-examples{list-style:none outside none;margin:0 0 10px;position:relative;text-align:center}.bs-docs-tooltip-examples li{display:inline;padding:0 10px;list-style:none;position:relative}@media (max-width:480px){#header{height:115px}#header h1{top:10px;left:5px;margin:3px auto}#user-nav{position:relative;left:auto;right:auto;width:100%;margin-top:-31px;border-top:1px solid #363e48;margin-bottom:0;background:#2e363f;float:right}.navbar>.nav{float:none}#my_menu{display:none}#my_menu_input{display:block}#user-nav>ul{right:0;margin-left:20%!important;margin-top:0;width:100%;background:#000;position:relative}#user-nav>ul>li{padding:0 0}#user-nav>ul>li>a{padding:5px 10px}#sidebar .content{display:none}#content{margin-left:0!important;border-top-left-radius:0;margin-top:0}#content-header{margin-top:0;text-align:center}#content-header .btn-group,#content-header h1{float:none}#content-header h1{display:block;text-align:center;margin-left:auto;margin-top:0;padding-top:15px;width:100%}#content-header .btn-group{margin-top:70px;margin-bottom:0;margin-right:0;left:30%}#sidebar{float:none;width:100%!important;display:block;position:relative;top:0}#sidebar>ul{margin:0;padding:0;width:100%;display:block;z-index:999;position:relative}#sidebar>ul>li{list-style-type:none;display:block;border-top:1px solid #41bedd;float:none!important;margin:0;position:relative;padding:2px 10px;cursor:pointer}#sidebar>ul>li:hover ul{display:none}#sidebar>ul>li:hover{background-color:#27a9e3}#sidebar>ul>li:hover a{background:0 0}#sidebar>ul li ul{margin:0;padding:0;top:35px;left:0;z-index:999;display:none;position:absolute;width:100%;min-width:100%;border-radius:none}#sidebar>ul li ul li{list-style-type:none;margin:0;font-size:12px;line-height:30px}#sidebar>ul li ul li a{display:block;padding:5px 10px;color:#fff;text-decoration:none;font-weight:700}#sidebar>ul li ul li:hover a{border-radius:0}#sidebar>ul li span{cursor:pointer;margin:0 2px 0 5px;font-weight:700;color:#fff;font-size:12px}#sidebar>ul li a i{background-image:url(/../img/glyphicons-halflings-white.png);margin-top:4px;vertical-align:top}#sidebar>a{padding:9px 20px 9px 15px;display:block!important;color:#eee;float:none!important;font-size:12px;font-weight:700}#sidebar>ul>li>a{padding:5px;display:block;color:#aaa}.widget-title .buttons>.btn{width:11px;white-space:nowrap;overflow:hidden}.form-horizontal .control-label{padding-left:30px}.form-horizontal .controls{margin-left:0;padding:10px 30px}.form-actions{text-align:center}.panel-right2{width:100%;background-color:#fff;border-right:1px solid #ddd;position:relative;left:0;overflow:auto;top:0;height:87%;width:100%}.panel-left2{margin-left:0}.dataTables_paginate .ui-button,.pagination.alternate li a{padding:4px 4px!important}.table th{padding:5px 4px 2px}}@media (min-width:481px) and (max-width:970px){body{background:#49cced}#header h1{top:5px;left:5px;width:35px}#header h1 a img{height:30px}#search{top:5px}#my_menu{display:none}#my_menu_input{display:block}#content{margin-top:0}#sidebar>ul>li{float:none}#sidebar>ul>li:hover ul{display:block}#sidebar,#sidebar>ul{width:43px;display:block;position:absolute;height:100%;z-index:1}#sidebar>ul ul{display:none;position:absolute;left:43px;top:0;min-width:150px;list-style:none}#sidebar>ul ul li a{white-space:nowrap;padding:10px 25px}#sidebar>ul ul:before{border-top:7px solid transparent;border-bottom:7px solid transparent;content:\"\";display:inline-block;left:-6px;position:absolute;top:11px}#sidebar>ul ul:after{content:\"\";display:inline-block;left:-5px;position:absolute;top:12px}#sidebar>a{display:none!important}#sidebar>ul>li.open.submenu>a{border-bottom:none!important}#sidebar>ul>li>a>span{display:none}#content{margin-left:43px}#sidebar .content{display:none}}@media (max-width:600px){.widget-title .buttons{float:left}.panel-left{margin-right:0}.panel-right{border-top:1px solid #ddd;border-left:none;position:relative;top:auto;right:auto;height:auto;width:auto}#sidebar .content{display:none}}@media (max-width:767px){body{padding:0!important}.container-fluid{padding-left:20px;padding-right:20px}#search{display:none}#user-nav>ul>li>a>span.text{display:none}#sidebar .content{display:none}}@media (min-width:768px) and (max-width:979px){.row-fluid [class*=span],[class*=span]{display:block;float:none;margin-left:0;width:auto}}@media (max-width:979px){div.dataTables_wrapper .ui-widget-header{height:68px}.dataTables_filter{position:relative;top:0}.dataTables_length{width:100%;text-align:center}.dataTables_filter,.dataTables_paginate{text-align:center}#sidebar .content{display:none}}");
+                        yaz.Close();
+                    }
+                }
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\css\\font-awesome.css", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        yaz.WriteLine("@font-face{font-family:FontAwesome;src:url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.eot);src:url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.eot?#iefix) format('embedded-opentype'),url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.woff) format('woff'),url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.ttf) format('truetype');font-weight:400;font-style:normal}[class*=\" icon-\"],[class^=icon-]{font-family:FontAwesome;font-weight:400;font-style:normal;text-decoration:inherit;display:inline;width:auto;height:auto;line-height:normal;vertical-align:baseline;background-image:none!important;background-position:0 0;background-repeat:repeat}[class*=\" icon-\"]:before,[class^=icon-]:before{text-decoration:inherit;display:inline-block;speak:none}a [class*=\" icon-\"],a [class^=icon-]{display:inline-block}.icon-large:before{vertical-align:-10%;font-size:1.3333333333333333em}.btn [class*=\" icon-\"],.btn [class^=icon-],.nav [class*=\" icon-\"],.nav [class^=icon-]{display:inline;line-height:.6em}.btn [class*=\" icon-\"].icon-spin,.btn [class^=icon-].icon-spin,.nav [class*=\" icon-\"].icon-spin,.nav [class^=icon-].icon-spin{display:inline-block}li [class*=\" icon-\"],li [class^=icon-]{display:inline-block;width:1.25em;text-align:center}li [class*=\" icon-\"].icon-large,li [class^=icon-].icon-large{width:1.5625em}ul.icons{list-style-type:none;text-indent:-.75em}ul.icons li [class*=\" icon-\"],ul.icons li [class^=icon-]{width:.75em}.icon-muted{color:#eee}.icon-border{border:solid 1px #eee;padding:.2em .25em .15em;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}.icon-2x{font-size:2em}.icon-2x.icon-border{border-width:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}.icon-3x{font-size:3em}.icon-3x.icon-border{border-width:3px;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px}.icon-4x{font-size:4em}.icon-4x.icon-border{border-width:4px;-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px}.pull-right{float:right}.pull-left{float:left}[class*=\" icon-\"].pull-left,[class^=icon-].pull-left{margin-right:.35em}[class*=\" icon-\"].pull-right,[class^=icon-].pull-right{margin-left:.35em}.btn [class*=\" icon-\"].pull-left.icon-2x,.btn [class*=\" icon-\"].pull-right.icon-2x,.btn [class^=icon-].pull-left.icon-2x,.btn [class^=icon-].pull-right.icon-2x{margin-top:.35em}.btn [class*=\" icon-\"].icon-spin.icon-large,.btn [class^=icon-].icon-spin.icon-large{height:.75em}.btn.btn-small [class*=\" icon-\"].pull-left.icon-2x,.btn.btn-small [class*=\" icon-\"].pull-right.icon-2x,.btn.btn-small [class^=icon-].pull-left.icon-2x,.btn.btn-small [class^=icon-].pull-right.icon-2x{margin-top:.45em}.btn.btn-large [class*=\" icon-\"].pull-left.icon-2x,.btn.btn-large [class*=\" icon-\"].pull-right.icon-2x,.btn.btn-large [class^=icon-].pull-left.icon-2x,.btn.btn-large [class^=icon-].pull-right.icon-2x{margin-top:.2em}.icon-spin{display:inline-block;-moz-animation:spin 2s infinite linear;-o-animation:spin 2s infinite linear;-webkit-animation:spin 2s infinite linear;animation:spin 2s infinite linear}@-moz-keyframes spin{0%{-moz-transform:rotate(0)}100%{-moz-transform:rotate(359deg)}}@-webkit-keyframes spin{0%{-webkit-transform:rotate(0)}100%{-webkit-transform:rotate(359deg)}}@-o-keyframes spin{0%{-o-transform:rotate(0)}100%{-o-transform:rotate(359deg)}}@-ms-keyframes spin{0%{-ms-transform:rotate(0)}100%{-ms-transform:rotate(359deg)}}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(359deg)}}.icon-glass:before{content:\"\\f000\"}.icon-music:before{content:\"\\f001\"}.icon-search:before{content:\"\\f002\"}.icon-envelope:before{content:\"\\f003\"}.icon-heart:before{content:\"\\f004\"}.icon-star:before{content:\"\\f005\"}.icon-star-empty:before{content:\"\\f006\"}.icon-user:before{content:\"\\f007\"}.icon-film:before{content:\"\\f008\"}.icon-th-large:before{content:\"\\f009\"}.icon-th:before{content:\"\\f00a\"}.icon-th-list:before{content:\"\\f00b\"}.icon-ok:before{content:\"\\f00c\"}.icon-remove:before{content:\"\\f00d\"}.icon-zoom-in:before{content:\"\\f00e\"}.icon-zoom-out:before{content:\"\\f010\"}.icon-off:before{content:\"\\f011\"}.icon-signal:before{content:\"\\f012\"}.icon-cog:before{content:\"\\f013\"}.icon-trash:before{content:\"\\f014\"}.icon-home:before{content:\"\\f015\"}.icon-file:before{content:\"\\f016\"}.icon-time:before{content:\"\\f017\"}.icon-road:before{content:\"\\f018\"}.icon-download-alt:before{content:\"\\f019\"}.icon-download:before{content:\"\\f01a\"}.icon-upload:before{content:\"\\f01b\"}.icon-inbox:before{content:\"\\f01c\"}.icon-play-circle:before{content:\"\\f01d\"}.icon-repeat:before{content:\"\\f01e\"}.icon-refresh:before{content:\"\\f021\"}.icon-list-alt:before{content:\"\\f022\"}.icon-lock:before{content:\"\\f023\"}.icon-flag:before{content:\"\\f024\"}.icon-headphones:before{content:\"\\f025\"}.icon-volume-off:before{content:\"\\f026\"}.icon-volume-down:before{content:\"\\f027\"}.icon-volume-up:before{content:\"\\f028\"}.icon-qrcode:before{content:\"\\f029\"}.icon-barcode:before{content:\"\\f02a\"}.icon-tag:before{content:\"\\f02b\"}.icon-tags:before{content:\"\\f02c\"}.icon-book:before{content:\"\\f02d\"}.icon-bookmark:before{content:\"\\f02e\"}.icon-print:before{content:\"\\f02f\"}.icon-camera:before{content:\"\\f030\"}.icon-font:before{content:\"\\f031\"}.icon-bold:before{content:\"\\f032\"}.icon-italic:before{content:\"\\f033\"}.icon-text-height:before{content:\"\\f034\"}.icon-text-width:before{content:\"\\f035\"}.icon-align-left:before{content:\"\\f036\"}.icon-align-center:before{content:\"\\f037\"}.icon-align-right:before{content:\"\\f038\"}.icon-align-justify:before{content:\"\\f039\"}.icon-list:before{content:\"\\f03a\"}.icon-indent-left:before{content:\"\\f03b\"}.icon-indent-right:before{content:\"\\f03c\"}.icon-facetime-video:before{content:\"\\f03d\"}.icon-picture:before{content:\"\\f03e\"}.icon-pencil:before{content:\"\\f040\"}.icon-map-marker:before{content:\"\\f041\"}.icon-adjust:before{content:\"\\f042\"}.icon-tint:before{content:\"\\f043\"}.icon-edit:before{content:\"\\f044\"}.icon-share:before{content:\"\\f045\"}.icon-check:before{content:\"\\f046\"}.icon-move:before{content:\"\\f047\"}.icon-step-backward:before{content:\"\\f048\"}.icon-fast-backward:before{content:\"\\f049\"}.icon-backward:before{content:\"\\f04a\"}.icon-play:before{content:\"\\f04b\"}.icon-pause:before{content:\"\\f04c\"}.icon-stop:before{content:\"\\f04d\"}.icon-forward:before{content:\"\\f04e\"}.icon-fast-forward:before{content:\"\\f050\"}.icon-step-forward:before{content:\"\\f051\"}.icon-eject:before{content:\"\\f052\"}.icon-chevron-left:before{content:\"\\f053\"}.icon-chevron-right:before{content:\"\\f054\"}.icon-plus-sign:before{content:\"\\f055\"}.icon-minus-sign:before{content:\"\\f056\"}.icon-remove-sign:before{content:\"\\f057\"}.icon-ok-sign:before{content:\"\\f058\"}.icon-question-sign:before{content:\"\\f059\"}.icon-info-sign:before{content:\"\\f05a\"}.icon-screenshot:before{content:\"\\f05b\"}.icon-remove-circle:before{content:\"\\f05c\"}.icon-ok-circle:before{content:\"\\f05d\"}.icon-ban-circle:before{content:\"\\f05e\"}.icon-arrow-left:before{content:\"\\f060\"}.icon-arrow-right:before{content:\"\\f061\"}.icon-arrow-up:before{content:\"\\f062\"}.icon-arrow-down:before{content:\"\\f063\"}.icon-share-alt:before{content:\"\\f064\"}.icon-resize-full:before{content:\"\\f065\"}.icon-resize-small:before{content:\"\\f066\"}.icon-plus:before{content:\"\\f067\"}.icon-minus:before{content:\"\\f068\"}.icon-asterisk:before{content:\"\\f069\"}.icon-exclamation-sign:before{content:\"\\f06a\"}.icon-gift:before{content:\"\\f06b\"}.icon-leaf:before{content:\"\\f06c\"}.icon-fire:before{content:\"\\f06d\"}.icon-eye-open:before{content:\"\\f06e\"}.icon-eye-close:before{content:\"\\f070\"}.icon-warning-sign:before{content:\"\\f071\"}.icon-plane:before{content:\"\\f072\"}.icon-calendar:before{content:\"\\f073\"}.icon-random:before{content:\"\\f074\"}.icon-comment:before{content:\"\\f075\"}.icon-magnet:before{content:\"\\f076\"}.icon-chevron-up:before{content:\"\\f077\"}.icon-chevron-down:before{content:\"\\f078\"}.icon-retweet:before{content:\"\\f079\"}.icon-shopping-cart:before{content:\"\\f07a\"}.icon-folder-close:before{content:\"\\f07b\"}.icon-folder-open:before{content:\"\\f07c\"}.icon-resize-vertical:before{content:\"\\f07d\"}.icon-resize-horizontal:before{content:\"\\f07e\"}.icon-bar-chart:before{content:\"\\f080\"}.icon-twitter-sign:before{content:\"\\f081\"}.icon-facebook-sign:before{content:\"\\f082\"}.icon-camera-retro:before{content:\"\\f083\"}.icon-key:before{content:\"\\f084\"}.icon-cogs:before{content:\"\\f085\"}.icon-comments:before{content:\"\\f086\"}.icon-thumbs-up:before{content:\"\\f087\"}.icon-thumbs-down:before{content:\"\\f088\"}.icon-star-half:before{content:\"\\f089\"}.icon-heart-empty:before{content:\"\\f08a\"}.icon-signout:before{content:\"\\f08b\"}.icon-linkedin-sign:before{content:\"\\f08c\"}.icon-pushpin:before{content:\"\\f08d\"}.icon-external-link:before{content:\"\\f08e\"}.icon-signin:before{content:\"\\f090\"}.icon-trophy:before{content:\"\\f091\"}.icon-github-sign:before{content:\"\\f092\"}.icon-upload-alt:before{content:\"\\f093\"}.icon-lemon:before{content:\"\\f094\"}.icon-phone:before{content:\"\\f095\"}.icon-check-empty:before{content:\"\\f096\"}.icon-bookmark-empty:before{content:\"\\f097\"}.icon-phone-sign:before{content:\"\\f098\"}.icon-twitter:before{content:\"\\f099\"}.icon-facebook:before{content:\"\\f09a\"}.icon-github:before{content:\"\\f09b\"}.icon-unlock:before{content:\"\\f09c\"}.icon-credit-card:before{content:\"\\f09d\"}.icon-rss:before{content:\"\\f09e\"}.icon-hdd:before{content:\"\\f0a0\"}.icon-bullhorn:before{content:\"\\f0a1\"}.icon-bell:before{content:\"\\f0a2\"}.icon-certificate:before{content:\"\\f0a3\"}.icon-hand-right:before{content:\"\\f0a4\"}.icon-hand-left:before{content:\"\\f0a5\"}.icon-hand-up:before{content:\"\\f0a6\"}.icon-hand-down:before{content:\"\\f0a7\"}.icon-circle-arrow-left:before{content:\"\\f0a8\"}.icon-circle-arrow-right:before{content:\"\\f0a9\"}.icon-circle-arrow-up:before{content:\"\\f0aa\"}.icon-circle-arrow-down:before{content:\"\\f0ab\"}.icon-globe:before{content:\"\\f0ac\"}.icon-wrench:before{content:\"\\f0ad\"}.icon-tasks:before{content:\"\\f0ae\"}.icon-filter:before{content:\"\\f0b0\"}.icon-briefcase:before{content:\"\\f0b1\"}.icon-fullscreen:before{content:\"\\f0b2\"}.icon-group:before{content:\"\\f0c0\"}.icon-link:before{content:\"\\f0c1\"}.icon-cloud:before{content:\"\\f0c2\"}.icon-beaker:before{content:\"\\f0c3\"}.icon-cut:before{content:\"\\f0c4\"}.icon-copy:before{content:\"\\f0c5\"}.icon-paper-clip:before{content:\"\\f0c6\"}.icon-save:before{content:\"\\f0c7\"}.icon-sign-blank:before{content:\"\\f0c8\"}.icon-reorder:before{content:\"\\f0c9\"}.icon-list-ul:before{content:\"\\f0ca\"}.icon-list-ol:before{content:\"\\f0cb\"}.icon-strikethrough:before{content:\"\\f0cc\"}.icon-underline:before{content:\"\\f0cd\"}.icon-table:before{content:\"\\f0ce\"}.icon-magic:before{content:\"\\f0d0\"}.icon-truck:before{content:\"\\f0d1\"}.icon-pinterest:before{content:\"\\f0d2\"}.icon-pinterest-sign:before{content:\"\\f0d3\"}.icon-google-plus-sign:before{content:\"\\f0d4\"}.icon-google-plus:before{content:\"\\f0d5\"}.icon-money:before{content:\"\\f0d6\"}.icon-caret-down:before{content:\"\\f0d7\"}.icon-caret-up:before{content:\"\\f0d8\"}.icon-caret-left:before{content:\"\\f0d9\"}.icon-caret-right:before{content:\"\\f0da\"}.icon-columns:before{content:\"\\f0db\"}.icon-sort:before{content:\"\\f0dc\"}.icon-sort-down:before{content:\"\\f0dd\"}.icon-sort-up:before{content:\"\\f0de\"}.icon-envelope-alt:before{content:\"\\f0e0\"}.icon-linkedin:before{content:\"\\f0e1\"}.icon-undo:before{content:\"\\f0e2\"}.icon-legal:before{content:\"\\f0e3\"}.icon-dashboard:before{content:\"\\f0e4\"}.icon-comment-alt:before{content:\"\\f0e5\"}.icon-comments-alt:before{content:\"\\f0e6\"}.icon-bolt:before{content:\"\\f0e7\"}.icon-sitemap:before{content:\"\\f0e8\"}.icon-umbrella:before{content:\"\\f0e9\"}.icon-paste:before{content:\"\\f0ea\"}.icon-lightbulb:before{content:\"\\f0eb\"}.icon-exchange:before{content:\"\\f0ec\"}.icon-cloud-download:before{content:\"\\f0ed\"}.icon-cloud-upload:before{content:\"\\f0ee\"}.icon-user-md:before{content:\"\\f0f0\"}.icon-stethoscope:before{content:\"\\f0f1\"}.icon-suitcase:before{content:\"\\f0f2\"}.icon-bell-alt:before{content:\"\\f0f3\"}.icon-coffee:before{content:\"\\f0f4\"}.icon-food:before{content:\"\\f0f5\"}.icon-file-alt:before{content:\"\\f0f6\"}.icon-building:before{content:\"\\f0f7\"}.icon-hospital:before{content:\"\\f0f8\"}.icon-ambulance:before{content:\"\\f0f9\"}.icon-medkit:before{content:\"\\f0fa\"}.icon-fighter-jet:before{content:\"\\f0fb\"}.icon-beer:before{content:\"\\f0fc\"}.icon-h-sign:before{content:\"\\f0fd\"}.icon-plus-sign-alt:before{content:\"\\f0fe\"}.icon-double-angle-left:before{content:\"\\f100\"}.icon-double-angle-right:before{content:\"\\f101\"}.icon-double-angle-up:before{content:\"\\f102\"}.icon-double-angle-down:before{content:\"\\f103\"}.icon-angle-left:before{content:\"\\f104\"}.icon-angle-right:before{content:\"\\f105\"}.icon-angle-up:before{content:\"\\f106\"}.icon-angle-down:before{content:\"\\f107\"}.icon-desktop:before{content:\"\\f108\"}.icon-laptop:before{content:\"\\f109\"}.icon-tablet:before{content:\"\\f10a\"}.icon-mobile-phone:before{content:\"\\f10b\"}.icon-circle-blank:before{content:\"\\f10c\"}.icon-quote-left:before{content:\"\\f10d\"}.icon-quote-right:before{content:\"\\f10e\"}.icon-spinner:before{content:\"\\f110\"}.icon-circle:before{content:\"\\f111\"}.icon-reply:before{content:\"\\f112\"}.icon-github-alt:before{content:\"\\f113\"}.icon-folder-close-alt:before{content:\"\\f114\"}.icon-folder-open-alt:before{content:\"\\f115\"}");
+                        yaz.Close();
+                    }
+                }
+            }
+            else
+            {
+                CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\css\\style.css");
+                CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\script.js");
+                CopyFromResource(StringToByteArray(Properties.Resources.Normal_Content_admin_css_style_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\style.css");
+
+                CopyFromResource(StringToByteArray(Properties.Resources.Normal_Content_admin_css_font_awesome_css_font_awesome_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\css\\font-awesome.css");
+                CopyFromResource(StringToByteArray(Properties.Resources.Normal_Content_admin_js_jquery_gritter_min_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\jquery.gritter.min.js");
+                CopyFromResource(StringToByteArray(Properties.Resources.Normal_Content_admin_css_jquery_gritter_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\jquery.gritter.css");
+                CopyFromResource(StringToByteArray(Properties.Resources.Normal_Content_admin_css_matrix_style_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-style.css");
+                CopyFromResource(StringToByteArray(Properties.Resources.Normal_Content_admin_js_matrix_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\matrix.js");
+                CopyFromResource(StringToByteArray(Properties.Resources.Normal_Content_admin_js_matrix_tables_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\matrix.tables.js");
+
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\script.js", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        yaz.WriteLine("$(document).ready(function () {");
+                        yaz.WriteLine("\tif ($(\"#Description\").length > 0) {");
+                        yaz.WriteLine("\t\tClassicEditor");
+                        yaz.WriteLine("\t\t\t.create(document.querySelector('#Description'), {");
+                        yaz.WriteLine("\t\t\t\t//toolbar: ['bold', 'italic']");
+                        yaz.WriteLine("\t\t\t})");
+                        yaz.WriteLine("\t\t\t.then(editor => {");
+                        yaz.WriteLine("\t\t\t\twindow.editor = editor;");
+                        yaz.WriteLine("\t\t\t})");
+                        yaz.WriteLine("\t\t\t.catch(err => {");
+                        yaz.WriteLine("\t\t\t\tconsole.error(err.stack);");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif (Urling.controller != undefined) {");
+                        yaz.WriteLine("\t\tvar activeLi = $(\"#sidebar li[data-url='\" + Urling.controller + \"']\");");
+                        yaz.WriteLine("\t\tvar submenuLi = activeLi.parent(\"ul\").parent(\"li\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t$(\"#sidebar li\").removeClass(\"active\");");
+                        yaz.WriteLine("\t\tactiveLi.addClass(\"active\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tif (submenuLi.hasClass(\"submenu\")) {");
+                        yaz.WriteLine("\t\t\tif ($(\"body\").width() > 970 || $(\"body\").width() <= 480) {");
+                        yaz.WriteLine("\t\t\t\tsubmenuLi.addClass(\"open\");");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\tsubmenuLi.addClass(\"active\");");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("$(function () {");
+                        yaz.WriteLine("\t$(document).on(\"click\", \"#btnMainSearch\", function () {");
+                        yaz.WriteLine("\t\tvar txtValue = $(\"#txtMainSearch\").val();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tswitch (txtValue) {");
+
+                        foreach (string Table in selectedTables)
+                        {
+                            yaz.WriteLine("\t\t\tcase \"" + Table + "\":");
+                            yaz.WriteLine("\t\t\t\twindow.location.href = AdminPath + \"/" + Table + "\";");
+                            yaz.WriteLine("\t\t\t\tbreak;");
+                        }
+
+                        yaz.WriteLine("\t\t\tdefault:");
+                        yaz.WriteLine("\t\t\t\t$.gritter.add({");
+                        yaz.WriteLine("\t\t\t\t\ttitle: 'Arama Sonuç',");
+                        yaz.WriteLine("\t\t\t\t\ttext: 'Aradığınız kelimeye uygun sonuç bulunamadı...',");
+                        yaz.WriteLine("\t\t\t\t\tsticky: false");
+                        yaz.WriteLine("\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\tbreak;");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"click\", \"a.dltLink\", function () {");
+                        yaz.WriteLine("\t\t$(this).addClass(\"active-dlt\");");
+                        yaz.WriteLine("\t\t$(\".dlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                        yaz.WriteLine("\t\t$(\".dlt-yes\").attr(\"data-link\", $(this).attr(\"data-link\"));");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"click\", \"a.dlt-yes\", function () {");
+                        yaz.WriteLine("\t\tvar link = $(this);");
+                        yaz.WriteLine("\t\tvar url = link.attr(\"data-link\");");
+                        yaz.WriteLine("\t\tvar dataID = parseInt(link.attr(\"data-id\"));");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t$.ajax({");
+                        yaz.WriteLine("\t\t\ttype: 'POST',");
+                        yaz.WriteLine("\t\t\turl: AdminPath + \"/\" + url + \"/Sil\",");
+                        yaz.WriteLine("\t\t\tdata: \"{ id: \" + dataID + \" }\",");
+                        yaz.WriteLine("\t\t\tdataType: \"json\",");
+                        yaz.WriteLine("\t\t\tcontentType: \"application/json; charset=utf-8\",");
+                        yaz.WriteLine("\t\t\tsuccess: function (answer) {");
+                        yaz.WriteLine("\t\t\t\tif (answer == true) {");
+                        yaz.WriteLine("\t\t\t\t\t$.gritter.add({");
+                        yaz.WriteLine("\t\t\t\t\t\ttitle: 'Sonuç',");
+                        yaz.WriteLine("\t\t\t\t\t\ttext: 'İlgili veri silindi.',");
+                        yaz.WriteLine("\t\t\t\t\t\tsticky: false");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\t$(\"a.dltLink.active-dlt\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                        yaz.WriteLine("\t\t\t\t\t\t$(this).remove();");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\telse {");
+                        yaz.WriteLine("\t\t\t\t\t$.gritter.add({");
+                        yaz.WriteLine("\t\t\t\t\t\ttitle: 'Sonuç',");
+                        yaz.WriteLine("\t\t\t\t\t\ttext: 'İlgili veri silinemedi.',");
+                        yaz.WriteLine("\t\t\t\t\t\tsticky: false");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"click\", \"a.dlt-no\", function () {");
+                        yaz.WriteLine("\t\t$(\".dlt-yes\").removeAttr(\"data-id\");");
+                        yaz.WriteLine("\t\t$(\".dlt-yes\").removeAttr(\"data-link\");");
+                        yaz.WriteLine("\t\t$(\"a.dltLink\").removeClass(\"active-dlt\");");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"click\", \".dropdown-toggle\", function () {");
+                        yaz.WriteLine("\t\t$(this).parent().addClass(\"open\");");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("});");
+
+                        yaz.Close();
+                    }
+                }
             }
 
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\css\\main.css");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\main.css");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_bootstrap_min_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\bootstrap.min.js");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_jquery_dataTables_min_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\jquery.dataTables.min.js");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_matrix_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\matrix.js");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_css_bootstrap_min_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\bootstrap.min.css");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_css_bootstrap_responsive_min_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\bootstrap-responsive.min.css");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_css_matrix_login_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-login.css");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_css_matrix_media_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-media.css");
         }
 
         void CreateJquery()
         {
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_js_jquery_jquery_min_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\jquery\\jquery.min.js");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_js_jquery_jquery_min_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\jquery\\jquery.min.js");
 
             if (!chkAngular.Checked)
             {
-                CopyFromResource(StringToByteArray(Properties.Resources.Content_js_jquery_json2_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\jquery\\json2.js");
+                CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_js_jquery_json2_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\jquery\\json2.js");
             }
         }
 
         void CreateImages()
         {
-            CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_active_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\active.png");
-            CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_breadcrumb_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\breadcrumb.png");
-            CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_glyphicons_halflings_white_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\glyphicons-halflings-white.png");
-            CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_line_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\line.png");
-            CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_logo_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\logo.png");
-            CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_menu_active_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\menu-active.png");
-            CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_passive_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\passive.png");
-            CopyFromResource(BitmapToByteArray(Properties.Resources.Content_admin_img_loading_gif), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\loading.gif");
-        }
-
-        void CreateAngularStylelScripts()
-        {
-            CreateCKEditor();
-
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_js_bootstrap_min_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\bootstrap.min.js");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_js_jquery_dataTables_min_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\jquery.dataTables.min.js");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_js_matrix_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\matrix.js");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_css_bootstrap_min_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\bootstrap.min.css");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_css_bootstrap_responsive_min_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\bootstrap-responsive.min.css");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_css_matrix_login_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-login.css");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_css_matrix_media_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-media.css");
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\matrix-style.css", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("*{outline:0!important;-moz-outline:none!important}body,html{height:100%;margin-top:-5px!important}body{overflow-x:hidden;margin-top:-10px;font-family:'Open Sans',sans-serif;font-size:12px;color:#666}a{color:#666}a:focus,a:hover{text-decoration:none;color:#28b779}tr.odd{background-color:#fff}.dropdown-menu .divider{margin:4px 0}.dropdown-menu{min-width:65px}.dropdown-menu>li>a{padding:3px 10px;color:#666;font-size:12px}.dropdown-menu>li>a i{padding-right:3px}.userphoto img{width:19px;height:19px}.alert{display:none}.alert,.btn,.btn-group>.btn:first-child,.btn-group>.btn:last-child,.btn-group>.dropdown-toggle,.dropdown-menu,.label,.progress,.table-bordered,.uneditable-input,.well,input[type=color],input[type=date],input[type=datetime-local],input[type=datetime],input[type=email],input[type=month],input[type=number],input[type=password],input[type=search],input[type=tel],input[type=text],input[type=time],input[type=url],input[type=week],select,textarea{border-radius:0}.btn,.uneditable-input,input[type=color],input[type=date],input[type=datetime-local],input[type=datetime],input[type=email],input[type=month],input[type=number],input[type=password],input[type=search],input[type=tel],input[type=text],input[type=time],input[type=url],input[type=week],textarea{box-shadow:none}.btn,.btn-primary,.progress,.progress .bar-danger,.progress .bar-info,.progress .bar-success,.progress .bar-warning,.progress-danger .bar,.progress-info .bar,.progress-success .bar,.progress-warning .bar{background-image:none}.accordion-heading h5{width:70%}.form-horizontal .form-actions{padding-left:20px}#footer{padding:10px;text-align:center}hr{border-top-color:#dadada}.carousel{margin-bottom:0}.fl{float:left}.fr{float:right}.badge-important,.label-important{background:#f74d4d}.bg_lb{background:#27a9e3}.bg_db{background:#2295c9}.bg_lg{background:#28b779}.bg_dg{background:#28b779}.bg_ly{background:#ffb848}.bg_dy{background:#da9628}.bg_ls{background:#2255a4}.bg_lo{background:#da542e}.bg_lr{background:#f74d4d}.bg_lv{background:#603bbc}.bg_lh{background:#b6b3b3}#header{height:77px;position:relative;width:100%;z-index:-9}#header h1{height:67px;left:0;overflow:hidden;position:relative;top:5px;width:211px;margin:0}#header h1 a{display:block;text-align:center}#header h1 a img{height:67px;vertical-align:top}#search{position:absolute;z-index:25;top:6px;right:10px}#search input[type=text]{padding:4px 10px 5px;border:0;width:100px}#search button{border:0;margin-left:-3px;margin-top:-11px;padding:5px 10px 4px}#search button i{opacity:.8;color:#fff}#search button:active i,#search button:hover i{opacity:1}#user-nav{position:absolute;left:220px;top:0;z-index:20;margin:0}#user-nav>ul{margin:0;padding:0;list-style:none;border-right:1px solid #2e363f;border-left:1px solid #000}#user-nav>ul>li{float:left;list-style-type:none;margin:0;position:relative;padding:0;border-left:1px solid #2e363f;border-right:1px solid #000}#user-nav>ul>li>a{padding:9px 10px;display:block;font-size:11px;cursor:pointer}#user-nav>ul>li.open>a,#user-nav>ul>li>a:hover{color:#fff;background:#000}#sidebar li a i,#user-nav>ul>li>a>i{opacity:.5;margin-top:2px}#user-nav>ul>li.open>a>i,#user-nav>ul>li>a:hover>i{opacity:1}#user-nav>ul>li>a>.label{vertical-align:middle;padding:1px 4px 1px;margin:-2px 4px 0;display:inline-block}#user-nav>ul ul>li>a{text-align:left}#sidebar{display:block;float:left;position:relative;width:220px;z-index:16}#sidebar>ul{list-style:none;margin:0 0 0;padding:0;position:absolute;width:220px}#sidebar>ul>li{display:block;position:relative}#sidebar>ul>li>a{padding:10px 0 10px 15px;display:block;color:#939da8}#sidebar>ul>li>a>i{margin-right:10px}#sidebar>ul>li.active>a{background:url(/" + projectName + "/Content/admin/img/menu-active.png) no-repeat scroll right center transparent!important;text-decoration:none}#sidebar>ul>li>a>.label{margin:0 20px 0 0;float:right;padding:3px 5px 2px}#sidebar>ul li ul{display:none;margin:0;padding:0}#sidebar>ul li.open ul{display:block}#sidebar>ul li ul li a{padding:10px 0 10px 25px;display:block;color:#777}#sidebar>ul li ul li:first-child a{border-top:0}#sidebar>ul li ul li:last-child a{border-bottom:0}#content{background:none repeat scroll 0 0 #eee;margin-left:220px;margin-right:0;padding-bottom:25px;position:relative;min-height:100%;width:auto}#content-header{position:abslute;width:100%;margin-top:-38px;z-index:20}#content-header h1{color:#555;font-size:28px;font-weight:400;float:none;text-shadow:0 1px 0 #fff;margin-left:20px;position:relative}#content-header .btn-group{float:right;right:20px;position:absolute}#content-header .btn-group,#content-header h1{margin-top:20px}#content-header .btn-group .btn{padding:11px 14px 9px}#content-header .btn-group .btn .label{position:absolute;top:-7px}.container-fluid .row-fluid:first-child{margin-top:20px}#breadcrumb{background-color:#fff;border-bottom:1px solid #e3ebed;text-align:center}#breadcrumb a{padding:8px 20px 8px 10px;display:inline-block;background-image:url(/../img/breadcrumb.png);background-position:center right;background-repeat:no-repeat;font-size:16px;font-weight:700;color:#2255a4;cursor:pointer}#breadcrumb a:hover{color:#333}#breadcrumb a:last-child{background-image:none}#breadcrumb a.current{font-weight:700;color:#444}#breadcrumb a i{margin-right:5px;opacity:.6}#breadcrumb a:hover i{margin-right:5px;opacity:.8}.todo ul{list-style:none outside none;margin:0}.todo li{border-bottom:1px solid #ebebeb;margin-bottom:0;padding:10px 0}.todo li:hover{background:none repeat scroll 0 0 #fcfcfc;border-color:#d9d9d9}.todo li:last-child{border-bottom:0}.todo li .txt{float:left}.todo li .by{margin-left:10px;margin-right:10px}.todo li .date{margin-right:10px}.quick-actions_homepage{width:100%;text-align:center;position:relative;float:left;margin-top:10px}.quick-actions,.quick-actions-horizontal,.stat-boxes,.stats-plain{display:block;list-style:none outside none;margin:15px 0;text-align:center}.stat-boxes2{display:inline-block;list-style:none outside none;margin:0;text-align:center}.stat-boxes2 li{display:inline-block;line-height:18px;margin:0 10px 10px;padding:0 10px;background:#fff;border:1px solid #dcdcdc}.stat-boxes2 li:hover{background:#f6f6f6}.stat-boxes .right,.stat-boxes2 .left{text-shadow:0 1px 0 #fff;float:left}.stat-boxes2 .left{border-right:1px solid #dcdcdc;box-shadow:1px 0 0 0 #fff;font-size:10px;font-weight:700;margin-right:10px;padding:10px 14px 6px 4px}.stat-boxes2 .right{color:#666;font-size:12px;padding:9px 10px 7px 0;text-align:center;min-width:70px;float:left}.stat-boxes2 .left span,.stat-boxes2 .right strong{display:block}.stat-boxes2 .right strong{font-size:26px;margin-bottom:3px;margin-top:6px}.quick-actions_homepage .quick-actions li{position:relative}.quick-actions_homepage .quick-actions li .label{position:absolute;padding:5px;top:-10px;right:-5px}.stats-plain{width:100%}.quick-actions li,.quick-actions-horizontal li,.stat-boxes li{float:left;line-height:18px;margin:0 10px 10px 0;padding:0 10px}.quick-actions li a:hover,.quick-actions li:hover,.quick-actions-horizontal li a:hover,.quick-actions-horizontal li:hover,.stat-boxes li a:hover,.stat-boxes li:hover{background:#2e363f}.quick-actions li{height:124px;width:210px}.quick-actions_homepage .quick-actions .span3{width:30%}.quick-actions li,.quick-actions-horizontal li{padding:0}.stats-plain li{padding:0 30px;display:inline-block;margin:0 10px 20px}.quick-actions li a{padding:20px 10px}.stats-plain li h4{font-size:40px;margin-bottom:15px}.stats-plain li span{font-size:14px;color:#fff}.quick-actions-horizontal li a span{padding:10px 12px 10px 10px;display:inline-block}.quick-actions li a,.quick-actions-horizontal li a{display:block;color:#fff;font-size:14px;font-weight:lighter}.quick-actions li a i[class*=\" icon-\"],.quick-actions li a i[class^=icon-]{font-size:60px;display:block;margin:0 auto 5px}.quick-actions-horizontal li a i[class*=\" icon-\"],.quick-actions-horizontal li a i[class^=icon-]{background-repeat:no-repeat;background-attachment:scroll;background-position:center;background-color:transparent;width:16px;height:16px;display:inline-block;margin:-2px 0 0!important;border-right:1px solid #ddd;margin-right:10px;padding:10px;vertical-align:middle}.quick-actions li:active,.quick-actions-horizontal li:active{background-image:-webkit-gradient(linear,0 0,0 100%,from(#eee),to(#f4f4f4));background-image:-webkit-linear-gradient(top,#eee 0,#f4f4f4 100%);background-image:-moz-linear-gradient(top,#eee 0,#f4f4f4 100%);background-image:-ms-linear-gradient(top,#eee 0,#f4f4f4 100%);background-image:-o-linear-gradient(top,#eee 0,#f4f4f4 100%);background-image:linear-gradient(top,#eee 0,#f4f4f4 100%);box-shadow:0 1px 4px 0 rgba(0,0,0,.2) inset,0 1px 0 rgba(255,255,255,.4)}.stat-boxes .left,.stat-boxes .right{text-shadow:0 1px 0 #fff;float:left}.stat-boxes .left{border-right:1px solid #dcdcdc;box-shadow:1px 0 0 0 #fff;font-size:10px;font-weight:700;margin-right:10px;padding:10px 14px 6px 4px}.stat-boxes .right{color:#666;font-size:12px;padding:9px 10px 7px 0;text-align:center;min-width:70px}.stat-boxes .left span,.stat-boxes .right strong{display:block}.stat-boxes .right strong{font-size:26px;margin-bottom:3px;margin-top:6px},.stat-boxes .peity_bar_good,.stat-boxes .peity_line_good{color:#459d1c}.stat-boxes .peity_bar_neutral,.stat-boxes .peity_line_neutral{color:#757575}.stat-boxes .peity_bar_bad,.stat-boxes .peity_line_bad{color:#ba1e20}.site-stats{margin:0;padding:0;text-align:center;list-style:none}.site-stats li{cursor:pointer;display:inline-block;margin:0 5px 10px;text-align:center;width:42%;padding:10px 0;color:#fff;position:relative}.site-stats li i{font-size:24px;clear:both}.site-stats li:hover{background:#2e363f}.site-stats li i{vertical-align:baseline}.site-stats li strong{font-weight:700;font-size:20px;width:100%;float:left;margin-left:0}.site-stats li small{margin-left:0;font-size:11px;width:100%;float:left}#donut,#interactive,#placeholder,#placeholder2,.bars,.chart,.pie{height:300px;max-width:100%}#choices{border-top:1px solid #dcdcdc;margin:10px 0;padding:10px}#choices br{display:none}#choices input{margin:-5px 5px 0 0}#choices label{display:inline-block;padding-right:20px}#tooltip{position:absolute;display:none;border:none;padding:3px 8px;border-radius:3px;font-size:10px;background-color:#222;color:#fff;z-index:25}.widget-box{background:none repeat scroll 0 0 #f9f9f9;border-left:1px solid #cdcdcd;border-top:1px solid #cdcdcd;border-right:1px solid #cdcdcd;clear:both;margin-top:16px;margin-bottom:16px;position:relative}.widget-box.widget-calendar,.widget-box.widget-chat{overflow:hidden!important}.accordion .widget-box{margin-top:-2px;margin-bottom:0;border-radius:0}.widget-box.widget-plain{background:0 0;border:none;margin-top:0;margin-bottom:0}.modal-header,.table th,.widget-title,div.dataTables_wrapper .ui-widget-header{background:#efefef;border-bottom:1px solid #cdcdcd;height:36px}.widget-title .nav-tabs{border-bottom:0 none}.widget-title .nav-tabs li a{border-bottom:medium none!important;border-left:1px solid #ddd;border-radius:0;border-right:1px solid #ddd;border-top:medium none;color:#999;margin:0;outline:medium none;padding:9px 10px 8px;font-weight:700;text-shadow:0 1px 0 #fff}.widget-title .nav-tabs li:first-child a{border-left:medium none!important}.widget-title .nav-tabs li a:hover{background-color:transparent!important;border-color:#d6d6d6;border-width:0 1px;color:#2b2b2b}.widget-title .nav-tabs li.active a{background-color:#f9f9f9!important;color:#444}.widget-title span.icon{padding:9px 10px 7px 11px;float:left;border-right:1px solid #dadada}.widget-title h5{color:#666;float:left;font-size:12px;font-weight:700;padding:12px;line-height:12px;margin:0}.widget-title .buttons{float:right;margin:8px 10px 0 0}.widget-title .label{padding:3px 5px 2px;float:right;margin:9px 11px 0 0;box-shadow:0 1px 2px rgba(0,0,0,.3) inset,0 1px 0 #fff}.widget-calendar .widget-title .label{margin-right:190px}.widget-content{padding:15px;border-bottom:1px solid #cdcdcd}.widget-box.widget-plain .widget-content{padding:12px 0 0}.widget-box.collapsible .collapse.in .widget-content{border-bottom:1px solid #cdcdcd}.recent-comments,.recent-posts,.recent-users{margin:0;padding:0}.article-post li,.recent-comments li,.recent-posts li,.recent-users li{border-bottom:1px dotted #aebdc8;list-style:none outside none;padding:10px}.recent-comments li.viewall,.recent-posts li.viewall,.recent-users li.viewall{padding:0}.recent-comments li.viewall a,.recent-posts li.viewall a,.recent-users li.viewall a{padding:5px;text-align:center;display:block;color:#888}.recent-comments li.viewall a:hover,.recent-posts li.viewall a:hover,.recent-users li.viewall a:hover{background-color:#eee}.recent-comments li:last-child,.recent-posts li:last-child,.recent-users li:last-child{border-bottom:none!important}.user-thumb{background:none repeat scroll 0 0 #fff;float:left;height:40px;margin-right:10px;margin-top:5px;padding:2px;width:40px}.user-info{color:#666;font-size:11px}.invoice-content{padding:20px}.invoice-action{margin-bottom:30px}.invoice-head{clear:both;margin-bottom:40px;overflow:hidden;width:auto}.invoice-meta{font-size:18px;margin-bottom:40px}.invoice-date{float:right;font-size:80%}.invoice-content h5{color:#333;font-size:16px;font-weight:400;margin-bottom:10px}.invoice-content ul{list-style:none;margin:0;padding:0}.invoice-to{float:left;width:370px}.invoice-from{float:right;width:300px}.invoice-from li,.invoice-to li{clear:left}.invoice-from li span,.invoice-to li span{display:block}.invoice-content th.total-label{text-align:right}.invoice-content th.total-amount{text-align:left}.amount-word{color:#666;margin-bottom:40px;margin-top:40px}.amount-word span{color:#5476a6;font-weight:700;padding-left:20px}.panel-left{margin-top:103px}.panel-left2{margin-left:176px}.panel-right{width:100%;background-color:#fff;border-bottom:1px solid #ddd;position:absolute;right:0;overflow:auto;top:38px;height:76px}.panel-right2{width:100%;background-color:#fff;border-right:1px solid #ddd;position:absolute;left:0;overflow:auto;top:0;height:94%;width:175px}.panel-right .panel-title,.panel-right2 .panel-title{width:100%;background-color:#ececec;border-bottom:1px solid #ddd}.panel-right .panel-title h5,.panel-right2 .panel-title h5{font-size:12px;color:#777;text-shadow:0 1px 0 #fff;padding:6px 10px 5px;margin:0}.panel-right .panel-content{padding:10px}.chat-content{height:470px;padding:15px}.chat-messages{height:420px;overflow:auto;position:relative}.chat-message{padding:7px 15px;margin:7px 0 0}.chat-message input[type=text]{margin-bottom:0!important;width:100%}.chat-message .input-box{display:block;margin-right:90px}.chat-message button{float:right}#chat-messages-inner p{padding:0;margin:10px 0 0 0}#chat-messages-inner p img{display:inline-block;float:left;vertical-align:middle;width:28px;height:28px;margin-top:-1px;margin-right:10px}#chat-messages-inner .msg-block,#chat-messages-inner p.offline span{background:none repeat scroll 0 0 #fff;border:1px solid #ccc;box-shadow:1px 1px 0 1px rgba(0,0,0,.05);display:block;margin-left:0;padding:10px;position:relative}#chat-messages-inner p.offline span{background:none repeat scroll 0 0 #fff5f5}#chat-messages-inner .time{color:#999;font-size:11px;float:right}#chat-messages-inner .msg{display:block;margin-top:13px;border-top:1px solid #dadada}#chat-messages-inner .msg-block:before{border-right:7px solid rgba(0,0,0,.1);border-top:7px solid transparent;border-bottom:7px solid transparent;content:\"\";display:none;left:-7px;position:absolute;top:11px}#chat-messages-inner .msg-block:after{border-right:6px solid #fff;border-top:6px solid transparent;border-bottom:6px solid transparent;content:\"\";display:none;left:-6px;position:absolute;top:12px}.chat-users{padding:0 0 30px}.chat-users .contact-list{line-height:21px;list-style:none outside none;margin:0;padding:0;font-size:10px}.chat-users .contact-list li{border:1px solid #dadada;margin:5px 5px;padding:1px;position:relative}.chat-users .contact-list li:hover{background-color:#efefef}.chat-users .contact-list li a{color:#666;display:block;padding:8px 5px}.chat-users .contact-list li.online a{font-weight:700}.chat-users .contact-list li.new{background-color:#eaeaea}.chat-users .contact-list li.offline{background-color:#ede0e0}.chat-users .contact-list li a img{display:inline-block;margin-right:10px;vertical-align:middle;width:28px;height:28px}.chat-users .contact-list li .msg-count{padding:3px 5px;position:absolute;right:10px;top:12px}.taskDesc i{margin:1px 5px 0}.taskOptions,.taskStatus{text-align:center!important}.taskStatus .in-progress{color:#64909e}.taskStatus .pending{color:#ac6363}.taskStatus .done{color:#75b468}.activity-list{list-style:none outside none;margin:0}.activity-list li{border-bottom:1px solid #eee;display:block}.activity-list li:last-child{border-bottom:medium none}.activity-list li a{display:block;padding:7px 10px}.activity-list li a:hover{background-color:#fbfbfb}.activity-list li a span{color:#aaa;font-size:11px;font-style:italic}.activity-list li a i{margin-right:10px;opacity:.6;vertical-align:middle}.new-update{border-top:1px solid #ddd;padding:10px 12px}.new-update:first-child{border-top:medium none}.new-update span{display:block}.new-update i{float:left;margin-top:3px;margin-right:13px}.new-update .update-date{color:#bbb;float:right;margin:4px -2px 0 0;text-align:center;width:30px}.new-update .update-date .update-day{display:block;font-size:20px;font-weight:700;margin-bottom:-4px}.update-alert,.update-done,.update-notice{display:block;float:left;max-width:76%}tr:hover{background:#f6f6f6}span.icon .checker{margin-top:-5px;margin-right:0}.dataTables_length{color:#878787;margin:7px 5px 0;position:relative;left:5px;width:50%;top:-2px}.dataTables_length div{vertical-align:middle}.dataTables_paginate{line-height:16px;text-align:right;margin-top:5px;margin-right:10px}.dataTables_paginate{line-height:16px;text-align:right;margin-top:5px;margin-right:10px}.dataTables_paginate .ui-button,.pagination.alternate li a{font-size:12px;padding:4px 10px!important;border-style:solid;border-width:1px;border-color:#ddd #ddd #ccc;border-color:rgba(0,0,0,.1) rgba(0,0,0,.1) rgba(0,0,0,.25);display:inline-block;line-height:16px;background:#f5f5f5;color:#333;text-shadow:0 1px 0 #fff}.dataTables_paginate .ui-button:hover,.pagination.alternate li a:hover{background:#e8e8e8;color:#222;text-shadow:0 1px 0 #fff;cursor:pointer}.dataTables_paginate .first{border-radius:4px 0 0 4px}.dataTables_paginate .last{border-radius:0 4px 4px 0}.dataTables_paginate .ui-state-disabled,.fc-state-disabled,.pagination.alternate li.disabled a{color:#aaa!important}.dataTables_paginate .ui-state-disabled:hover,.fc-state-disabled:hover,.pagination.alternate li.disabled a:hover{background:#f5f5f5;cursor:default!important}.dataTables_paginate span .ui-state-disabled,.pagination.alternate li.active a{background:#41bedd!important;color:#fff!important;cursor:default!important}div.dataTables_wrapper .ui-widget-header{border-right:medium none;border-top:1px solid #d5d5d5;font-weight:400;margin-top:-1px}.dataTables_wrapper .ui-toolbar{padding:5px}.dataTables_filter{color:#878787;font-size:11px;right:0;top:37px;margin:4px 8px 2px 10px;position:absolute;text-align:left}.dataTables_filter input{margin-bottom:0}.table th{height:auto;font-size:10px;padding:5px 10px 2px;border-bottom:0;text-align:center;color:#666}.table.with-check tr td:first-child,.table.with-check tr th:first-child{width:10px}.table.with-check tr th:first-child i{margin-top:-2px;opacity:.6}.table.with-check tr td:first-child .checker{margin-right:0}.table tr.checked td{background-color:#ffffe3!important}.nopadding{padding:0!important}.nopadding .table{margin-bottom:0}.nopadding .table-bordered{border:0}.thumbnails{margin-left:-2.12766%!important}.thumbnails [class*=span]{margin-left:2.12766%!important;position:relative}.thumbnails .actions{width:auto;height:16px;background-color:#000;padding:4px 8px 8px 8px;position:absolute;bottom:0;left:50%;margin-top:-13px;margin-left:-24px;opacity:0;top:10%;transition:1s ease-out;-moz-transition:opacity .3s ease-in-out}.thumbnails li:hover .actions,.thumbnails li:hover .actions a:hover{opacity:1;color:#fff;top:50%;transition:1s ease-out}.line{background:url(/../img/line.png) repeat-x scroll 0 0 transparent;display:block;height:8px}.modal{z-index:99999!important}.modal-backdrop{z-index:999!important}.modal-header{height:auto;padding:8px 15px 5px}.modal-header h3{font-size:12px;text-shadow:0 1px 0 #fff}.notify-ui ul{list-style:none;margin:0;padding:0}.notify-ui li{background:#eee;margin-bottom:5px;padding:5px 10px;text-align:center;border:1px solid #ddd}.notify-ui li:hover{cursor:pointer;color:#777}form{margin-bottom:0}.form-horizontal .control-group{border-top:1px solid #fff;border-bottom:1px solid #eee;margin-bottom:0}.form-horizontal .control-group:last-child{border-bottom:0}.form-horizontal .control-label{padding-top:15px;width:180px}.form-horizontal .controls{margin-left:200px;padding:10px 0}.row-fluid .span20{width:97.8%}.form-horizontal .form-actions{margin-top:0;margin-bottom:0}.help-block,.help-inline{color:#999}#lightbox{position:fixed;top:0;left:0;width:100%;height:100%;background:url(/overlay.png) repeat #000;text-align:center;z-index:9999}#lightbox p{position:absolute;top:10px;right:10px;width:22px;height:22px;cursor:pointer;z-index:22;border:1px solid #fff;border-radius:100%;padding:2px;text-align:center;transition:.5s}#lightbox p:hover{transform:rotate(180deg)}#imgbox{position:absolute;left:0;top:0;width:100%;height:100%;background:url(/overlay.png) repeat #000;text-align:center;z-index:21}#imgbox img{margin-top:100px;border:10px solid #fff}.error_ex{text-align:center}.error_ex h1{font-size:140px;font-weight:700;padding:50px 0;color:#28b779}#sidebar .content{padding:10px;position:relative;color:#939da8}#sidebar .percent{font-weight:700;position:absolute;right:10px;top:25px}#sidebar .progress{margin-bottom:2px;margin-top:2px;width:70%}#sidebar .progress-mini{height:6px}#sidebar .stat{font-size:11px}.btn-icon-pg ul{margin:0;padding:0}.btn-icon-pg ul li{margin:5px;padding:5px;list-style:none;display:inline-block;border:1px solid #dadada;min-width:187px;cursor:pointer}.btn-icon-pg ul li:hover i{transition:.3s;-moz-transition:.3s;-webkit-transition:.3s;-o-transition:.3s;margin-left:8px}.accordion{margin-top:16px}.fix_hgt{height:115px;overflow-x:auto}.input-append .add-on:last-child,.input-append .btn:last-child{border-radius:0;padding:6px 5px 2px}.input-append input,.input-append input[class*=span],.input-prepend input,.input-prepend input[class*=span]{width:none}.input-append input,.input-append select,.input-prepend input,.input-prepend span{border-radius:0!important}.bs-docs-tooltip-examples{list-style:none outside none;margin:0 0 10px;position:relative;text-align:center}.bs-docs-tooltip-examples li{display:inline;padding:0 10px;list-style:none;position:relative}@media (max-width:480px){#header{height:115px}#header h1{top:10px;left:5px;margin:3px auto}#user-nav{position:relative;left:auto;right:auto;width:100%;margin-top:-31px;border-top:1px solid #363e48;margin-bottom:0;background:#2e363f;float:right}.navbar>.nav{float:none}#my_menu{display:none}#my_menu_input{display:block}#user-nav>ul{right:0;margin-left:20%!important;margin-top:0;width:100%;background:#000;position:relative}#user-nav>ul>li{padding:0 0}#user-nav>ul>li>a{padding:5px 10px}#sidebar .content{display:none}#content{margin-left:0!important;border-top-left-radius:0;margin-top:0}#content-header{margin-top:0;text-align:center}#content-header .btn-group,#content-header h1{float:none}#content-header h1{display:block;text-align:center;margin-left:auto;margin-top:0;padding-top:15px;width:100%}#content-header .btn-group{margin-top:70px;margin-bottom:0;margin-right:0;left:30%}#sidebar{float:none;width:100%!important;display:block;position:relative;top:0}#sidebar>ul{margin:0;padding:0;width:100%;display:block;z-index:999;position:relative}#sidebar>ul>li{list-style-type:none;display:block;border-top:1px solid #41bedd;float:none!important;margin:0;position:relative;padding:2px 10px;cursor:pointer}#sidebar>ul>li:hover ul{display:none}#sidebar>ul>li:hover{background-color:#27a9e3}#sidebar>ul>li:hover a{background:0 0}#sidebar>ul li ul{margin:0;padding:0;top:35px;left:0;z-index:999;display:none;position:absolute;width:100%;min-width:100%;border-radius:none}#sidebar>ul li ul li{list-style-type:none;margin:0;font-size:12px;line-height:30px}#sidebar>ul li ul li a{display:block;padding:5px 10px;color:#fff;text-decoration:none;font-weight:700}#sidebar>ul li ul li:hover a{border-radius:0}#sidebar>ul li span{cursor:pointer;margin:0 2px 0 5px;font-weight:700;color:#fff;font-size:12px}#sidebar>ul li a i{background-image:url(/../img/glyphicons-halflings-white.png);margin-top:4px;vertical-align:top}#sidebar>a{padding:9px 20px 9px 15px;display:block!important;color:#eee;float:none!important;font-size:12px;font-weight:700}#sidebar>ul>li>a{padding:5px;display:block;color:#aaa}.widget-title .buttons>.btn{width:11px;white-space:nowrap;overflow:hidden}.form-horizontal .control-label{padding-left:30px}.form-horizontal .controls{margin-left:0;padding:10px 30px}.form-actions{text-align:center}.panel-right2{width:100%;background-color:#fff;border-right:1px solid #ddd;position:relative;left:0;overflow:auto;top:0;height:87%;width:100%}.panel-left2{margin-left:0}.dataTables_paginate .ui-button,.pagination.alternate li a{padding:4px 4px!important}.table th{padding:5px 4px 2px}}@media (min-width:481px) and (max-width:970px){body{background:#49cced}#header h1{top:5px;left:5px;width:35px}#header h1 a img{height:30px}#search{top:5px}#my_menu{display:none}#my_menu_input{display:block}#content{margin-top:0}#sidebar>ul>li{float:none}#sidebar>ul>li:hover ul{display:block}#sidebar,#sidebar>ul{width:43px;display:block;position:absolute;height:100%;z-index:1}#sidebar>ul ul{display:none;position:absolute;left:43px;top:0;min-width:150px;list-style:none}#sidebar>ul ul li a{white-space:nowrap;padding:10px 25px}#sidebar>ul ul:before{border-top:7px solid transparent;border-bottom:7px solid transparent;content:\"\";display:inline-block;left:-6px;position:absolute;top:11px}#sidebar>ul ul:after{content:\"\";display:inline-block;left:-5px;position:absolute;top:12px}#sidebar>a{display:none!important}#sidebar>ul>li.open.submenu>a{border-bottom:none!important}#sidebar>ul>li>a>span{display:none}#content{margin-left:43px}#sidebar .content{display:none}}@media (max-width:600px){.widget-title .buttons{float:left}.panel-left{margin-right:0}.panel-right{border-top:1px solid #ddd;border-left:none;position:relative;top:auto;right:auto;height:auto;width:auto}#sidebar .content{display:none}}@media (max-width:767px){body{padding:0!important}.container-fluid{padding-left:20px;padding-right:20px}#search{display:none}#user-nav>ul>li>a>span.text{display:none}#sidebar .content{display:none}}@media (min-width:768px) and (max-width:979px){.row-fluid [class*=span],[class*=span]{display:block;float:none;margin-left:0;width:auto}}@media (max-width:979px){div.dataTables_wrapper .ui-widget-header{height:68px}.dataTables_filter{position:relative;top:0}.dataTables_length{width:100%;text-align:center}.dataTables_filter,.dataTables_paginate{text-align:center}#sidebar .content{display:none}}");
-                    yaz.Close();
-                }
-            }
-
-            CreateFontAwesome();
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_active_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\active.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_breadcrumb_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\breadcrumb.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_glyphicons_halflings_white_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\glyphicons-halflings-white.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_line_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\line.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_logo_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\logo.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_menu_active_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\menu-active.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_passive_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\passive.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_loading_gif), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\loading.gif");
         }
 
         void CreateFontAwesome()
         {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\css\\font-awesome.css", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("@font-face{font-family:FontAwesome;src:url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.eot);src:url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.eot?#iefix) format('embedded-opentype'),url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.woff) format('woff'),url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.ttf) format('truetype');font-weight:400;font-style:normal}[class*=\" icon-\"],[class^=icon-]{font-family:FontAwesome;font-weight:400;font-style:normal;text-decoration:inherit;display:inline;width:auto;height:auto;line-height:normal;vertical-align:baseline;background-image:none!important;background-position:0 0;background-repeat:repeat}[class*=\" icon-\"]:before,[class^=icon-]:before{text-decoration:inherit;display:inline-block;speak:none}a [class*=\" icon-\"],a [class^=icon-]{display:inline-block}.icon-large:before{vertical-align:-10%;font-size:1.3333333333333333em}.btn [class*=\" icon-\"],.btn [class^=icon-],.nav [class*=\" icon-\"],.nav [class^=icon-]{display:inline;line-height:.6em}.btn [class*=\" icon-\"].icon-spin,.btn [class^=icon-].icon-spin,.nav [class*=\" icon-\"].icon-spin,.nav [class^=icon-].icon-spin{display:inline-block}li [class*=\" icon-\"],li [class^=icon-]{display:inline-block;width:1.25em;text-align:center}li [class*=\" icon-\"].icon-large,li [class^=icon-].icon-large{width:1.5625em}ul.icons{list-style-type:none;text-indent:-.75em}ul.icons li [class*=\" icon-\"],ul.icons li [class^=icon-]{width:.75em}.icon-muted{color:#eee}.icon-border{border:solid 1px #eee;padding:.2em .25em .15em;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}.icon-2x{font-size:2em}.icon-2x.icon-border{border-width:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}.icon-3x{font-size:3em}.icon-3x.icon-border{border-width:3px;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px}.icon-4x{font-size:4em}.icon-4x.icon-border{border-width:4px;-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px}.pull-right{float:right}.pull-left{float:left}[class*=\" icon-\"].pull-left,[class^=icon-].pull-left{margin-right:.35em}[class*=\" icon-\"].pull-right,[class^=icon-].pull-right{margin-left:.35em}.btn [class*=\" icon-\"].pull-left.icon-2x,.btn [class*=\" icon-\"].pull-right.icon-2x,.btn [class^=icon-].pull-left.icon-2x,.btn [class^=icon-].pull-right.icon-2x{margin-top:.35em}.btn [class*=\" icon-\"].icon-spin.icon-large,.btn [class^=icon-].icon-spin.icon-large{height:.75em}.btn.btn-small [class*=\" icon-\"].pull-left.icon-2x,.btn.btn-small [class*=\" icon-\"].pull-right.icon-2x,.btn.btn-small [class^=icon-].pull-left.icon-2x,.btn.btn-small [class^=icon-].pull-right.icon-2x{margin-top:.45em}.btn.btn-large [class*=\" icon-\"].pull-left.icon-2x,.btn.btn-large [class*=\" icon-\"].pull-right.icon-2x,.btn.btn-large [class^=icon-].pull-left.icon-2x,.btn.btn-large [class^=icon-].pull-right.icon-2x{margin-top:.2em}.icon-spin{display:inline-block;-moz-animation:spin 2s infinite linear;-o-animation:spin 2s infinite linear;-webkit-animation:spin 2s infinite linear;animation:spin 2s infinite linear}@-moz-keyframes spin{0%{-moz-transform:rotate(0)}100%{-moz-transform:rotate(359deg)}}@-webkit-keyframes spin{0%{-webkit-transform:rotate(0)}100%{-webkit-transform:rotate(359deg)}}@-o-keyframes spin{0%{-o-transform:rotate(0)}100%{-o-transform:rotate(359deg)}}@-ms-keyframes spin{0%{-ms-transform:rotate(0)}100%{-ms-transform:rotate(359deg)}}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(359deg)}}.icon-glass:before{content:\"\\f000\"}.icon-music:before{content:\"\\f001\"}.icon-search:before{content:\"\\f002\"}.icon-envelope:before{content:\"\\f003\"}.icon-heart:before{content:\"\\f004\"}.icon-star:before{content:\"\\f005\"}.icon-star-empty:before{content:\"\\f006\"}.icon-user:before{content:\"\\f007\"}.icon-film:before{content:\"\\f008\"}.icon-th-large:before{content:\"\\f009\"}.icon-th:before{content:\"\\f00a\"}.icon-th-list:before{content:\"\\f00b\"}.icon-ok:before{content:\"\\f00c\"}.icon-remove:before{content:\"\\f00d\"}.icon-zoom-in:before{content:\"\\f00e\"}.icon-zoom-out:before{content:\"\\f010\"}.icon-off:before{content:\"\\f011\"}.icon-signal:before{content:\"\\f012\"}.icon-cog:before{content:\"\\f013\"}.icon-trash:before{content:\"\\f014\"}.icon-home:before{content:\"\\f015\"}.icon-file:before{content:\"\\f016\"}.icon-time:before{content:\"\\f017\"}.icon-road:before{content:\"\\f018\"}.icon-download-alt:before{content:\"\\f019\"}.icon-download:before{content:\"\\f01a\"}.icon-upload:before{content:\"\\f01b\"}.icon-inbox:before{content:\"\\f01c\"}.icon-play-circle:before{content:\"\\f01d\"}.icon-repeat:before{content:\"\\f01e\"}.icon-refresh:before{content:\"\\f021\"}.icon-list-alt:before{content:\"\\f022\"}.icon-lock:before{content:\"\\f023\"}.icon-flag:before{content:\"\\f024\"}.icon-headphones:before{content:\"\\f025\"}.icon-volume-off:before{content:\"\\f026\"}.icon-volume-down:before{content:\"\\f027\"}.icon-volume-up:before{content:\"\\f028\"}.icon-qrcode:before{content:\"\\f029\"}.icon-barcode:before{content:\"\\f02a\"}.icon-tag:before{content:\"\\f02b\"}.icon-tags:before{content:\"\\f02c\"}.icon-book:before{content:\"\\f02d\"}.icon-bookmark:before{content:\"\\f02e\"}.icon-print:before{content:\"\\f02f\"}.icon-camera:before{content:\"\\f030\"}.icon-font:before{content:\"\\f031\"}.icon-bold:before{content:\"\\f032\"}.icon-italic:before{content:\"\\f033\"}.icon-text-height:before{content:\"\\f034\"}.icon-text-width:before{content:\"\\f035\"}.icon-align-left:before{content:\"\\f036\"}.icon-align-center:before{content:\"\\f037\"}.icon-align-right:before{content:\"\\f038\"}.icon-align-justify:before{content:\"\\f039\"}.icon-list:before{content:\"\\f03a\"}.icon-indent-left:before{content:\"\\f03b\"}.icon-indent-right:before{content:\"\\f03c\"}.icon-facetime-video:before{content:\"\\f03d\"}.icon-picture:before{content:\"\\f03e\"}.icon-pencil:before{content:\"\\f040\"}.icon-map-marker:before{content:\"\\f041\"}.icon-adjust:before{content:\"\\f042\"}.icon-tint:before{content:\"\\f043\"}.icon-edit:before{content:\"\\f044\"}.icon-share:before{content:\"\\f045\"}.icon-check:before{content:\"\\f046\"}.icon-move:before{content:\"\\f047\"}.icon-step-backward:before{content:\"\\f048\"}.icon-fast-backward:before{content:\"\\f049\"}.icon-backward:before{content:\"\\f04a\"}.icon-play:before{content:\"\\f04b\"}.icon-pause:before{content:\"\\f04c\"}.icon-stop:before{content:\"\\f04d\"}.icon-forward:before{content:\"\\f04e\"}.icon-fast-forward:before{content:\"\\f050\"}.icon-step-forward:before{content:\"\\f051\"}.icon-eject:before{content:\"\\f052\"}.icon-chevron-left:before{content:\"\\f053\"}.icon-chevron-right:before{content:\"\\f054\"}.icon-plus-sign:before{content:\"\\f055\"}.icon-minus-sign:before{content:\"\\f056\"}.icon-remove-sign:before{content:\"\\f057\"}.icon-ok-sign:before{content:\"\\f058\"}.icon-question-sign:before{content:\"\\f059\"}.icon-info-sign:before{content:\"\\f05a\"}.icon-screenshot:before{content:\"\\f05b\"}.icon-remove-circle:before{content:\"\\f05c\"}.icon-ok-circle:before{content:\"\\f05d\"}.icon-ban-circle:before{content:\"\\f05e\"}.icon-arrow-left:before{content:\"\\f060\"}.icon-arrow-right:before{content:\"\\f061\"}.icon-arrow-up:before{content:\"\\f062\"}.icon-arrow-down:before{content:\"\\f063\"}.icon-share-alt:before{content:\"\\f064\"}.icon-resize-full:before{content:\"\\f065\"}.icon-resize-small:before{content:\"\\f066\"}.icon-plus:before{content:\"\\f067\"}.icon-minus:before{content:\"\\f068\"}.icon-asterisk:before{content:\"\\f069\"}.icon-exclamation-sign:before{content:\"\\f06a\"}.icon-gift:before{content:\"\\f06b\"}.icon-leaf:before{content:\"\\f06c\"}.icon-fire:before{content:\"\\f06d\"}.icon-eye-open:before{content:\"\\f06e\"}.icon-eye-close:before{content:\"\\f070\"}.icon-warning-sign:before{content:\"\\f071\"}.icon-plane:before{content:\"\\f072\"}.icon-calendar:before{content:\"\\f073\"}.icon-random:before{content:\"\\f074\"}.icon-comment:before{content:\"\\f075\"}.icon-magnet:before{content:\"\\f076\"}.icon-chevron-up:before{content:\"\\f077\"}.icon-chevron-down:before{content:\"\\f078\"}.icon-retweet:before{content:\"\\f079\"}.icon-shopping-cart:before{content:\"\\f07a\"}.icon-folder-close:before{content:\"\\f07b\"}.icon-folder-open:before{content:\"\\f07c\"}.icon-resize-vertical:before{content:\"\\f07d\"}.icon-resize-horizontal:before{content:\"\\f07e\"}.icon-bar-chart:before{content:\"\\f080\"}.icon-twitter-sign:before{content:\"\\f081\"}.icon-facebook-sign:before{content:\"\\f082\"}.icon-camera-retro:before{content:\"\\f083\"}.icon-key:before{content:\"\\f084\"}.icon-cogs:before{content:\"\\f085\"}.icon-comments:before{content:\"\\f086\"}.icon-thumbs-up:before{content:\"\\f087\"}.icon-thumbs-down:before{content:\"\\f088\"}.icon-star-half:before{content:\"\\f089\"}.icon-heart-empty:before{content:\"\\f08a\"}.icon-signout:before{content:\"\\f08b\"}.icon-linkedin-sign:before{content:\"\\f08c\"}.icon-pushpin:before{content:\"\\f08d\"}.icon-external-link:before{content:\"\\f08e\"}.icon-signin:before{content:\"\\f090\"}.icon-trophy:before{content:\"\\f091\"}.icon-github-sign:before{content:\"\\f092\"}.icon-upload-alt:before{content:\"\\f093\"}.icon-lemon:before{content:\"\\f094\"}.icon-phone:before{content:\"\\f095\"}.icon-check-empty:before{content:\"\\f096\"}.icon-bookmark-empty:before{content:\"\\f097\"}.icon-phone-sign:before{content:\"\\f098\"}.icon-twitter:before{content:\"\\f099\"}.icon-facebook:before{content:\"\\f09a\"}.icon-github:before{content:\"\\f09b\"}.icon-unlock:before{content:\"\\f09c\"}.icon-credit-card:before{content:\"\\f09d\"}.icon-rss:before{content:\"\\f09e\"}.icon-hdd:before{content:\"\\f0a0\"}.icon-bullhorn:before{content:\"\\f0a1\"}.icon-bell:before{content:\"\\f0a2\"}.icon-certificate:before{content:\"\\f0a3\"}.icon-hand-right:before{content:\"\\f0a4\"}.icon-hand-left:before{content:\"\\f0a5\"}.icon-hand-up:before{content:\"\\f0a6\"}.icon-hand-down:before{content:\"\\f0a7\"}.icon-circle-arrow-left:before{content:\"\\f0a8\"}.icon-circle-arrow-right:before{content:\"\\f0a9\"}.icon-circle-arrow-up:before{content:\"\\f0aa\"}.icon-circle-arrow-down:before{content:\"\\f0ab\"}.icon-globe:before{content:\"\\f0ac\"}.icon-wrench:before{content:\"\\f0ad\"}.icon-tasks:before{content:\"\\f0ae\"}.icon-filter:before{content:\"\\f0b0\"}.icon-briefcase:before{content:\"\\f0b1\"}.icon-fullscreen:before{content:\"\\f0b2\"}.icon-group:before{content:\"\\f0c0\"}.icon-link:before{content:\"\\f0c1\"}.icon-cloud:before{content:\"\\f0c2\"}.icon-beaker:before{content:\"\\f0c3\"}.icon-cut:before{content:\"\\f0c4\"}.icon-copy:before{content:\"\\f0c5\"}.icon-paper-clip:before{content:\"\\f0c6\"}.icon-save:before{content:\"\\f0c7\"}.icon-sign-blank:before{content:\"\\f0c8\"}.icon-reorder:before{content:\"\\f0c9\"}.icon-list-ul:before{content:\"\\f0ca\"}.icon-list-ol:before{content:\"\\f0cb\"}.icon-strikethrough:before{content:\"\\f0cc\"}.icon-underline:before{content:\"\\f0cd\"}.icon-table:before{content:\"\\f0ce\"}.icon-magic:before{content:\"\\f0d0\"}.icon-truck:before{content:\"\\f0d1\"}.icon-pinterest:before{content:\"\\f0d2\"}.icon-pinterest-sign:before{content:\"\\f0d3\"}.icon-google-plus-sign:before{content:\"\\f0d4\"}.icon-google-plus:before{content:\"\\f0d5\"}.icon-money:before{content:\"\\f0d6\"}.icon-caret-down:before{content:\"\\f0d7\"}.icon-caret-up:before{content:\"\\f0d8\"}.icon-caret-left:before{content:\"\\f0d9\"}.icon-caret-right:before{content:\"\\f0da\"}.icon-columns:before{content:\"\\f0db\"}.icon-sort:before{content:\"\\f0dc\"}.icon-sort-down:before{content:\"\\f0dd\"}.icon-sort-up:before{content:\"\\f0de\"}.icon-envelope-alt:before{content:\"\\f0e0\"}.icon-linkedin:before{content:\"\\f0e1\"}.icon-undo:before{content:\"\\f0e2\"}.icon-legal:before{content:\"\\f0e3\"}.icon-dashboard:before{content:\"\\f0e4\"}.icon-comment-alt:before{content:\"\\f0e5\"}.icon-comments-alt:before{content:\"\\f0e6\"}.icon-bolt:before{content:\"\\f0e7\"}.icon-sitemap:before{content:\"\\f0e8\"}.icon-umbrella:before{content:\"\\f0e9\"}.icon-paste:before{content:\"\\f0ea\"}.icon-lightbulb:before{content:\"\\f0eb\"}.icon-exchange:before{content:\"\\f0ec\"}.icon-cloud-download:before{content:\"\\f0ed\"}.icon-cloud-upload:before{content:\"\\f0ee\"}.icon-user-md:before{content:\"\\f0f0\"}.icon-stethoscope:before{content:\"\\f0f1\"}.icon-suitcase:before{content:\"\\f0f2\"}.icon-bell-alt:before{content:\"\\f0f3\"}.icon-coffee:before{content:\"\\f0f4\"}.icon-food:before{content:\"\\f0f5\"}.icon-file-alt:before{content:\"\\f0f6\"}.icon-building:before{content:\"\\f0f7\"}.icon-hospital:before{content:\"\\f0f8\"}.icon-ambulance:before{content:\"\\f0f9\"}.icon-medkit:before{content:\"\\f0fa\"}.icon-fighter-jet:before{content:\"\\f0fb\"}.icon-beer:before{content:\"\\f0fc\"}.icon-h-sign:before{content:\"\\f0fd\"}.icon-plus-sign-alt:before{content:\"\\f0fe\"}.icon-double-angle-left:before{content:\"\\f100\"}.icon-double-angle-right:before{content:\"\\f101\"}.icon-double-angle-up:before{content:\"\\f102\"}.icon-double-angle-down:before{content:\"\\f103\"}.icon-angle-left:before{content:\"\\f104\"}.icon-angle-right:before{content:\"\\f105\"}.icon-angle-up:before{content:\"\\f106\"}.icon-angle-down:before{content:\"\\f107\"}.icon-desktop:before{content:\"\\f108\"}.icon-laptop:before{content:\"\\f109\"}.icon-tablet:before{content:\"\\f10a\"}.icon-mobile-phone:before{content:\"\\f10b\"}.icon-circle-blank:before{content:\"\\f10c\"}.icon-quote-left:before{content:\"\\f10d\"}.icon-quote-right:before{content:\"\\f10e\"}.icon-spinner:before{content:\"\\f110\"}.icon-circle:before{content:\"\\f111\"}.icon-reply:before{content:\"\\f112\"}.icon-github-alt:before{content:\"\\f113\"}.icon-folder-close-alt:before{content:\"\\f114\"}.icon-folder-open-alt:before{content:\"\\f115\"}");
-                    yaz.Close();
-                }
-            }
-
-            CopyFromResource(Properties.Resources.Content_admin_css_font_awesome_FontAwesome_otf, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\FontAwesome.otf");
-            CopyFromResource(Properties.Resources.Content_admin_css_font_awesome_fontawesome_webfont_eot, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.eot");
-            CopyFromResource(Properties.Resources.Content_admin_css_font_awesome_fontawesome_webfont_svg, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.svg");
-            CopyFromResource(Properties.Resources.Content_admin_css_font_awesome_fontawesome_webfont_ttf, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.ttf");
-            CopyFromResource(Properties.Resources.Content_admin_css_font_awesome_fontawesome_webfont_woff, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.woff");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_FontAwesome_otf, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\FontAwesome.otf");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_eot, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.eot");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_svg, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.svg");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_ttf, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.ttf");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_woff, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.woff");
         }
 
         void CreateCKEditor()
         {
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_js_ckeditor_ckeditor_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\ckeditor.js");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_js_ckeditor_ckeditor_js_map), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\ckeditor.js.map");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_js_ckeditor_translations_en_au_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations\\en-au.js");
-            CopyFromResource(StringToByteArray(Properties.Resources.Content_admin_js_ckeditor_translations_tr_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations\\tr.js");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_ckeditor_ckeditor_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\ckeditor.js");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_ckeditor_ckeditor_js_map), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\ckeditor.js.map");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_ckeditor_translations_en_au_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations\\en-au.js");
+            CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_ckeditor_translations_tr_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations\\tr.js");
         }
 
         void CopyFromResource(byte[] resourceFile, string destFile)

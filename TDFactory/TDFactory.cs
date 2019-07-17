@@ -38,6 +38,7 @@ namespace TDFactory
         string selectedcolumn;
         string projectName = "Proje";
         string projectFolder = "";
+        string[] aliases = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
 
         private void TDFactoryForm_Load(object sender, EventArgs e)
         {
