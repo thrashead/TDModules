@@ -5337,7 +5337,12 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
+                    yaz.WriteLine("-------------");
+                    yaz.WriteLine("-- Hatalar --");
+                    yaz.WriteLine("-------------");
                     yaz.WriteLine("");
+                    yaz.WriteLine("Hata 1 : The type or namespace name 'Http' does not exist in the namespace 'System.Web'");
+                    yaz.WriteLine("Çözüm 1 : Package Manager Console üzerinden \"Install-Package Microsoft.AspNet.WebApi.Core\" kodunu çalıştır.");
                     yaz.Close();
                 }
             }
