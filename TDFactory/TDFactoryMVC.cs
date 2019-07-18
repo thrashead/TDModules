@@ -1134,6 +1134,18 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
+                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
+
+                int z = 0;
+                foreach (string item in lstSeciliKolonlar.Items)
+                {
+                    dizi[z] = item.Replace(" [" + Table + "]", "");
+                    z++;
+                }
+
+                List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+
                 CreateDirectories(Table);
 
                 if (i <= 0)
@@ -1177,7 +1189,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").Take(4).ToList())
                         {
                             List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -1210,7 +1222,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").Take(4).ToList())
                         {
                             List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -1242,7 +1254,11 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" href=\"@AppMgr.AdminPath/" + Table + "/Duzenle/@item." + id + "\">Düzenle</a></li>");
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-type=\"" + Table + "\" data-id=\"@item." + id + "\" data-link=\"" + Table + "\" data-toggle=\"modal\" href=\"#dltData\">Sil</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-type=\"" + Table + "\" data-id=\"@item." + id + "\" data-link=\"" + Table + "\" data-toggle=\"modal\">Sil</a></li>");
+
+                            if (deleted)
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rdltLink\" href=\"#rdltData\" data-type=\"" + Table + "\" data-id=\"@item." + id + "\" data-link=\"" + Table + "\" data-toggle=\"modal\">Kaldır</a></li>");
+
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t</ul>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t</div>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</td>");
@@ -1292,7 +1308,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\t<fieldset>");
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList())
                         {
                             if (!identityColumns.Contains(column.ColumnName))
                             {
@@ -1383,7 +1399,7 @@ namespace TDFactory
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t<fieldset>");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList())
                             {
                                 if (!identityColumns.Contains(column.ColumnName))
                                 {
@@ -1455,10 +1471,13 @@ namespace TDFactory
                                         List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
                                         string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
 
-                                        List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName).Take(4).ToList();
+                                        List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName && a.ColumnName.ToLower() != "deleted").Take(4).ToList();
 
                                         List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
                                         fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
+
+                                        List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
+                                        bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
 
                                         yaz.WriteLine("");
                                         yaz.WriteLine("\t\t<div class=\"row-fluid\">");
@@ -1532,7 +1551,11 @@ namespace TDFactory
                                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
                                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" href=\"@AppMgr.AdminPath/" + ForeignTableName + "/Duzenle/@item." + idFrgn + "\">Düzenle</a></li>");
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-toggle=\"modal\" href=\"#dltData\" data-link=\"" + ForeignTableName + "\" data-id=\"@item." + idFrgn + "\">Sil</a></li>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-link=\"" + ForeignTableName + "\" data-id=\"@item." + idFrgn + "\">Sil</a></li>");
+
+                                            if (fDeleted)
+                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rdltLink\" href=\"#rdltData\" data-toggle=\"modal\" data-link=\"" + ForeignTableName + "\" data-id=\"@item." + idFrgn + "\">Kaldır</a></li>");
+
                                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t</ul>");
                                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</div>");
                                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</td>");
@@ -1590,6 +1613,18 @@ namespace TDFactory
 
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
+                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
+
+                int z = 0;
+                foreach (string item in lstSeciliKolonlar.Items)
+                {
+                    dizi[z] = item.Replace(" [" + Table + "]", "");
+                    z++;
+                }
+
+                List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
 
                 CreateDirectories(Table);
 
@@ -1671,7 +1706,8 @@ namespace TDFactory
                         {
                             if (!column.IsIdentity)
                             {
-                                insertSql += "table." + column.ColumnName + ", ";
+                                if (column.ColumnName.ToLower() != "deleted")
+                                    insertSql += "table." + column.ColumnName + ", ";
                             }
                         }
                         insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
@@ -1756,7 +1792,8 @@ namespace TDFactory
                             string updateSql = "var result = entity.usp_" + Table + "Update(";
                             foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                             {
-                                updateSql += "table." + column.ColumnName + ", ";
+                                if (column.ColumnName.ToLower() != "deleted")
+                                    updateSql += "table." + column.ColumnName + ", ";
                             }
                             updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
                             updateSql += ").FirstOrDefault();";
@@ -1807,21 +1844,59 @@ namespace TDFactory
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
-                            //Sil
-                            yaz.WriteLine("\t\t[HttpPost]");
-                            yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\ttry");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn Json(true);");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\tcatch");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn Json(false);");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}");
+                            if (deleted == false)
+                            {
+                                //Sil
+                                yaz.WriteLine("\t\t[HttpPost]");
+                                yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\treturn Json(true);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\tcatch");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn Json(false);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}");
+                            }
+                            else
+                            {
+                                //Sil
+                                yaz.WriteLine("\t\t[HttpPost]");
+                                yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "SetDeleted(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\treturn Json(true);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\tcatch");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn Json(false);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+
+                                //Kaldır
+                                yaz.WriteLine("\t\t[HttpPost]");
+                                yaz.WriteLine("\t\tpublic JsonResult Kaldir(" + columntype.ReturnCSharpType() + " id)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\treturn Json(true);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\tcatch");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn Json(false);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}");
+                            }
                         }
 
                         yaz.WriteLine("\t}");
@@ -3888,6 +3963,18 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
+                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
+
+                int z = 0;
+                foreach (string item in lstSeciliKolonlar.Items)
+                {
+                    dizi[z] = item.Replace(" [" + Table + "]", "");
+                    z++;
+                }
+
+                List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+
                 CreateAngularDirectories(Table);
 
                 if (i <= 0)
@@ -3922,7 +4009,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").Take(4).ToList())
                         {
                             List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -3952,7 +4039,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).Take(4).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").Take(4).ToList())
                         {
                             List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -3977,7 +4064,6 @@ namespace TDFactory
                             i++;
                         }
 
-
                         if (identityColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
@@ -3985,7 +4071,11 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + Table + "/Duzenle/' + item?." + id + "]\">Düzenle</a></li>");
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-id]=\"item?." + id + "\">Sil</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" [attr.data-id]=\"item?." + id + "\">Sil</a></li>");
+
+                            if (deleted)
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rdltLink\" href=\"#rdltData\" data-toggle=\"modal\" [attr.data-id]=\"item?." + id + "\">Kaldır</a></li>");
+
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -4023,7 +4113,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t<form [formGroup]=\"ekleForm\" (ngSubmit)=\"onSubmit()\">");
                         yaz.WriteLine("\t\t\t<fieldset>");
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList())
                         {
                             if (!identityColumns.Contains(column.ColumnName))
                             {
@@ -4117,7 +4207,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t<form [formGroup]=\"duzenleForm\" (ngSubmit)=\"onSubmit()\">");
                             yaz.WriteLine("\t\t\t<fieldset>");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList())
                             {
                                 if (identityColumns.Contains(column.ColumnName))
                                 {
@@ -4207,10 +4297,13 @@ namespace TDFactory
                                     List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
                                     string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
 
-                                    List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName).Take(4).ToList();
+                                    List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName && a.ColumnName.ToLower() != "deleted").Take(4).ToList();
 
                                     List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
                                     fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
+
+                                    List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
+                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"row-fluid\">");
@@ -4272,7 +4365,11 @@ namespace TDFactory
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + ForeignTableName + "/Duzenle/' + item?." + idFrgn + "]\">Düzenle</a></li>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-toggle=\"modal\" href=\"#dltData\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Sil</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Sil</a></li>");
+
+                                        if (fDeleted)
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rdltLink\" href=\"#rdltData\" data-toggle=\"modal\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kaldır</a></li>");
+
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -4327,6 +4424,18 @@ namespace TDFactory
 
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
+                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
+
+                int z = 0;
+                foreach (string item in lstSeciliKolonlar.Items)
+                {
+                    dizi[z] = item.Replace(" [" + Table + "]", "");
+                    z++;
+                }
+
+                List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
 
                 if (i <= 0)
                 {
@@ -4404,7 +4513,8 @@ namespace TDFactory
                         {
                             if (!column.IsIdentity)
                             {
-                                insertSql += "table." + column.ColumnName + ", ";
+                                if (column.ColumnName.ToLower() != "deleted")
+                                    insertSql += "table." + column.ColumnName + ", ";
                             }
                         }
                         insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
@@ -4492,7 +4602,8 @@ namespace TDFactory
                             string updateSql = "var result = entity.usp_" + Table + "Update(";
                             foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                             {
-                                updateSql += "table." + column.ColumnName + ", ";
+                                if (column.ColumnName.ToLower() != "deleted")
+                                    updateSql += "table." + column.ColumnName + ", ";
                             }
                             updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
                             updateSql += ").FirstOrDefault();";
@@ -4542,21 +4653,59 @@ namespace TDFactory
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
-                            //Sil
-                            yaz.WriteLine("\t\t[HttpGet]");
-                            yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\ttry");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\tcatch");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}");
+                            if (deleted == false)
+                            {
+                                //Sil
+                                yaz.WriteLine("\t\t[HttpGet]");
+                                yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\tcatch");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}");
+                            }
+                            else
+                            {
+                                //Sil
+                                yaz.WriteLine("\t\t[HttpGet]");
+                                yaz.WriteLine("\t\tpublic JsonResult Sil(" + columntype.ReturnCSharpType() + " id)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "SetDeleted(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\tcatch");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+
+                                //Kaldır
+                                yaz.WriteLine("\t\t[HttpGet]");
+                                yaz.WriteLine("\t\tpublic JsonResult Kaldir(" + columntype.ReturnCSharpType() + " id)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\tcatch");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}");
+                            }
                         }
 
                         yaz.WriteLine("\t}");
@@ -4588,6 +4737,18 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
+                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
+
+                int z = 0;
+                foreach (string item in lstSeciliKolonlar.Items)
+                {
+                    dizi[z] = item.Replace(" [" + Table + "]", "");
+                    z++;
+                }
+
+                List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+
                 if (i <= 0)
                 {
                     CreateAngularHomeController();
@@ -4611,6 +4772,10 @@ namespace TDFactory
                         yaz.WriteLine("\tprivate linkEkle: string = \"Ajax/" + Table + "/Ekle\";");
                         yaz.WriteLine("\tprivate linkDuzenle: string = \"Ajax/" + Table + "/Duzenle\";");
                         yaz.WriteLine("\tprivate linkSil: string = \"Ajax/" + Table + "/Sil\";");
+
+                        if (deleted)
+                            yaz.WriteLine("\tprivate linkKaldir: string = \"Ajax/" + Table + "/Kaldir\";");
+
                         yaz.WriteLine("");
                         yaz.WriteLine("\tconstructor(private http: HttpClient) {");
                         yaz.WriteLine("\t}");
@@ -4645,6 +4810,16 @@ namespace TDFactory
                         yaz.WriteLine("\t\tlet params = new HttpParams().set(\"id\", id);");
                         yaz.WriteLine("\t\treturn this.http.get<boolean>(this.linkSil, { params: params });");
                         yaz.WriteLine("\t}");
+
+                        if (deleted)
+                        {
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tgetKaldir(id: string): Observable<boolean> {");
+                            yaz.WriteLine("\t\tlet params = new HttpParams().set(\"id\", id);");
+                            yaz.WriteLine("\t\treturn this.http.get<boolean>(this.linkKaldir, { params: params });");
+                            yaz.WriteLine("\t}");
+                        }
+
                         yaz.WriteLine("}");
                         yaz.Close();
                     }
@@ -4669,6 +4844,18 @@ namespace TDFactory
 
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
+                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
+
+                int z = 0;
+                foreach (string item in lstSeciliKolonlar.Items)
+                {
+                    dizi[z] = item.Replace(" [" + Table + "]", "");
+                    z++;
+                }
+
+                List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
 
                 CreateAngularDirectories(Table);
 
@@ -4722,6 +4909,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\t\t\t\tthis.FillData();");
                         yaz.WriteLine("\t\t\t\t\t\t}, 1);");
                         yaz.WriteLine("\t\t\t\t\t});");
+
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.dltLink\", function () {");
                         yaz.WriteLine("\t\t\t\t\t\t$(this).addClass(\"active-dlt\");");
@@ -4732,6 +4920,21 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
                         yaz.WriteLine("\t\t\t\t\t\tthis.onDelete(id);");
                         yaz.WriteLine("\t\t\t\t\t});");
+
+                        if (deleted)
+                        {
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.rdltLink\", function () {");
+                            yaz.WriteLine("\t\t\t\t\t\t$(this).addClass(\"active-rdlt\");");
+                            yaz.WriteLine("\t\t\t\t\t\t$(\"a.rdlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                            yaz.WriteLine("\t\t\t\t\t});");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.rdlt-yes\", () => {");
+                            yaz.WriteLine("\t\t\t\t\t\tlet id: string = $(\"a.rdlt-yes\").attr(\"data-id\");");
+                            yaz.WriteLine("\t\t\t\t\t\tthis.onRealDelete(id);");
+                            yaz.WriteLine("\t\t\t\t\t});");
+                        }
+
                         yaz.WriteLine("\t\t\t\t}, 1);");
                         yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError);");
                         yaz.WriteLine("\t\t}");
@@ -4758,6 +4961,26 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
+
+                        if (deleted)
+                        {
+                            yaz.WriteLine("\tonRealDelete(id) {");
+                            yaz.WriteLine("\t\tthis.service.getKaldir(id).subscribe((resData) => {");
+                            yaz.WriteLine("\t\t\tif (resData == true) {");
+                            yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"RealDelete\");");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\t$(\"a.rdltLink.active-rdlt\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                            yaz.WriteLine("\t\t\t\t\t$(this).remove();");
+                            yaz.WriteLine("\t\t\t\t});");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\telse {");
+                            yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"RealDeleteNot\");");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                            yaz.WriteLine("\t}");
+                            yaz.WriteLine("");
+                        }
+
                         yaz.WriteLine("\tShowAlert(type: string) {");
                         yaz.WriteLine("\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeIn(\"slow\");");
                         yaz.WriteLine("");
@@ -4818,7 +5041,7 @@ namespace TDFactory
                         }
 
                         int i = 0;
-                        List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "").ToList();
+                        List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && a.ColumnName.ToLower() != "deleted").ToList();
 
                         foreach (TableColumnNames column in tempTableColumns)
                         {
@@ -4852,7 +5075,7 @@ namespace TDFactory
 
                         yaz.WriteLine("\t\tthis.ekleForm = this.formBuilder.group({");
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList())
                         {
                             if (!column.IsIdentity)
                             {
@@ -4898,7 +5121,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList())
                         {
                             if (!column.IsIdentity)
                             {
@@ -4960,7 +5183,7 @@ namespace TDFactory
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from '@angular/router';");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "").ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && a.ColumnName.ToLower() != "deleted").ToList())
                             {
                                 yaz.WriteLine("import ClassicEditor from '../../../../../Content/admin/js/ckeditor/ckeditor.js';");
                                 break;
@@ -5022,7 +5245,7 @@ namespace TDFactory
                             yaz.WriteLine("");
 
                             int i = 0;
-                            List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "").ToList();
+                            List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && a.ColumnName.ToLower() != "deleted").ToList();
 
                             foreach (TableColumnNames column in tempTableColumns)
                             {
@@ -5056,7 +5279,7 @@ namespace TDFactory
 
                             yaz.WriteLine("\t\tthis.duzenleForm = this.formBuilder.group({");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList())
                             {
                                 if (column.TypeName.Name == "Boolean")
                                 {
@@ -5128,11 +5351,23 @@ namespace TDFactory
                                 foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
+                                    List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
+                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.dlt-yes\", () => {");
                                     yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
                                     yaz.WriteLine("\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Delete(id);");
                                     yaz.WriteLine("\t\t\t\t\t\t});");
+
+                                    if (fDeleted)
+                                    {
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.rdlt-yes\", () => {");
+                                        yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.rdlt-yes\").attr(\"data-id\");");
+                                        yaz.WriteLine("\t\t\t\t\t\t\tthis.on" + ForeignTableName + "RealDelete(id);");
+                                        yaz.WriteLine("\t\t\t\t\t\t});");
+                                    }
                                 }
 
                                 yaz.WriteLine("\t\t\t\t\t}, 1);");
@@ -5161,7 +5396,7 @@ namespace TDFactory
 
                             i = 0;
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList())
                             {
                                 if (column.TypeName.Name == "String" && column.CharLength == "")
                                 {
@@ -5198,6 +5433,8 @@ namespace TDFactory
                                 foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
+                                    List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
+                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\ton" + ForeignTableName + "Delete(id) {");
@@ -5214,6 +5451,25 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                                     yaz.WriteLine("\t}");
+
+                                    if (fDeleted)
+                                    {
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\ton" + ForeignTableName + "RealDelete(id) {");
+                                        yaz.WriteLine("\t\tthis.service" + ForeignTableName + ".getKaldir(id).subscribe((resData) => {");
+                                        yaz.WriteLine("\t\t\tif (resData == true) {");
+                                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"RealDelete\");");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\t$(\"a.rdltLink.active-rdlt\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                                        yaz.WriteLine("\t\t\t\t\t$(this).remove();");
+                                        yaz.WriteLine("\t\t\t\t});");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("\t\t\telse {");
+                                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"RealDeleteNot\");");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                                        yaz.WriteLine("\t}");
+                                    }
                                 }
 
                                 yaz.WriteLine("");
@@ -5492,7 +5748,7 @@ namespace TDFactory
 
                 string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
 
-                List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
+                List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted").ToList();
 
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Service\\I" + Table + "Service.cs", FileMode.Create))
                 {
@@ -5786,6 +6042,21 @@ namespace TDFactory
                     yaz.WriteLine("USE [" + DBName + "]");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
+                    yaz.WriteLine("declare @procName varchar(500)");
+                    yaz.WriteLine("declare cur cursor");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("for select [name] from sys.objects where type = 'p'");
+                    yaz.WriteLine("open cur");
+                    yaz.WriteLine("fetch next from cur into @procName");
+                    yaz.WriteLine("while @@fetch_status = 0");
+                    yaz.WriteLine("begin");
+                    yaz.WriteLine("\texec('drop procedure [' + @procName + ']')");
+                    yaz.WriteLine("\tfetch next from cur into @procName");
+                    yaz.WriteLine("end");
+                    yaz.WriteLine("close cur");
+                    yaz.WriteLine("deallocate cur");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
 
                     foreach (string Table in selectedTables)
                     {
@@ -5810,6 +6081,7 @@ namespace TDFactory
                         }
 
                         List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                        string deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? " and [Deleted] = 0" : "";
 
                         string idType = null;
 
@@ -5823,12 +6095,6 @@ namespace TDFactory
 
                         //Select//
                         yaz.WriteLine("/* Select */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Select]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Select]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Select]");
 
                         if (idType != null)
@@ -5847,7 +6113,8 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            sqlText += "[" + column.ColumnName + "],";
+                            if (column.ColumnName.ToLower() != "deleted")
+                                sqlText += "[" + column.ColumnName + "],";
                         }
 
                         sqlText = sqlText.Remove(sqlText.Length - 1);
@@ -5858,7 +6125,7 @@ namespace TDFactory
 
                         if (idType != null)
                         {
-                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)");
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)" + deleted);
                         }
 
                         yaz.WriteLine("");
@@ -5869,12 +6136,6 @@ namespace TDFactory
 
                         //SelectTop//
                         yaz.WriteLine("/* SelectTop */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectTop]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectTop]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectTop]");
 
                         if (idType != null)
@@ -5894,7 +6155,8 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            sqlText += "[" + column.ColumnName + "],";
+                            if (column.ColumnName.ToLower() != "deleted")
+                                sqlText += "[" + column.ColumnName + "],";
                         }
 
                         sqlText = sqlText.Remove(sqlText.Length - 1);
@@ -5905,7 +6167,7 @@ namespace TDFactory
 
                         if (idType != null)
                         {
-                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)");
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)" + deleted);
                         }
 
                         yaz.WriteLine("");
@@ -5918,12 +6180,6 @@ namespace TDFactory
                         if (fkcListForeign.Count > 0)
                         {
                             yaz.WriteLine("/* LinkedSelect */");
-                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "LinkedSelect]') IS NOT NULL");
-                            yaz.WriteLine("BEGIN");
-                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "LinkedSelect]");
-                            yaz.WriteLine("END");
-                            yaz.WriteLine("GO");
-
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "LinkedSelect]");
 
                             if (idType != null)
@@ -5942,7 +6198,8 @@ namespace TDFactory
 
                             foreach (ColumnInfo column in columnNames)
                             {
-                                sqlText += "[" + column.ColumnName + "],";
+                                if (column.ColumnName.ToLower() != "deleted")
+                                    sqlText += "[" + column.ColumnName + "],";
                             }
 
                             yaz.WriteLine(sqlText);
@@ -5973,7 +6230,7 @@ namespace TDFactory
 
                             if (idType != null)
                             {
-                                yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)");
+                                yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)" + deleted);
                             }
 
                             yaz.WriteLine("");
@@ -5995,14 +6252,9 @@ namespace TDFactory
                                     string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
 
                                     List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
+                                    string fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? " and [Deleted] = 0" : "";
 
                                     yaz.WriteLine("/* ByLinkedIDSelect */");
-                                    yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]') IS NOT NULL");
-                                    yaz.WriteLine("BEGIN");
-                                    yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]");
-                                    yaz.WriteLine("END");
-                                    yaz.WriteLine("GO");
-
                                     yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]");
 
                                     string fidType = null;
@@ -6030,7 +6282,8 @@ namespace TDFactory
 
                                     foreach (ColumnInfo column in fColumnNames)
                                     {
-                                        sqlText += "[" + column.ColumnName + "],";
+                                        if (column.ColumnName.ToLower() != "deleted")
+                                            sqlText += "[" + column.ColumnName + "],";
                                     }
 
                                     yaz.WriteLine(sqlText);
@@ -6043,7 +6296,7 @@ namespace TDFactory
 
                                     yaz.WriteLine("\tFROM " + schema + ".[" + ForeignTableName + "]");
 
-                                    yaz.WriteLine("\tWHERE ([" + fkc2.ForeignColumnName + "] = @" + fkc2.ForeignColumnName + " OR @" + fkc2.ForeignColumnName + " IS NULL)");
+                                    yaz.WriteLine("\tWHERE ([" + fkc2.ForeignColumnName + "] = @" + fkc2.ForeignColumnName + " OR @" + fkc2.ForeignColumnName + " IS NULL)" + fDeleted);
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\tCOMMIT");
@@ -6056,16 +6309,10 @@ namespace TDFactory
 
                         ////Insert//
                         yaz.WriteLine("/* Insert */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Insert]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Insert]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Insert]");
 
                         i = 1;
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList())
                         {
                             if (column.IsIdentity == "NO")
                             {
@@ -6076,7 +6323,7 @@ namespace TDFactory
 
                                 extra += column.IsNullable != "NO" ? " = NULL" : "";
 
-                                if (i != columnNames.Count)
+                                if (i != columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList().Count)
                                     yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
                                 else
                                     yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
@@ -6094,9 +6341,12 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.IsIdentity == "NO")
+                            if (column.ColumnName.ToLower() != "deleted")
                             {
-                                sqlText = sqlText + "[" + column.ColumnName + "],";
+                                if (column.IsIdentity == "NO")
+                                {
+                                    sqlText = sqlText + "[" + column.ColumnName + "],";
+                                }
                             }
                         }
 
@@ -6109,9 +6359,12 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.IsIdentity == "NO")
+                            if (column.ColumnName.ToLower() != "deleted")
                             {
-                                sqlText = sqlText + "@" + column.ColumnName + ",";
+                                if (column.IsIdentity == "NO")
+                                {
+                                    sqlText = sqlText + "@" + column.ColumnName + ",";
+                                }
                             }
                         }
 
@@ -6123,21 +6376,16 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
                         yaz.WriteLine("END;");
+                        yaz.WriteLine("GO");
                         yaz.WriteLine("");
                         ////Insert//
 
                         ////Update//
                         yaz.WriteLine("/* Update */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Update]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Update]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
 
                         i = 1;
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList())
                         {
                             string extra = "";
 
@@ -6146,7 +6394,7 @@ namespace TDFactory
 
                             extra += column.IsNullable != "NO" ? " = NULL" : "";
 
-                            if (i != columnNames.Count)
+                            if (i != columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList().Count)
                                 yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
                             else
                                 yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
@@ -6161,16 +6409,18 @@ namespace TDFactory
                         yaz.WriteLine("\tBEGIN TRAN");
                         yaz.WriteLine("");
 
-
                         yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "]");
 
                         sqlText = "\tSET ";
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.IsIdentity == "NO")
+                            if (column.ColumnName.ToLower() != "deleted")
                             {
-                                sqlText = sqlText + "[" + column.ColumnName + "] = @" + column.ColumnName + ",";
+                                if (column.IsIdentity == "NO")
+                                {
+                                    sqlText = sqlText + "[" + column.ColumnName + "] = @" + column.ColumnName + ",";
+                                }
                             }
                         }
 
@@ -6189,7 +6439,8 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            sqlText = sqlText + "[" + column.ColumnName + "],";
+                            if (column.ColumnName.ToLower() != "deleted")
+                                sqlText = sqlText + "[" + column.ColumnName + "],";
                         }
 
                         sqlText = sqlText.Remove(sqlText.Length - 1);
@@ -6212,12 +6463,6 @@ namespace TDFactory
 
                         //Delete//
                         yaz.WriteLine("/* Delete */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Delete]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Delete]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Delete]");
 
                         if (idType != null)
@@ -6245,6 +6490,38 @@ namespace TDFactory
                         yaz.WriteLine("GO");
                         yaz.WriteLine("");
                         //Delete//
+
+                        //SetDeleted//
+                        if (deleted != "")
+                        {
+                            yaz.WriteLine("/* SetDeleted */");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SetDeleted]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + idColumn + " " + idType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "] SET [Deleted] = 1");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
+                            }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                        }
+                        //SetDeleted//
                     }
 
                     yaz.Close();
@@ -7050,15 +7327,18 @@ namespace TDFactory
                         yaz.WriteLine("}");
                         yaz.WriteLine("");
                         yaz.WriteLine("$(function () {");
-                        yaz.WriteLine("\t$('#search input[type=text]').typeahead({");
-                        yaz.WriteLine("\t\tsource: [");
+                        yaz.WriteLine("\tif($('#search input[type=text]').length > 0)");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\t$('#search input[type=text]').typeahead({");
+                        yaz.WriteLine("\t\t\tsource: [");
                         foreach (string Table in selectedTables)
                         {
-                            yaz.WriteLine("\t\t\t'" + Table + "',");
+                            yaz.WriteLine("\t\t\t\t'" + Table + "',");
                         }
-                        yaz.WriteLine("\t\t],");
-                        yaz.WriteLine("\t\titems: 4");
-                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("\t\t\t],");
+                        yaz.WriteLine("\t\t\titems: 4");
+                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t$(document).on(\"keyup\", \"#txtMainSearch\", function () {");
                         yaz.WriteLine("\t\tif (event.keyCode == 13) {");
@@ -7116,6 +7396,52 @@ namespace TDFactory
                         yaz.WriteLine("\t\t$(\"a.dltLink\").removeClass(\"active-dlt\");");
                         yaz.WriteLine("\t});");
                         yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"click\", \"a.rdltLink\", function () {");
+                        yaz.WriteLine("\t\t$(this).addClass(\"active-rdlt\");");
+                        yaz.WriteLine("\t\t$(\".rdlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                        yaz.WriteLine("\t\t$(\".rdlt-yes\").attr(\"data-link\", $(this).attr(\"data-link\"));");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"click\", \"a.rdlt-yes\", function () {");
+                        yaz.WriteLine("\t\tvar link = $(this);");
+                        yaz.WriteLine("\t\tvar url = link.attr(\"data-link\");");
+                        yaz.WriteLine("\t\tvar dataID = parseInt(link.attr(\"data-id\"));");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t$.ajax({");
+                        yaz.WriteLine("\t\t\ttype: 'POST',");
+                        yaz.WriteLine("\t\t\turl: AdminPath + \"/\" + url + \"/Kaldir\",");
+                        yaz.WriteLine("\t\t\tdata: \"{ id: \" + dataID + \" }\",");
+                        yaz.WriteLine("\t\t\tdataType: \"json\",");
+                        yaz.WriteLine("\t\t\tcontentType: \"application/json; charset=utf-8\",");
+                        yaz.WriteLine("\t\t\tsuccess: function (answer) {");
+                        yaz.WriteLine("\t\t\t\tif (answer == true) {");
+                        yaz.WriteLine("\t\t\t\t\t$.gritter.add({");
+                        yaz.WriteLine("\t\t\t\t\t\ttitle: 'Sonuç',");
+                        yaz.WriteLine("\t\t\t\t\t\ttext: 'İlgili veri kaldırıldı.',");
+                        yaz.WriteLine("\t\t\t\t\t\tsticky: false");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\t$(\"a.rdltLink.active-rdlt\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                        yaz.WriteLine("\t\t\t\t\t\t$(this).remove();");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\telse {");
+                        yaz.WriteLine("\t\t\t\t\t$.gritter.add({");
+                        yaz.WriteLine("\t\t\t\t\t\ttitle: 'Sonuç',");
+                        yaz.WriteLine("\t\t\t\t\t\ttext: 'İlgili veri kaldırılamadı.',");
+                        yaz.WriteLine("\t\t\t\t\t\tsticky: false");
+                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t$(document).on(\"click\", \"a.rdlt-no\", function () {");
+                        yaz.WriteLine("\t\t$(\".rdlt-yes\").removeAttr(\"data-id\");");
+                        yaz.WriteLine("\t\t$(\".rdlt-yes\").removeAttr(\"data-link\");");
+                        yaz.WriteLine("\t\t$(\"a.rdltLink\").removeClass(\"active-rdlt\");");
+                        yaz.WriteLine("\t});");
+                        yaz.WriteLine("");
                         yaz.WriteLine("\t$(document).on(\"click\", \".dropdown-toggle\", function () {");
                         yaz.WriteLine("\t\t$(this).parent().addClass(\"open\");");
                         yaz.WriteLine("\t});");
@@ -7154,6 +7480,9 @@ namespace TDFactory
             CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_menu_active_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\menu-active.png");
             CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_passive_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\passive.png");
             CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_loading_gif), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\loading.gif");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_gritter_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\gritter.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_larrow_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\larrow.png");
+            CopyFromResource(BitmapToByteArray(Properties.Resources.Shared_Content_admin_img_rarrow_png), PathAddress + "\\" + projectName + "\\Content\\admin\\img\\rarrow.png");
         }
 
         void CreateFontAwesome()
