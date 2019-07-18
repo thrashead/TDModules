@@ -1445,118 +1445,113 @@ namespace TDFactory
 
                             if (fkcList.Count > 0)
                             {
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    string ForeignTableName = fkc.ForeignTableName;
-
-                                    List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
-                                    string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
-
-                                    List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName).Take(4).ToList();
-
-                                    List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
-                                    fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
-
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"row-fluid\">");
-                                    yaz.WriteLine("\t\t\t<div class=\"span12\">");
-                                    yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
-                                    yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
-                                    yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
-                                    yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + ForeignTableName + "</h5>");
-                                    yaz.WriteLine("\t\t\t\t\t</div>");
-                                    yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
-                                    yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t<thead>");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t<tr>");
-
-                                    i = 0;
-
-                                    foreach (TableColumnNames item in foreignColumns)
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                     {
-                                        List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
 
-                                        string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+                                        List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
+                                        string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
 
-                                        if (frchkForeignLst.Count > 0)
+                                        List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName).Take(4).ToList();
+
+                                        List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
+                                        fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
+
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t<div class=\"row-fluid\">");
+                                        yaz.WriteLine("\t\t\t<div class=\"span12\">");
+                                        yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
+                                        yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
+                                        yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + ForeignTableName + "</h5>");
+                                        yaz.WriteLine("\t\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t<thead>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t<tr>");
+
+                                        i = 0;
+
+                                        foreach (TableColumnNames item in foreignColumns)
                                         {
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst.FirstOrDefault().PrimaryTableName + "</th>");
-                                        }
-                                        else
-                                        {
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + item.ColumnName + "</th>");
-                                        }
+                                            List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
 
-                                        i++;
-                                    }
+                                            string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
-                                    if (identityForeignColumns.Count > 0)
-                                    {
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
-                                    }
-
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
-
-                                    yaz.WriteLine("\t\t\t\t\t\t\t@{");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\tforeach (" + ForeignTableName + "Model item in Model." + ForeignTableName + "List)");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<tr>");
-
-                                    i = 0;
-
-                                    foreach (TableColumnNames item in foreignColumns)
-                                    {
-                                        List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
-
-                                        string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
-
-                                        if (item.TypeName.Name != "Boolean")
-                                        {
-                                            if (frchkForeignLst.Count > 0)
+                                            if (frchkForeignLst.Count <= 0)
                                             {
-                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + frchkForeignLst.FirstOrDefault().PrimaryTableName + "Adi</td>");
-                                            }
-                                            else
-                                            {
-                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + item.ColumnName + "</td>");
+                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + item.ColumnName + "</th>");
+                                                i++;
                                             }
                                         }
-                                        else
+
+                                        if (identityForeignColumns.Count > 0)
                                         {
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + " style=\"text-align:center;\">@(item." + item.ColumnName + " == true ? Html.Raw(\"<img class='active' />\") : Html.Raw(\"<img class='passive' />\"))</td>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
                                         }
 
-                                        i++;
-                                    }
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
 
-                                    if (identityForeignColumns.Count > 0)
-                                    {
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" href=\"@AppMgr.AdminPath/" + ForeignTableName + "/Duzenle/@item." + idFrgn + "\">Düzenle</a></li>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-toggle=\"modal\" href=\"#dltData\" data-link=\"" + ForeignTableName + "\" data-id=\"@item." + idFrgn + "\">Sil</a></li>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t</ul>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</div>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</td>");
-                                    }
+                                        yaz.WriteLine("\t\t\t\t\t\t\t@{");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\tforeach (" + ForeignTableName + "Model item in Model." + ForeignTableName + "List)");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<tr>");
 
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t</tr>");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t</tbody>");
-                                    yaz.WriteLine("\t\t\t\t\t\t</table>");
-                                    yaz.WriteLine("\t\t\t\t\t</div>");
-                                    yaz.WriteLine("\t\t\t\t</div>");
-                                    yaz.WriteLine("\t\t\t</div>");
-                                    yaz.WriteLine("\t\t</div>");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"pagelinks\">");
-                                    yaz.WriteLine("\t\t\t@Html.ActionLink(\"" + ForeignTableName + " Ekle\", \"Ekle\", \"" + ForeignTableName + "\", null, new { @class = \"btn btn-primary btn-add\", data_type = \"" + ForeignTableName + "\" })");
-                                    yaz.WriteLine("\t\t</div>");
+                                        i = 0;
+
+                                        foreach (TableColumnNames item in foreignColumns)
+                                        {
+                                            List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
+
+                                            string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                                            if (frchkForeignLst.Count <= 0)
+                                            {
+                                                if (item.TypeName.Name != "Boolean")
+                                                {
+                                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + item.ColumnName + "</td>");
+                                                    i++;
+                                                }
+                                                else
+                                                {
+                                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + " style=\"text-align:center;\">@(item." + item.ColumnName + " == true ? Html.Raw(\"<img class='active' />\") : Html.Raw(\"<img class='passive' />\"))</td>");
+                                                    i++;
+                                                }
+                                            }
+                                        }
+
+                                        if (identityForeignColumns.Count > 0)
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" href=\"@AppMgr.AdminPath/" + ForeignTableName + "/Duzenle/@item." + idFrgn + "\">Düzenle</a></li>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" data-toggle=\"modal\" href=\"#dltData\" data-link=\"" + ForeignTableName + "\" data-id=\"@item." + idFrgn + "\">Sil</a></li>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t</ul>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</div>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</td>");
+                                        }
+
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t</tr>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t}");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t</tbody>");
+                                        yaz.WriteLine("\t\t\t\t\t\t</table>");
+                                        yaz.WriteLine("\t\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t\t</div>");
+                                        yaz.WriteLine("\t\t\t</div>");
+                                        yaz.WriteLine("\t\t</div>");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t<div class=\"pagelinks\">");
+                                        yaz.WriteLine("\t\t\t@Html.ActionLink(\"" + ForeignTableName + " Ekle\", \"Ekle\", \"" + ForeignTableName + "\", null, new { @class = \"btn btn-primary btn-add\", data_type = \"" + ForeignTableName + "\" })");
+                                        yaz.WriteLine("\t\t</div>");
+                                    }
                                 }
                             }
 
@@ -1735,40 +1730,17 @@ namespace TDFactory
 
                             if (fkcList.Count > 0)
                             {
-                                i = 0;
-
                                 foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
-
-                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
-
-                                    int j = 0;
-
                                     foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                     {
-                                        if (i == j)
-                                        {
-                                            linkedby += "id,";
-                                        }
-                                        else
-                                        {
-                                            linkedby += "null,";
-                                        }
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
 
-                                        j++;
+                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(id).ToList();"); ;
+                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                        yaz.WriteLine("");
                                     }
-
-                                    i++;
-
-                                    linkedby = linkedby.TrimEnd(',');
-                                    linkedby += ").ToList();";
-
-                                    yaz.WriteLine(linkedby);
-
-                                    yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "ByLinkedIDSelect_Result>());");
-                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -1817,40 +1789,17 @@ namespace TDFactory
 
                             if (fkcList.Count > 0)
                             {
-                                i = 0;
-
                                 foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
-
-                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
-
-                                    int j = 0;
-
                                     foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                     {
-                                        if (i == j)
-                                        {
-                                            linkedby += "table." + id + ",";
-                                        }
-                                        else
-                                        {
-                                            linkedby += "null,";
-                                        }
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
 
-                                        j++;
+                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
+                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                        yaz.WriteLine("");
                                     }
-
-                                    i++;
-
-                                    linkedby = linkedby.TrimEnd(',');
-                                    linkedby += ").ToList();";
-
-                                    yaz.WriteLine(linkedby);
-
-                                    yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "ByLinkedIDSelect_Result>());");
-                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4284,16 +4233,11 @@ namespace TDFactory
 
                                         string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
-                                        if (frchkForeignLst.Count > 0)
-                                        {
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst.FirstOrDefault().PrimaryTableName + "</th>");
-                                        }
-                                        else
+                                        if (frchkForeignLst.Count <= 0)
                                         {
                                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + item.ColumnName + "</th>");
+                                            i++;
                                         }
-
-                                        i++;
                                     }
 
                                     if (identityForeignColumns.Count > 0)
@@ -4314,16 +4258,11 @@ namespace TDFactory
 
                                         string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
-                                        if (frchkForeignLst.Count > 0)
-                                        {
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + frchkForeignLst.FirstOrDefault().PrimaryTableName + "Adi }}</td>");
-                                        }
-                                        else
+                                        if (frchkForeignLst.Count <= 0)
                                         {
                                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + item.ColumnName + " }}</td>");
+                                            i++;
                                         }
-
-                                        i++;
                                     }
 
                                     if (identityForeignColumns.Count > 0)
@@ -4424,7 +4363,8 @@ namespace TDFactory
                         yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic JsonResult Index()");
                         yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> table = entity.usp_" + Table + linked + "Select(null).ToList();");
+                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> tableTemp = entity.usp_" + Table + linked + "Select(null).ToList();");
+                        yaz.WriteLine("\t\t\tList<" + Table + "Model> table = tableTemp.ChangeModelList<" + Table + "Model, usp_" + Table + linked + "Select_Result>();");
                         yaz.WriteLine("\t\t\t");
                         yaz.WriteLine("\t\t\treturn Json(table, JsonRequestBehavior.AllowGet);");
                         yaz.WriteLine("\t\t}");
@@ -4507,8 +4447,8 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Duzenle(" + columntype.ReturnCSharpType() + " id)");
                             yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectTop_Result uspTable = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
-                            yaz.WriteLine("\t\t\t" + Table + "Model table = uspTable.ChangeModel<" + Table + "Model>();");
+                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectTop_Result tableTemp = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                            yaz.WriteLine("\t\t\t" + Table + "Model table = tableTemp.ChangeModel<" + Table + "Model>();");
                             yaz.WriteLine("");
 
                             if (fkcListForeign.Count > 0)
@@ -4526,40 +4466,17 @@ namespace TDFactory
 
                             if (fkcList.Count > 0)
                             {
-                                i = 0;
-
                                 foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
-
-                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = _entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
-
-                                    int j = 0;
-
                                     foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                     {
-                                        if (i == j)
-                                        {
-                                            linkedby += "id,";
-                                        }
-                                        else
-                                        {
-                                            linkedby += "null,";
-                                        }
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
 
-                                        j++;
+                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(id).ToList();"); ;
+                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                        yaz.WriteLine("");
                                     }
-
-                                    i++;
-
-                                    linkedby = linkedby.TrimEnd(',');
-                                    linkedby += ").ToList();";
-
-                                    yaz.WriteLine(linkedby);
-
-                                    yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "ByLinkedIDSelect_Result>());");
-                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -4607,40 +4524,17 @@ namespace TDFactory
 
                             if (fkcList.Count > 0)
                             {
-                                i = 0;
-
                                 foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    string ForeignTableName = fkc.ForeignTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == ForeignTableName).ToList());
-
-                                    string linkedby = "\t\t\tList<usp_" + ForeignTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = _entity.usp_" + ForeignTableName + "ByLinkedIDSelect(";
-
-                                    int j = 0;
-
                                     foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                     {
-                                        if (i == j)
-                                        {
-                                            linkedby += "table." + id + ",";
-                                        }
-                                        else
-                                        {
-                                            linkedby += "null,";
-                                        }
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
 
-                                        j++;
+                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
+                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                        yaz.WriteLine("");
                                     }
-
-                                    i++;
-
-                                    linkedby = linkedby.TrimEnd(',');
-                                    linkedby += ").ToList();";
-
-                                    yaz.WriteLine(linkedby);
-
-                                    yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "ByLinkedIDSelect_Result>());");
-                                    yaz.WriteLine("");
                                 }
                             }
 
@@ -5472,6 +5366,7 @@ namespace TDFactory
                     yaz.WriteLine("\ttslint.json");
                     yaz.WriteLine("- Visual Studio içinde \"Show All files\" diyip \"node_modules\" klasörü hariç bu dosyalar projeye dahil edeceksin.");
                     yaz.WriteLine("- \"npm install --save rxjs-compat\" diyerek rxjs tipini yükleyeceksin.");
+                    yaz.WriteLine("- \"npm install jquery --save\" diyerek jquery yükleyeceksin.");
                     yaz.WriteLine("- \"npm install --save @types/jquery\" diyerek jquery tipini yükleyeceksin.");
                     yaz.WriteLine("- \"npm install --save @types/jest\" diyerek jest tipini yükleyeceksin.");
                     yaz.WriteLine("- tsconfig.json dosyası içine \"types\": [ \"jquery\", \"jest\" ] tanımlamasını gireceksin.");
@@ -6086,42 +5981,37 @@ namespace TDFactory
                         //ByLinkedIDSelect//
                         if (fkcList.Count > 0)
                         {
-                            i = 0;
-                            int fkcCount = fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList().Count;
-
                             foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
-                                string ForeignTableName = fkc.ForeignTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
-
-                                List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
-
-                                if (i == 0)
+                                foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                 {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string ForeignTableName = fkc2.ForeignTableName;
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
+
+                                    List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
+
                                     yaz.WriteLine("/* ByLinkedIDSelect */");
-                                    yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + ForeignTableName + "ByLinkedIDSelect]') IS NOT NULL");
+                                    yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]') IS NOT NULL");
                                     yaz.WriteLine("BEGIN");
-                                    yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + ForeignTableName + "ByLinkedIDSelect]");
+                                    yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]");
                                     yaz.WriteLine("END");
                                     yaz.WriteLine("GO");
 
-                                    yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + ForeignTableName + "ByLinkedIDSelect]");
+                                    yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]");
 
-                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    string fidType = null;
+                                    try
                                     {
-                                        string fidType = null;
-                                        try
-                                        {
-                                            fidType = fColumnNames.Where(a => a.ColumnName == fkc2.ForeignColumnName).FirstOrDefault().DataType;
-                                        }
-                                        catch
-                                        {
-                                        }
+                                        fidType = fColumnNames.Where(a => a.ColumnName == fkc2.ForeignColumnName).FirstOrDefault().DataType;
+                                    }
+                                    catch
+                                    {
+                                    }
 
-                                        if (fidType != null)
-                                        {
-                                            yaz.WriteLine("\t@" + fkc2.ForeignColumnName + " " + fidType);
-                                        }
+                                    if (fidType != null)
+                                    {
+                                        yaz.WriteLine("\t@" + fkc2.ForeignColumnName + " " + fidType);
                                     }
 
                                     yaz.WriteLine("AS");
@@ -6139,42 +6029,22 @@ namespace TDFactory
                                     }
 
                                     yaz.WriteLine(sqlText);
-                                }
 
-                                sqlText = "";
+                                    sqlText = "";
 
-                                sqlText += "\t(SELECT " + aliases[i % 10] + "." + columnText + " FROM " + Table + " " + aliases[i % 10] + " WHERE " + aliases[i % 10] + "." + fkc.PrimaryColumnName + " = " + fkc.ForeignColumnName + ") as " + Table + "Adi,";
-
-                                if (fkcCount == i + 1)
-                                {
-                                    sqlText = sqlText.Remove(sqlText.Length - 1);
-                                    sqlText = sqlText.Replace(",", ", ");
-                                }
-
-                                yaz.WriteLine(sqlText);
-
-                                if (i == 0)
-                                {
-                                    yaz.WriteLine("\tFROM " + schema + ".[" + ForeignTableName + "]");
-
-                                    sqlText = "\tWHERE";
-
-                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                    {
-                                        sqlText += " ([" + fkc2.ForeignColumnName + "] = @" + fkc2.ForeignColumnName + " OR @" + fkc2.ForeignColumnName + " IS NULL) AND";
-                                    }
-
-                                    sqlText = sqlText.TrimEnd('D').TrimEnd('N').TrimEnd('A').TrimEnd(' ');
+                                    sqlText += "\t(SELECT A." + columnText + " FROM " + Table + " A WHERE A." + fkc.PrimaryColumnName + " = " + fkc2.ForeignColumnName + ") as " + Table + "Adi";
 
                                     yaz.WriteLine(sqlText);
+
+                                    yaz.WriteLine("\tFROM " + schema + ".[" + ForeignTableName + "]");
+
+                                    yaz.WriteLine("\tWHERE ([" + fkc2.ForeignColumnName + "] = @" + fkc2.ForeignColumnName + " OR @" + fkc2.ForeignColumnName + " IS NULL)");
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\tCOMMIT");
                                     yaz.WriteLine("GO");
                                     yaz.WriteLine("");
                                 }
-
-                                i++;
                             }
                         }
                         //ByLinkedIDSelect//
@@ -6531,7 +6401,450 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        yaz.WriteLine("@font-face{font-family:FontAwesome;src:url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.eot);src:url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.eot?#iefix) format('embedded-opentype'),url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.woff) format('woff'),url(/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.ttf) format('truetype');font-weight:400;font-style:normal}[class*=\" icon-\"],[class^=icon-]{font-family:FontAwesome;font-weight:400;font-style:normal;text-decoration:inherit;display:inline;width:auto;height:auto;line-height:normal;vertical-align:baseline;background-image:none!important;background-position:0 0;background-repeat:repeat}[class*=\" icon-\"]:before,[class^=icon-]:before{text-decoration:inherit;display:inline-block;speak:none}a [class*=\" icon-\"],a [class^=icon-]{display:inline-block}.icon-large:before{vertical-align:-10%;font-size:1.3333333333333333em}.btn [class*=\" icon-\"],.btn [class^=icon-],.nav [class*=\" icon-\"],.nav [class^=icon-]{display:inline;line-height:.6em}.btn [class*=\" icon-\"].icon-spin,.btn [class^=icon-].icon-spin,.nav [class*=\" icon-\"].icon-spin,.nav [class^=icon-].icon-spin{display:inline-block}li [class*=\" icon-\"],li [class^=icon-]{display:inline-block;width:1.25em;text-align:center}li [class*=\" icon-\"].icon-large,li [class^=icon-].icon-large{width:1.5625em}ul.icons{list-style-type:none;text-indent:-.75em}ul.icons li [class*=\" icon-\"],ul.icons li [class^=icon-]{width:.75em}.icon-muted{color:#eee}.icon-border{border:solid 1px #eee;padding:.2em .25em .15em;-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px}.icon-2x{font-size:2em}.icon-2x.icon-border{border-width:2px;-webkit-border-radius:4px;-moz-border-radius:4px;border-radius:4px}.icon-3x{font-size:3em}.icon-3x.icon-border{border-width:3px;-webkit-border-radius:5px;-moz-border-radius:5px;border-radius:5px}.icon-4x{font-size:4em}.icon-4x.icon-border{border-width:4px;-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px}.pull-right{float:right}.pull-left{float:left}[class*=\" icon-\"].pull-left,[class^=icon-].pull-left{margin-right:.35em}[class*=\" icon-\"].pull-right,[class^=icon-].pull-right{margin-left:.35em}.btn [class*=\" icon-\"].pull-left.icon-2x,.btn [class*=\" icon-\"].pull-right.icon-2x,.btn [class^=icon-].pull-left.icon-2x,.btn [class^=icon-].pull-right.icon-2x{margin-top:.35em}.btn [class*=\" icon-\"].icon-spin.icon-large,.btn [class^=icon-].icon-spin.icon-large{height:.75em}.btn.btn-small [class*=\" icon-\"].pull-left.icon-2x,.btn.btn-small [class*=\" icon-\"].pull-right.icon-2x,.btn.btn-small [class^=icon-].pull-left.icon-2x,.btn.btn-small [class^=icon-].pull-right.icon-2x{margin-top:.45em}.btn.btn-large [class*=\" icon-\"].pull-left.icon-2x,.btn.btn-large [class*=\" icon-\"].pull-right.icon-2x,.btn.btn-large [class^=icon-].pull-left.icon-2x,.btn.btn-large [class^=icon-].pull-right.icon-2x{margin-top:.2em}.icon-spin{display:inline-block;-moz-animation:spin 2s infinite linear;-o-animation:spin 2s infinite linear;-webkit-animation:spin 2s infinite linear;animation:spin 2s infinite linear}@-moz-keyframes spin{0%{-moz-transform:rotate(0)}100%{-moz-transform:rotate(359deg)}}@-webkit-keyframes spin{0%{-webkit-transform:rotate(0)}100%{-webkit-transform:rotate(359deg)}}@-o-keyframes spin{0%{-o-transform:rotate(0)}100%{-o-transform:rotate(359deg)}}@-ms-keyframes spin{0%{-ms-transform:rotate(0)}100%{-ms-transform:rotate(359deg)}}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(359deg)}}.icon-glass:before{content:\"\\f000\"}.icon-music:before{content:\"\\f001\"}.icon-search:before{content:\"\\f002\"}.icon-envelope:before{content:\"\\f003\"}.icon-heart:before{content:\"\\f004\"}.icon-star:before{content:\"\\f005\"}.icon-star-empty:before{content:\"\\f006\"}.icon-user:before{content:\"\\f007\"}.icon-film:before{content:\"\\f008\"}.icon-th-large:before{content:\"\\f009\"}.icon-th:before{content:\"\\f00a\"}.icon-th-list:before{content:\"\\f00b\"}.icon-ok:before{content:\"\\f00c\"}.icon-remove:before{content:\"\\f00d\"}.icon-zoom-in:before{content:\"\\f00e\"}.icon-zoom-out:before{content:\"\\f010\"}.icon-off:before{content:\"\\f011\"}.icon-signal:before{content:\"\\f012\"}.icon-cog:before{content:\"\\f013\"}.icon-trash:before{content:\"\\f014\"}.icon-home:before{content:\"\\f015\"}.icon-file:before{content:\"\\f016\"}.icon-time:before{content:\"\\f017\"}.icon-road:before{content:\"\\f018\"}.icon-download-alt:before{content:\"\\f019\"}.icon-download:before{content:\"\\f01a\"}.icon-upload:before{content:\"\\f01b\"}.icon-inbox:before{content:\"\\f01c\"}.icon-play-circle:before{content:\"\\f01d\"}.icon-repeat:before{content:\"\\f01e\"}.icon-refresh:before{content:\"\\f021\"}.icon-list-alt:before{content:\"\\f022\"}.icon-lock:before{content:\"\\f023\"}.icon-flag:before{content:\"\\f024\"}.icon-headphones:before{content:\"\\f025\"}.icon-volume-off:before{content:\"\\f026\"}.icon-volume-down:before{content:\"\\f027\"}.icon-volume-up:before{content:\"\\f028\"}.icon-qrcode:before{content:\"\\f029\"}.icon-barcode:before{content:\"\\f02a\"}.icon-tag:before{content:\"\\f02b\"}.icon-tags:before{content:\"\\f02c\"}.icon-book:before{content:\"\\f02d\"}.icon-bookmark:before{content:\"\\f02e\"}.icon-print:before{content:\"\\f02f\"}.icon-camera:before{content:\"\\f030\"}.icon-font:before{content:\"\\f031\"}.icon-bold:before{content:\"\\f032\"}.icon-italic:before{content:\"\\f033\"}.icon-text-height:before{content:\"\\f034\"}.icon-text-width:before{content:\"\\f035\"}.icon-align-left:before{content:\"\\f036\"}.icon-align-center:before{content:\"\\f037\"}.icon-align-right:before{content:\"\\f038\"}.icon-align-justify:before{content:\"\\f039\"}.icon-list:before{content:\"\\f03a\"}.icon-indent-left:before{content:\"\\f03b\"}.icon-indent-right:before{content:\"\\f03c\"}.icon-facetime-video:before{content:\"\\f03d\"}.icon-picture:before{content:\"\\f03e\"}.icon-pencil:before{content:\"\\f040\"}.icon-map-marker:before{content:\"\\f041\"}.icon-adjust:before{content:\"\\f042\"}.icon-tint:before{content:\"\\f043\"}.icon-edit:before{content:\"\\f044\"}.icon-share:before{content:\"\\f045\"}.icon-check:before{content:\"\\f046\"}.icon-move:before{content:\"\\f047\"}.icon-step-backward:before{content:\"\\f048\"}.icon-fast-backward:before{content:\"\\f049\"}.icon-backward:before{content:\"\\f04a\"}.icon-play:before{content:\"\\f04b\"}.icon-pause:before{content:\"\\f04c\"}.icon-stop:before{content:\"\\f04d\"}.icon-forward:before{content:\"\\f04e\"}.icon-fast-forward:before{content:\"\\f050\"}.icon-step-forward:before{content:\"\\f051\"}.icon-eject:before{content:\"\\f052\"}.icon-chevron-left:before{content:\"\\f053\"}.icon-chevron-right:before{content:\"\\f054\"}.icon-plus-sign:before{content:\"\\f055\"}.icon-minus-sign:before{content:\"\\f056\"}.icon-remove-sign:before{content:\"\\f057\"}.icon-ok-sign:before{content:\"\\f058\"}.icon-question-sign:before{content:\"\\f059\"}.icon-info-sign:before{content:\"\\f05a\"}.icon-screenshot:before{content:\"\\f05b\"}.icon-remove-circle:before{content:\"\\f05c\"}.icon-ok-circle:before{content:\"\\f05d\"}.icon-ban-circle:before{content:\"\\f05e\"}.icon-arrow-left:before{content:\"\\f060\"}.icon-arrow-right:before{content:\"\\f061\"}.icon-arrow-up:before{content:\"\\f062\"}.icon-arrow-down:before{content:\"\\f063\"}.icon-share-alt:before{content:\"\\f064\"}.icon-resize-full:before{content:\"\\f065\"}.icon-resize-small:before{content:\"\\f066\"}.icon-plus:before{content:\"\\f067\"}.icon-minus:before{content:\"\\f068\"}.icon-asterisk:before{content:\"\\f069\"}.icon-exclamation-sign:before{content:\"\\f06a\"}.icon-gift:before{content:\"\\f06b\"}.icon-leaf:before{content:\"\\f06c\"}.icon-fire:before{content:\"\\f06d\"}.icon-eye-open:before{content:\"\\f06e\"}.icon-eye-close:before{content:\"\\f070\"}.icon-warning-sign:before{content:\"\\f071\"}.icon-plane:before{content:\"\\f072\"}.icon-calendar:before{content:\"\\f073\"}.icon-random:before{content:\"\\f074\"}.icon-comment:before{content:\"\\f075\"}.icon-magnet:before{content:\"\\f076\"}.icon-chevron-up:before{content:\"\\f077\"}.icon-chevron-down:before{content:\"\\f078\"}.icon-retweet:before{content:\"\\f079\"}.icon-shopping-cart:before{content:\"\\f07a\"}.icon-folder-close:before{content:\"\\f07b\"}.icon-folder-open:before{content:\"\\f07c\"}.icon-resize-vertical:before{content:\"\\f07d\"}.icon-resize-horizontal:before{content:\"\\f07e\"}.icon-bar-chart:before{content:\"\\f080\"}.icon-twitter-sign:before{content:\"\\f081\"}.icon-facebook-sign:before{content:\"\\f082\"}.icon-camera-retro:before{content:\"\\f083\"}.icon-key:before{content:\"\\f084\"}.icon-cogs:before{content:\"\\f085\"}.icon-comments:before{content:\"\\f086\"}.icon-thumbs-up:before{content:\"\\f087\"}.icon-thumbs-down:before{content:\"\\f088\"}.icon-star-half:before{content:\"\\f089\"}.icon-heart-empty:before{content:\"\\f08a\"}.icon-signout:before{content:\"\\f08b\"}.icon-linkedin-sign:before{content:\"\\f08c\"}.icon-pushpin:before{content:\"\\f08d\"}.icon-external-link:before{content:\"\\f08e\"}.icon-signin:before{content:\"\\f090\"}.icon-trophy:before{content:\"\\f091\"}.icon-github-sign:before{content:\"\\f092\"}.icon-upload-alt:before{content:\"\\f093\"}.icon-lemon:before{content:\"\\f094\"}.icon-phone:before{content:\"\\f095\"}.icon-check-empty:before{content:\"\\f096\"}.icon-bookmark-empty:before{content:\"\\f097\"}.icon-phone-sign:before{content:\"\\f098\"}.icon-twitter:before{content:\"\\f099\"}.icon-facebook:before{content:\"\\f09a\"}.icon-github:before{content:\"\\f09b\"}.icon-unlock:before{content:\"\\f09c\"}.icon-credit-card:before{content:\"\\f09d\"}.icon-rss:before{content:\"\\f09e\"}.icon-hdd:before{content:\"\\f0a0\"}.icon-bullhorn:before{content:\"\\f0a1\"}.icon-bell:before{content:\"\\f0a2\"}.icon-certificate:before{content:\"\\f0a3\"}.icon-hand-right:before{content:\"\\f0a4\"}.icon-hand-left:before{content:\"\\f0a5\"}.icon-hand-up:before{content:\"\\f0a6\"}.icon-hand-down:before{content:\"\\f0a7\"}.icon-circle-arrow-left:before{content:\"\\f0a8\"}.icon-circle-arrow-right:before{content:\"\\f0a9\"}.icon-circle-arrow-up:before{content:\"\\f0aa\"}.icon-circle-arrow-down:before{content:\"\\f0ab\"}.icon-globe:before{content:\"\\f0ac\"}.icon-wrench:before{content:\"\\f0ad\"}.icon-tasks:before{content:\"\\f0ae\"}.icon-filter:before{content:\"\\f0b0\"}.icon-briefcase:before{content:\"\\f0b1\"}.icon-fullscreen:before{content:\"\\f0b2\"}.icon-group:before{content:\"\\f0c0\"}.icon-link:before{content:\"\\f0c1\"}.icon-cloud:before{content:\"\\f0c2\"}.icon-beaker:before{content:\"\\f0c3\"}.icon-cut:before{content:\"\\f0c4\"}.icon-copy:before{content:\"\\f0c5\"}.icon-paper-clip:before{content:\"\\f0c6\"}.icon-save:before{content:\"\\f0c7\"}.icon-sign-blank:before{content:\"\\f0c8\"}.icon-reorder:before{content:\"\\f0c9\"}.icon-list-ul:before{content:\"\\f0ca\"}.icon-list-ol:before{content:\"\\f0cb\"}.icon-strikethrough:before{content:\"\\f0cc\"}.icon-underline:before{content:\"\\f0cd\"}.icon-table:before{content:\"\\f0ce\"}.icon-magic:before{content:\"\\f0d0\"}.icon-truck:before{content:\"\\f0d1\"}.icon-pinterest:before{content:\"\\f0d2\"}.icon-pinterest-sign:before{content:\"\\f0d3\"}.icon-google-plus-sign:before{content:\"\\f0d4\"}.icon-google-plus:before{content:\"\\f0d5\"}.icon-money:before{content:\"\\f0d6\"}.icon-caret-down:before{content:\"\\f0d7\"}.icon-caret-up:before{content:\"\\f0d8\"}.icon-caret-left:before{content:\"\\f0d9\"}.icon-caret-right:before{content:\"\\f0da\"}.icon-columns:before{content:\"\\f0db\"}.icon-sort:before{content:\"\\f0dc\"}.icon-sort-down:before{content:\"\\f0dd\"}.icon-sort-up:before{content:\"\\f0de\"}.icon-envelope-alt:before{content:\"\\f0e0\"}.icon-linkedin:before{content:\"\\f0e1\"}.icon-undo:before{content:\"\\f0e2\"}.icon-legal:before{content:\"\\f0e3\"}.icon-dashboard:before{content:\"\\f0e4\"}.icon-comment-alt:before{content:\"\\f0e5\"}.icon-comments-alt:before{content:\"\\f0e6\"}.icon-bolt:before{content:\"\\f0e7\"}.icon-sitemap:before{content:\"\\f0e8\"}.icon-umbrella:before{content:\"\\f0e9\"}.icon-paste:before{content:\"\\f0ea\"}.icon-lightbulb:before{content:\"\\f0eb\"}.icon-exchange:before{content:\"\\f0ec\"}.icon-cloud-download:before{content:\"\\f0ed\"}.icon-cloud-upload:before{content:\"\\f0ee\"}.icon-user-md:before{content:\"\\f0f0\"}.icon-stethoscope:before{content:\"\\f0f1\"}.icon-suitcase:before{content:\"\\f0f2\"}.icon-bell-alt:before{content:\"\\f0f3\"}.icon-coffee:before{content:\"\\f0f4\"}.icon-food:before{content:\"\\f0f5\"}.icon-file-alt:before{content:\"\\f0f6\"}.icon-building:before{content:\"\\f0f7\"}.icon-hospital:before{content:\"\\f0f8\"}.icon-ambulance:before{content:\"\\f0f9\"}.icon-medkit:before{content:\"\\f0fa\"}.icon-fighter-jet:before{content:\"\\f0fb\"}.icon-beer:before{content:\"\\f0fc\"}.icon-h-sign:before{content:\"\\f0fd\"}.icon-plus-sign-alt:before{content:\"\\f0fe\"}.icon-double-angle-left:before{content:\"\\f100\"}.icon-double-angle-right:before{content:\"\\f101\"}.icon-double-angle-up:before{content:\"\\f102\"}.icon-double-angle-down:before{content:\"\\f103\"}.icon-angle-left:before{content:\"\\f104\"}.icon-angle-right:before{content:\"\\f105\"}.icon-angle-up:before{content:\"\\f106\"}.icon-angle-down:before{content:\"\\f107\"}.icon-desktop:before{content:\"\\f108\"}.icon-laptop:before{content:\"\\f109\"}.icon-tablet:before{content:\"\\f10a\"}.icon-mobile-phone:before{content:\"\\f10b\"}.icon-circle-blank:before{content:\"\\f10c\"}.icon-quote-left:before{content:\"\\f10d\"}.icon-quote-right:before{content:\"\\f10e\"}.icon-spinner:before{content:\"\\f110\"}.icon-circle:before{content:\"\\f111\"}.icon-reply:before{content:\"\\f112\"}.icon-github-alt:before{content:\"\\f113\"}.icon-folder-close-alt:before{content:\"\\f114\"}.icon-folder-open-alt:before{content:\"\\f115\"}");
+                        yaz.WriteLine("@font-face {");
+                        yaz.WriteLine("\tfont-family: 'FontAwesome';");
+                        yaz.WriteLine("\tsrc: url('/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.eot');");
+                        yaz.WriteLine("\tsrc: url('/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.eot?#iefix') format('embedded-opentype'),");
+                        yaz.WriteLine("\t\t url('/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.woff') format('woff'), ");
+                        yaz.WriteLine("\t\t url('/" + projectName + "/Content/admin/css/font-awesome/fontawesome-webfont.ttf') format('truetype');");
+                        yaz.WriteLine("\tfont-weight: normal;");
+                        yaz.WriteLine("\tfont-style: normal;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("[class^=\"icon-\"],");
+                        yaz.WriteLine("[class*=\" icon-\"] {");
+                        yaz.WriteLine("\tfont-family: FontAwesome;");
+                        yaz.WriteLine("\tfont-weight: normal;");
+                        yaz.WriteLine("\tfont-style: normal;");
+                        yaz.WriteLine("\ttext-decoration: inherit;");
+                        yaz.WriteLine("\tdisplay: inline;");
+                        yaz.WriteLine("\twidth: auto;");
+                        yaz.WriteLine("\theight: auto;");
+                        yaz.WriteLine("\tline-height: normal;");
+                        yaz.WriteLine("\tvertical-align: baseline;");
+                        yaz.WriteLine("\tbackground-image: none !important;");
+                        yaz.WriteLine("\tbackground-position: 0% 0%;");
+                        yaz.WriteLine("\tbackground-repeat: repeat;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("[class^=\"icon-\"]:before,");
+                        yaz.WriteLine("[class*=\" icon-\"]:before {");
+                        yaz.WriteLine("\ttext-decoration: inherit;");
+                        yaz.WriteLine("\tdisplay: inline-block;");
+                        yaz.WriteLine("\tspeak: none;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("/* makes sure icons active on rollover in links */");
+                        yaz.WriteLine("a [class^=\"icon-\"],");
+                        yaz.WriteLine("a [class*=\" icon-\"] {");
+                        yaz.WriteLine("\tdisplay: inline-block;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("/* makes the font 33% larger relative to the icon container */");
+                        yaz.WriteLine(".icon-large:before {");
+                        yaz.WriteLine("\tvertical-align: -10%;");
+                        yaz.WriteLine("\tfont-size: 1.3333333333333333em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".btn [class^=\"icon-\"],");
+                        yaz.WriteLine(".nav [class^=\"icon-\"],");
+                        yaz.WriteLine(".btn [class*=\" icon-\"],");
+                        yaz.WriteLine(".nav [class*=\" icon-\"] {");
+                        yaz.WriteLine("\tdisplay: inline;");
+                        yaz.WriteLine("\t/* keeps button heights with and without icons the same */");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tline-height: .6em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".btn [class^=\"icon-\"].icon-spin,");
+                        yaz.WriteLine(".nav [class^=\"icon-\"].icon-spin,");
+                        yaz.WriteLine(".btn [class*=\" icon-\"].icon-spin,");
+                        yaz.WriteLine(".nav [class*=\" icon-\"].icon-spin {");
+                        yaz.WriteLine("\tdisplay: inline-block;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("li [class^=\"icon-\"],");
+                        yaz.WriteLine("li [class*=\" icon-\"] {");
+                        yaz.WriteLine("\tdisplay: inline-block;");
+                        yaz.WriteLine("\twidth: 1.25em;");
+                        yaz.WriteLine("\ttext-align: center;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("li [class^=\"icon-\"].icon-large,");
+                        yaz.WriteLine("li [class*=\" icon-\"].icon-large {");
+                        yaz.WriteLine("\t/* increased font size for icon-large */");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\twidth: 1.5625em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("ul.icons {");
+                        yaz.WriteLine("\tlist-style-type: none;");
+                        yaz.WriteLine("\ttext-indent: -0.75em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("ul.icons li [class^=\"icon-\"],");
+                        yaz.WriteLine("ul.icons li [class*=\" icon-\"] {");
+                        yaz.WriteLine("\twidth: .75em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-muted {");
+                        yaz.WriteLine("\tcolor: #eeeeee;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-border {");
+                        yaz.WriteLine("\tborder: solid 1px #eeeeee;");
+                        yaz.WriteLine("\tpadding: .2em .25em .15em;");
+                        yaz.WriteLine("\t-webkit-border-radius: 3px;");
+                        yaz.WriteLine("\t-moz-border-radius: 3px;");
+                        yaz.WriteLine("\tborder-radius: 3px;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-2x {");
+                        yaz.WriteLine("\tfont-size: 2em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-2x.icon-border {");
+                        yaz.WriteLine("\tborder-width: 2px;");
+                        yaz.WriteLine("\t-webkit-border-radius: 4px;");
+                        yaz.WriteLine("\t-moz-border-radius: 4px;");
+                        yaz.WriteLine("\tborder-radius: 4px;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-3x {");
+                        yaz.WriteLine("\tfont-size: 3em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-3x.icon-border {");
+                        yaz.WriteLine("\tborder-width: 3px;");
+                        yaz.WriteLine("\t-webkit-border-radius: 5px;");
+                        yaz.WriteLine("\t-moz-border-radius: 5px;");
+                        yaz.WriteLine("\tborder-radius: 5px;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-4x {");
+                        yaz.WriteLine("\tfont-size: 4em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-4x.icon-border {");
+                        yaz.WriteLine("\tborder-width: 4px;");
+                        yaz.WriteLine("\t-webkit-border-radius: 6px;");
+                        yaz.WriteLine("\t-moz-border-radius: 6px;");
+                        yaz.WriteLine("\tborder-radius: 6px;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".pull-right {");
+                        yaz.WriteLine("\tfloat: right;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".pull-left {");
+                        yaz.WriteLine("\tfloat: left;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("[class^=\"icon-\"].pull-left,");
+                        yaz.WriteLine("[class*=\" icon-\"].pull-left {");
+                        yaz.WriteLine("\tmargin-right: .35em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("[class^=\"icon-\"].pull-right,");
+                        yaz.WriteLine("[class*=\" icon-\"].pull-right {");
+                        yaz.WriteLine("\tmargin-left: .35em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".btn [class^=\"icon-\"].pull-left.icon-2x,");
+                        yaz.WriteLine(".btn [class*=\" icon-\"].pull-left.icon-2x,");
+                        yaz.WriteLine(".btn [class^=\"icon-\"].pull-right.icon-2x,");
+                        yaz.WriteLine(".btn [class*=\" icon-\"].pull-right.icon-2x {");
+                        yaz.WriteLine("\tmargin-top: .35em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".btn [class^=\"icon-\"].icon-spin.icon-large,");
+                        yaz.WriteLine(".btn [class*=\" icon-\"].icon-spin.icon-large {");
+                        yaz.WriteLine("\theight: .75em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".btn.btn-small [class^=\"icon-\"].pull-left.icon-2x,");
+                        yaz.WriteLine(".btn.btn-small [class*=\" icon-\"].pull-left.icon-2x,");
+                        yaz.WriteLine(".btn.btn-small [class^=\"icon-\"].pull-right.icon-2x,");
+                        yaz.WriteLine(".btn.btn-small [class*=\" icon-\"].pull-right.icon-2x {");
+                        yaz.WriteLine("\tmargin-top: .45em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".btn.btn-large [class^=\"icon-\"].pull-left.icon-2x,");
+                        yaz.WriteLine(".btn.btn-large [class*=\" icon-\"].pull-left.icon-2x,");
+                        yaz.WriteLine(".btn.btn-large [class^=\"icon-\"].pull-right.icon-2x,");
+                        yaz.WriteLine(".btn.btn-large [class*=\" icon-\"].pull-right.icon-2x {");
+                        yaz.WriteLine("\tmargin-top: .2em;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine(".icon-spin {");
+                        yaz.WriteLine("\tdisplay: inline-block;");
+                        yaz.WriteLine("\t-moz-animation: spin 2s infinite linear;");
+                        yaz.WriteLine("\t-o-animation: spin 2s infinite linear;");
+                        yaz.WriteLine("\t-webkit-animation: spin 2s infinite linear;");
+                        yaz.WriteLine("\tanimation: spin 2s infinite linear;");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("@-moz-keyframes spin {");
+                        yaz.WriteLine("\t0% { -moz-transform: rotate(0deg); }");
+                        yaz.WriteLine("\t100% { -moz-transform: rotate(359deg); }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("@-webkit-keyframes spin {");
+                        yaz.WriteLine("\t0% { -webkit-transform: rotate(0deg); }");
+                        yaz.WriteLine("\t100% { -webkit-transform: rotate(359deg); }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("@-o-keyframes spin {");
+                        yaz.WriteLine("\t0% { -o-transform: rotate(0deg); }");
+                        yaz.WriteLine("\t100% { -o-transform: rotate(359deg); }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("@-ms-keyframes spin {");
+                        yaz.WriteLine("\t0% { -ms-transform: rotate(0deg); }");
+                        yaz.WriteLine("\t100% { -ms-transform: rotate(359deg); }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("@keyframes spin {");
+                        yaz.WriteLine("\t0% { transform: rotate(0deg); }");
+                        yaz.WriteLine("\t100% { transform: rotate(359deg); }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-glass:before                { content: \"\\f000\"; }");
+                        yaz.WriteLine(".icon-music:before                { content: \"\\f001\"; }");
+                        yaz.WriteLine(".icon-search:before               { content: \"\\f002\"; }");
+                        yaz.WriteLine(".icon-envelope:before             { content: \"\\f003\"; }");
+                        yaz.WriteLine(".icon-heart:before                { content: \"\\f004\"; }");
+                        yaz.WriteLine(".icon-star:before                 { content: \"\\f005\"; }");
+                        yaz.WriteLine(".icon-star-empty:before           { content: \"\\f006\"; }");
+                        yaz.WriteLine(".icon-user:before                 { content: \"\\f007\"; }");
+                        yaz.WriteLine(".icon-film:before                 { content: \"\\f008\"; }");
+                        yaz.WriteLine(".icon-th-large:before             { content: \"\\f009\"; }");
+                        yaz.WriteLine(".icon-th:before                   { content: \"\\f00a\"; }");
+                        yaz.WriteLine(".icon-th-list:before              { content: \"\\f00b\"; }");
+                        yaz.WriteLine(".icon-ok:before                   { content: \"\\f00c\"; }");
+                        yaz.WriteLine(".icon-remove:before               { content: \"\\f00d\"; }");
+                        yaz.WriteLine(".icon-zoom-in:before              { content: \"\\f00e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-zoom-out:before             { content: \"\\f010\"; }");
+                        yaz.WriteLine(".icon-off:before                  { content: \"\\f011\"; }");
+                        yaz.WriteLine(".icon-signal:before               { content: \"\\f012\"; }");
+                        yaz.WriteLine(".icon-cog:before                  { content: \"\\f013\"; }");
+                        yaz.WriteLine(".icon-trash:before                { content: \"\\f014\"; }");
+                        yaz.WriteLine(".icon-home:before                 { content: \"\\f015\"; }");
+                        yaz.WriteLine(".icon-file:before                 { content: \"\\f016\"; }");
+                        yaz.WriteLine(".icon-time:before                 { content: \"\\f017\"; }");
+                        yaz.WriteLine(".icon-road:before                 { content: \"\\f018\"; }");
+                        yaz.WriteLine(".icon-download-alt:before         { content: \"\\f019\"; }");
+                        yaz.WriteLine(".icon-download:before             { content: \"\\f01a\"; }");
+                        yaz.WriteLine(".icon-upload:before               { content: \"\\f01b\"; }");
+                        yaz.WriteLine(".icon-inbox:before                { content: \"\\f01c\"; }");
+                        yaz.WriteLine(".icon-play-circle:before          { content: \"\\f01d\"; }");
+                        yaz.WriteLine(".icon-repeat:before               { content: \"\\f01e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("/* \\f020 doesn't work in Safari. all shifted one down */");
+                        yaz.WriteLine(".icon-refresh:before              { content: \"\\f021\"; }");
+                        yaz.WriteLine(".icon-list-alt:before             { content: \"\\f022\"; }");
+                        yaz.WriteLine(".icon-lock:before                 { content: \"\\f023\"; }");
+                        yaz.WriteLine(".icon-flag:before                 { content: \"\\f024\"; }");
+                        yaz.WriteLine(".icon-headphones:before           { content: \"\\f025\"; }");
+                        yaz.WriteLine(".icon-volume-off:before           { content: \"\\f026\"; }");
+                        yaz.WriteLine(".icon-volume-down:before          { content: \"\\f027\"; }");
+                        yaz.WriteLine(".icon-volume-up:before            { content: \"\\f028\"; }");
+                        yaz.WriteLine(".icon-qrcode:before               { content: \"\\f029\"; }");
+                        yaz.WriteLine(".icon-barcode:before              { content: \"\\f02a\"; }");
+                        yaz.WriteLine(".icon-tag:before                  { content: \"\\f02b\"; }");
+                        yaz.WriteLine(".icon-tags:before                 { content: \"\\f02c\"; }");
+                        yaz.WriteLine(".icon-book:before                 { content: \"\\f02d\"; }");
+                        yaz.WriteLine(".icon-bookmark:before             { content: \"\\f02e\"; }");
+                        yaz.WriteLine(".icon-print:before                { content: \"\\f02f\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-camera:before               { content: \"\\f030\"; }");
+                        yaz.WriteLine(".icon-font:before                 { content: \"\\f031\"; }");
+                        yaz.WriteLine(".icon-bold:before                 { content: \"\\f032\"; }");
+                        yaz.WriteLine(".icon-italic:before               { content: \"\\f033\"; }");
+                        yaz.WriteLine(".icon-text-height:before          { content: \"\\f034\"; }");
+                        yaz.WriteLine(".icon-text-width:before           { content: \"\\f035\"; }");
+                        yaz.WriteLine(".icon-align-left:before           { content: \"\\f036\"; }");
+                        yaz.WriteLine(".icon-align-center:before         { content: \"\\f037\"; }");
+                        yaz.WriteLine(".icon-align-right:before          { content: \"\\f038\"; }");
+                        yaz.WriteLine(".icon-align-justify:before        { content: \"\\f039\"; }");
+                        yaz.WriteLine(".icon-list:before                 { content: \"\\f03a\"; }");
+                        yaz.WriteLine(".icon-indent-left:before          { content: \"\\f03b\"; }");
+                        yaz.WriteLine(".icon-indent-right:before         { content: \"\\f03c\"; }");
+                        yaz.WriteLine(".icon-facetime-video:before       { content: \"\\f03d\"; }");
+                        yaz.WriteLine(".icon-picture:before              { content: \"\\f03e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-pencil:before               { content: \"\\f040\"; }");
+                        yaz.WriteLine(".icon-map-marker:before           { content: \"\\f041\"; }");
+                        yaz.WriteLine(".icon-adjust:before               { content: \"\\f042\"; }");
+                        yaz.WriteLine(".icon-tint:before                 { content: \"\\f043\"; }");
+                        yaz.WriteLine(".icon-edit:before                 { content: \"\\f044\"; }");
+                        yaz.WriteLine(".icon-share:before                { content: \"\\f045\"; }");
+                        yaz.WriteLine(".icon-check:before                { content: \"\\f046\"; }");
+                        yaz.WriteLine(".icon-move:before                 { content: \"\\f047\"; }");
+                        yaz.WriteLine(".icon-step-backward:before        { content: \"\\f048\"; }");
+                        yaz.WriteLine(".icon-fast-backward:before        { content: \"\\f049\"; }");
+                        yaz.WriteLine(".icon-backward:before             { content: \"\\f04a\"; }");
+                        yaz.WriteLine(".icon-play:before                 { content: \"\\f04b\"; }");
+                        yaz.WriteLine(".icon-pause:before                { content: \"\\f04c\"; }");
+                        yaz.WriteLine(".icon-stop:before                 { content: \"\\f04d\"; }");
+                        yaz.WriteLine(".icon-forward:before              { content: \"\\f04e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-fast-forward:before         { content: \"\\f050\"; }");
+                        yaz.WriteLine(".icon-step-forward:before         { content: \"\\f051\"; }");
+                        yaz.WriteLine(".icon-eject:before                { content: \"\\f052\"; }");
+                        yaz.WriteLine(".icon-chevron-left:before         { content: \"\\f053\"; }");
+                        yaz.WriteLine(".icon-chevron-right:before        { content: \"\\f054\"; }");
+                        yaz.WriteLine(".icon-plus-sign:before            { content: \"\\f055\"; }");
+                        yaz.WriteLine(".icon-minus-sign:before           { content: \"\\f056\"; }");
+                        yaz.WriteLine(".icon-remove-sign:before          { content: \"\\f057\"; }");
+                        yaz.WriteLine(".icon-ok-sign:before              { content: \"\\f058\"; }");
+                        yaz.WriteLine(".icon-question-sign:before        { content: \"\\f059\"; }");
+                        yaz.WriteLine(".icon-info-sign:before            { content: \"\\f05a\"; }");
+                        yaz.WriteLine(".icon-screenshot:before           { content: \"\\f05b\"; }");
+                        yaz.WriteLine(".icon-remove-circle:before        { content: \"\\f05c\"; }");
+                        yaz.WriteLine(".icon-ok-circle:before            { content: \"\\f05d\"; }");
+                        yaz.WriteLine(".icon-ban-circle:before           { content: \"\\f05e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-arrow-left:before           { content: \"\\f060\"; }");
+                        yaz.WriteLine(".icon-arrow-right:before          { content: \"\\f061\"; }");
+                        yaz.WriteLine(".icon-arrow-up:before             { content: \"\\f062\"; }");
+                        yaz.WriteLine(".icon-arrow-down:before           { content: \"\\f063\"; }");
+                        yaz.WriteLine(".icon-share-alt:before            { content: \"\\f064\"; }");
+                        yaz.WriteLine(".icon-resize-full:before          { content: \"\\f065\"; }");
+                        yaz.WriteLine(".icon-resize-small:before         { content: \"\\f066\"; }");
+                        yaz.WriteLine(".icon-plus:before                 { content: \"\\f067\"; }");
+                        yaz.WriteLine(".icon-minus:before                { content: \"\\f068\"; }");
+                        yaz.WriteLine(".icon-asterisk:before             { content: \"\\f069\"; }");
+                        yaz.WriteLine(".icon-exclamation-sign:before     { content: \"\\f06a\"; }");
+                        yaz.WriteLine(".icon-gift:before                 { content: \"\\f06b\"; }");
+                        yaz.WriteLine(".icon-leaf:before                 { content: \"\\f06c\"; }");
+                        yaz.WriteLine(".icon-fire:before                 { content: \"\\f06d\"; }");
+                        yaz.WriteLine(".icon-eye-open:before             { content: \"\\f06e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-eye-close:before            { content: \"\\f070\"; }");
+                        yaz.WriteLine(".icon-warning-sign:before         { content: \"\\f071\"; }");
+                        yaz.WriteLine(".icon-plane:before                { content: \"\\f072\"; }");
+                        yaz.WriteLine(".icon-calendar:before             { content: \"\\f073\"; }");
+                        yaz.WriteLine(".icon-random:before               { content: \"\\f074\"; }");
+                        yaz.WriteLine(".icon-comment:before              { content: \"\\f075\"; }");
+                        yaz.WriteLine(".icon-magnet:before               { content: \"\\f076\"; }");
+                        yaz.WriteLine(".icon-chevron-up:before           { content: \"\\f077\"; }");
+                        yaz.WriteLine(".icon-chevron-down:before         { content: \"\\f078\"; }");
+                        yaz.WriteLine(".icon-retweet:before              { content: \"\\f079\"; }");
+                        yaz.WriteLine(".icon-shopping-cart:before        { content: \"\\f07a\"; }");
+                        yaz.WriteLine(".icon-folder-close:before         { content: \"\\f07b\"; }");
+                        yaz.WriteLine(".icon-folder-open:before          { content: \"\\f07c\"; }");
+                        yaz.WriteLine(".icon-resize-vertical:before      { content: \"\\f07d\"; }");
+                        yaz.WriteLine(".icon-resize-horizontal:before    { content: \"\\f07e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-bar-chart:before            { content: \"\\f080\"; }");
+                        yaz.WriteLine(".icon-twitter-sign:before         { content: \"\\f081\"; }");
+                        yaz.WriteLine(".icon-facebook-sign:before        { content: \"\\f082\"; }");
+                        yaz.WriteLine(".icon-camera-retro:before         { content: \"\\f083\"; }");
+                        yaz.WriteLine(".icon-key:before                  { content: \"\\f084\"; }");
+                        yaz.WriteLine(".icon-cogs:before                 { content: \"\\f085\"; }");
+                        yaz.WriteLine(".icon-comments:before             { content: \"\\f086\"; }");
+                        yaz.WriteLine(".icon-thumbs-up:before            { content: \"\\f087\"; }");
+                        yaz.WriteLine(".icon-thumbs-down:before          { content: \"\\f088\"; }");
+                        yaz.WriteLine(".icon-star-half:before            { content: \"\\f089\"; }");
+                        yaz.WriteLine(".icon-heart-empty:before          { content: \"\\f08a\"; }");
+                        yaz.WriteLine(".icon-signout:before              { content: \"\\f08b\"; }");
+                        yaz.WriteLine(".icon-linkedin-sign:before        { content: \"\\f08c\"; }");
+                        yaz.WriteLine(".icon-pushpin:before              { content: \"\\f08d\"; }");
+                        yaz.WriteLine(".icon-external-link:before        { content: \"\\f08e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-signin:before               { content: \"\\f090\"; }");
+                        yaz.WriteLine(".icon-trophy:before               { content: \"\\f091\"; }");
+                        yaz.WriteLine(".icon-github-sign:before          { content: \"\\f092\"; }");
+                        yaz.WriteLine(".icon-upload-alt:before           { content: \"\\f093\"; }");
+                        yaz.WriteLine(".icon-lemon:before                { content: \"\\f094\"; }");
+                        yaz.WriteLine(".icon-phone:before                { content: \"\\f095\"; }");
+                        yaz.WriteLine(".icon-check-empty:before          { content: \"\\f096\"; }");
+                        yaz.WriteLine(".icon-bookmark-empty:before       { content: \"\\f097\"; }");
+                        yaz.WriteLine(".icon-phone-sign:before           { content: \"\\f098\"; }");
+                        yaz.WriteLine(".icon-twitter:before              { content: \"\\f099\"; }");
+                        yaz.WriteLine(".icon-facebook:before             { content: \"\\f09a\"; }");
+                        yaz.WriteLine(".icon-github:before               { content: \"\\f09b\"; }");
+                        yaz.WriteLine(".icon-unlock:before               { content: \"\\f09c\"; }");
+                        yaz.WriteLine(".icon-credit-card:before          { content: \"\\f09d\"; }");
+                        yaz.WriteLine(".icon-rss:before                  { content: \"\\f09e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-hdd:before                  { content: \"\\f0a0\"; }");
+                        yaz.WriteLine(".icon-bullhorn:before             { content: \"\\f0a1\"; }");
+                        yaz.WriteLine(".icon-bell:before                 { content: \"\\f0a2\"; }");
+                        yaz.WriteLine(".icon-certificate:before          { content: \"\\f0a3\"; }");
+                        yaz.WriteLine(".icon-hand-right:before           { content: \"\\f0a4\"; }");
+                        yaz.WriteLine(".icon-hand-left:before            { content: \"\\f0a5\"; }");
+                        yaz.WriteLine(".icon-hand-up:before              { content: \"\\f0a6\"; }");
+                        yaz.WriteLine(".icon-hand-down:before            { content: \"\\f0a7\"; }");
+                        yaz.WriteLine(".icon-circle-arrow-left:before    { content: \"\\f0a8\"; }");
+                        yaz.WriteLine(".icon-circle-arrow-right:before   { content: \"\\f0a9\"; }");
+                        yaz.WriteLine(".icon-circle-arrow-up:before      { content: \"\\f0aa\"; }");
+                        yaz.WriteLine(".icon-circle-arrow-down:before    { content: \"\\f0ab\"; }");
+                        yaz.WriteLine(".icon-globe:before                { content: \"\\f0ac\"; }");
+                        yaz.WriteLine(".icon-wrench:before               { content: \"\\f0ad\"; }");
+                        yaz.WriteLine(".icon-tasks:before                { content: \"\\f0ae\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-filter:before               { content: \"\\f0b0\"; }");
+                        yaz.WriteLine(".icon-briefcase:before            { content: \"\\f0b1\"; }");
+                        yaz.WriteLine(".icon-fullscreen:before           { content: \"\\f0b2\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-group:before                { content: \"\\f0c0\"; }");
+                        yaz.WriteLine(".icon-link:before                 { content: \"\\f0c1\"; }");
+                        yaz.WriteLine(".icon-cloud:before                { content: \"\\f0c2\"; }");
+                        yaz.WriteLine(".icon-beaker:before               { content: \"\\f0c3\"; }");
+                        yaz.WriteLine(".icon-cut:before                  { content: \"\\f0c4\"; }");
+                        yaz.WriteLine(".icon-copy:before                 { content: \"\\f0c5\"; }");
+                        yaz.WriteLine(".icon-paper-clip:before           { content: \"\\f0c6\"; }");
+                        yaz.WriteLine(".icon-save:before                 { content: \"\\f0c7\"; }");
+                        yaz.WriteLine(".icon-sign-blank:before           { content: \"\\f0c8\"; }");
+                        yaz.WriteLine(".icon-reorder:before              { content: \"\\f0c9\"; }");
+                        yaz.WriteLine(".icon-list-ul:before              { content: \"\\f0ca\"; }");
+                        yaz.WriteLine(".icon-list-ol:before              { content: \"\\f0cb\"; }");
+                        yaz.WriteLine(".icon-strikethrough:before        { content: \"\\f0cc\"; }");
+                        yaz.WriteLine(".icon-underline:before            { content: \"\\f0cd\"; }");
+                        yaz.WriteLine(".icon-table:before                { content: \"\\f0ce\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-magic:before                { content: \"\\f0d0\"; }");
+                        yaz.WriteLine(".icon-truck:before                { content: \"\\f0d1\"; }");
+                        yaz.WriteLine(".icon-pinterest:before            { content: \"\\f0d2\"; }");
+                        yaz.WriteLine(".icon-pinterest-sign:before       { content: \"\\f0d3\"; }");
+                        yaz.WriteLine(".icon-google-plus-sign:before     { content: \"\\f0d4\"; }");
+                        yaz.WriteLine(".icon-google-plus:before          { content: \"\\f0d5\"; }");
+                        yaz.WriteLine(".icon-money:before                { content: \"\\f0d6\"; }");
+                        yaz.WriteLine(".icon-caret-down:before           { content: \"\\f0d7\"; }");
+                        yaz.WriteLine(".icon-caret-up:before             { content: \"\\f0d8\"; }");
+                        yaz.WriteLine(".icon-caret-left:before           { content: \"\\f0d9\"; }");
+                        yaz.WriteLine(".icon-caret-right:before          { content: \"\\f0da\"; }");
+                        yaz.WriteLine(".icon-columns:before              { content: \"\\f0db\"; }");
+                        yaz.WriteLine(".icon-sort:before                 { content: \"\\f0dc\"; }");
+                        yaz.WriteLine(".icon-sort-down:before            { content: \"\\f0dd\"; }");
+                        yaz.WriteLine(".icon-sort-up:before              { content: \"\\f0de\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-envelope-alt:before         { content: \"\\f0e0\"; }");
+                        yaz.WriteLine(".icon-linkedin:before             { content: \"\\f0e1\"; }");
+                        yaz.WriteLine(".icon-undo:before                 { content: \"\\f0e2\"; }");
+                        yaz.WriteLine(".icon-legal:before                { content: \"\\f0e3\"; }");
+                        yaz.WriteLine(".icon-dashboard:before            { content: \"\\f0e4\"; }");
+                        yaz.WriteLine(".icon-comment-alt:before          { content: \"\\f0e5\"; }");
+                        yaz.WriteLine(".icon-comments-alt:before         { content: \"\\f0e6\"; }");
+                        yaz.WriteLine(".icon-bolt:before                 { content: \"\\f0e7\"; }");
+                        yaz.WriteLine(".icon-sitemap:before              { content: \"\\f0e8\"; }");
+                        yaz.WriteLine(".icon-umbrella:before             { content: \"\\f0e9\"; }");
+                        yaz.WriteLine(".icon-paste:before                { content: \"\\f0ea\"; }");
+                        yaz.WriteLine(".icon-lightbulb:before            { content: \"\\f0eb\"; }");
+                        yaz.WriteLine(".icon-exchange:before             { content: \"\\f0ec\"; }");
+                        yaz.WriteLine(".icon-cloud-download:before       { content: \"\\f0ed\"; }");
+                        yaz.WriteLine(".icon-cloud-upload:before         { content: \"\\f0ee\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-user-md:before              { content: \"\\f0f0\"; }");
+                        yaz.WriteLine(".icon-stethoscope:before          { content: \"\\f0f1\"; }");
+                        yaz.WriteLine(".icon-suitcase:before             { content: \"\\f0f2\"; }");
+                        yaz.WriteLine(".icon-bell-alt:before             { content: \"\\f0f3\"; }");
+                        yaz.WriteLine(".icon-coffee:before               { content: \"\\f0f4\"; }");
+                        yaz.WriteLine(".icon-food:before                 { content: \"\\f0f5\"; }");
+                        yaz.WriteLine(".icon-file-alt:before             { content: \"\\f0f6\"; }");
+                        yaz.WriteLine(".icon-building:before             { content: \"\\f0f7\"; }");
+                        yaz.WriteLine(".icon-hospital:before             { content: \"\\f0f8\"; }");
+                        yaz.WriteLine(".icon-ambulance:before            { content: \"\\f0f9\"; }");
+                        yaz.WriteLine(".icon-medkit:before               { content: \"\\f0fa\"; }");
+                        yaz.WriteLine(".icon-fighter-jet:before          { content: \"\\f0fb\"; }");
+                        yaz.WriteLine(".icon-beer:before                 { content: \"\\f0fc\"; }");
+                        yaz.WriteLine(".icon-h-sign:before               { content: \"\\f0fd\"; }");
+                        yaz.WriteLine(".icon-plus-sign-alt:before        { content: \"\\f0fe\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-double-angle-left:before    { content: \"\\f100\"; }");
+                        yaz.WriteLine(".icon-double-angle-right:before   { content: \"\\f101\"; }");
+                        yaz.WriteLine(".icon-double-angle-up:before      { content: \"\\f102\"; }");
+                        yaz.WriteLine(".icon-double-angle-down:before    { content: \"\\f103\"; }");
+                        yaz.WriteLine(".icon-angle-left:before           { content: \"\\f104\"; }");
+                        yaz.WriteLine(".icon-angle-right:before          { content: \"\\f105\"; }");
+                        yaz.WriteLine(".icon-angle-up:before             { content: \"\\f106\"; }");
+                        yaz.WriteLine(".icon-angle-down:before           { content: \"\\f107\"; }");
+                        yaz.WriteLine(".icon-desktop:before              { content: \"\\f108\"; }");
+                        yaz.WriteLine(".icon-laptop:before               { content: \"\\f109\"; }");
+                        yaz.WriteLine(".icon-tablet:before               { content: \"\\f10a\"; }");
+                        yaz.WriteLine(".icon-mobile-phone:before         { content: \"\\f10b\"; }");
+                        yaz.WriteLine(".icon-circle-blank:before         { content: \"\\f10c\"; }");
+                        yaz.WriteLine(".icon-quote-left:before           { content: \"\\f10d\"; }");
+                        yaz.WriteLine(".icon-quote-right:before          { content: \"\\f10e\"; }");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".icon-spinner:before              { content: \"\\f110\"; }");
+                        yaz.WriteLine(".icon-circle:before               { content: \"\\f111\"; }");
+                        yaz.WriteLine(".icon-reply:before                { content: \"\\f112\"; }");
+                        yaz.WriteLine(".icon-github-alt:before           { content: \"\\f113\"; }");
+                        yaz.WriteLine(".icon-folder-close-alt:before     { content: \"\\f114\"; }");
+                        yaz.WriteLine(".icon-folder-open-alt:before      { content: \"\\f115\"; }");
                         yaz.Close();
                     }
                 }
@@ -6841,10 +7154,10 @@ namespace TDFactory
         void CreateFontAwesome()
         {
             CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_FontAwesome_otf, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\FontAwesome.otf");
-            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_eot, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.eot");
-            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_svg, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.svg");
-            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_ttf, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.ttf");
-            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_woff, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome_webfont.woff");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_eot, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome-webfont.eot");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_svg, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome-webfont.svg");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_ttf, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome-webfont.ttf");
+            CopyFromResource(Properties.Resources.Angular_Content_admin_css_font_awesome_fontawesome_webfont_woff, PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\fontawesome-webfont.woff");
         }
 
         void CreateCKEditor()
