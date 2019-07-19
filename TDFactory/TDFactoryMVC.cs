@@ -4443,12 +4443,12 @@ namespace TDFactory
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + ForeignTableName + "/Duzenle/' + item?." + idFrgn + "]\">Düzenle</a></li>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kopyala</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kopyala</a></li>");
 
                                         if (fDeleted)
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kaldır</a></li>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kaldır</a></li>");
 
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" [attr.data-link]=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Sil</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Sil</a></li>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -4990,7 +4990,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\tFillData() {");
                         yaz.WriteLine("\t\tif (this.callTable == true) {");
-                        yaz.WriteLine("\t\t\tthis.service.getIndex().subscribe((resData) => {");
+                        yaz.WriteLine("\t\t\tthis.subscription.add(this.service.getIndex().subscribe((resData) => {");
                         yaz.WriteLine("\t\t\t\tthis." + Table + "List = resData;");
                         yaz.WriteLine("\t\t\t\tthis.callTable = false;");
                         yaz.WriteLine("");
@@ -5048,7 +5048,8 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("\t\t\t\t}, 1);");
-                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError,");
+                        yaz.WriteLine("\t\t\t\t() => { this.subscription.unsubscribe(); }));");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\tsetTimeout(() => {");
@@ -5083,7 +5084,9 @@ namespace TDFactory
                         yaz.WriteLine("");
 
                         yaz.WriteLine("\tonDelete(id) {");
-                        yaz.WriteLine("\t\tthis.service.getSil(id).subscribe((resData) => {");
+                        yaz.WriteLine("\t\tthis.subscription.add(this.service.getSil(id).subscribe((resData) => {");
+                        yaz.WriteLine("\t\t\t$(\"a.dltLink.active-dlt\").removeClass(\"active-dlt\");");
+                        yaz.WriteLine("");
                         yaz.WriteLine("\t\t\tif (resData == true) {");
                         yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Delete\");");
                         yaz.WriteLine("");
@@ -5094,14 +5097,17 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\telse {");
                         yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"DeleteNot\");");
                         yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
+                        yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); }));");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
 
                         if (deleted)
                         {
                             yaz.WriteLine("\tonRemove(id) {");
-                            yaz.WriteLine("\t\tthis.service.getKaldir(id).subscribe((resData) => {");
+                            yaz.WriteLine("\t\tthis.subscription.add(this.service.getKaldir(id).subscribe((resData) => {");
+                            yaz.WriteLine("\t\t\t$(\"a.rmvLink.active-rmv\").removeClass(\"active-rmv\");");
+                            yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tif (resData == true) {");
                             yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Remove\");");
                             yaz.WriteLine("");
@@ -5112,7 +5118,8 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\telse {");
                             yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"RemoveNot\");");
                             yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
+                            yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); }));");
                             yaz.WriteLine("\t}");
                             yaz.WriteLine("");
                         }
@@ -5135,6 +5142,7 @@ namespace TDFactory
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("import { Component } from \"@angular/core\";");
+                        yaz.WriteLine("import { Subscription } from \"rxjs\";");
                         yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToHyperLinkText(true) + "\";");
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
 
@@ -5148,8 +5156,7 @@ namespace TDFactory
 
                         yaz.WriteLine("");
                         yaz.WriteLine("@Component({");
-                        yaz.WriteLine("\ttemplateUrl: './ekle.html',");
-                        yaz.WriteLine("\tproviders: [" + Table + "Service]");
+                        yaz.WriteLine("\ttemplateUrl: './ekle.html'");
                         yaz.WriteLine("})");
                         yaz.WriteLine("");
                         yaz.WriteLine("export class Admin" + Table + "EkleComponent {");
@@ -5161,6 +5168,8 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\tmodel: any;");
                         yaz.WriteLine("");
+                        yaz.WriteLine("\tprivate subscription: Subscription = new Subscription();");
+                        yaz.WriteLine("");
 
                         yaz.WriteLine("\tconstructor(private service: " + Table + "Service, private formBuilder: FormBuilder, private router: Router) {");
 
@@ -5170,9 +5179,10 @@ namespace TDFactory
 
                         if (fkcListForeign.Count > 0)
                         {
-                            yaz.WriteLine("\t\tthis.service.getEkle().subscribe((resData) => {");
+                            yaz.WriteLine("\t\tthis.subscription.add(this.service.getEkle().subscribe((resData) => {");
                             yaz.WriteLine("\t\t\tthis.model = resData;");
-                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
+                            yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); }));");
                             yaz.WriteLine("");
                         }
 
@@ -5250,6 +5260,12 @@ namespace TDFactory
                         yaz.WriteLine("\t\t});");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
+
+                        yaz.WriteLine("\tngOnDestroy(): void {");
+                        yaz.WriteLine("\t\tthis.subscription.unsubscribe();");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+
                         yaz.WriteLine("\tonSubmit() {");
                         yaz.WriteLine("\t\tthis.data = new Object();");
 
@@ -5279,7 +5295,7 @@ namespace TDFactory
                             }
                         }
 
-                        yaz.WriteLine("\t\tthis.service.postEkle(this.data)");
+                        yaz.WriteLine("\t\tthis.subscription.add(this.service.postEkle(this.data)");
                         yaz.WriteLine("\t\t\t.subscribe((answer) => {");
                         yaz.WriteLine("\t\t\t\tif (answer.Mesaj == null) {");
                         yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
@@ -5289,7 +5305,8 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
                         yaz.WriteLine("\t\t\t\t}");
                         yaz.WriteLine("\t\t\t},");
-                        yaz.WriteLine("\t\t\t\tresError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t\t\t\tresError => this.errorMsg = resError,");
+                        yaz.WriteLine("\t\t\t\t\t() => { this.subscription.unsubscribe(); }));");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("}");
                         yaz.Close();
@@ -5309,7 +5326,7 @@ namespace TDFactory
 
                             if (fkcList.Count > 0)
                             {
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                 {
                                     string PrimaryTableName = fkc.ForeignTableName;
 
@@ -5353,7 +5370,7 @@ namespace TDFactory
                             string constructor = "constructor(private service: " + Table + "Service, private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute";
                             if (fkcList.Count > 0)
                             {
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
                                     constructor += ", private service" + ForeignTableName + ": " + ForeignTableName + "Service";
@@ -5444,7 +5461,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\tif (this.callTable == true) {");
                             yaz.WriteLine("\t\t\tthis.route.params.subscribe((params: Params) => {");
                             yaz.WriteLine("\t\t\t\tthis.id = params['id'];");
-                            yaz.WriteLine("\t\t\t\tthis.service.getDuzenle(this.id).subscribe((resData) => {");
+                            yaz.WriteLine("\t\t\t\tthis.subscription.add(this.service.getDuzenle(this.id).subscribe((resData) => {");
                             yaz.WriteLine("\t\t\t\t\tthis.model = resData;");
                             yaz.WriteLine("\t\t\t\t\tthis.callTable = false;");
 
@@ -5471,35 +5488,51 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.cpyLink\", function () {");
                                 yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-cpy\");");
                                 yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.cpy-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                                yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.cpy-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
                                 yaz.WriteLine("\t\t\t\t\t\t});");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.dltLink\", function () {");
                                 yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-dlt\");");
                                 yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                                yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
                                 yaz.WriteLine("\t\t\t\t\t\t});");
 
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                int y = 0;
+
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
                                     List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
                                     bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.cpy-yes\", () => {");
+                                    yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.cpy-yes[data-link='" + ForeignTableName + "']\", () => {");
                                     yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.cpy-yes\").attr(\"data-id\");");
                                     yaz.WriteLine("\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Copy(id);");
                                     yaz.WriteLine("\t\t\t\t\t\t});");
 
                                     yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.dlt-yes\", () => {");
+                                    yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.dlt-yes[data-link='" + ForeignTableName + "']\", () => {");
                                     yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
                                     yaz.WriteLine("\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Delete(id);");
                                     yaz.WriteLine("\t\t\t\t\t\t});");
 
                                     if (fDeleted)
                                     {
+                                        if(y == 0)
+                                        {
+                                            yaz.WriteLine("");
+                                            yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.rmvLink\", function () {");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-rmv\");");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.rmv-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.rmv-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
+                                            yaz.WriteLine("\t\t\t\t\t\t});");
+
+                                            y++;
+                                        }
+
                                         yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.rmv-yes\", () => {");
+                                        yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.rmv-yes[data-link='" + ForeignTableName + "']\", () => {");
                                         yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.rmv-yes\").attr(\"data-id\");");
                                         yaz.WriteLine("\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Remove(id);");
                                         yaz.WriteLine("\t\t\t\t\t\t});");
@@ -5509,7 +5542,8 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\t}, 1);");
                             }
 
-                            yaz.WriteLine("\t\t\t\t}, resError => this.errorMsg = resError);");
+                            yaz.WriteLine("\t\t\t\t}, resError => this.errorMsg = resError,");
+                            yaz.WriteLine("\t\t\t\t\t() => { this.subscription.unsubscribe(); }));");
                             yaz.WriteLine("\t\t\t});");
                             yaz.WriteLine("\t\t}");
 
@@ -5557,7 +5591,7 @@ namespace TDFactory
                                 yaz.WriteLine("");
                             }
 
-                            yaz.WriteLine("\t\tthis.service.postDuzenle(this.data)");
+                            yaz.WriteLine("\t\tthis.subscription.add(this.service.postDuzenle(this.data)");
                             yaz.WriteLine("\t\t\t.subscribe((answer) => {");
                             yaz.WriteLine("\t\t\t\tif (answer.Mesaj == null) {");
                             yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
@@ -5567,12 +5601,13 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
                             yaz.WriteLine("\t\t\t\t}");
                             yaz.WriteLine("\t\t\t},");
-                            yaz.WriteLine("\t\t\t\tresError => this.errorMsg = resError);");
+                            yaz.WriteLine("\t\t\t\tresError => this.errorMsg = resError,");
+                            yaz.WriteLine("\t\t\t\t\t() => { this.subscription.unsubscribe(); }));");
                             yaz.WriteLine("\t}");
 
                             if (fkcList.Count > 0)
                             {
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
                                     List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
