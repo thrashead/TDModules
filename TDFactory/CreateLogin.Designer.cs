@@ -254,6 +254,7 @@
             this.txtUserLoginName.Name = "txtUserLoginName";
             this.txtUserLoginName.Size = new System.Drawing.Size(180, 20);
             this.txtUserLoginName.TabIndex = 66;
+            this.txtUserLoginName.Text = "user";
             this.txtUserLoginName.TextChanged += new System.EventHandler(this.txtUserLoginName_TextChanged);
             // 
             // txtUserPassword
@@ -262,6 +263,7 @@
             this.txtUserPassword.Name = "txtUserPassword";
             this.txtUserPassword.Size = new System.Drawing.Size(180, 20);
             this.txtUserPassword.TabIndex = 67;
+            this.txtUserPassword.Text = "123456";
             this.txtUserPassword.UseSystemPasswordChar = true;
             this.txtUserPassword.TextChanged += new System.EventHandler(this.txtUserPassword_TextChanged);
             // 

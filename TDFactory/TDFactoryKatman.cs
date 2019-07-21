@@ -61,6 +61,8 @@ namespace TDFactory
             btnKolonlarEkle.Enabled = false;
 
             btnButunTabloAlanlar.Enabled = false;
+
+            btnVTVeritabaniGetir_Click();
         }
 
         private void btnBaglan_Click(object sender, EventArgs e)
@@ -86,6 +88,8 @@ namespace TDFactory
                     }
 
                     DBName = cmbVeritabani.Text;
+                    txtProjectName.Text = cmbVeritabani.Text;
+                    txtProjectName.Text = chkAngular.Checked ? txtProjectName.Text + "Angular" : txtProjectName.Text;
 
                     foreach (string item in tableNames)
                     {
@@ -122,6 +126,8 @@ namespace TDFactory
                 btnKolonEkle.Enabled = false;
                 btnKolonlarEkle.Enabled = false;
             }
+
+            btnButunTabloAlanlar_Click(null, null);
         }
 
         private void btnBaslat_Click(object sender, EventArgs e)

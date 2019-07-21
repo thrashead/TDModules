@@ -35,12 +35,12 @@ namespace TDFactory
             }
         }
 
-        private void btnVTVeritabaniGetir_Click(object sender, EventArgs e)
+        private void btnVTVeritabaniGetir_Click()
         {
             ClearTableControls();
             lstVTKolonlar.Items.Clear();
             btnVTTabloOlustur.Enabled = false;
-            cmbVTVeritabani.DataSource = null;
+            cmbVeritabani.DataSource = null;
             cmbVTTabloAdi.Items.Clear();
             txtVTTabloAdi.Visible = true;
             txtVTTabloAdi.Text = "";
@@ -52,11 +52,11 @@ namespace TDFactory
 
             try
             {
-                cmbVTVeritabani.DataSource = Helper.Helper.DatabaseNames(new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, DatabaseName = cmbVTVeritabani.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text, Server = txtVTSunucu.Text });
+                cmbVeritabani.DataSource = Helper.Helper.DatabaseNames(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text, Server = txtSunucu.Text });
 
-                if (cmbVTVeritabani.Items.Count > 0)
+                if (cmbVeritabani.Items.Count > 0)
                 {
-                    cmbVTVeritabani.Enabled = true;
+                    cmbVeritabani.Enabled = true;
                     txtVTTabloAdi.Enabled = true;
                     cmbVTTabloAdi.Enabled = true;
                     chkVTTabloDuzenle.Enabled = true;
@@ -65,7 +65,7 @@ namespace TDFactory
             catch
             {
                 MessageBox.Show("Bağlantı Sağlanamadı");
-                cmbVTVeritabani.Enabled = false;
+                cmbVeritabani.Enabled = false;
             }
         }
 
@@ -364,7 +364,7 @@ namespace TDFactory
                 }
 
                 _cre.ColumnName = lstVTKolonlar.SelectedItem.ToString().KolonAdi();
-                _cre.ConnectionInfo = new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, DatabaseName = cmbVTVeritabani.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text, Server = txtVTSunucu.Text };
+                _cre.ConnectionInfo = new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text, Server = txtSunucu.Text };
 
                 _cre.ShowDialog();
             }
@@ -495,7 +495,7 @@ namespace TDFactory
                 }
             }
 
-            if (cmbVTVeritabani.SelectedIndex >= 0 && lstVTKolonlar.Items.Count > 0 && tabloadikontrol == true)
+            if (cmbVeritabani.SelectedIndex >= 0 && lstVTKolonlar.Items.Count > 0 && tabloadikontrol == true)
             {
                 if (chkVTTabloDuzenle.Checked)
                 {
@@ -558,7 +558,7 @@ namespace TDFactory
 
             if (chkVTTabloDuzenle.Checked)
             {
-                List<ForeignKeyChecker> fkc = ForeignKeyCheck(new SqlConnection() { ConnectionString = Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, DatabaseName = cmbVTVeritabani.Text, Server = txtVTSunucu.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text }) }, cmbVTTabloAdi.Text);
+                List<ForeignKeyChecker> fkc = ForeignKeyCheck(new SqlConnection() { ConnectionString = Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Server = txtSunucu.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }) }, cmbVTTabloAdi.Text);
 
                 foreach (ForeignKeyChecker item in fkc)
                 {
@@ -576,22 +576,22 @@ namespace TDFactory
                 txtVTTabloAdi.Visible = false;
                 txtVTTabloAdi.Text = "";
 
-                if (cmbVTVeritabani.Text != "")
+                if (cmbVeritabani.Text != "")
                 {
                     try
                     {
                         tableNames = new List<string>();
 
-                        if (chkVTWindowsAuthentication.Checked == true)
+                        if (chkWindowsAuthentication.Checked == true)
                         {
-                            tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtVTSunucu.Text, DatabaseName = cmbVTVeritabani.Text });
+                            tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text });
                         }
                         else
                         {
-                            tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtVTSunucu.Text, DatabaseName = cmbVTVeritabani.Text, IsWindowsAuthentication = false, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text });
+                            tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text });
                         }
 
-                        DBName = cmbVTVeritabani.Text;
+                        DBName = cmbVeritabani.Text;
 
                         cmbVTTabloAdi.Items.Clear();
 
@@ -611,11 +611,11 @@ namespace TDFactory
 
                         if (chkWindowsAuthentication.Checked == true)
                         {
-                            columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtVTSunucu.Text, DatabaseName = cmbVTVeritabani.Text }, cmbVTTabloAdi.Text);
+                            columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, cmbVTTabloAdi.Text);
                         }
                         else
                         {
-                            columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtVTSunucu.Text, DatabaseName = cmbVTVeritabani.Text, IsWindowsAuthentication = false, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text }, cmbVTTabloAdi.Text);
+                            columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, cmbVTTabloAdi.Text);
                         }
 
                         lstVTKolonlar.Items.Clear();
@@ -735,7 +735,7 @@ namespace TDFactory
 
         private void cmbVTVeritabani_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cmbVTVeritabani.Text != "")
+            if (cmbVeritabani.Text != "")
             {
                 if (chkVTTabloDuzenle.Checked)
                 {
@@ -743,16 +743,16 @@ namespace TDFactory
                     {
                         tableNames = new List<string>();
 
-                        if (chkVTWindowsAuthentication.Checked == true)
+                        if (chkWindowsAuthentication.Checked == true)
                         {
-                            tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtVTSunucu.Text, DatabaseName = cmbVTVeritabani.Text });
+                            tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text });
                         }
                         else
                         {
-                            tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtVTSunucu.Text, DatabaseName = cmbVTVeritabani.Text, IsWindowsAuthentication = false, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text });
+                            tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text });
                         }
 
-                        DBName = cmbVTVeritabani.Text;
+                        DBName = cmbVeritabani.Text;
 
                         cmbVTTabloAdi.Items.Clear();
 
@@ -787,7 +787,7 @@ namespace TDFactory
             lstVTKolonlar.Items.Clear();
             Relations.Clear();
 
-            List<ForeignKeyChecker> fkc = ForeignKeyCheck(new SqlConnection() { ConnectionString = Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, DatabaseName = cmbVTVeritabani.Text, Server = txtVTSunucu.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text }) }, cmbVTTabloAdi.Text);
+            List<ForeignKeyChecker> fkc = ForeignKeyCheck(new SqlConnection() { ConnectionString = Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Server = txtSunucu.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }) }, cmbVTTabloAdi.Text);
 
             foreach (ForeignKeyChecker item in fkc)
             {
@@ -807,11 +807,11 @@ namespace TDFactory
 
                 if (chkWindowsAuthentication.Checked == true)
                 {
-                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtVTSunucu.Text, DatabaseName = cmbVTVeritabani.Text }, cmbVTTabloAdi.Text);
+                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, cmbVTTabloAdi.Text);
                 }
                 else
                 {
-                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtVTSunucu.Text, DatabaseName = cmbVTVeritabani.Text, IsWindowsAuthentication = false, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text }, cmbVTTabloAdi.Text);
+                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, cmbVTTabloAdi.Text);
                 }
 
                 foreach (ColumnInfo item in columnNames)
@@ -981,9 +981,9 @@ namespace TDFactory
 
             alanlar = alanlar.TrimEnd(',');
 
-            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, DatabaseName = cmbVTVeritabani.Text, Server = txtVTSunucu.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text }));
+            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Server = txtSunucu.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }));
 
-            cmd.CommandText = "USE [" + cmbVTVeritabani.Text + "] ";
+            cmd.CommandText = "USE [" + cmbVeritabani.Text + "] ";
 
             try
             {
@@ -1087,9 +1087,9 @@ namespace TDFactory
 
             alanlar = alanlar.TrimEnd(',');
 
-            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, DatabaseName = cmbVTVeritabani.Text, Server = txtVTSunucu.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text }));
+            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Server = txtSunucu.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }));
 
-            cmd.CommandText = "USE [" + cmbVTVeritabani.Text + "] ";
+            cmd.CommandText = "USE [" + cmbVeritabani.Text + "] ";
 
             try
             {
@@ -1146,9 +1146,9 @@ namespace TDFactory
         {
             SqlCommand cmd = new SqlCommand();
 
-            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, DatabaseName = cmbVTVeritabani.Text, Server = txtVTSunucu.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text }));
+            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Server = txtSunucu.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }));
 
-            cmd.CommandText = "USE [" + cmbVTVeritabani.Text + "] ";
+            cmd.CommandText = "USE [" + cmbVeritabani.Text + "] ";
 
             try
             {

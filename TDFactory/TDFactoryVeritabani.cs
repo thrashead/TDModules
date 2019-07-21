@@ -25,23 +25,6 @@ namespace TDFactory
             }
         }
 
-        private void chkVTWindowsAuthentication_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkVTWindowsAuthentication.Checked == false)
-            {
-                txtVTKullaniciAdi.Enabled = true;
-                txtVTSifre.Enabled = true;
-            }
-            else
-            {
-                txtVTKullaniciAdi.Enabled = false;
-                txtVTSifre.Enabled = false;
-            }
-
-            txtVTKullaniciAdi.Text = "";
-            txtVTSifre.Text = "";
-        }
-
         private void chkLimitsizBoyut_CheckedChanged(object sender, EventArgs e)
         {
             if (numMaxDosyaBoyutu.Enabled == true)
@@ -81,7 +64,7 @@ namespace TDFactory
         private void btnCreateLogin_Click(object sender, EventArgs e)
         {
             CreateLogin creLogForm = new CreateLogin();
-            creLogForm.ConnectionInfo = new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, DatabaseName = cmbVTVeritabani.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text, Server = txtVTSunucu.Text };
+            creLogForm.ConnectionInfo = new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text, Server = txtSunucu.Text };
             creLogForm.ShowDialog();
         }
 
@@ -101,7 +84,7 @@ namespace TDFactory
                              @"SIZE = " + numLogBoyutu.Value.ToString() + "MB, MAXSIZE = " + logBoyutu + ", FILEGROWTH = " + numLogGenislemeYuzdesi.Value.ToString() + "%)";
 
             cmd.CommandText = cmdText;
-            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkVTWindowsAuthentication.Checked, Server = txtVTSunucu.Text, Username = txtVTKullaniciAdi.Text, Password = txtVTSifre.Text }));
+            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, Server = txtSunucu.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }));
 
             try
             {
