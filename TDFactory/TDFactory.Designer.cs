@@ -84,11 +84,14 @@
             this.numDosyaGenislemeYuzdesi = new System.Windows.Forms.NumericUpDown();
             this.lblLogGenislemeYuzdesi = new System.Windows.Forms.Label();
             this.tabpageKatmanlariOlustur = new System.Windows.Forms.TabPage();
+            this.grpIslem = new System.Windows.Forms.GroupBox();
             this.pnlKaydet = new System.Windows.Forms.Panel();
             this.chkAngular = new System.Windows.Forms.CheckBox();
+            this.txtProjectName = new System.Windows.Forms.TextBox();
             this.pnlAndroidService = new System.Windows.Forms.Panel();
             this.rdAndWcf = new System.Windows.Forms.RadioButton();
             this.rdAndSqlite = new System.Windows.Forms.RadioButton();
+            this.lblProjectName = new System.Windows.Forms.Label();
             this.chkAndData = new System.Windows.Forms.CheckBox();
             this.lstAndIzin = new System.Windows.Forms.ListBox();
             this.lblAndIzinler = new System.Windows.Forms.Label();
@@ -100,6 +103,7 @@
             this.chkAndJava = new System.Windows.Forms.CheckBox();
             this.chkAndLayout = new System.Windows.Forms.CheckBox();
             this.chkAndHepsi = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpSplitter1 = new System.Windows.Forms.GroupBox();
             this.lblWCSifre = new System.Windows.Forms.Label();
             this.lblWCKullanici = new System.Windows.Forms.Label();
@@ -110,14 +114,11 @@
             this.chkMVCWebConfig = new System.Windows.Forms.CheckBox();
             this.chkMVCStoredProc = new System.Windows.Forms.CheckBox();
             this.chkMVCController = new System.Windows.Forms.CheckBox();
-            this.txtProjectName = new System.Windows.Forms.TextBox();
             this.btnAndroidBaslat = new System.Windows.Forms.Button();
             this.btnBaslat = new System.Windows.Forms.Button();
             this.chkMVCView = new System.Windows.Forms.CheckBox();
             this.chkMVCModel = new System.Windows.Forms.CheckBox();
-            this.lblProjectName = new System.Windows.Forms.Label();
             this.chkMVCHepsi = new System.Windows.Forms.CheckBox();
-            this.grpIslem = new System.Windows.Forms.GroupBox();
             this.btnButunTabloAlanlar = new System.Windows.Forms.Button();
             this.lstSeciliTablolar = new System.Windows.Forms.ListBox();
             this.btnKolonCikar = new System.Windows.Forms.Button();
@@ -158,7 +159,6 @@
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBaglanti = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tbconTablar.SuspendLayout();
             this.tabpageVeritabaniOlustur.SuspendLayout();
             this.grpTablo.SuspendLayout();
@@ -173,9 +173,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.numDosyaBoyutu)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDosyaGenislemeYuzdesi)).BeginInit();
             this.tabpageKatmanlariOlustur.SuspendLayout();
+            this.grpIslem.SuspendLayout();
             this.pnlKaydet.SuspendLayout();
             this.pnlAndroidService.SuspendLayout();
-            this.grpIslem.SuspendLayout();
             this.grpKolon.SuspendLayout();
             this.grpBaglanti.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -183,8 +183,8 @@
             // 
             // tbconTablar
             // 
-            this.tbconTablar.Controls.Add(this.tabpageVeritabaniOlustur);
             this.tbconTablar.Controls.Add(this.tabpageKatmanlariOlustur);
+            this.tbconTablar.Controls.Add(this.tabpageVeritabaniOlustur);
             this.tbconTablar.Location = new System.Drawing.Point(12, 97);
             this.tbconTablar.Name = "tbconTablar";
             this.tbconTablar.SelectedIndex = 0;
@@ -907,6 +907,16 @@
             this.tabpageKatmanlariOlustur.Text = "Katmanları Oluştur";
             this.tabpageKatmanlariOlustur.UseVisualStyleBackColor = true;
             // 
+            // grpIslem
+            // 
+            this.grpIslem.Controls.Add(this.pnlKaydet);
+            this.grpIslem.Location = new System.Drawing.Point(14, 15);
+            this.grpIslem.Name = "grpIslem";
+            this.grpIslem.Size = new System.Drawing.Size(1019, 267);
+            this.grpIslem.TabIndex = 45;
+            this.grpIslem.TabStop = false;
+            this.grpIslem.Text = "İşlemler";
+            // 
             // pnlKaydet
             // 
             this.pnlKaydet.Controls.Add(this.chkAngular);
@@ -956,6 +966,14 @@
             this.chkAngular.Text = "Angular";
             this.chkAngular.UseVisualStyleBackColor = true;
             // 
+            // txtProjectName
+            // 
+            this.txtProjectName.Location = new System.Drawing.Point(83, 5);
+            this.txtProjectName.Name = "txtProjectName";
+            this.txtProjectName.Size = new System.Drawing.Size(930, 20);
+            this.txtProjectName.TabIndex = 69;
+            this.txtProjectName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtProjectName_KeyPress);
+            // 
             // pnlAndroidService
             // 
             this.pnlAndroidService.Controls.Add(this.rdAndWcf);
@@ -986,6 +1004,16 @@
             this.rdAndSqlite.Text = "SQLite";
             this.rdAndSqlite.UseVisualStyleBackColor = true;
             this.rdAndSqlite.CheckedChanged += new System.EventHandler(this.rdAndData_CheckedChanged);
+            // 
+            // lblProjectName
+            // 
+            this.lblProjectName.AutoSize = true;
+            this.lblProjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblProjectName.Location = new System.Drawing.Point(7, 8);
+            this.lblProjectName.Name = "lblProjectName";
+            this.lblProjectName.Size = new System.Drawing.Size(70, 13);
+            this.lblProjectName.TabIndex = 13;
+            this.lblProjectName.Text = "Proje İsmi :";
             // 
             // chkAndData
             // 
@@ -1256,6 +1284,15 @@
             this.chkAndHepsi.UseVisualStyleBackColor = true;
             this.chkAndHepsi.CheckedChanged += new System.EventHandler(this.chkAndHepsi_CheckedChanged);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Location = new System.Drawing.Point(325, 54);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(5, 160);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "groupBox1";
+            // 
             // grpSplitter1
             // 
             this.grpSplitter1.Location = new System.Drawing.Point(667, 55);
@@ -1360,14 +1397,6 @@
             this.chkMVCController.UseVisualStyleBackColor = true;
             this.chkMVCController.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
             // 
-            // txtProjectName
-            // 
-            this.txtProjectName.Location = new System.Drawing.Point(83, 5);
-            this.txtProjectName.Name = "txtProjectName";
-            this.txtProjectName.Size = new System.Drawing.Size(930, 20);
-            this.txtProjectName.TabIndex = 69;
-            this.txtProjectName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtProjectName_KeyPress);
-            // 
             // btnAndroidBaslat
             // 
             this.btnAndroidBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
@@ -1414,16 +1443,6 @@
             this.chkMVCModel.UseVisualStyleBackColor = true;
             this.chkMVCModel.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
             // 
-            // lblProjectName
-            // 
-            this.lblProjectName.AutoSize = true;
-            this.lblProjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblProjectName.Location = new System.Drawing.Point(7, 8);
-            this.lblProjectName.Name = "lblProjectName";
-            this.lblProjectName.Size = new System.Drawing.Size(70, 13);
-            this.lblProjectName.TabIndex = 13;
-            this.lblProjectName.Text = "Proje İsmi :";
-            // 
             // chkMVCHepsi
             // 
             this.chkMVCHepsi.AutoSize = true;
@@ -1437,16 +1456,6 @@
             this.chkMVCHepsi.Text = "Hepsi";
             this.chkMVCHepsi.UseVisualStyleBackColor = true;
             this.chkMVCHepsi.CheckedChanged += new System.EventHandler(this.chkMVCHepsi_CheckedChanged);
-            // 
-            // grpIslem
-            // 
-            this.grpIslem.Controls.Add(this.pnlKaydet);
-            this.grpIslem.Location = new System.Drawing.Point(14, 15);
-            this.grpIslem.Name = "grpIslem";
-            this.grpIslem.Size = new System.Drawing.Size(1019, 267);
-            this.grpIslem.TabIndex = 45;
-            this.grpIslem.TabStop = false;
-            this.grpIslem.Text = "İşlemler";
             // 
             // btnButunTabloAlanlar
             // 
@@ -1887,15 +1896,6 @@
             this.panel1.TabIndex = 61;
             this.panel1.Visible = false;
             // 
-            // groupBox1
-            // 
-            this.groupBox1.Location = new System.Drawing.Point(325, 54);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(5, 160);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
-            // 
             // TDFactory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1929,11 +1929,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.numDosyaBoyutu)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDosyaGenislemeYuzdesi)).EndInit();
             this.tabpageKatmanlariOlustur.ResumeLayout(false);
+            this.grpIslem.ResumeLayout(false);
             this.pnlKaydet.ResumeLayout(false);
             this.pnlKaydet.PerformLayout();
             this.pnlAndroidService.ResumeLayout(false);
             this.pnlAndroidService.PerformLayout();
-            this.grpIslem.ResumeLayout(false);
             this.grpKolon.ResumeLayout(false);
             this.grpKolon.PerformLayout();
             this.grpBaglanti.ResumeLayout(false);
