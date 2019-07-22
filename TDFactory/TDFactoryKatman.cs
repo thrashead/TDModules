@@ -714,6 +714,95 @@ namespace TDFactory
             }
         }
 
+        private void chkAngular_CheckedChanged(object sender, EventArgs e)
+        {
+            if(((CheckBox)sender).Checked) {
+                if (!txtProjectName.Text.ToUrl(true).Contains("angular"))
+                {
+                    txtProjectName.Text = txtProjectName.Text + "Angular";
+                }
+            }
+            else
+            {
+                if (txtProjectName.Text.ToUrl(true).Contains("angular"))
+                {
+                    txtProjectName.Text = txtProjectName.Text.Replace("Angular", "").Replace("angular", "").Replace("ANGULAR", "");
+                }
+            }
+        }
+
+        private void btnUrlColumns_Click(object sender, EventArgs e)
+        {
+            string column = txtUrlColumns.Text.Trim().Replace(" ", "").ToUrl(true);
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstUrlColumns.Items.Contains(column))
+                {
+                    lstUrlColumns.Items.Add(column);
+                }
+            }
+        }
+
+        private void btnDeletedColumns_Click(object sender, EventArgs e)
+        {
+            string column = txtDeletedColumns.Text.Trim().Replace(" ", "").ToUrl(true);
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstDeletedColumns.Items.Contains(column))
+                {
+                    lstDeletedColumns.Items.Add(column);
+                }
+            }
+        }
+
+        private void btnFileColumns_Click(object sender, EventArgs e)
+        {
+            string column = txtFileColumns.Text.Trim().Replace(" ", "").ToUrl(true);
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstFileColumns.Items.Contains(column))
+                {
+                    lstFileColumns.Items.Add(column);
+                }
+            }
+        }
+
+        private void btnImageColumns_Click(object sender, EventArgs e)
+        {
+            string column = txtImageColumns.Text.Trim().Replace(" ", "").ToUrl(true);
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstImageColumns.Items.Contains(column))
+                {
+                    lstImageColumns.Items.Add(column);
+                }
+            }
+        }
+
+        private void btnUrlColumnsSub_Click(object sender, EventArgs e)
+        {
+            lstUrlColumns.Items.Remove(lstUrlColumns.SelectedItem);
+        }
+
+        private void btnDeletedColumnsSub_Click(object sender, EventArgs e)
+        {
+            lstDeletedColumns.Items.Remove(lstDeletedColumns.SelectedItem);
+        }
+
+        private void btnFileColumnsSub_Click(object sender, EventArgs e)
+        {
+            lstFileColumns.Items.Remove(lstFileColumns.SelectedItem);
+        }
+
+        private void btnImageColumnsSub_Click(object sender, EventArgs e)
+        {
+            lstImageColumns.Items.Remove(lstImageColumns.SelectedItem);
+        }
+
         void ClearLabel()
         {
             lblKolonAdi.Text = "";

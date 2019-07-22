@@ -37,10 +37,10 @@
             this.lblDeletedColumns = new System.Windows.Forms.Label();
             this.lblFileColumns = new System.Windows.Forms.Label();
             this.lblUrlColumns = new System.Windows.Forms.Label();
-            this.btnImageColumns = new System.Windows.Forms.Button();
-            this.btnFileColumns = new System.Windows.Forms.Button();
-            this.btnDeletedColumns = new System.Windows.Forms.Button();
-            this.btnUrlColumns = new System.Windows.Forms.Button();
+            this.btnImageColumnsAdd = new System.Windows.Forms.Button();
+            this.btnFileColumnsAdd = new System.Windows.Forms.Button();
+            this.btnDeletedColumnsAdd = new System.Windows.Forms.Button();
+            this.btnUrlColumnsAdd = new System.Windows.Forms.Button();
             this.txtImageColumns = new System.Windows.Forms.TextBox();
             this.txtFileColumns = new System.Windows.Forms.TextBox();
             this.lstImageColumns = new System.Windows.Forms.ListBox();
@@ -175,6 +175,10 @@
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBaglanti = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnUrlColumnsSub = new System.Windows.Forms.Button();
+            this.btnDeletedColumnsSub = new System.Windows.Forms.Button();
+            this.btnFileColumnsSub = new System.Windows.Forms.Button();
+            this.btnImageColumnsSub = new System.Windows.Forms.Button();
             this.tbconTablar.SuspendLayout();
             this.tabpageKatmanlariOlustur.SuspendLayout();
             this.grpIslem.SuspendLayout();
@@ -234,10 +238,14 @@
             this.pnlKaydet.Controls.Add(this.lblDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lblFileColumns);
             this.pnlKaydet.Controls.Add(this.lblUrlColumns);
-            this.pnlKaydet.Controls.Add(this.btnImageColumns);
-            this.pnlKaydet.Controls.Add(this.btnFileColumns);
-            this.pnlKaydet.Controls.Add(this.btnDeletedColumns);
-            this.pnlKaydet.Controls.Add(this.btnUrlColumns);
+            this.pnlKaydet.Controls.Add(this.btnImageColumnsSub);
+            this.pnlKaydet.Controls.Add(this.btnImageColumnsAdd);
+            this.pnlKaydet.Controls.Add(this.btnFileColumnsSub);
+            this.pnlKaydet.Controls.Add(this.btnFileColumnsAdd);
+            this.pnlKaydet.Controls.Add(this.btnDeletedColumnsSub);
+            this.pnlKaydet.Controls.Add(this.btnDeletedColumnsAdd);
+            this.pnlKaydet.Controls.Add(this.btnUrlColumnsSub);
+            this.pnlKaydet.Controls.Add(this.btnUrlColumnsAdd);
             this.pnlKaydet.Controls.Add(this.txtImageColumns);
             this.pnlKaydet.Controls.Add(this.txtFileColumns);
             this.pnlKaydet.Controls.Add(this.lstImageColumns);
@@ -323,41 +331,45 @@
             this.lblUrlColumns.TabIndex = 92;
             this.lblUrlColumns.Text = "Url Kolonları";
             // 
-            // btnImageColumns
+            // btnImageColumnsAdd
             // 
-            this.btnImageColumns.Location = new System.Drawing.Point(964, 163);
-            this.btnImageColumns.Name = "btnImageColumns";
-            this.btnImageColumns.Size = new System.Drawing.Size(50, 23);
-            this.btnImageColumns.TabIndex = 91;
-            this.btnImageColumns.Text = "Ekle";
-            this.btnImageColumns.UseVisualStyleBackColor = true;
+            this.btnImageColumnsAdd.Location = new System.Drawing.Point(962, 163);
+            this.btnImageColumnsAdd.Name = "btnImageColumnsAdd";
+            this.btnImageColumnsAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnImageColumnsAdd.TabIndex = 91;
+            this.btnImageColumnsAdd.Text = "+";
+            this.btnImageColumnsAdd.UseVisualStyleBackColor = true;
+            this.btnImageColumnsAdd.Click += new System.EventHandler(this.btnImageColumns_Click);
             // 
-            // btnFileColumns
+            // btnFileColumnsAdd
             // 
-            this.btnFileColumns.Location = new System.Drawing.Point(793, 163);
-            this.btnFileColumns.Name = "btnFileColumns";
-            this.btnFileColumns.Size = new System.Drawing.Size(50, 23);
-            this.btnFileColumns.TabIndex = 91;
-            this.btnFileColumns.Text = "Ekle";
-            this.btnFileColumns.UseVisualStyleBackColor = true;
+            this.btnFileColumnsAdd.Location = new System.Drawing.Point(791, 163);
+            this.btnFileColumnsAdd.Name = "btnFileColumnsAdd";
+            this.btnFileColumnsAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnFileColumnsAdd.TabIndex = 91;
+            this.btnFileColumnsAdd.Text = "+";
+            this.btnFileColumnsAdd.UseVisualStyleBackColor = true;
+            this.btnFileColumnsAdd.Click += new System.EventHandler(this.btnFileColumns_Click);
             // 
-            // btnDeletedColumns
+            // btnDeletedColumnsAdd
             // 
-            this.btnDeletedColumns.Location = new System.Drawing.Point(964, 55);
-            this.btnDeletedColumns.Name = "btnDeletedColumns";
-            this.btnDeletedColumns.Size = new System.Drawing.Size(50, 23);
-            this.btnDeletedColumns.TabIndex = 91;
-            this.btnDeletedColumns.Text = "Ekle";
-            this.btnDeletedColumns.UseVisualStyleBackColor = true;
+            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(962, 55);
+            this.btnDeletedColumnsAdd.Name = "btnDeletedColumnsAdd";
+            this.btnDeletedColumnsAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnDeletedColumnsAdd.TabIndex = 91;
+            this.btnDeletedColumnsAdd.Text = "+";
+            this.btnDeletedColumnsAdd.UseVisualStyleBackColor = true;
+            this.btnDeletedColumnsAdd.Click += new System.EventHandler(this.btnDeletedColumns_Click);
             // 
-            // btnUrlColumns
+            // btnUrlColumnsAdd
             // 
-            this.btnUrlColumns.Location = new System.Drawing.Point(793, 55);
-            this.btnUrlColumns.Name = "btnUrlColumns";
-            this.btnUrlColumns.Size = new System.Drawing.Size(50, 23);
-            this.btnUrlColumns.TabIndex = 91;
-            this.btnUrlColumns.Text = "Ekle";
-            this.btnUrlColumns.UseVisualStyleBackColor = true;
+            this.btnUrlColumnsAdd.Location = new System.Drawing.Point(791, 55);
+            this.btnUrlColumnsAdd.Name = "btnUrlColumnsAdd";
+            this.btnUrlColumnsAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnUrlColumnsAdd.TabIndex = 91;
+            this.btnUrlColumnsAdd.Text = "+";
+            this.btnUrlColumnsAdd.UseVisualStyleBackColor = true;
+            this.btnUrlColumnsAdd.Click += new System.EventHandler(this.btnUrlColumns_Click);
             // 
             // txtImageColumns
             // 
@@ -440,6 +452,7 @@
             this.chkAngular.TabIndex = 88;
             this.chkAngular.Text = "Angular";
             this.chkAngular.UseVisualStyleBackColor = true;
+            this.chkAngular.CheckedChanged += new System.EventHandler(this.chkAngular_CheckedChanged);
             // 
             // txtProjectName
             // 
@@ -2076,6 +2089,46 @@
             this.panel1.TabIndex = 61;
             this.panel1.Visible = false;
             // 
+            // btnUrlColumnsSub
+            // 
+            this.btnUrlColumnsSub.Location = new System.Drawing.Point(818, 55);
+            this.btnUrlColumnsSub.Name = "btnUrlColumnsSub";
+            this.btnUrlColumnsSub.Size = new System.Drawing.Size(25, 23);
+            this.btnUrlColumnsSub.TabIndex = 91;
+            this.btnUrlColumnsSub.Text = "-";
+            this.btnUrlColumnsSub.UseVisualStyleBackColor = true;
+            this.btnUrlColumnsSub.Click += new System.EventHandler(this.btnUrlColumnsSub_Click);
+            // 
+            // btnDeletedColumnsSub
+            // 
+            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(990, 55);
+            this.btnDeletedColumnsSub.Name = "btnDeletedColumnsSub";
+            this.btnDeletedColumnsSub.Size = new System.Drawing.Size(25, 23);
+            this.btnDeletedColumnsSub.TabIndex = 91;
+            this.btnDeletedColumnsSub.Text = "-";
+            this.btnDeletedColumnsSub.UseVisualStyleBackColor = true;
+            this.btnDeletedColumnsSub.Click += new System.EventHandler(this.btnDeletedColumnsSub_Click);
+            // 
+            // btnFileColumnsSub
+            // 
+            this.btnFileColumnsSub.Location = new System.Drawing.Point(818, 163);
+            this.btnFileColumnsSub.Name = "btnFileColumnsSub";
+            this.btnFileColumnsSub.Size = new System.Drawing.Size(25, 23);
+            this.btnFileColumnsSub.TabIndex = 91;
+            this.btnFileColumnsSub.Text = "-";
+            this.btnFileColumnsSub.UseVisualStyleBackColor = true;
+            this.btnFileColumnsSub.Click += new System.EventHandler(this.btnFileColumnsSub_Click);
+            // 
+            // btnImageColumnsSub
+            // 
+            this.btnImageColumnsSub.Location = new System.Drawing.Point(989, 163);
+            this.btnImageColumnsSub.Name = "btnImageColumnsSub";
+            this.btnImageColumnsSub.Size = new System.Drawing.Size(25, 23);
+            this.btnImageColumnsSub.TabIndex = 91;
+            this.btnImageColumnsSub.Text = "-";
+            this.btnImageColumnsSub.UseVisualStyleBackColor = true;
+            this.btnImageColumnsSub.Click += new System.EventHandler(this.btnImageColumnsSub_Click);
+            // 
             // TDFactory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2257,10 +2310,10 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ListBox lstUrlColumns;
-        private System.Windows.Forms.Button btnUrlColumns;
+        private System.Windows.Forms.Button btnUrlColumnsAdd;
         private System.Windows.Forms.TextBox txtUrlColumns;
-        private System.Windows.Forms.Button btnImageColumns;
-        private System.Windows.Forms.Button btnFileColumns;
+        private System.Windows.Forms.Button btnImageColumnsAdd;
+        private System.Windows.Forms.Button btnFileColumnsAdd;
         private System.Windows.Forms.TextBox txtImageColumns;
         private System.Windows.Forms.TextBox txtFileColumns;
         private System.Windows.Forms.ListBox lstImageColumns;
@@ -2269,8 +2322,12 @@
         private System.Windows.Forms.Label lblDeletedColumns;
         private System.Windows.Forms.Label lblFileColumns;
         private System.Windows.Forms.Label lblUrlColumns;
-        private System.Windows.Forms.Button btnDeletedColumns;
+        private System.Windows.Forms.Button btnDeletedColumnsAdd;
         private System.Windows.Forms.TextBox txtDeletedColumns;
         private System.Windows.Forms.ListBox lstDeletedColumns;
+        private System.Windows.Forms.Button btnImageColumnsSub;
+        private System.Windows.Forms.Button btnFileColumnsSub;
+        private System.Windows.Forms.Button btnDeletedColumnsSub;
+        private System.Windows.Forms.Button btnUrlColumnsSub;
     }
 }
