@@ -270,6 +270,11 @@ namespace TDFactory
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Uploads");
                     }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Uploads\\Deleted"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Uploads\\Deleted");
+                    }
                 }
                 else
                 {
@@ -2776,6 +2781,11 @@ namespace TDFactory
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Uploads"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Uploads");
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Uploads\\Deleted"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Uploads\\Deleted");
                     }
                 }
                 else
