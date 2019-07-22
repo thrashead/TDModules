@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using TDFactory.Helper;
+using InType = TDFactory.Helper.ExMethods.InType;
 
 namespace TDFactory
 {
@@ -705,7 +706,7 @@ namespace TDFactory
                                     }
                                 }
 
-                                if (column.ColumnName.ToLower() != "deleted" && column.ColumnName.ToLower() != "url" && column.ColumnName.ToLower() != "routeurl")
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(UrlColumns, InType.ToUrlLower))
                                 {
                                     if (!column.IsIdentity)
                                     {
@@ -1168,7 +1169,7 @@ namespace TDFactory
                 }
 
                 List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 CreateDirectories(Table);
 
@@ -1213,7 +1214,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").Take(4).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
                         {
                             List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -1246,7 +1247,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").Take(4).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
                         {
                             List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -1260,7 +1261,12 @@ namespace TDFactory
                                 }
                                 else
                                 {
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + column.ColumnName + "</td>");
+                                    if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><img src=\"@AppMgr.UploadPath/@item." + column.ColumnName + "\" style=\"height:40px; max-width:80px;\" /></td>");
+                                    else if (column.ColumnName.In(FileColumns, InType.ToUrlLower))
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"@AppMgr.UploadPath/@item." + column.ColumnName + "\" target=\"_blank\">@item." + column.ColumnName + "</a></td>");
+                                    else
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + column.ColumnName + "</td>");
                                 }
                             }
                             else
@@ -1333,7 +1339,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\t<fieldset>");
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
                         {
                             if (!identityColumns.Contains(column.ColumnName))
                             {
@@ -1356,13 +1362,24 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
 
-                                    if (column.TypeName.Name == "String" && column.CharLength != "")
+                                    if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                     {
-                                        yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ", new { type = \"file\", name = \"" + column.ColumnName.ToUrl(true) + "Temp\" })");
+                                    }
+                                    else if (column.ColumnName.In(FileColumns, InType.ToUrlLower))
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ", new { type = \"file\", name = \"" + column.ColumnName.ToUrl(true) + "Temp\" })");
                                     }
                                     else
                                     {
-                                        yaz.WriteLine("\t\t\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
+                                        if (column.TypeName.Name == "String" && column.CharLength != "")
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ")");
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
+                                        }
                                     }
                                 }
 
@@ -1423,7 +1440,7 @@ namespace TDFactory
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t<fieldset>");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
                             {
                                 if (!identityColumns.Contains(column.ColumnName))
                                 {
@@ -1446,13 +1463,28 @@ namespace TDFactory
                                         yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
 
-                                        if (column.TypeName.Name == "String" && column.CharLength != "")
+                                        if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                         {
-                                            yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ")");
+                                            yaz.WriteLine("\t\t\t\t\t<img src=\"@(AppMgr.UploadPath + \"/\" + Model." + column.ColumnName + ")\" style=\"height:40px; max-width:80px;\" /><br /><br />");
+                                            yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model." + column.ColumnName + ")");
+                                            yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ", new { type = \"file\", name = Model." + column.ColumnName + " })");
+                                        }
+                                        else if (column.ColumnName.In(FileColumns, InType.ToUrlLower))
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t<a class=\"btn btn-mini btn-info\" href=\"@AppMgr.UploadPath/@Model." + column.ColumnName + "\" target=\"_blank\">@Model." + column.ColumnName + "</a><br /><br />");
+                                            yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model." + column.ColumnName + ")");
+                                            yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ", new { type = \"file\", name = Model." + column.ColumnName + " })");
                                         }
                                         else
                                         {
-                                            yaz.WriteLine("\t\t\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
+                                            if (column.TypeName.Name == "String" && column.CharLength != "")
+                                            {
+                                                yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ")");
+                                            }
+                                            else
+                                            {
+                                                yaz.WriteLine("\t\t\t\t\t@Html.EditorFor(model => model." + column.ColumnName + ")");
+                                            }
                                         }
                                     }
 
@@ -1494,13 +1526,13 @@ namespace TDFactory
                                         List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
                                         string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
 
-                                        List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").Take(4).ToList();
+                                        List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList();
 
                                         List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
                                         fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
 
                                         List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
-                                        bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                                        bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                                         yaz.WriteLine("");
                                         yaz.WriteLine("\t\t<div class=\"row-fluid\">");
@@ -1556,7 +1588,12 @@ namespace TDFactory
                                             {
                                                 if (item.TypeName.Name != "Boolean")
                                                 {
-                                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + item.ColumnName + "</td>");
+                                                    if (item.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><img src=\"@AppMgr.UploadPath/@item." + item.ColumnName + "\" style=\"height:40px; max-width:80px;\" /></td>");
+                                                    else if (item.ColumnName.In(FileColumns, InType.ToUrlLower))
+                                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"@AppMgr.UploadPath/@item." + item.ColumnName + "\" target=\"_blank\">@item." + item.ColumnName + "</a></td>");
+                                                    else
+                                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">@item." + item.ColumnName + "</td>");
                                                     i++;
                                                 }
                                                 else
@@ -1648,9 +1685,9 @@ namespace TDFactory
                 }
 
                 List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
-                List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.ToLower() == "url" || a.ColumnName.ToLower() == "routeurl").ToList();
+                List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.ToUrl(true) == "url" || a.ColumnName.ToUrl(true) == "routeurl").ToList();
 
                 CreateDirectories(Table);
 
@@ -1728,7 +1765,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo item in urlColumns)
                         {
-                            yaz.WriteLine("\t\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToHyperLinkText();");
+                            yaz.WriteLine("\t\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToUrl();");
                             yaz.WriteLine("\t\t\t\t");
                         }
 
@@ -1737,7 +1774,7 @@ namespace TDFactory
                         {
                             if (!column.IsIdentity)
                             {
-                                if (column.ColumnName.ToLower() != "deleted")
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                     insertSql += "table." + column.ColumnName + ", ";
                             }
                         }
@@ -1806,8 +1843,8 @@ namespace TDFactory
                                         string PrimaryTableName = fkc.PrimaryTableName;
                                         string ForeignTableName = fkc2.ForeignTableName;
 
-                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(id).ToList();"); ;
-                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(id).ToList();"); ;
+                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
                                         yaz.WriteLine("");
                                     }
                                 }
@@ -1824,14 +1861,14 @@ namespace TDFactory
 
                             foreach (ColumnInfo item in urlColumns)
                             {
-                                yaz.WriteLine("\t\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToHyperLinkText();");
+                                yaz.WriteLine("\t\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToUrl();");
                                 yaz.WriteLine("\t\t\t\t");
                             }
 
                             string updateSql = "var result = entity.usp_" + Table + "Update(";
                             foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                             {
-                                if (column.ColumnName.ToLower() != "deleted")
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                     updateSql += "table." + column.ColumnName + ", ";
                             }
                             updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
@@ -1872,8 +1909,8 @@ namespace TDFactory
                                         string PrimaryTableName = fkc.PrimaryTableName;
                                         string ForeignTableName = fkc2.ForeignTableName;
 
-                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
-                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
+                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
                                         yaz.WriteLine("");
                                     }
                                 }
@@ -2641,9 +2678,9 @@ namespace TDFactory
             }
             else
             {
-                if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName.ToHyperLinkText(true)))
+                if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName.ToUrl(true)))
                 {
-                    Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName.ToHyperLinkText(true));
+                    Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName.ToUrl(true));
                 }
             }
         }
@@ -2674,7 +2711,7 @@ namespace TDFactory
                     yaz.WriteLine("}");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
-                    yaz.WriteLine("\tselector: \"" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-app\",");
+                    yaz.WriteLine("\tselector: \"" + projectName.Substring(0, 3).ToUrl(true) + "-app\",");
                     yaz.WriteLine("\ttemplateUrl: './app.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
@@ -2691,7 +2728,7 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("<router-outlet></router-outlet>");
-                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-scripts></" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-scripts>");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-scripts></" + projectName.Substring(0, 3).ToUrl(true) + "-scripts>");
                     yaz.Close();
                 }
             }
@@ -2703,7 +2740,7 @@ namespace TDFactory
                     yaz.WriteLine("import { Component } from '@angular/core';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
-                    yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-layout',");
+                    yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToUrl(true) + "-layout',");
                     yaz.WriteLine("\ttemplateUrl: './layout.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
@@ -2724,7 +2761,7 @@ namespace TDFactory
                     yaz.WriteLine("import '../../../../Content/js/main.js';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
-                    yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-scripts',");
+                    yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToUrl(true) + "-scripts',");
                     yaz.WriteLine("\ttemplate: '',");
                     yaz.WriteLine("\tstyleUrls: [");
                     yaz.WriteLine("\t\t'../../../../Content/css/main.css'");
@@ -3539,9 +3576,9 @@ namespace TDFactory
 
                     foreach (string Table in selectedTables)
                     {
-                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "';");
-                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "/ekle';");
-                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "/duzenle';");
+                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToUrl(true) + "';");
+                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToUrl(true) + "/ekle';");
+                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToUrl(true) + "/duzenle';");
                         yaz.WriteLine("");
                     }
 
@@ -3550,7 +3587,7 @@ namespace TDFactory
 
                     foreach (string Table in selectedTables)
                     {
-                        yaz.WriteLine("import { " + Table + "Service } from './admin/services/" + Table.ToHyperLinkText(true) + "';");
+                        yaz.WriteLine("import { " + Table + "Service } from './admin/services/" + Table.ToUrl(true) + "';");
 
                         if (i == selectedTables.Count)
                             yaz.WriteLine("");
@@ -3635,9 +3672,9 @@ namespace TDFactory
 
                     foreach (string Table in selectedTables)
                     {
-                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "';");
-                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "/ekle';");
-                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToHyperLinkText(true) + "/duzenle';");
+                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToUrl(true) + "';");
+                        yaz.WriteLine("import { Admin" + Table + "EkleComponent } from './admin/views/" + Table.ToUrl(true) + "/ekle';");
+                        yaz.WriteLine("import { Admin" + Table + "DuzenleComponent } from './admin/views/" + Table.ToUrl(true) + "/duzenle';");
                         yaz.WriteLine("");
                     }
 
@@ -4050,7 +4087,7 @@ namespace TDFactory
                 }
 
                 List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 CreateAngularDirectories(Table);
 
@@ -4063,7 +4100,7 @@ namespace TDFactory
                 }
 
                 //Index
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\index.html", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\index.html", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
@@ -4086,7 +4123,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").Take(4).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
                         {
                             List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -4116,7 +4153,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").Take(4).ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
                         {
                             List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -4179,7 +4216,7 @@ namespace TDFactory
                 }
 
                 //Ekle
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\ekle.html", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\ekle.html", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
@@ -4191,7 +4228,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t<form [formGroup]=\"ekleForm\" (ngSubmit)=\"onSubmit()\">");
                         yaz.WriteLine("\t\t\t<fieldset>");
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
                         {
                             if (!identityColumns.Contains(column.ColumnName))
                             {
@@ -4273,7 +4310,7 @@ namespace TDFactory
                 //Duzenle
                 if (identityColumns.Count > 0)
                 {
-                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\duzenle.html", FileMode.Create))
+                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\duzenle.html", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
@@ -4285,7 +4322,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t<form [formGroup]=\"duzenleForm\" (ngSubmit)=\"onSubmit()\">");
                             yaz.WriteLine("\t\t\t<fieldset>");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
                             {
                                 if (identityColumns.Contains(column.ColumnName))
                                 {
@@ -4329,7 +4366,7 @@ namespace TDFactory
                                             yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"number\" value=\"{{ model?." + column.ColumnName + " }}\" />");
                                         }
                                         else if (column.TypeName.Name == "String" &&
-                                                 column.CharLength.ToLower() == "")
+                                                 column.CharLength.ToUrl(true) == "")
                                         {
                                             yaz.WriteLine("\t\t\t\t\t" + column.ColumnName);
                                             yaz.WriteLine("\t\t\t\t</div>");
@@ -4375,13 +4412,13 @@ namespace TDFactory
                                     List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
                                     string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
 
-                                    List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").Take(4).ToList();
+                                    List<TableColumnNames> foreignColumns = tableColumnNames.Where(a => a.TableName == ForeignTableName && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList();
 
                                     List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
                                     fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
 
                                     List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
-                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"row-fluid\">");
@@ -4514,9 +4551,9 @@ namespace TDFactory
                 }
 
                 List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
-                List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.ToLower() == "url" || a.ColumnName.ToLower() == "routeurl").ToList();
+                List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.ToUrl(true) == "url" || a.ColumnName.ToUrl(true) == "routeurl").ToList();
 
                 if (i <= 0)
                 {
@@ -4591,7 +4628,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo item in urlColumns)
                         {
-                            yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToHyperLinkText();");
+                            yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToUrl();");
                             yaz.WriteLine("\t\t\t");
                         }
 
@@ -4600,7 +4637,7 @@ namespace TDFactory
                         {
                             if (!column.IsIdentity)
                             {
-                                if (column.ColumnName.ToLower() != "deleted")
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                     insertSql += "table." + column.ColumnName + ", ";
                             }
                         }
@@ -4670,8 +4707,8 @@ namespace TDFactory
                                         string PrimaryTableName = fkc.PrimaryTableName;
                                         string ForeignTableName = fkc2.ForeignTableName;
 
-                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(id).ToList();"); ;
-                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(id).ToList();"); ;
+                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
                                         yaz.WriteLine("");
                                     }
                                 }
@@ -4688,14 +4725,14 @@ namespace TDFactory
 
                             foreach (ColumnInfo item in urlColumns)
                             {
-                                yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToHyperLinkText();");
+                                yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToUrl();");
                                 yaz.WriteLine("\t\t\t");
                             }
 
                             string updateSql = "var result = entity.usp_" + Table + "Update(";
                             foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
                             {
-                                if (column.ColumnName.ToLower() != "deleted")
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                     updateSql += "table." + column.ColumnName + ", ";
                             }
                             updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
@@ -4735,8 +4772,8 @@ namespace TDFactory
                                         string PrimaryTableName = fkc.PrimaryTableName;
                                         string ForeignTableName = fkc2.ForeignTableName;
 
-                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToLower() + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
-                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToLower() + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
+                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + "Model, usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
                                         yaz.WriteLine("");
                                     }
                                 }
@@ -4839,7 +4876,7 @@ namespace TDFactory
                 }
 
                 List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 if (i <= 0)
                 {
@@ -4848,7 +4885,7 @@ namespace TDFactory
                     i++;
                 }
 
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services\\" + Table.ToHyperLinkText(true) + ".ts", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\services\\" + Table.ToUrl(true) + ".ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
@@ -4953,19 +4990,19 @@ namespace TDFactory
                 }
 
                 List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 CreateAngularDirectories(Table);
 
                 //Index
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\index.ts", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\index.ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("import { Component } from \"@angular/core\";");
                         yaz.WriteLine("import { Subscription } from \"rxjs\";");
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
-                        yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToHyperLinkText(true) + "\";");
+                        yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToUrl(true) + "\";");
                         yaz.WriteLine("import * as $ from \"jquery\";");
                         yaz.WriteLine("");
                         yaz.WriteLine("@Component({");
@@ -5137,13 +5174,13 @@ namespace TDFactory
                 }
 
                 //Ekle
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\ekle.ts", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\ekle.ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("import { Component } from \"@angular/core\";");
                         yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                        yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToHyperLinkText(true) + "\";");
+                        yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToUrl(true) + "\";");
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
 
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
@@ -5187,7 +5224,7 @@ namespace TDFactory
                         }
 
                         int i = 0;
-                        List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && a.ColumnName.ToLower() != "deleted").ToList();
+                        List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList();
 
                         foreach (TableColumnNames column in tempTableColumns)
                         {
@@ -5221,7 +5258,7 @@ namespace TDFactory
 
                         yaz.WriteLine("\t\tthis.ekleForm = this.formBuilder.group({");
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
                         {
                             if (!column.IsIdentity)
                             {
@@ -5273,7 +5310,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").ToList())
+                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
                         {
                             if (!column.IsIdentity)
                             {
@@ -5316,13 +5353,13 @@ namespace TDFactory
                 //Duzenle
                 if (identityColumns.Count > 0)
                 {
-                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToHyperLinkText(true) + "\\duzenle.ts", FileMode.Create))
+                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\duzenle.ts", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
                             yaz.WriteLine("import { Component } from \"@angular/core\";");
                             yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                            yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToHyperLinkText(true) + "\";");
+                            yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToUrl(true) + "\";");
 
                             if (fkcList.Count > 0)
                             {
@@ -5330,14 +5367,14 @@ namespace TDFactory
                                 {
                                     string PrimaryTableName = fkc.ForeignTableName;
 
-                                    yaz.WriteLine("import { " + PrimaryTableName + "Service } from '../../services/" + PrimaryTableName.ToHyperLinkText(true) + "';");
+                                    yaz.WriteLine("import { " + PrimaryTableName + "Service } from '../../services/" + PrimaryTableName.ToUrl(true) + "';");
                                 }
                             }
 
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && a.ColumnName.ToLower() != "deleted").ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
                             {
                                 yaz.WriteLine("import ClassicEditor from \"../../../../../Content/admin/js/ckeditor/ckeditor.js\";");
                                 break;
@@ -5387,7 +5424,7 @@ namespace TDFactory
                             yaz.WriteLine("");
 
                             int i = 0;
-                            List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && a.ColumnName.ToLower() != "deleted").ToList();
+                            List<TableColumnNames> tempTableColumns = tableColumnNames.Where(a => a.TableName == Table && a.TypeName.Name == "String" && a.CharLength == "" && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList();
 
                             foreach (TableColumnNames column in tempTableColumns)
                             {
@@ -5421,7 +5458,7 @@ namespace TDFactory
 
                             yaz.WriteLine("\t\tthis.duzenleForm = this.formBuilder.group({");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
                             {
                                 if (column.TypeName.Name == "Boolean")
                                 {
@@ -5503,7 +5540,7 @@ namespace TDFactory
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
                                     List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
-                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.cpy-yes[data-link='" + ForeignTableName + "']\", () => {");
@@ -5519,7 +5556,7 @@ namespace TDFactory
 
                                     if (fDeleted)
                                     {
-                                        if(y == 0)
+                                        if (y == 0)
                                         {
                                             yaz.WriteLine("");
                                             yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.rmvLink\", function () {");
@@ -5572,7 +5609,7 @@ namespace TDFactory
 
                             i = 0;
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && a.ColumnName.ToLower() != "deleted" && a.ColumnName.ToLower() != "url" && a.ColumnName.ToLower() != "routeurl").ToList())
+                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
                             {
                                 if (column.TypeName.Name == "String" && column.CharLength == "")
                                 {
@@ -5611,7 +5648,7 @@ namespace TDFactory
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
                                     List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
-                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
+                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\ton" + ForeignTableName + "Copy(id) {");
@@ -5745,7 +5782,7 @@ namespace TDFactory
                     yaz.WriteLine("\tLayout = \"~/Views/Shared/_Layout.cshtml\";");
                     yaz.WriteLine("}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-app></" + projectName.Substring(0, 3).ToHyperLinkText(true) + "-app>");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-app></" + projectName.Substring(0, 3).ToUrl(true) + "-app>");
                     yaz.Close();
                 }
             }
@@ -5944,8 +5981,8 @@ namespace TDFactory
                 string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
 
                 List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? true : false;
-                columnNames = columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
+                columnNames = columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList();
 
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Service\\I" + Table + "Service.cs", FileMode.Create))
                 {
@@ -6329,7 +6366,7 @@ namespace TDFactory
                         }
 
                         List<ColumnInfo> columnNames = Helper.Helper.ColumnNames(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                        string deleted = columnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? " and [Deleted] = 0" : "";
+                        string deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
 
                         string idType = null;
 
@@ -6366,7 +6403,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.ColumnName.ToLower() != "deleted")
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                 sqlText += "[" + column.ColumnName + "],";
                         }
 
@@ -6408,7 +6445,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.ColumnName.ToLower() != "deleted")
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                 sqlText += "[" + column.ColumnName + "],";
                         }
 
@@ -6451,7 +6488,7 @@ namespace TDFactory
 
                             foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.ColumnName.ToLower() != "deleted")
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                     sqlText += "[" + column.ColumnName + "],";
                             }
 
@@ -6505,7 +6542,7 @@ namespace TDFactory
                                     string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
 
                                     List<ColumnInfo> fColumnNames = Helper.Helper.ColumnNames(connectionInfo, ForeignTableName).ToList();
-                                    string fDeleted = fColumnNames.Where(a => a.ColumnName.ToLower() == "deleted").ToList().Count > 0 ? " and [Deleted] = 0" : "";
+                                    string fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
 
                                     yaz.WriteLine("/* ByLinkedIDSelect */");
                                     yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]");
@@ -6535,7 +6572,7 @@ namespace TDFactory
 
                                     foreach (ColumnInfo column in fColumnNames)
                                     {
-                                        if (column.ColumnName.ToLower() != "deleted")
+                                        if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                             sqlText += "[" + column.ColumnName + "],";
                                     }
 
@@ -6565,7 +6602,7 @@ namespace TDFactory
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Insert]");
 
                         i = 1;
-                        foreach (ColumnInfo column in columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList())
+                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
                         {
                             if (column.IsIdentity == "NO")
                             {
@@ -6576,7 +6613,7 @@ namespace TDFactory
 
                                 extra += column.IsNullable != "NO" ? " = NULL" : "";
 
-                                if (i != columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList().Count)
+                                if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count)
                                     yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
                                 else
                                     yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
@@ -6594,7 +6631,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.ColumnName.ToLower() != "deleted")
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                             {
                                 if (column.IsIdentity == "NO")
                                 {
@@ -6612,7 +6649,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.ColumnName.ToLower() != "deleted")
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                             {
                                 if (column.IsIdentity == "NO")
                                 {
@@ -6638,7 +6675,7 @@ namespace TDFactory
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
 
                         i = 1;
-                        foreach (ColumnInfo column in columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList())
+                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
                         {
                             string extra = "";
 
@@ -6647,7 +6684,7 @@ namespace TDFactory
 
                             extra += column.IsNullable != "NO" ? " = NULL" : "";
 
-                            if (i != columnNames.Where(a => a.ColumnName.ToLower() != "deleted").ToList().Count)
+                            if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count)
                                 yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
                             else
                                 yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
@@ -6668,7 +6705,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.ColumnName.ToLower() != "deleted")
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                             {
                                 if (column.IsIdentity == "NO")
                                 {
@@ -6692,7 +6729,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.ColumnName.ToLower() != "deleted")
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                 sqlText = sqlText + "[" + column.ColumnName + "],";
                         }
 
@@ -6754,7 +6791,7 @@ namespace TDFactory
                                 {
                                     sqlText = sqlText + "A.[" + column.ColumnName + "] + ' (Kopya)',";
                                 }
-                                else if (column.ColumnName.ToLower() == "url" || column.ColumnName.ToLower() == "routeurl")
+                                else if (column.ColumnName.ToUrl(true) == "url" || column.ColumnName.ToUrl(true) == "routeurl")
                                 {
                                     sqlText = sqlText + "A.[" + column.ColumnName + "] + '-(Kopya)',";
                                 }
@@ -6774,7 +6811,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.ColumnName.ToLower() != "deleted")
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
                                 sqlText = sqlText + "[" + column.ColumnName + "],";
                         }
 

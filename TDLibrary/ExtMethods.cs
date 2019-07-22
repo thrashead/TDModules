@@ -134,22 +134,22 @@ namespace TDLibrary
 
         #endregion
 
-        #region ToHyperLinkText - Yazıyı hiperlinke çevirir. toLower param true giderse harfleri küçültür.
+        #region ToUrl - Yazıyı hiperlinke çevirir. toLower param true giderse harfleri küçültür.
 
-        public static string ToHyperLinkText(this string text, bool toLower = false)
+        public static string ToUrl(this string text, bool toLower = false)
         {
             if (toLower == true)
             {
                 text = text.ToLower();
             }
 
-            text = HyperLinkTextReplacer(text);
+            text = UrlReplacer(text);
             text = text.MakeSingle("-").Trim('-');
 
             return text;
         }
 
-        private static string HyperLinkTextReplacer(string _text)
+        private static string UrlReplacer(string _text)
         {
             _text = _text.Replace("&amp;", "");
             _text = _text.Replace("&#304;", "İ");

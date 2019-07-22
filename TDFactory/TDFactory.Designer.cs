@@ -30,6 +30,58 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TDFactory));
             this.tbconTablar = new System.Windows.Forms.TabControl();
+            this.tabpageKatmanlariOlustur = new System.Windows.Forms.TabPage();
+            this.grpIslem = new System.Windows.Forms.GroupBox();
+            this.pnlKaydet = new System.Windows.Forms.Panel();
+            this.lblImageColumns = new System.Windows.Forms.Label();
+            this.lblDeletedColumns = new System.Windows.Forms.Label();
+            this.lblFileColumns = new System.Windows.Forms.Label();
+            this.lblUrlColumns = new System.Windows.Forms.Label();
+            this.btnImageColumns = new System.Windows.Forms.Button();
+            this.btnFileColumns = new System.Windows.Forms.Button();
+            this.btnDeletedColumns = new System.Windows.Forms.Button();
+            this.btnUrlColumns = new System.Windows.Forms.Button();
+            this.txtImageColumns = new System.Windows.Forms.TextBox();
+            this.txtFileColumns = new System.Windows.Forms.TextBox();
+            this.lstImageColumns = new System.Windows.Forms.ListBox();
+            this.lstFileColumns = new System.Windows.Forms.ListBox();
+            this.txtDeletedColumns = new System.Windows.Forms.TextBox();
+            this.txtUrlColumns = new System.Windows.Forms.TextBox();
+            this.lstDeletedColumns = new System.Windows.Forms.ListBox();
+            this.lstUrlColumns = new System.Windows.Forms.ListBox();
+            this.chkAngular = new System.Windows.Forms.CheckBox();
+            this.txtProjectName = new System.Windows.Forms.TextBox();
+            this.pnlAndroidService = new System.Windows.Forms.Panel();
+            this.rdAndWcf = new System.Windows.Forms.RadioButton();
+            this.rdAndSqlite = new System.Windows.Forms.RadioButton();
+            this.lblProjectName = new System.Windows.Forms.Label();
+            this.chkAndData = new System.Windows.Forms.CheckBox();
+            this.lstAndIzin = new System.Windows.Forms.ListBox();
+            this.lblAndIzinler = new System.Windows.Forms.Label();
+            this.lblAndroidKatmanlar = new System.Windows.Forms.Label();
+            this.chkAndManifest = new System.Windows.Forms.CheckBox();
+            this.lblMVCKatmanlar = new System.Windows.Forms.Label();
+            this.lblVTKatman = new System.Windows.Forms.Label();
+            this.chkAndModel = new System.Windows.Forms.CheckBox();
+            this.chkAndJava = new System.Windows.Forms.CheckBox();
+            this.chkAndLayout = new System.Windows.Forms.CheckBox();
+            this.chkAndHepsi = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.grpSplitter1 = new System.Windows.Forms.GroupBox();
+            this.lblWCSifre = new System.Windows.Forms.Label();
+            this.lblWCKullanici = new System.Windows.Forms.Label();
+            this.txtWCSifre = new System.Windows.Forms.TextBox();
+            this.txtWCKullanici = new System.Windows.Forms.TextBox();
+            this.chkMVCStilScript = new System.Windows.Forms.CheckBox();
+            this.chkMVCWcfServis = new System.Windows.Forms.CheckBox();
+            this.chkMVCWebConfig = new System.Windows.Forms.CheckBox();
+            this.chkMVCStoredProc = new System.Windows.Forms.CheckBox();
+            this.chkMVCController = new System.Windows.Forms.CheckBox();
+            this.btnAndroidBaslat = new System.Windows.Forms.Button();
+            this.btnBaslat = new System.Windows.Forms.Button();
+            this.chkMVCView = new System.Windows.Forms.CheckBox();
+            this.chkMVCModel = new System.Windows.Forms.CheckBox();
+            this.chkMVCHepsi = new System.Windows.Forms.CheckBox();
             this.tabpageVeritabaniOlustur = new System.Windows.Forms.TabPage();
             this.grpTablo = new System.Windows.Forms.GroupBox();
             this.btnVTTabloSil = new System.Windows.Forms.Button();
@@ -83,42 +135,6 @@
             this.numDosyaBoyutu = new System.Windows.Forms.NumericUpDown();
             this.numDosyaGenislemeYuzdesi = new System.Windows.Forms.NumericUpDown();
             this.lblLogGenislemeYuzdesi = new System.Windows.Forms.Label();
-            this.tabpageKatmanlariOlustur = new System.Windows.Forms.TabPage();
-            this.grpIslem = new System.Windows.Forms.GroupBox();
-            this.pnlKaydet = new System.Windows.Forms.Panel();
-            this.chkAngular = new System.Windows.Forms.CheckBox();
-            this.txtProjectName = new System.Windows.Forms.TextBox();
-            this.pnlAndroidService = new System.Windows.Forms.Panel();
-            this.rdAndWcf = new System.Windows.Forms.RadioButton();
-            this.rdAndSqlite = new System.Windows.Forms.RadioButton();
-            this.lblProjectName = new System.Windows.Forms.Label();
-            this.chkAndData = new System.Windows.Forms.CheckBox();
-            this.lstAndIzin = new System.Windows.Forms.ListBox();
-            this.lblAndIzinler = new System.Windows.Forms.Label();
-            this.lblAndroidKatmanlar = new System.Windows.Forms.Label();
-            this.chkAndManifest = new System.Windows.Forms.CheckBox();
-            this.lblMVCKatmanlar = new System.Windows.Forms.Label();
-            this.lblVTKatman = new System.Windows.Forms.Label();
-            this.chkAndModel = new System.Windows.Forms.CheckBox();
-            this.chkAndJava = new System.Windows.Forms.CheckBox();
-            this.chkAndLayout = new System.Windows.Forms.CheckBox();
-            this.chkAndHepsi = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.grpSplitter1 = new System.Windows.Forms.GroupBox();
-            this.lblWCSifre = new System.Windows.Forms.Label();
-            this.lblWCKullanici = new System.Windows.Forms.Label();
-            this.txtWCSifre = new System.Windows.Forms.TextBox();
-            this.txtWCKullanici = new System.Windows.Forms.TextBox();
-            this.chkMVCStilScript = new System.Windows.Forms.CheckBox();
-            this.chkMVCWcfServis = new System.Windows.Forms.CheckBox();
-            this.chkMVCWebConfig = new System.Windows.Forms.CheckBox();
-            this.chkMVCStoredProc = new System.Windows.Forms.CheckBox();
-            this.chkMVCController = new System.Windows.Forms.CheckBox();
-            this.btnAndroidBaslat = new System.Windows.Forms.Button();
-            this.btnBaslat = new System.Windows.Forms.Button();
-            this.chkMVCView = new System.Windows.Forms.CheckBox();
-            this.chkMVCModel = new System.Windows.Forms.CheckBox();
-            this.chkMVCHepsi = new System.Windows.Forms.CheckBox();
             this.btnButunTabloAlanlar = new System.Windows.Forms.Button();
             this.lstSeciliTablolar = new System.Windows.Forms.ListBox();
             this.btnKolonCikar = new System.Windows.Forms.Button();
@@ -160,6 +176,10 @@
             this.grpBaglanti = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbconTablar.SuspendLayout();
+            this.tabpageKatmanlariOlustur.SuspendLayout();
+            this.grpIslem.SuspendLayout();
+            this.pnlKaydet.SuspendLayout();
+            this.pnlAndroidService.SuspendLayout();
             this.tabpageVeritabaniOlustur.SuspendLayout();
             this.grpTablo.SuspendLayout();
             this.grpKolonlar.SuspendLayout();
@@ -172,10 +192,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numLogGenislemeYuzdesi)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDosyaBoyutu)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDosyaGenislemeYuzdesi)).BeginInit();
-            this.tabpageKatmanlariOlustur.SuspendLayout();
-            this.grpIslem.SuspendLayout();
-            this.pnlKaydet.SuspendLayout();
-            this.pnlAndroidService.SuspendLayout();
             this.grpKolon.SuspendLayout();
             this.grpBaglanti.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -190,6 +206,731 @@
             this.tbconTablar.SelectedIndex = 0;
             this.tbconTablar.Size = new System.Drawing.Size(1047, 416);
             this.tbconTablar.TabIndex = 28;
+            // 
+            // tabpageKatmanlariOlustur
+            // 
+            this.tabpageKatmanlariOlustur.Controls.Add(this.grpIslem);
+            this.tabpageKatmanlariOlustur.Location = new System.Drawing.Point(4, 22);
+            this.tabpageKatmanlariOlustur.Name = "tabpageKatmanlariOlustur";
+            this.tabpageKatmanlariOlustur.Padding = new System.Windows.Forms.Padding(3);
+            this.tabpageKatmanlariOlustur.Size = new System.Drawing.Size(1039, 390);
+            this.tabpageKatmanlariOlustur.TabIndex = 1;
+            this.tabpageKatmanlariOlustur.Text = "Katmanları Oluştur";
+            this.tabpageKatmanlariOlustur.UseVisualStyleBackColor = true;
+            // 
+            // grpIslem
+            // 
+            this.grpIslem.Controls.Add(this.pnlKaydet);
+            this.grpIslem.Location = new System.Drawing.Point(14, 15);
+            this.grpIslem.Name = "grpIslem";
+            this.grpIslem.Size = new System.Drawing.Size(1019, 267);
+            this.grpIslem.TabIndex = 45;
+            this.grpIslem.TabStop = false;
+            this.grpIslem.Text = "İşlemler";
+            // 
+            // pnlKaydet
+            // 
+            this.pnlKaydet.Controls.Add(this.lblImageColumns);
+            this.pnlKaydet.Controls.Add(this.lblDeletedColumns);
+            this.pnlKaydet.Controls.Add(this.lblFileColumns);
+            this.pnlKaydet.Controls.Add(this.lblUrlColumns);
+            this.pnlKaydet.Controls.Add(this.btnImageColumns);
+            this.pnlKaydet.Controls.Add(this.btnFileColumns);
+            this.pnlKaydet.Controls.Add(this.btnDeletedColumns);
+            this.pnlKaydet.Controls.Add(this.btnUrlColumns);
+            this.pnlKaydet.Controls.Add(this.txtImageColumns);
+            this.pnlKaydet.Controls.Add(this.txtFileColumns);
+            this.pnlKaydet.Controls.Add(this.lstImageColumns);
+            this.pnlKaydet.Controls.Add(this.lstFileColumns);
+            this.pnlKaydet.Controls.Add(this.txtDeletedColumns);
+            this.pnlKaydet.Controls.Add(this.txtUrlColumns);
+            this.pnlKaydet.Controls.Add(this.lstDeletedColumns);
+            this.pnlKaydet.Controls.Add(this.lstUrlColumns);
+            this.pnlKaydet.Controls.Add(this.chkAngular);
+            this.pnlKaydet.Controls.Add(this.txtProjectName);
+            this.pnlKaydet.Controls.Add(this.pnlAndroidService);
+            this.pnlKaydet.Controls.Add(this.lblProjectName);
+            this.pnlKaydet.Controls.Add(this.chkAndData);
+            this.pnlKaydet.Controls.Add(this.lstAndIzin);
+            this.pnlKaydet.Controls.Add(this.lblAndIzinler);
+            this.pnlKaydet.Controls.Add(this.lblAndroidKatmanlar);
+            this.pnlKaydet.Controls.Add(this.chkAndManifest);
+            this.pnlKaydet.Controls.Add(this.lblMVCKatmanlar);
+            this.pnlKaydet.Controls.Add(this.lblVTKatman);
+            this.pnlKaydet.Controls.Add(this.chkAndModel);
+            this.pnlKaydet.Controls.Add(this.chkAndJava);
+            this.pnlKaydet.Controls.Add(this.chkAndLayout);
+            this.pnlKaydet.Controls.Add(this.chkAndHepsi);
+            this.pnlKaydet.Controls.Add(this.groupBox1);
+            this.pnlKaydet.Controls.Add(this.grpSplitter1);
+            this.pnlKaydet.Controls.Add(this.lblWCSifre);
+            this.pnlKaydet.Controls.Add(this.lblWCKullanici);
+            this.pnlKaydet.Controls.Add(this.txtWCSifre);
+            this.pnlKaydet.Controls.Add(this.txtWCKullanici);
+            this.pnlKaydet.Controls.Add(this.chkMVCStilScript);
+            this.pnlKaydet.Controls.Add(this.chkMVCWcfServis);
+            this.pnlKaydet.Controls.Add(this.chkMVCWebConfig);
+            this.pnlKaydet.Controls.Add(this.chkMVCStoredProc);
+            this.pnlKaydet.Controls.Add(this.chkMVCController);
+            this.pnlKaydet.Controls.Add(this.btnAndroidBaslat);
+            this.pnlKaydet.Controls.Add(this.btnBaslat);
+            this.pnlKaydet.Controls.Add(this.chkMVCView);
+            this.pnlKaydet.Controls.Add(this.chkMVCModel);
+            this.pnlKaydet.Controls.Add(this.chkMVCHepsi);
+            this.pnlKaydet.Enabled = false;
+            this.pnlKaydet.Location = new System.Drawing.Point(0, 12);
+            this.pnlKaydet.Name = "pnlKaydet";
+            this.pnlKaydet.Size = new System.Drawing.Size(1019, 255);
+            this.pnlKaydet.TabIndex = 68;
+            // 
+            // lblImageColumns
+            // 
+            this.lblImageColumns.AutoSize = true;
+            this.lblImageColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblImageColumns.Location = new System.Drawing.Point(846, 149);
+            this.lblImageColumns.Name = "lblImageColumns";
+            this.lblImageColumns.Size = new System.Drawing.Size(94, 13);
+            this.lblImageColumns.TabIndex = 92;
+            this.lblImageColumns.Text = "Resim Kolonları";
+            // 
+            // lblDeletedColumns
+            // 
+            this.lblDeletedColumns.AutoSize = true;
+            this.lblDeletedColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblDeletedColumns.Location = new System.Drawing.Point(846, 41);
+            this.lblDeletedColumns.Name = "lblDeletedColumns";
+            this.lblDeletedColumns.Size = new System.Drawing.Size(74, 13);
+            this.lblDeletedColumns.TabIndex = 92;
+            this.lblDeletedColumns.Text = "Sil Kolonları";
+            // 
+            // lblFileColumns
+            // 
+            this.lblFileColumns.AutoSize = true;
+            this.lblFileColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblFileColumns.Location = new System.Drawing.Point(678, 149);
+            this.lblFileColumns.Name = "lblFileColumns";
+            this.lblFileColumns.Size = new System.Drawing.Size(95, 13);
+            this.lblFileColumns.TabIndex = 92;
+            this.lblFileColumns.Text = "Dosya Kolonları";
+            // 
+            // lblUrlColumns
+            // 
+            this.lblUrlColumns.AutoSize = true;
+            this.lblUrlColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblUrlColumns.Location = new System.Drawing.Point(678, 41);
+            this.lblUrlColumns.Name = "lblUrlColumns";
+            this.lblUrlColumns.Size = new System.Drawing.Size(76, 13);
+            this.lblUrlColumns.TabIndex = 92;
+            this.lblUrlColumns.Text = "Url Kolonları";
+            // 
+            // btnImageColumns
+            // 
+            this.btnImageColumns.Location = new System.Drawing.Point(964, 163);
+            this.btnImageColumns.Name = "btnImageColumns";
+            this.btnImageColumns.Size = new System.Drawing.Size(50, 23);
+            this.btnImageColumns.TabIndex = 91;
+            this.btnImageColumns.Text = "Ekle";
+            this.btnImageColumns.UseVisualStyleBackColor = true;
+            // 
+            // btnFileColumns
+            // 
+            this.btnFileColumns.Location = new System.Drawing.Point(793, 163);
+            this.btnFileColumns.Name = "btnFileColumns";
+            this.btnFileColumns.Size = new System.Drawing.Size(50, 23);
+            this.btnFileColumns.TabIndex = 91;
+            this.btnFileColumns.Text = "Ekle";
+            this.btnFileColumns.UseVisualStyleBackColor = true;
+            // 
+            // btnDeletedColumns
+            // 
+            this.btnDeletedColumns.Location = new System.Drawing.Point(964, 55);
+            this.btnDeletedColumns.Name = "btnDeletedColumns";
+            this.btnDeletedColumns.Size = new System.Drawing.Size(50, 23);
+            this.btnDeletedColumns.TabIndex = 91;
+            this.btnDeletedColumns.Text = "Ekle";
+            this.btnDeletedColumns.UseVisualStyleBackColor = true;
+            // 
+            // btnUrlColumns
+            // 
+            this.btnUrlColumns.Location = new System.Drawing.Point(793, 55);
+            this.btnUrlColumns.Name = "btnUrlColumns";
+            this.btnUrlColumns.Size = new System.Drawing.Size(50, 23);
+            this.btnUrlColumns.TabIndex = 91;
+            this.btnUrlColumns.Text = "Ekle";
+            this.btnUrlColumns.UseVisualStyleBackColor = true;
+            // 
+            // txtImageColumns
+            // 
+            this.txtImageColumns.Location = new System.Drawing.Point(849, 165);
+            this.txtImageColumns.Name = "txtImageColumns";
+            this.txtImageColumns.Size = new System.Drawing.Size(109, 20);
+            this.txtImageColumns.TabIndex = 90;
+            // 
+            // txtFileColumns
+            // 
+            this.txtFileColumns.Location = new System.Drawing.Point(678, 165);
+            this.txtFileColumns.Name = "txtFileColumns";
+            this.txtFileColumns.Size = new System.Drawing.Size(109, 20);
+            this.txtFileColumns.TabIndex = 90;
+            // 
+            // lstImageColumns
+            // 
+            this.lstImageColumns.FormattingEnabled = true;
+            this.lstImageColumns.Items.AddRange(new object[] {
+            "pictureurl",
+            "imageurl",
+            "thumburl"});
+            this.lstImageColumns.Location = new System.Drawing.Point(849, 191);
+            this.lstImageColumns.Name = "lstImageColumns";
+            this.lstImageColumns.Size = new System.Drawing.Size(165, 56);
+            this.lstImageColumns.TabIndex = 89;
+            // 
+            // lstFileColumns
+            // 
+            this.lstFileColumns.FormattingEnabled = true;
+            this.lstFileColumns.Items.AddRange(new object[] {
+            "fileurl"});
+            this.lstFileColumns.Location = new System.Drawing.Point(678, 191);
+            this.lstFileColumns.Name = "lstFileColumns";
+            this.lstFileColumns.Size = new System.Drawing.Size(165, 56);
+            this.lstFileColumns.TabIndex = 89;
+            // 
+            // txtDeletedColumns
+            // 
+            this.txtDeletedColumns.Location = new System.Drawing.Point(849, 57);
+            this.txtDeletedColumns.Name = "txtDeletedColumns";
+            this.txtDeletedColumns.Size = new System.Drawing.Size(109, 20);
+            this.txtDeletedColumns.TabIndex = 90;
+            // 
+            // txtUrlColumns
+            // 
+            this.txtUrlColumns.Location = new System.Drawing.Point(678, 57);
+            this.txtUrlColumns.Name = "txtUrlColumns";
+            this.txtUrlColumns.Size = new System.Drawing.Size(109, 20);
+            this.txtUrlColumns.TabIndex = 90;
+            // 
+            // lstDeletedColumns
+            // 
+            this.lstDeletedColumns.FormattingEnabled = true;
+            this.lstDeletedColumns.Items.AddRange(new object[] {
+            "deleted"});
+            this.lstDeletedColumns.Location = new System.Drawing.Point(849, 83);
+            this.lstDeletedColumns.Name = "lstDeletedColumns";
+            this.lstDeletedColumns.Size = new System.Drawing.Size(165, 56);
+            this.lstDeletedColumns.TabIndex = 89;
+            // 
+            // lstUrlColumns
+            // 
+            this.lstUrlColumns.FormattingEnabled = true;
+            this.lstUrlColumns.Items.AddRange(new object[] {
+            "url",
+            "routeurl",
+            "rewriteurl"});
+            this.lstUrlColumns.Location = new System.Drawing.Point(678, 83);
+            this.lstUrlColumns.Name = "lstUrlColumns";
+            this.lstUrlColumns.Size = new System.Drawing.Size(165, 56);
+            this.lstUrlColumns.TabIndex = 89;
+            // 
+            // chkAngular
+            // 
+            this.chkAngular.AutoSize = true;
+            this.chkAngular.Location = new System.Drawing.Point(9, 77);
+            this.chkAngular.Name = "chkAngular";
+            this.chkAngular.Size = new System.Drawing.Size(62, 17);
+            this.chkAngular.TabIndex = 88;
+            this.chkAngular.Text = "Angular";
+            this.chkAngular.UseVisualStyleBackColor = true;
+            // 
+            // txtProjectName
+            // 
+            this.txtProjectName.Location = new System.Drawing.Point(83, 5);
+            this.txtProjectName.Name = "txtProjectName";
+            this.txtProjectName.Size = new System.Drawing.Size(930, 20);
+            this.txtProjectName.TabIndex = 69;
+            this.txtProjectName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtProjectName_KeyPress);
+            // 
+            // pnlAndroidService
+            // 
+            this.pnlAndroidService.Controls.Add(this.rdAndWcf);
+            this.pnlAndroidService.Controls.Add(this.rdAndSqlite);
+            this.pnlAndroidService.Location = new System.Drawing.Point(545, 197);
+            this.pnlAndroidService.Name = "pnlAndroidService";
+            this.pnlAndroidService.Size = new System.Drawing.Size(116, 21);
+            this.pnlAndroidService.TabIndex = 87;
+            // 
+            // rdAndWcf
+            // 
+            this.rdAndWcf.AutoSize = true;
+            this.rdAndWcf.Location = new System.Drawing.Point(4, 3);
+            this.rdAndWcf.Name = "rdAndWcf";
+            this.rdAndWcf.Size = new System.Drawing.Size(49, 17);
+            this.rdAndWcf.TabIndex = 83;
+            this.rdAndWcf.Text = "WCF";
+            this.rdAndWcf.UseVisualStyleBackColor = true;
+            this.rdAndWcf.CheckedChanged += new System.EventHandler(this.rdAndData_CheckedChanged);
+            // 
+            // rdAndSqlite
+            // 
+            this.rdAndSqlite.AutoSize = true;
+            this.rdAndSqlite.Location = new System.Drawing.Point(59, 3);
+            this.rdAndSqlite.Name = "rdAndSqlite";
+            this.rdAndSqlite.Size = new System.Drawing.Size(57, 17);
+            this.rdAndSqlite.TabIndex = 82;
+            this.rdAndSqlite.Text = "SQLite";
+            this.rdAndSqlite.UseVisualStyleBackColor = true;
+            this.rdAndSqlite.CheckedChanged += new System.EventHandler(this.rdAndData_CheckedChanged);
+            // 
+            // lblProjectName
+            // 
+            this.lblProjectName.AutoSize = true;
+            this.lblProjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblProjectName.Location = new System.Drawing.Point(7, 8);
+            this.lblProjectName.Name = "lblProjectName";
+            this.lblProjectName.Size = new System.Drawing.Size(70, 13);
+            this.lblProjectName.TabIndex = 13;
+            this.lblProjectName.Text = "Proje İsmi :";
+            // 
+            // chkAndData
+            // 
+            this.chkAndData.AutoSize = true;
+            this.chkAndData.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkAndData.Location = new System.Drawing.Point(588, 174);
+            this.chkAndData.Name = "chkAndData";
+            this.chkAndData.Size = new System.Drawing.Size(73, 17);
+            this.chkAndData.TabIndex = 81;
+            this.chkAndData.Text = "Veritabanı";
+            this.chkAndData.UseVisualStyleBackColor = true;
+            this.chkAndData.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
+            // 
+            // lstAndIzin
+            // 
+            this.lstAndIzin.FormattingEnabled = true;
+            this.lstAndIzin.Items.AddRange(new object[] {
+            "INTERNET",
+            "ACCESS_NETWORK_STATE",
+            "READ_EXTERNAL_STORAGE",
+            "WRITE_EXTERNAL_STORAGE",
+            "ACCESS_COARSE_LOCATION",
+            "ACCESS_FINE_LOCATION",
+            "VIBRATE",
+            "CAMERA",
+            "READ_SMS",
+            "RECEIVE_SMS",
+            "SEND_SMS",
+            "CALL_PHONE",
+            "ANSWER_PHONE_CALLS",
+            "RECORD_AUDIO",
+            "ACCESS_WIFI_STATE",
+            "BLUETOOTH",
+            "BODY_SENSORS",
+            "CHANGE_CONFIGURATION",
+            "CHANGE_NETWORK_STATE",
+            "CHANGE_WIFI_STATE",
+            "CLEAR_APP_CACHE",
+            "DELETE_CACHE_FILES",
+            "DELETE_PACKAGES",
+            "INSTALL_PACKAGES",
+            "KILL_BACKGROUND_PROCESSES",
+            "READ_CALENDAR",
+            "READ_CONTACTS",
+            "READ_PHONE_NUMBERS",
+            "READ_PHONE_STATE",
+            "REBOOT",
+            "SET_TIME",
+            "SET_TIME_ZONE",
+            "WRITE_CALENDAR",
+            "WRITE_CONTACTS",
+            "ADD_VOICEMAIL.voicemail",
+            "READ_VOICEMAIL.voicemail",
+            "WRITE_VOICEMAIL.voicemail",
+            "SET_ALARM.alarm",
+            "INSTALL_SHORTCUT.launcher",
+            "UNINSTALL_SHORTCUT.launcher",
+            "ACCESS_CHECKIN_PROPERTIES",
+            "ACCESS_LOCATION_EXTRA_COMMANDS",
+            "ACCESS_NOTIFICATION_POLICY",
+            "ACCOUNT_MANAGER",
+            "BATTERY_STATS",
+            "BIND_ACCESSIBILITY_SERVICE",
+            "BIND_APPWIDGET",
+            "BIND_AUTOFILL_SERVICE",
+            "BIND_CARRIER_MESSAGING_SERVICE",
+            "BIND_CARRIER_SERVICES",
+            "BIND_CHOOSER_TARGET_SERVICE",
+            "BIND_CONDITION_PROVIDER_SERVICE",
+            "BIND_DEVICE_ADMIN",
+            "BIND_DREAM_SERVICE",
+            "BIND_INCALL_SERVICE",
+            "BIND_INPUT_METHOD",
+            "BIND_MIDI_DEVICE_SERVICE",
+            "BIND_NFC_SERVICE",
+            "BIND_NOTIFICATION_LISTENER_SERVICE",
+            "BIND_PRINT_SERVICE",
+            "BIND_QUICK_SETTINGS_TILE",
+            "BIND_REMOTEVIEWS",
+            "BIND_SCREENING_SERVICE",
+            "BIND_TELECOM_CONNECTION_SERVICE",
+            "BIND_TEXT_SERVICE",
+            "BIND_TV_INPUT",
+            "BIND_VISUAL_VOICEMAIL_SERVICE",
+            "BIND_VOICE_INTERACTION",
+            "BIND_VPN_SERVICE",
+            "BIND_VR_LISTENER_SERVICE",
+            "BIND_WALLPAPER",
+            "BLUETOOTH_ADMIN",
+            "BLUETOOTH_PRIVILEGED",
+            "BROADCAST_PACKAGE_REMOVED",
+            "BROADCAST_SMS",
+            "BROADCAST_STICKY",
+            "BROADCAST_WAP_PUSH",
+            "CALL_PRIVILEGED",
+            "CAPTURE_AUDIO_OUTPUT",
+            "CAPTURE_SECURE_VIDEO_OUTPUT",
+            "CAPTURE_VIDEO_OUTPUT",
+            "CHANGE_COMPONENT_ENABLED_STATE",
+            "CHANGE_WIFI_MULTICAST_STATE",
+            "CONTROL_LOCATION_UPDATES",
+            "DIAGNOSTIC",
+            "DISABLE_KEYGUARD",
+            "DUMP",
+            "EXPAND_STATUS_BAR",
+            "FACTORY_TEST",
+            "GET_ACCOUNTS",
+            "GET_ACCOUNTS_PRIVILEGED",
+            "GET_PACKAGE_SIZE",
+            "GET_TASKS",
+            "GLOBAL_SEARCH",
+            "INSTALL_LOCATION_PROVIDER",
+            "INSTANT_APP_FOREGROUND_SERVICE",
+            "LOCATION_HARDWARE",
+            "MANAGE_DOCUMENTS",
+            "MANAGE_OWN_CALLS",
+            "MASTER_CLEAR",
+            "MEDIA_CONTENT_CONTROL",
+            "MODIFY_AUDIO_SETTINGS",
+            "MODIFY_PHONE_STATE",
+            "MOUNT_FORMAT_FILESYSTEMS",
+            "MOUNT_UNMOUNT_FILESYSTEMS",
+            "NFC",
+            "PACKAGE_USAGE_STATS",
+            "PERSISTENT_ACTIVITY",
+            "PROCESS_OUTGOING_CALLS",
+            "READ_CALL_LOG",
+            "READ_FRAME_BUFFER",
+            "READ_INPUT_STATE",
+            "READ_LOGS",
+            "READ_SYNC_SETTINGS",
+            "READ_SYNC_STATS",
+            "RECEIVE_BOOT_COMPLETED",
+            "RECEIVE_MMS",
+            "RECEIVE_WAP_PUSH",
+            "REORDER_TASKS",
+            "REQUEST_COMPANION_RUN_IN_BACKGROUND",
+            "REQUEST_COMPANION_USE_DATA_IN_BACKGROUND",
+            "REQUEST_DELETE_PACKAGES",
+            "REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
+            "REQUEST_INSTALL_PACKAGES",
+            "RESTART_PACKAGES",
+            "SEND_RESPOND_VIA_MESSAGE",
+            "SET_ALWAYS_FINISH",
+            "SET_ANIMATION_SCALE",
+            "SET_DEBUG_APP",
+            "SET_PREFERRED_APPLICATIONS",
+            "SET_PROCESS_LIMIT",
+            "SET_WALLPAPER",
+            "SET_WALLPAPER_HINTS",
+            "SIGNAL_PERSISTENT_PROCESSES",
+            "STATUS_BAR",
+            "SYSTEM_ALERT_WINDOW",
+            "TRANSMIT_IR",
+            "UPDATE_DEVICE_STATS",
+            "USE_FINGERPRINT",
+            "USE_SIP",
+            "WAKE_LOCK",
+            "WRITE_APN_SETTINGS",
+            "WRITE_CALL_LOG",
+            "WRITE_GSERVICES",
+            "WRITE_SECURE_SETTINGS",
+            "WRITE_SETTINGS",
+            "WRITE_SYNC_SETTINGS"});
+            this.lstAndIzin.Location = new System.Drawing.Point(336, 83);
+            this.lstAndIzin.Name = "lstAndIzin";
+            this.lstAndIzin.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+            this.lstAndIzin.Size = new System.Drawing.Size(205, 121);
+            this.lstAndIzin.TabIndex = 79;
+            // 
+            // lblAndIzinler
+            // 
+            this.lblAndIzinler.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblAndIzinler.Location = new System.Drawing.Point(336, 68);
+            this.lblAndIzinler.Name = "lblAndIzinler";
+            this.lblAndIzinler.Size = new System.Drawing.Size(43, 18);
+            this.lblAndIzinler.TabIndex = 80;
+            this.lblAndIzinler.Text = "İzinler :";
+            // 
+            // lblAndroidKatmanlar
+            // 
+            this.lblAndroidKatmanlar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblAndroidKatmanlar.Location = new System.Drawing.Point(336, 50);
+            this.lblAndroidKatmanlar.Name = "lblAndroidKatmanlar";
+            this.lblAndroidKatmanlar.Size = new System.Drawing.Size(127, 18);
+            this.lblAndroidKatmanlar.TabIndex = 69;
+            this.lblAndroidKatmanlar.Text = "Android Seçenekleri";
+            // 
+            // chkAndManifest
+            // 
+            this.chkAndManifest.AutoSize = true;
+            this.chkAndManifest.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkAndManifest.Location = new System.Drawing.Point(595, 154);
+            this.chkAndManifest.Name = "chkAndManifest";
+            this.chkAndManifest.Size = new System.Drawing.Size(66, 17);
+            this.chkAndManifest.TabIndex = 78;
+            this.chkAndManifest.Text = "Manifest";
+            this.chkAndManifest.UseVisualStyleBackColor = true;
+            this.chkAndManifest.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
+            // 
+            // lblMVCKatmanlar
+            // 
+            this.lblMVCKatmanlar.AutoSize = true;
+            this.lblMVCKatmanlar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblMVCKatmanlar.Location = new System.Drawing.Point(6, 50);
+            this.lblMVCKatmanlar.Name = "lblMVCKatmanlar";
+            this.lblMVCKatmanlar.Size = new System.Drawing.Size(104, 13);
+            this.lblMVCKatmanlar.TabIndex = 5;
+            this.lblMVCKatmanlar.Text = "Web Seçenekleri";
+            // 
+            // lblVTKatman
+            // 
+            this.lblVTKatman.AutoSize = true;
+            this.lblVTKatman.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblVTKatman.Location = new System.Drawing.Point(5, 155);
+            this.lblVTKatman.Name = "lblVTKatman";
+            this.lblVTKatman.Size = new System.Drawing.Size(121, 13);
+            this.lblVTKatman.TabIndex = 5;
+            this.lblVTKatman.Text = "Veritabanı Bilgileri : ";
+            // 
+            // chkAndModel
+            // 
+            this.chkAndModel.AutoSize = true;
+            this.chkAndModel.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkAndModel.Location = new System.Drawing.Point(606, 135);
+            this.chkAndModel.Name = "chkAndModel";
+            this.chkAndModel.Size = new System.Drawing.Size(55, 17);
+            this.chkAndModel.TabIndex = 77;
+            this.chkAndModel.Text = "Model";
+            this.chkAndModel.UseVisualStyleBackColor = true;
+            this.chkAndModel.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
+            // 
+            // chkAndJava
+            // 
+            this.chkAndJava.AutoSize = true;
+            this.chkAndJava.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkAndJava.Location = new System.Drawing.Point(612, 116);
+            this.chkAndJava.Name = "chkAndJava";
+            this.chkAndJava.Size = new System.Drawing.Size(49, 17);
+            this.chkAndJava.TabIndex = 77;
+            this.chkAndJava.Text = "Java";
+            this.chkAndJava.UseVisualStyleBackColor = true;
+            this.chkAndJava.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
+            // 
+            // chkAndLayout
+            // 
+            this.chkAndLayout.AutoSize = true;
+            this.chkAndLayout.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkAndLayout.Location = new System.Drawing.Point(603, 97);
+            this.chkAndLayout.Name = "chkAndLayout";
+            this.chkAndLayout.Size = new System.Drawing.Size(58, 17);
+            this.chkAndLayout.TabIndex = 77;
+            this.chkAndLayout.Text = "Layout";
+            this.chkAndLayout.UseVisualStyleBackColor = true;
+            this.chkAndLayout.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
+            // 
+            // chkAndHepsi
+            // 
+            this.chkAndHepsi.AutoSize = true;
+            this.chkAndHepsi.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkAndHepsi.Checked = true;
+            this.chkAndHepsi.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkAndHepsi.Location = new System.Drawing.Point(608, 77);
+            this.chkAndHepsi.Name = "chkAndHepsi";
+            this.chkAndHepsi.Size = new System.Drawing.Size(53, 17);
+            this.chkAndHepsi.TabIndex = 77;
+            this.chkAndHepsi.Text = "Hepsi";
+            this.chkAndHepsi.UseVisualStyleBackColor = true;
+            this.chkAndHepsi.CheckedChanged += new System.EventHandler(this.chkAndHepsi_CheckedChanged);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Location = new System.Drawing.Point(325, 54);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(5, 160);
+            this.groupBox1.TabIndex = 2;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "groupBox1";
+            // 
+            // grpSplitter1
+            // 
+            this.grpSplitter1.Location = new System.Drawing.Point(667, 55);
+            this.grpSplitter1.Name = "grpSplitter1";
+            this.grpSplitter1.Size = new System.Drawing.Size(5, 160);
+            this.grpSplitter1.TabIndex = 2;
+            this.grpSplitter1.TabStop = false;
+            this.grpSplitter1.Text = "groupBox1";
+            // 
+            // lblWCSifre
+            // 
+            this.lblWCSifre.AutoSize = true;
+            this.lblWCSifre.Location = new System.Drawing.Point(22, 201);
+            this.lblWCSifre.Name = "lblWCSifre";
+            this.lblWCSifre.Size = new System.Drawing.Size(37, 13);
+            this.lblWCSifre.TabIndex = 75;
+            this.lblWCSifre.Text = "Şifre : ";
+            // 
+            // lblWCKullanici
+            // 
+            this.lblWCKullanici.AutoSize = true;
+            this.lblWCKullanici.Location = new System.Drawing.Point(7, 176);
+            this.lblWCKullanici.Name = "lblWCKullanici";
+            this.lblWCKullanici.Size = new System.Drawing.Size(52, 13);
+            this.lblWCKullanici.TabIndex = 74;
+            this.lblWCKullanici.Text = "Kullanıcı :";
+            // 
+            // txtWCSifre
+            // 
+            this.txtWCSifre.Location = new System.Drawing.Point(60, 198);
+            this.txtWCSifre.Name = "txtWCSifre";
+            this.txtWCSifre.Size = new System.Drawing.Size(149, 20);
+            this.txtWCSifre.TabIndex = 73;
+            this.txtWCSifre.Text = "123456";
+            this.txtWCSifre.UseSystemPasswordChar = true;
+            // 
+            // txtWCKullanici
+            // 
+            this.txtWCKullanici.Location = new System.Drawing.Point(60, 173);
+            this.txtWCKullanici.Name = "txtWCKullanici";
+            this.txtWCKullanici.Size = new System.Drawing.Size(149, 20);
+            this.txtWCKullanici.TabIndex = 72;
+            this.txtWCKullanici.Text = "user";
+            // 
+            // chkMVCStilScript
+            // 
+            this.chkMVCStilScript.AutoSize = true;
+            this.chkMVCStilScript.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCStilScript.Location = new System.Drawing.Point(245, 155);
+            this.chkMVCStilScript.Name = "chkMVCStilScript";
+            this.chkMVCStilScript.Size = new System.Drawing.Size(73, 17);
+            this.chkMVCStilScript.TabIndex = 0;
+            this.chkMVCStilScript.Text = "Stil, Script";
+            this.chkMVCStilScript.UseVisualStyleBackColor = true;
+            this.chkMVCStilScript.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
+            // chkMVCWcfServis
+            // 
+            this.chkMVCWcfServis.AutoSize = true;
+            this.chkMVCWcfServis.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCWcfServis.Location = new System.Drawing.Point(240, 197);
+            this.chkMVCWcfServis.Name = "chkMVCWcfServis";
+            this.chkMVCWcfServis.Size = new System.Drawing.Size(78, 17);
+            this.chkMVCWcfServis.TabIndex = 0;
+            this.chkMVCWcfServis.Text = "Wcf Servis";
+            this.chkMVCWcfServis.UseVisualStyleBackColor = true;
+            this.chkMVCWcfServis.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
+            // chkMVCWebConfig
+            // 
+            this.chkMVCWebConfig.AutoSize = true;
+            this.chkMVCWebConfig.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCWebConfig.Location = new System.Drawing.Point(236, 176);
+            this.chkMVCWebConfig.Name = "chkMVCWebConfig";
+            this.chkMVCWebConfig.Size = new System.Drawing.Size(82, 17);
+            this.chkMVCWebConfig.TabIndex = 0;
+            this.chkMVCWebConfig.Text = "Web.Config";
+            this.chkMVCWebConfig.UseVisualStyleBackColor = true;
+            this.chkMVCWebConfig.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
+            // chkMVCStoredProc
+            // 
+            this.chkMVCStoredProc.AutoSize = true;
+            this.chkMVCStoredProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCStoredProc.Location = new System.Drawing.Point(209, 135);
+            this.chkMVCStoredProc.Name = "chkMVCStoredProc";
+            this.chkMVCStoredProc.Size = new System.Drawing.Size(109, 17);
+            this.chkMVCStoredProc.TabIndex = 0;
+            this.chkMVCStoredProc.Text = "Stored Procedure";
+            this.chkMVCStoredProc.UseVisualStyleBackColor = true;
+            this.chkMVCStoredProc.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
+            // chkMVCController
+            // 
+            this.chkMVCController.AutoSize = true;
+            this.chkMVCController.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCController.Location = new System.Drawing.Point(248, 116);
+            this.chkMVCController.Name = "chkMVCController";
+            this.chkMVCController.Size = new System.Drawing.Size(70, 17);
+            this.chkMVCController.TabIndex = 0;
+            this.chkMVCController.Text = "Controller";
+            this.chkMVCController.UseVisualStyleBackColor = true;
+            this.chkMVCController.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
+            // btnAndroidBaslat
+            // 
+            this.btnAndroidBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnAndroidBaslat.Location = new System.Drawing.Point(331, 224);
+            this.btnAndroidBaslat.Name = "btnAndroidBaslat";
+            this.btnAndroidBaslat.Size = new System.Drawing.Size(330, 23);
+            this.btnAndroidBaslat.TabIndex = 27;
+            this.btnAndroidBaslat.Text = "Android Katmanları Oluştur";
+            this.btnAndroidBaslat.UseVisualStyleBackColor = true;
+            this.btnAndroidBaslat.Click += new System.EventHandler(this.btnAndroidBaslat_Click);
+            // 
+            // btnBaslat
+            // 
+            this.btnBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnBaslat.Location = new System.Drawing.Point(8, 224);
+            this.btnBaslat.Name = "btnBaslat";
+            this.btnBaslat.Size = new System.Drawing.Size(310, 23);
+            this.btnBaslat.TabIndex = 27;
+            this.btnBaslat.Text = "Web Katmanları Oluştur";
+            this.btnBaslat.UseVisualStyleBackColor = true;
+            this.btnBaslat.Click += new System.EventHandler(this.btnBaslat_Click);
+            // 
+            // chkMVCView
+            // 
+            this.chkMVCView.AutoSize = true;
+            this.chkMVCView.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCView.Location = new System.Drawing.Point(269, 96);
+            this.chkMVCView.Name = "chkMVCView";
+            this.chkMVCView.Size = new System.Drawing.Size(49, 17);
+            this.chkMVCView.TabIndex = 0;
+            this.chkMVCView.Text = "View";
+            this.chkMVCView.UseVisualStyleBackColor = true;
+            this.chkMVCView.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
+            // chkMVCModel
+            // 
+            this.chkMVCModel.AutoSize = true;
+            this.chkMVCModel.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCModel.Location = new System.Drawing.Point(263, 76);
+            this.chkMVCModel.Name = "chkMVCModel";
+            this.chkMVCModel.Size = new System.Drawing.Size(55, 17);
+            this.chkMVCModel.TabIndex = 0;
+            this.chkMVCModel.Text = "Model";
+            this.chkMVCModel.UseVisualStyleBackColor = true;
+            this.chkMVCModel.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
+            // 
+            // chkMVCHepsi
+            // 
+            this.chkMVCHepsi.AutoSize = true;
+            this.chkMVCHepsi.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkMVCHepsi.Checked = true;
+            this.chkMVCHepsi.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkMVCHepsi.Location = new System.Drawing.Point(265, 55);
+            this.chkMVCHepsi.Name = "chkMVCHepsi";
+            this.chkMVCHepsi.Size = new System.Drawing.Size(53, 17);
+            this.chkMVCHepsi.TabIndex = 0;
+            this.chkMVCHepsi.Text = "Hepsi";
+            this.chkMVCHepsi.UseVisualStyleBackColor = true;
+            this.chkMVCHepsi.CheckedChanged += new System.EventHandler(this.chkMVCHepsi_CheckedChanged);
             // 
             // tabpageVeritabaniOlustur
             // 
@@ -896,567 +1637,6 @@
             this.lblLogGenislemeYuzdesi.TabIndex = 0;
             this.lblLogGenislemeYuzdesi.Text = "Log Genişleme Yüzdesi :";
             // 
-            // tabpageKatmanlariOlustur
-            // 
-            this.tabpageKatmanlariOlustur.Controls.Add(this.grpIslem);
-            this.tabpageKatmanlariOlustur.Location = new System.Drawing.Point(4, 22);
-            this.tabpageKatmanlariOlustur.Name = "tabpageKatmanlariOlustur";
-            this.tabpageKatmanlariOlustur.Padding = new System.Windows.Forms.Padding(3);
-            this.tabpageKatmanlariOlustur.Size = new System.Drawing.Size(1039, 390);
-            this.tabpageKatmanlariOlustur.TabIndex = 1;
-            this.tabpageKatmanlariOlustur.Text = "Katmanları Oluştur";
-            this.tabpageKatmanlariOlustur.UseVisualStyleBackColor = true;
-            // 
-            // grpIslem
-            // 
-            this.grpIslem.Controls.Add(this.pnlKaydet);
-            this.grpIslem.Location = new System.Drawing.Point(14, 15);
-            this.grpIslem.Name = "grpIslem";
-            this.grpIslem.Size = new System.Drawing.Size(1019, 267);
-            this.grpIslem.TabIndex = 45;
-            this.grpIslem.TabStop = false;
-            this.grpIslem.Text = "İşlemler";
-            // 
-            // pnlKaydet
-            // 
-            this.pnlKaydet.Controls.Add(this.chkAngular);
-            this.pnlKaydet.Controls.Add(this.txtProjectName);
-            this.pnlKaydet.Controls.Add(this.pnlAndroidService);
-            this.pnlKaydet.Controls.Add(this.lblProjectName);
-            this.pnlKaydet.Controls.Add(this.chkAndData);
-            this.pnlKaydet.Controls.Add(this.lstAndIzin);
-            this.pnlKaydet.Controls.Add(this.lblAndIzinler);
-            this.pnlKaydet.Controls.Add(this.lblAndroidKatmanlar);
-            this.pnlKaydet.Controls.Add(this.chkAndManifest);
-            this.pnlKaydet.Controls.Add(this.lblMVCKatmanlar);
-            this.pnlKaydet.Controls.Add(this.lblVTKatman);
-            this.pnlKaydet.Controls.Add(this.chkAndModel);
-            this.pnlKaydet.Controls.Add(this.chkAndJava);
-            this.pnlKaydet.Controls.Add(this.chkAndLayout);
-            this.pnlKaydet.Controls.Add(this.chkAndHepsi);
-            this.pnlKaydet.Controls.Add(this.groupBox1);
-            this.pnlKaydet.Controls.Add(this.grpSplitter1);
-            this.pnlKaydet.Controls.Add(this.lblWCSifre);
-            this.pnlKaydet.Controls.Add(this.lblWCKullanici);
-            this.pnlKaydet.Controls.Add(this.txtWCSifre);
-            this.pnlKaydet.Controls.Add(this.txtWCKullanici);
-            this.pnlKaydet.Controls.Add(this.chkMVCStilScript);
-            this.pnlKaydet.Controls.Add(this.chkMVCWcfServis);
-            this.pnlKaydet.Controls.Add(this.chkMVCWebConfig);
-            this.pnlKaydet.Controls.Add(this.chkMVCStoredProc);
-            this.pnlKaydet.Controls.Add(this.chkMVCController);
-            this.pnlKaydet.Controls.Add(this.btnAndroidBaslat);
-            this.pnlKaydet.Controls.Add(this.btnBaslat);
-            this.pnlKaydet.Controls.Add(this.chkMVCView);
-            this.pnlKaydet.Controls.Add(this.chkMVCModel);
-            this.pnlKaydet.Controls.Add(this.chkMVCHepsi);
-            this.pnlKaydet.Enabled = false;
-            this.pnlKaydet.Location = new System.Drawing.Point(0, 12);
-            this.pnlKaydet.Name = "pnlKaydet";
-            this.pnlKaydet.Size = new System.Drawing.Size(1019, 255);
-            this.pnlKaydet.TabIndex = 68;
-            // 
-            // chkAngular
-            // 
-            this.chkAngular.AutoSize = true;
-            this.chkAngular.Location = new System.Drawing.Point(9, 77);
-            this.chkAngular.Name = "chkAngular";
-            this.chkAngular.Size = new System.Drawing.Size(62, 17);
-            this.chkAngular.TabIndex = 88;
-            this.chkAngular.Text = "Angular";
-            this.chkAngular.UseVisualStyleBackColor = true;
-            // 
-            // txtProjectName
-            // 
-            this.txtProjectName.Location = new System.Drawing.Point(83, 5);
-            this.txtProjectName.Name = "txtProjectName";
-            this.txtProjectName.Size = new System.Drawing.Size(930, 20);
-            this.txtProjectName.TabIndex = 69;
-            this.txtProjectName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtProjectName_KeyPress);
-            // 
-            // pnlAndroidService
-            // 
-            this.pnlAndroidService.Controls.Add(this.rdAndWcf);
-            this.pnlAndroidService.Controls.Add(this.rdAndSqlite);
-            this.pnlAndroidService.Location = new System.Drawing.Point(545, 197);
-            this.pnlAndroidService.Name = "pnlAndroidService";
-            this.pnlAndroidService.Size = new System.Drawing.Size(116, 21);
-            this.pnlAndroidService.TabIndex = 87;
-            // 
-            // rdAndWcf
-            // 
-            this.rdAndWcf.AutoSize = true;
-            this.rdAndWcf.Location = new System.Drawing.Point(4, 3);
-            this.rdAndWcf.Name = "rdAndWcf";
-            this.rdAndWcf.Size = new System.Drawing.Size(49, 17);
-            this.rdAndWcf.TabIndex = 83;
-            this.rdAndWcf.Text = "WCF";
-            this.rdAndWcf.UseVisualStyleBackColor = true;
-            this.rdAndWcf.CheckedChanged += new System.EventHandler(this.rdAndData_CheckedChanged);
-            // 
-            // rdAndSqlite
-            // 
-            this.rdAndSqlite.AutoSize = true;
-            this.rdAndSqlite.Location = new System.Drawing.Point(59, 3);
-            this.rdAndSqlite.Name = "rdAndSqlite";
-            this.rdAndSqlite.Size = new System.Drawing.Size(57, 17);
-            this.rdAndSqlite.TabIndex = 82;
-            this.rdAndSqlite.Text = "SQLite";
-            this.rdAndSqlite.UseVisualStyleBackColor = true;
-            this.rdAndSqlite.CheckedChanged += new System.EventHandler(this.rdAndData_CheckedChanged);
-            // 
-            // lblProjectName
-            // 
-            this.lblProjectName.AutoSize = true;
-            this.lblProjectName.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblProjectName.Location = new System.Drawing.Point(7, 8);
-            this.lblProjectName.Name = "lblProjectName";
-            this.lblProjectName.Size = new System.Drawing.Size(70, 13);
-            this.lblProjectName.TabIndex = 13;
-            this.lblProjectName.Text = "Proje İsmi :";
-            // 
-            // chkAndData
-            // 
-            this.chkAndData.AutoSize = true;
-            this.chkAndData.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndData.Location = new System.Drawing.Point(588, 174);
-            this.chkAndData.Name = "chkAndData";
-            this.chkAndData.Size = new System.Drawing.Size(73, 17);
-            this.chkAndData.TabIndex = 81;
-            this.chkAndData.Text = "Veritabanı";
-            this.chkAndData.UseVisualStyleBackColor = true;
-            this.chkAndData.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
-            // 
-            // lstAndIzin
-            // 
-            this.lstAndIzin.FormattingEnabled = true;
-            this.lstAndIzin.Items.AddRange(new object[] {
-            "INTERNET",
-            "ACCESS_NETWORK_STATE",
-            "READ_EXTERNAL_STORAGE",
-            "WRITE_EXTERNAL_STORAGE",
-            "ACCESS_COARSE_LOCATION",
-            "ACCESS_FINE_LOCATION",
-            "VIBRATE",
-            "CAMERA",
-            "READ_SMS",
-            "RECEIVE_SMS",
-            "SEND_SMS",
-            "CALL_PHONE",
-            "ANSWER_PHONE_CALLS",
-            "RECORD_AUDIO",
-            "ACCESS_WIFI_STATE",
-            "BLUETOOTH",
-            "BODY_SENSORS",
-            "CHANGE_CONFIGURATION",
-            "CHANGE_NETWORK_STATE",
-            "CHANGE_WIFI_STATE",
-            "CLEAR_APP_CACHE",
-            "DELETE_CACHE_FILES",
-            "DELETE_PACKAGES",
-            "INSTALL_PACKAGES",
-            "KILL_BACKGROUND_PROCESSES",
-            "READ_CALENDAR",
-            "READ_CONTACTS",
-            "READ_PHONE_NUMBERS",
-            "READ_PHONE_STATE",
-            "REBOOT",
-            "SET_TIME",
-            "SET_TIME_ZONE",
-            "WRITE_CALENDAR",
-            "WRITE_CONTACTS",
-            "ADD_VOICEMAIL.voicemail",
-            "READ_VOICEMAIL.voicemail",
-            "WRITE_VOICEMAIL.voicemail",
-            "SET_ALARM.alarm",
-            "INSTALL_SHORTCUT.launcher",
-            "UNINSTALL_SHORTCUT.launcher",
-            "ACCESS_CHECKIN_PROPERTIES",
-            "ACCESS_LOCATION_EXTRA_COMMANDS",
-            "ACCESS_NOTIFICATION_POLICY",
-            "ACCOUNT_MANAGER",
-            "BATTERY_STATS",
-            "BIND_ACCESSIBILITY_SERVICE",
-            "BIND_APPWIDGET",
-            "BIND_AUTOFILL_SERVICE",
-            "BIND_CARRIER_MESSAGING_SERVICE",
-            "BIND_CARRIER_SERVICES",
-            "BIND_CHOOSER_TARGET_SERVICE",
-            "BIND_CONDITION_PROVIDER_SERVICE",
-            "BIND_DEVICE_ADMIN",
-            "BIND_DREAM_SERVICE",
-            "BIND_INCALL_SERVICE",
-            "BIND_INPUT_METHOD",
-            "BIND_MIDI_DEVICE_SERVICE",
-            "BIND_NFC_SERVICE",
-            "BIND_NOTIFICATION_LISTENER_SERVICE",
-            "BIND_PRINT_SERVICE",
-            "BIND_QUICK_SETTINGS_TILE",
-            "BIND_REMOTEVIEWS",
-            "BIND_SCREENING_SERVICE",
-            "BIND_TELECOM_CONNECTION_SERVICE",
-            "BIND_TEXT_SERVICE",
-            "BIND_TV_INPUT",
-            "BIND_VISUAL_VOICEMAIL_SERVICE",
-            "BIND_VOICE_INTERACTION",
-            "BIND_VPN_SERVICE",
-            "BIND_VR_LISTENER_SERVICE",
-            "BIND_WALLPAPER",
-            "BLUETOOTH_ADMIN",
-            "BLUETOOTH_PRIVILEGED",
-            "BROADCAST_PACKAGE_REMOVED",
-            "BROADCAST_SMS",
-            "BROADCAST_STICKY",
-            "BROADCAST_WAP_PUSH",
-            "CALL_PRIVILEGED",
-            "CAPTURE_AUDIO_OUTPUT",
-            "CAPTURE_SECURE_VIDEO_OUTPUT",
-            "CAPTURE_VIDEO_OUTPUT",
-            "CHANGE_COMPONENT_ENABLED_STATE",
-            "CHANGE_WIFI_MULTICAST_STATE",
-            "CONTROL_LOCATION_UPDATES",
-            "DIAGNOSTIC",
-            "DISABLE_KEYGUARD",
-            "DUMP",
-            "EXPAND_STATUS_BAR",
-            "FACTORY_TEST",
-            "GET_ACCOUNTS",
-            "GET_ACCOUNTS_PRIVILEGED",
-            "GET_PACKAGE_SIZE",
-            "GET_TASKS",
-            "GLOBAL_SEARCH",
-            "INSTALL_LOCATION_PROVIDER",
-            "INSTANT_APP_FOREGROUND_SERVICE",
-            "LOCATION_HARDWARE",
-            "MANAGE_DOCUMENTS",
-            "MANAGE_OWN_CALLS",
-            "MASTER_CLEAR",
-            "MEDIA_CONTENT_CONTROL",
-            "MODIFY_AUDIO_SETTINGS",
-            "MODIFY_PHONE_STATE",
-            "MOUNT_FORMAT_FILESYSTEMS",
-            "MOUNT_UNMOUNT_FILESYSTEMS",
-            "NFC",
-            "PACKAGE_USAGE_STATS",
-            "PERSISTENT_ACTIVITY",
-            "PROCESS_OUTGOING_CALLS",
-            "READ_CALL_LOG",
-            "READ_FRAME_BUFFER",
-            "READ_INPUT_STATE",
-            "READ_LOGS",
-            "READ_SYNC_SETTINGS",
-            "READ_SYNC_STATS",
-            "RECEIVE_BOOT_COMPLETED",
-            "RECEIVE_MMS",
-            "RECEIVE_WAP_PUSH",
-            "REORDER_TASKS",
-            "REQUEST_COMPANION_RUN_IN_BACKGROUND",
-            "REQUEST_COMPANION_USE_DATA_IN_BACKGROUND",
-            "REQUEST_DELETE_PACKAGES",
-            "REQUEST_IGNORE_BATTERY_OPTIMIZATIONS",
-            "REQUEST_INSTALL_PACKAGES",
-            "RESTART_PACKAGES",
-            "SEND_RESPOND_VIA_MESSAGE",
-            "SET_ALWAYS_FINISH",
-            "SET_ANIMATION_SCALE",
-            "SET_DEBUG_APP",
-            "SET_PREFERRED_APPLICATIONS",
-            "SET_PROCESS_LIMIT",
-            "SET_WALLPAPER",
-            "SET_WALLPAPER_HINTS",
-            "SIGNAL_PERSISTENT_PROCESSES",
-            "STATUS_BAR",
-            "SYSTEM_ALERT_WINDOW",
-            "TRANSMIT_IR",
-            "UPDATE_DEVICE_STATS",
-            "USE_FINGERPRINT",
-            "USE_SIP",
-            "WAKE_LOCK",
-            "WRITE_APN_SETTINGS",
-            "WRITE_CALL_LOG",
-            "WRITE_GSERVICES",
-            "WRITE_SECURE_SETTINGS",
-            "WRITE_SETTINGS",
-            "WRITE_SYNC_SETTINGS"});
-            this.lstAndIzin.Location = new System.Drawing.Point(336, 83);
-            this.lstAndIzin.Name = "lstAndIzin";
-            this.lstAndIzin.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.lstAndIzin.Size = new System.Drawing.Size(205, 121);
-            this.lstAndIzin.TabIndex = 79;
-            // 
-            // lblAndIzinler
-            // 
-            this.lblAndIzinler.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblAndIzinler.Location = new System.Drawing.Point(336, 68);
-            this.lblAndIzinler.Name = "lblAndIzinler";
-            this.lblAndIzinler.Size = new System.Drawing.Size(43, 18);
-            this.lblAndIzinler.TabIndex = 80;
-            this.lblAndIzinler.Text = "İzinler :";
-            // 
-            // lblAndroidKatmanlar
-            // 
-            this.lblAndroidKatmanlar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblAndroidKatmanlar.Location = new System.Drawing.Point(336, 50);
-            this.lblAndroidKatmanlar.Name = "lblAndroidKatmanlar";
-            this.lblAndroidKatmanlar.Size = new System.Drawing.Size(127, 18);
-            this.lblAndroidKatmanlar.TabIndex = 69;
-            this.lblAndroidKatmanlar.Text = "Android Seçenekleri";
-            // 
-            // chkAndManifest
-            // 
-            this.chkAndManifest.AutoSize = true;
-            this.chkAndManifest.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndManifest.Location = new System.Drawing.Point(595, 154);
-            this.chkAndManifest.Name = "chkAndManifest";
-            this.chkAndManifest.Size = new System.Drawing.Size(66, 17);
-            this.chkAndManifest.TabIndex = 78;
-            this.chkAndManifest.Text = "Manifest";
-            this.chkAndManifest.UseVisualStyleBackColor = true;
-            this.chkAndManifest.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
-            // 
-            // lblMVCKatmanlar
-            // 
-            this.lblMVCKatmanlar.AutoSize = true;
-            this.lblMVCKatmanlar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblMVCKatmanlar.Location = new System.Drawing.Point(6, 50);
-            this.lblMVCKatmanlar.Name = "lblMVCKatmanlar";
-            this.lblMVCKatmanlar.Size = new System.Drawing.Size(104, 13);
-            this.lblMVCKatmanlar.TabIndex = 5;
-            this.lblMVCKatmanlar.Text = "Web Seçenekleri";
-            // 
-            // lblVTKatman
-            // 
-            this.lblVTKatman.AutoSize = true;
-            this.lblVTKatman.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblVTKatman.Location = new System.Drawing.Point(5, 155);
-            this.lblVTKatman.Name = "lblVTKatman";
-            this.lblVTKatman.Size = new System.Drawing.Size(121, 13);
-            this.lblVTKatman.TabIndex = 5;
-            this.lblVTKatman.Text = "Veritabanı Bilgileri : ";
-            // 
-            // chkAndModel
-            // 
-            this.chkAndModel.AutoSize = true;
-            this.chkAndModel.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndModel.Location = new System.Drawing.Point(606, 135);
-            this.chkAndModel.Name = "chkAndModel";
-            this.chkAndModel.Size = new System.Drawing.Size(55, 17);
-            this.chkAndModel.TabIndex = 77;
-            this.chkAndModel.Text = "Model";
-            this.chkAndModel.UseVisualStyleBackColor = true;
-            this.chkAndModel.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
-            // 
-            // chkAndJava
-            // 
-            this.chkAndJava.AutoSize = true;
-            this.chkAndJava.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndJava.Location = new System.Drawing.Point(612, 116);
-            this.chkAndJava.Name = "chkAndJava";
-            this.chkAndJava.Size = new System.Drawing.Size(49, 17);
-            this.chkAndJava.TabIndex = 77;
-            this.chkAndJava.Text = "Java";
-            this.chkAndJava.UseVisualStyleBackColor = true;
-            this.chkAndJava.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
-            // 
-            // chkAndLayout
-            // 
-            this.chkAndLayout.AutoSize = true;
-            this.chkAndLayout.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndLayout.Location = new System.Drawing.Point(603, 97);
-            this.chkAndLayout.Name = "chkAndLayout";
-            this.chkAndLayout.Size = new System.Drawing.Size(58, 17);
-            this.chkAndLayout.TabIndex = 77;
-            this.chkAndLayout.Text = "Layout";
-            this.chkAndLayout.UseVisualStyleBackColor = true;
-            this.chkAndLayout.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
-            // 
-            // chkAndHepsi
-            // 
-            this.chkAndHepsi.AutoSize = true;
-            this.chkAndHepsi.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndHepsi.Checked = true;
-            this.chkAndHepsi.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAndHepsi.Location = new System.Drawing.Point(608, 77);
-            this.chkAndHepsi.Name = "chkAndHepsi";
-            this.chkAndHepsi.Size = new System.Drawing.Size(53, 17);
-            this.chkAndHepsi.TabIndex = 77;
-            this.chkAndHepsi.Text = "Hepsi";
-            this.chkAndHepsi.UseVisualStyleBackColor = true;
-            this.chkAndHepsi.CheckedChanged += new System.EventHandler(this.chkAndHepsi_CheckedChanged);
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Location = new System.Drawing.Point(325, 54);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(5, 160);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "groupBox1";
-            // 
-            // grpSplitter1
-            // 
-            this.grpSplitter1.Location = new System.Drawing.Point(667, 55);
-            this.grpSplitter1.Name = "grpSplitter1";
-            this.grpSplitter1.Size = new System.Drawing.Size(5, 160);
-            this.grpSplitter1.TabIndex = 2;
-            this.grpSplitter1.TabStop = false;
-            this.grpSplitter1.Text = "groupBox1";
-            // 
-            // lblWCSifre
-            // 
-            this.lblWCSifre.AutoSize = true;
-            this.lblWCSifre.Location = new System.Drawing.Point(22, 201);
-            this.lblWCSifre.Name = "lblWCSifre";
-            this.lblWCSifre.Size = new System.Drawing.Size(37, 13);
-            this.lblWCSifre.TabIndex = 75;
-            this.lblWCSifre.Text = "Şifre : ";
-            // 
-            // lblWCKullanici
-            // 
-            this.lblWCKullanici.AutoSize = true;
-            this.lblWCKullanici.Location = new System.Drawing.Point(7, 176);
-            this.lblWCKullanici.Name = "lblWCKullanici";
-            this.lblWCKullanici.Size = new System.Drawing.Size(52, 13);
-            this.lblWCKullanici.TabIndex = 74;
-            this.lblWCKullanici.Text = "Kullanıcı :";
-            // 
-            // txtWCSifre
-            // 
-            this.txtWCSifre.Location = new System.Drawing.Point(60, 198);
-            this.txtWCSifre.Name = "txtWCSifre";
-            this.txtWCSifre.Size = new System.Drawing.Size(149, 20);
-            this.txtWCSifre.TabIndex = 73;
-            this.txtWCSifre.Text = "123456";
-            this.txtWCSifre.UseSystemPasswordChar = true;
-            // 
-            // txtWCKullanici
-            // 
-            this.txtWCKullanici.Location = new System.Drawing.Point(60, 173);
-            this.txtWCKullanici.Name = "txtWCKullanici";
-            this.txtWCKullanici.Size = new System.Drawing.Size(149, 20);
-            this.txtWCKullanici.TabIndex = 72;
-            this.txtWCKullanici.Text = "user";
-            // 
-            // chkMVCStilScript
-            // 
-            this.chkMVCStilScript.AutoSize = true;
-            this.chkMVCStilScript.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCStilScript.Location = new System.Drawing.Point(245, 155);
-            this.chkMVCStilScript.Name = "chkMVCStilScript";
-            this.chkMVCStilScript.Size = new System.Drawing.Size(73, 17);
-            this.chkMVCStilScript.TabIndex = 0;
-            this.chkMVCStilScript.Text = "Stil, Script";
-            this.chkMVCStilScript.UseVisualStyleBackColor = true;
-            this.chkMVCStilScript.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
-            // 
-            // chkMVCWcfServis
-            // 
-            this.chkMVCWcfServis.AutoSize = true;
-            this.chkMVCWcfServis.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCWcfServis.Location = new System.Drawing.Point(240, 197);
-            this.chkMVCWcfServis.Name = "chkMVCWcfServis";
-            this.chkMVCWcfServis.Size = new System.Drawing.Size(78, 17);
-            this.chkMVCWcfServis.TabIndex = 0;
-            this.chkMVCWcfServis.Text = "Wcf Servis";
-            this.chkMVCWcfServis.UseVisualStyleBackColor = true;
-            this.chkMVCWcfServis.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
-            // 
-            // chkMVCWebConfig
-            // 
-            this.chkMVCWebConfig.AutoSize = true;
-            this.chkMVCWebConfig.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCWebConfig.Location = new System.Drawing.Point(236, 176);
-            this.chkMVCWebConfig.Name = "chkMVCWebConfig";
-            this.chkMVCWebConfig.Size = new System.Drawing.Size(82, 17);
-            this.chkMVCWebConfig.TabIndex = 0;
-            this.chkMVCWebConfig.Text = "Web.Config";
-            this.chkMVCWebConfig.UseVisualStyleBackColor = true;
-            this.chkMVCWebConfig.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
-            // 
-            // chkMVCStoredProc
-            // 
-            this.chkMVCStoredProc.AutoSize = true;
-            this.chkMVCStoredProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCStoredProc.Location = new System.Drawing.Point(209, 135);
-            this.chkMVCStoredProc.Name = "chkMVCStoredProc";
-            this.chkMVCStoredProc.Size = new System.Drawing.Size(109, 17);
-            this.chkMVCStoredProc.TabIndex = 0;
-            this.chkMVCStoredProc.Text = "Stored Procedure";
-            this.chkMVCStoredProc.UseVisualStyleBackColor = true;
-            this.chkMVCStoredProc.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
-            // 
-            // chkMVCController
-            // 
-            this.chkMVCController.AutoSize = true;
-            this.chkMVCController.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCController.Location = new System.Drawing.Point(248, 116);
-            this.chkMVCController.Name = "chkMVCController";
-            this.chkMVCController.Size = new System.Drawing.Size(70, 17);
-            this.chkMVCController.TabIndex = 0;
-            this.chkMVCController.Text = "Controller";
-            this.chkMVCController.UseVisualStyleBackColor = true;
-            this.chkMVCController.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
-            // 
-            // btnAndroidBaslat
-            // 
-            this.btnAndroidBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnAndroidBaslat.Location = new System.Drawing.Point(331, 224);
-            this.btnAndroidBaslat.Name = "btnAndroidBaslat";
-            this.btnAndroidBaslat.Size = new System.Drawing.Size(330, 23);
-            this.btnAndroidBaslat.TabIndex = 27;
-            this.btnAndroidBaslat.Text = "Android Katmanları Oluştur";
-            this.btnAndroidBaslat.UseVisualStyleBackColor = true;
-            this.btnAndroidBaslat.Click += new System.EventHandler(this.btnAndroidBaslat_Click);
-            // 
-            // btnBaslat
-            // 
-            this.btnBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnBaslat.Location = new System.Drawing.Point(8, 224);
-            this.btnBaslat.Name = "btnBaslat";
-            this.btnBaslat.Size = new System.Drawing.Size(310, 23);
-            this.btnBaslat.TabIndex = 27;
-            this.btnBaslat.Text = "Web Katmanları Oluştur";
-            this.btnBaslat.UseVisualStyleBackColor = true;
-            this.btnBaslat.Click += new System.EventHandler(this.btnBaslat_Click);
-            // 
-            // chkMVCView
-            // 
-            this.chkMVCView.AutoSize = true;
-            this.chkMVCView.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCView.Location = new System.Drawing.Point(269, 96);
-            this.chkMVCView.Name = "chkMVCView";
-            this.chkMVCView.Size = new System.Drawing.Size(49, 17);
-            this.chkMVCView.TabIndex = 0;
-            this.chkMVCView.Text = "View";
-            this.chkMVCView.UseVisualStyleBackColor = true;
-            this.chkMVCView.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
-            // 
-            // chkMVCModel
-            // 
-            this.chkMVCModel.AutoSize = true;
-            this.chkMVCModel.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCModel.Location = new System.Drawing.Point(263, 76);
-            this.chkMVCModel.Name = "chkMVCModel";
-            this.chkMVCModel.Size = new System.Drawing.Size(55, 17);
-            this.chkMVCModel.TabIndex = 0;
-            this.chkMVCModel.Text = "Model";
-            this.chkMVCModel.UseVisualStyleBackColor = true;
-            this.chkMVCModel.CheckedChanged += new System.EventHandler(this.chkMVCDiger_CheckedChanged);
-            // 
-            // chkMVCHepsi
-            // 
-            this.chkMVCHepsi.AutoSize = true;
-            this.chkMVCHepsi.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCHepsi.Checked = true;
-            this.chkMVCHepsi.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMVCHepsi.Location = new System.Drawing.Point(265, 55);
-            this.chkMVCHepsi.Name = "chkMVCHepsi";
-            this.chkMVCHepsi.Size = new System.Drawing.Size(53, 17);
-            this.chkMVCHepsi.TabIndex = 0;
-            this.chkMVCHepsi.Text = "Hepsi";
-            this.chkMVCHepsi.UseVisualStyleBackColor = true;
-            this.chkMVCHepsi.CheckedChanged += new System.EventHandler(this.chkMVCHepsi_CheckedChanged);
-            // 
             // btnButunTabloAlanlar
             // 
             this.btnButunTabloAlanlar.Enabled = false;
@@ -1913,6 +2093,12 @@
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TDFactoryForm_FormClosed);
             this.Load += new System.EventHandler(this.TDFactoryForm_Load);
             this.tbconTablar.ResumeLayout(false);
+            this.tabpageKatmanlariOlustur.ResumeLayout(false);
+            this.grpIslem.ResumeLayout(false);
+            this.pnlKaydet.ResumeLayout(false);
+            this.pnlKaydet.PerformLayout();
+            this.pnlAndroidService.ResumeLayout(false);
+            this.pnlAndroidService.PerformLayout();
             this.tabpageVeritabaniOlustur.ResumeLayout(false);
             this.grpTablo.ResumeLayout(false);
             this.grpTablo.PerformLayout();
@@ -1928,12 +2114,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.numLogGenislemeYuzdesi)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDosyaBoyutu)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numDosyaGenislemeYuzdesi)).EndInit();
-            this.tabpageKatmanlariOlustur.ResumeLayout(false);
-            this.grpIslem.ResumeLayout(false);
-            this.pnlKaydet.ResumeLayout(false);
-            this.pnlKaydet.PerformLayout();
-            this.pnlAndroidService.ResumeLayout(false);
-            this.pnlAndroidService.PerformLayout();
             this.grpKolon.ResumeLayout(false);
             this.grpKolon.PerformLayout();
             this.grpBaglanti.ResumeLayout(false);
@@ -2076,5 +2256,21 @@
         private System.Windows.Forms.GroupBox grpBaglanti;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.ListBox lstUrlColumns;
+        private System.Windows.Forms.Button btnUrlColumns;
+        private System.Windows.Forms.TextBox txtUrlColumns;
+        private System.Windows.Forms.Button btnImageColumns;
+        private System.Windows.Forms.Button btnFileColumns;
+        private System.Windows.Forms.TextBox txtImageColumns;
+        private System.Windows.Forms.TextBox txtFileColumns;
+        private System.Windows.Forms.ListBox lstImageColumns;
+        private System.Windows.Forms.ListBox lstFileColumns;
+        private System.Windows.Forms.Label lblImageColumns;
+        private System.Windows.Forms.Label lblDeletedColumns;
+        private System.Windows.Forms.Label lblFileColumns;
+        private System.Windows.Forms.Label lblUrlColumns;
+        private System.Windows.Forms.Button btnDeletedColumns;
+        private System.Windows.Forms.TextBox txtDeletedColumns;
+        private System.Windows.Forms.ListBox lstDeletedColumns;
     }
 }

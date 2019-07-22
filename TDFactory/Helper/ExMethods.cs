@@ -58,8 +58,6 @@ namespace TDFactory.Helper
                 case "None": return "object";
                 default: return "string";
             }
-
-            return tip;
         }
 
         public static List<string> IdentityCheck(this List<string> _list, ListBox _listBox)
@@ -79,20 +77,32 @@ namespace TDFactory.Helper
             return _list;
         }
 
-        public static string ToHyperLinkText(this string _text, bool _toLower = false)
+        public static string[] ToStringList(this ListBox.ObjectCollection _list)
+        {
+            List<string> returnList = new List<string>();
+
+            foreach (string item in _list)
+            {
+                returnList.Add(item);
+            }
+
+            return returnList.ToArray();
+        }
+
+        public static string ToUrl(this string _text, bool _toLower = false)
         {
             if (_toLower == true)
             {
                 _text = _text.ToLower();
             }
 
-            _text = HyperLinkTextReplacer(_text);
+            _text = UrlReplacer(_text);
             _text = _text.MakeSingle("-").Trim('-');
 
             return _text;
         }
 
-        private static string HyperLinkTextReplacer(string _text)
+        private static string UrlReplacer(string _text)
         {
             _text = _text.Replace("&amp;", "");
             _text = _text.Replace("&#304;", "İ");
@@ -187,9 +197,30 @@ namespace TDFactory.Helper
             return _text;
         }
 
-        public static bool In(this string item, string[] arrayList)
+        public static bool In(this string item, string[] arrayList, InType toLower = InType.Nothing)
         {
+            switch (toLower)
+            {
+                case InType.ToLower:
+                    item = item.ToLower();
+                    break;
+                case InType.ToUrl:
+                    item = item.ToUrl();
+                    break;
+                case InType.ToUrlLower:
+                    item = item.ToUrl(true);
+                    break;
+            }
+
             return arrayList.ToList().IndexOf(item) >= 0 ? true : false;
+        }
+
+        public enum InType
+        {
+            Nothing,
+            ToLower,
+            ToUrl,
+            ToUrlLower
         }
     }
 }

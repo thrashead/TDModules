@@ -741,7 +741,7 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                string _table = Table.ToHyperLinkText(true);
+                string _table = Table.ToUrl(true);
 
                 AndKlasorOlustur(_table, true);
 
@@ -1812,7 +1812,7 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                string _table = Table.ToHyperLinkText(true);
+                string _table = Table.ToUrl(true);
                 string PrimaryTableName = "";
                 string foreignColumnId = "";
                 string foreignColumnText = "";
@@ -3499,7 +3499,7 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                string _table = Table.ToHyperLinkText(true);
+                string _table = Table.ToUrl(true);
 
                 List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
 
@@ -4032,7 +4032,7 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                string _table = Table.ToHyperLinkText(true);
+                string _table = Table.ToUrl(true);
 
                 List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
 
@@ -4741,7 +4741,7 @@ namespace TDFactory
 
                     foreach (string table in selectedTables)
                     {
-                        string _table = table.ToHyperLinkText(true);
+                        string _table = table.ToUrl(true);
 
                         yaz.WriteLine("\t\t\t\t\t'src/main/res/layouts/" + _table + "',");
                     }

@@ -148,6 +148,11 @@ namespace TDFactory
                     tableColumnNames = GetTableColumnNames();
                     selectedTables = GetSelectedTableNames(tableColumnNames);
 
+                    UrlColumns = lstUrlColumns.Items.ToStringList();
+                    DeletedColumns = lstDeletedColumns.Items.ToStringList();
+                    FileColumns = lstFileColumns.Items.ToStringList();
+                    ImageColumns = lstImageColumns.Items.ToStringList();
+
                     if (chkAngular.Checked)
                     {
                         CreateAngular();

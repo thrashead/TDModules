@@ -33,6 +33,12 @@ namespace TDFactory
         List<string> selectedTables;
         List<string> ckEditors;
 
+        string[] UrlColumns;
+        string[] DeletedColumns;
+        string[] FileColumns;
+        string[] ImageColumns;
+
+
         int tableindex, columnindex, selectedtableindex;
         bool tableselected = false, columnselected = false;
         string DBName = "";
