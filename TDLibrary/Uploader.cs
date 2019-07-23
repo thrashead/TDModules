@@ -40,7 +40,7 @@ namespace TDLibrary
             }
         }
 
-        public static Uploader UploadPicture(string uploadPath = null, bool createThumb = true, long maxSize = 0)
+        public static Uploader UploadPicture(bool addGuid = true, string uploadPath = null, bool createThumb = true, long maxSize = 0)
         {
             Uploader uploader = new Uploader();
             uploader.Control = false;
@@ -60,9 +60,10 @@ namespace TDLibrary
                     {
                         if (file.ContentLength >= 0 && file.ContentLength < maxSize)
                         {
-                            string guid = Guider.GetGuid(5);
                             var fileName = Path.GetFileName(file.FileName);
-                            fileName = fileName.Split('.')[0] + "_" + guid + "." + fileName.Split('.')[1];
+
+                            if (addGuid)
+                                fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
 
                             var path = Path.Combine(uploadPath, fileName);
                             file.SaveAs(path);
@@ -110,7 +111,7 @@ namespace TDLibrary
             return uploader;
         }
 
-        public static List<Uploader> UploadPictures(string uploadPath = null, bool createThumb = true, long maxSize = 0)
+        public static List<Uploader> UploadPictures(bool addGuid = true, string uploadPath = null, bool createThumb = true, long maxSize = 0)
         {
             List<Uploader> uploaderList = new List<Uploader>();
             Uploader uploader;
@@ -134,7 +135,10 @@ namespace TDLibrary
                             if (file.ContentLength >= 0 && file.ContentLength < maxSize)
                             {
                                 var fileName = Path.GetFileName(file.FileName);
-                                fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
+
+                                if (addGuid)
+                                    fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
+
                                 var path = Path.Combine(uploadPath, fileName);
                                 file.SaveAs(path);
 
@@ -189,7 +193,7 @@ namespace TDLibrary
             return uploaderList;
         }
 
-        public static List<Uploader> UploadGallery(string galleryName, string uploadPath = null, bool createThumb = true, long maxSize = 0)
+        public static List<Uploader> UploadGallery(string galleryName, bool addGuid = true, string uploadPath = null, bool createThumb = true, long maxSize = 0)
         {
             List<Uploader> uploaderList = new List<Uploader>();
             Uploader uploader;
@@ -213,7 +217,10 @@ namespace TDLibrary
                             if (file.ContentLength >= 0 && file.ContentLength < maxSize)
                             {
                                 var fileName = Path.GetFileName(file.FileName);
-                                fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
+
+                                if (addGuid)
+                                    fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
+
                                 var path = Path.Combine(uploadPath, galleryName + "/" + fileName);
                                 file.SaveAs(path);
 
@@ -268,7 +275,7 @@ namespace TDLibrary
             return uploaderList;
         }
 
-        public static Uploader UploadFile(string uploadPath = null, long maxSize = 0)
+        public static Uploader UploadFile(bool addGuid = true, string uploadPath = null, long maxSize = 0)
         {
             Uploader uploader = new Uploader();
             uploader.Control = false;
@@ -286,9 +293,11 @@ namespace TDLibrary
                     {
                         if (file.ContentLength >= 0 && file.ContentLength < maxSize)
                         {
-                            string guid = Guider.GetGuid(5);
                             var fileName = Path.GetFileName(file.FileName);
-                            fileName = fileName.Split('.')[0] + "_" + guid + "." + fileName.Split('.')[1];
+
+                            if (addGuid)
+                                fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
+
                             var path = Path.Combine(uploadPath, fileName);
                             file.SaveAs(path);
 
@@ -329,7 +338,7 @@ namespace TDLibrary
             return uploader;
         }
 
-        public static List<Uploader> UploadFiles(string uploadPath = null, long maxSize = 0)
+        public static List<Uploader> UploadFiles(bool addGuid = true, string uploadPath = null, long maxSize = 0)
         {
             List<Uploader> uploaderList = new List<Uploader>();
             Uploader uploader;
@@ -353,7 +362,10 @@ namespace TDLibrary
                             if (file.ContentLength >= 0 && file.ContentLength < maxSize)
                             {
                                 var fileName = Path.GetFileName(file.FileName);
-                                fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
+
+                                if (addGuid)
+                                    fileName = fileName.Split('.')[0] + "_" + Guider.GetGuid(5) + "." + fileName.Split('.')[1];
+
                                 var path = Path.Combine(uploadPath, fileName);
                                 file.SaveAs(path);
 
