@@ -637,7 +637,7 @@ namespace TDLibrary
                     {
                         if (item.PropertyType != itemT.PropertyType)
                         {
-                            return  false;
+                            return false;
                         }
                         else
                         {

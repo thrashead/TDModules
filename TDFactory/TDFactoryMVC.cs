@@ -29,6 +29,7 @@ namespace TDFactory
                 CreateWebConfig();
                 CreateWcfService();
                 CreateStylelScript();
+                CreateDllFiles();
 
                 CreateStoredProcedure();
             }
@@ -86,6 +87,11 @@ namespace TDFactory
             {
                 if (chkMVCHepsi.Checked)
                 {
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\bin"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\bin");
+                    }
+
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\App_Start"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\App_Start");
@@ -1783,7 +1789,7 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
                                 string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
                                 yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
                                 yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
@@ -1888,7 +1894,7 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
                                 string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
                                 yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
                                 yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
@@ -1916,7 +1922,7 @@ namespace TDFactory
                                 foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
                                     string PrimaryTableName = fkc.PrimaryTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
                                     yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
                                     yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
@@ -2058,7 +2064,7 @@ namespace TDFactory
                                 foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
                                     string PrimaryTableName = fkc.PrimaryTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
                                     yaz.WriteLine("\t\t\tList<" + PrimaryTableName + "> table" + PrimaryTableName + " = entity." + PrimaryTableName + ".ToList();");
                                     yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
@@ -2472,6 +2478,7 @@ namespace TDFactory
                 CreateWcfService();
                 CreateWebConfig();
                 CreateStylelScript();
+                CreateDllFiles();
 
                 CreateStoredProcedure();
             }
@@ -2602,6 +2609,11 @@ namespace TDFactory
             {
                 if (chkMVCHepsi.Checked)
                 {
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\bin"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\bin");
+                    }
+
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\App_Start"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\App_Start");
@@ -3903,8 +3915,8 @@ namespace TDFactory
                     }
 
                     yaz.WriteLine("const routes: Routes = [");
-                    yaz.WriteLine("\t{ path: 'Admin', component: AdminLoginComponent },");
-                    yaz.WriteLine("\t{ path: 'Admin/Login', component: AdminLoginComponent },");
+                    yaz.WriteLine("\t{ path: 'Admin', component: AdminLoginComponent, runGuardsAndResolvers: 'always' },");
+                    yaz.WriteLine("\t{ path: 'Admin/Login', component: AdminLoginComponent, runGuardsAndResolvers: 'always' },");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t{");
                     yaz.WriteLine("\t\tpath: '',");
@@ -3912,7 +3924,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\tchildren: [");
                     yaz.WriteLine("\t\t\t//{ path: '', redirectTo: 'Home', pathMatch: 'full' },");
                     yaz.WriteLine("\t\t\t{ path: '', component: HomeComponent, pathMatch: 'full' },");
-                    yaz.WriteLine("\t\t]");
+                    yaz.WriteLine("\t\t], runGuardsAndResolvers: 'always'");
                     yaz.WriteLine("\t},");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t{");
@@ -3930,14 +3942,14 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Duzenle/:id', component: Admin" + Table + "DuzenleComponent },");
                     }
 
-                    yaz.WriteLine("\t\t]");
+                    yaz.WriteLine("\t\t], runGuardsAndResolvers: 'always'");
                     yaz.WriteLine("\t},");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t{ path: '**', redirectTo: '' }");
+                    yaz.WriteLine("\t{ path: '**', redirectTo: '', runGuardsAndResolvers: 'always' }");
                     yaz.WriteLine("];");
                     yaz.WriteLine("");
                     yaz.WriteLine("@NgModule({");
-                    yaz.WriteLine("\timports: [RouterModule.forRoot(routes)],");
+                    yaz.WriteLine("\timports: [RouterModule.forRoot(routes, { onSameUrlNavigation: 'reload' })],");
                     yaz.WriteLine("\texports: [RouterModule]");
                     yaz.WriteLine("})");
                     yaz.WriteLine("export class AppRoutingModule { }");
@@ -4889,7 +4901,7 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
                                 string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
                                 yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
                                 yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
@@ -4941,7 +4953,7 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
                                 string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
                                 yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
                                 yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\");");
@@ -5014,7 +5026,7 @@ namespace TDFactory
                                 foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
                                     string PrimaryTableName = fkc.PrimaryTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
                                     yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
                                     yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
@@ -5115,7 +5127,7 @@ namespace TDFactory
                                 foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
                                     string PrimaryTableName = fkc.PrimaryTableName;
-                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
                                     yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
                                     yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
@@ -5487,7 +5499,7 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        yaz.WriteLine("import { Component } from \"@angular/core\";");
+                        yaz.WriteLine("import { Component, OnDestroy, OnInit } from \"@angular/core\";");
                         yaz.WriteLine("import { Subscription } from \"rxjs\";");
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
                         yaz.WriteLine("import { " + Table + "Service } from \"../../services/" + Table.ToUrl(true) + "\";");
@@ -5497,7 +5509,7 @@ namespace TDFactory
                         yaz.WriteLine("\ttemplateUrl: './index.html'");
                         yaz.WriteLine("})");
                         yaz.WriteLine("");
-                        yaz.WriteLine("export class Admin" + Table + "IndexComponent {");
+                        yaz.WriteLine("export class Admin" + Table + "IndexComponent implements OnInit, OnDestroy {");
                         yaz.WriteLine("\terrorMsg: string;");
                         yaz.WriteLine("\t" + Table + "List: any;");
                         yaz.WriteLine("");
@@ -5594,8 +5606,7 @@ namespace TDFactory
                         yaz.WriteLine("\tonCopy(id) {");
                         yaz.WriteLine("\t\tthis.subscription = this.service.getKopyala(id).subscribe((resData) => {");
                         yaz.WriteLine("\t\t\tif (resData == true) {");
-                        yaz.WriteLine("\t\t\t\tlet currentUrl = this.router.url;");
-                        yaz.WriteLine("\t\t\t\tthis.router.navigate(['/'], { skipLocationChange: true }).then(() => { this.router.navigate([currentUrl]) });");
+                        yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                         yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                         yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
@@ -5605,8 +5616,7 @@ namespace TDFactory
                         yaz.WriteLine("\tonDelete(id) {");
                         yaz.WriteLine("\t\tthis.subscription = this.service.getSil(id).subscribe((resData) => {");
                         yaz.WriteLine("\t\t\tif (resData == true) {");
-                        yaz.WriteLine("\t\t\t\tlet currentUrl = this.router.url;");
-                        yaz.WriteLine("\t\t\t\tthis.router.navigate(['/'], { skipLocationChange: true }).then(() => { this.router.navigate([currentUrl]) });");
+                        yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                         yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                         yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
@@ -5618,8 +5628,7 @@ namespace TDFactory
                             yaz.WriteLine("\tonRemove(id) {");
                             yaz.WriteLine("\t\tthis.subscription = this.service.getKaldir(id).subscribe((resData) => {");
                             yaz.WriteLine("\t\t\tif (resData == true) {");
-                            yaz.WriteLine("\t\t\t\tlet currentUrl = this.router.url;");
-                            yaz.WriteLine("\t\t\t\tthis.router.navigate(['/'], { skipLocationChange: true }).then(() => { this.router.navigate([currentUrl]) });");
+                            yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                             yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
@@ -6279,8 +6288,7 @@ namespace TDFactory
                                     yaz.WriteLine("\ton" + ForeignTableName + "Copy(id) {");
                                     yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getKopyala(id).subscribe((resData) => {");
                                     yaz.WriteLine("\t\t\tif (resData == true) {");
-                                    yaz.WriteLine("\t\t\t\tlet currentUrl = this.router.url;");
-                                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/'], { skipLocationChange: true }).then(() => { this.router.navigate([currentUrl]) });");
+                                    yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                                     yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
@@ -6290,8 +6298,7 @@ namespace TDFactory
                                     yaz.WriteLine("\ton" + ForeignTableName + "Delete(id) {");
                                     yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getSil(id).subscribe((resData) => {");
                                     yaz.WriteLine("\t\t\tif (resData == true) {");
-                                    yaz.WriteLine("\t\t\t\tlet currentUrl = this.router.url;");
-                                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/'], { skipLocationChange: true }).then(() => { this.router.navigate([currentUrl]) });");
+                                    yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                                     yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
@@ -6303,8 +6310,7 @@ namespace TDFactory
                                         yaz.WriteLine("\ton" + ForeignTableName + "Remove(id) {");
                                         yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getKaldir(id).subscribe((resData) => {");
                                         yaz.WriteLine("\t\t\tif (resData == true) {");
-                                        yaz.WriteLine("\t\t\t\tlet currentUrl = this.router.url;");
-                                        yaz.WriteLine("\t\t\t\tthis.router.navigate(['/'], { skipLocationChange: true }).then(() => { this.router.navigate([currentUrl]) });");
+                                        yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                                         yaz.WriteLine("\t\t\t}");
                                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                                         yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
@@ -8504,6 +8510,11 @@ namespace TDFactory
             CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_ckeditor_ckeditor_js_map), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\ckeditor.js.map");
             CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_ckeditor_translations_en_au_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations\\en-au.js");
             CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_admin_js_ckeditor_translations_tr_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations\\tr.js");
+        }
+
+        void CreateDllFiles()
+        {
+            CopyFromResource(Properties.Resources.Shared_bin_TDLibrary_dll, PathAddress + "\\" + projectFolder + "\\bin\\TDLibrary.dll");
         }
 
         void CopyFromResource(byte[] resourceFile, string destFile)

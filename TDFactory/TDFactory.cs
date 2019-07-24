@@ -249,7 +249,7 @@ namespace TDFactory
                 bool nullable = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsNullable == "YES" ? true : false;
                 bool identity = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsIdentity == "YES" ? true : false;
                 bool primarykey = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsPrimaryKey == "YES" ? true : false;
-                tableColumnNames.Add(new TableColumnNames() { TableName = item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""), ColumnName = item.ToString().Split(' ')[0], TypeName = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().DataType.ReturnType(), IsNullable = nullable, CharLength = charlength, IsIdentity = identity, IsPrimaryKey = primarykey });
+                tableColumnNames.Add(new TableColumnNames() { TableName = item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""), ColumnName = item.ToString().Split(' ')[0], TypeName = SqlTypes.ReturnType(columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().DataType), IsNullable = nullable, CharLength = charlength, IsIdentity = identity, IsPrimaryKey = primarykey });
             }
 
             return tableColumnNames;
@@ -270,7 +270,7 @@ namespace TDFactory
             return returnList;
         }
 
-        private string GetColumnText(List<TableColumnNames> columns)
+        private string GetColumnText(List<TableColumnNames> columns, bool toString = true)
         {
             string columnText = "";
 
@@ -286,15 +286,17 @@ namespace TDFactory
                 }
             }
 
+            string tostring = toString ? ".ToString()" : "";
+
             if (columnText == "")
             {
                 if (columns.Count > 1)
                 {
-                    columnText = columns[1].ColumnName + ".ToString()";
+                    columnText = columns[1].ColumnName + tostring;
                 }
                 else
                 {
-                    columnText = columns[0].ColumnName + ".ToString()";
+                    columnText = columns[0].ColumnName + tostring;
                 }
             }
 

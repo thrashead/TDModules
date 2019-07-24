@@ -241,7 +241,7 @@ namespace TDFactory
                 Tekrar:
                 foreach (object item in lstKolonlar.Items)
                 {
-                    if (lstSeciliKolonlar.Items.Contains(item.ToString().TabloluKolon(lstSeciliTablolar.SelectedItem.ToString())))
+                    if (lstSeciliKolonlar.Items.Contains(item.ToString().ColumnWithTable(lstSeciliTablolar.SelectedItem.ToString())))
                     {
                         lstKolonlar.Items.Remove(item);
                         goto Tekrar;
@@ -304,7 +304,7 @@ namespace TDFactory
             {
                 selectedcolumn = selectedcolumn ?? lstSeciliKolonlar.SelectedItem.ToString();
 
-                lstSeciliTablolar.SelectedIndex = lstSeciliTablolar.Items.IndexOf(selectedcolumn.TabloAdi());
+                lstSeciliTablolar.SelectedIndex = lstSeciliTablolar.Items.IndexOf(selectedcolumn.TableName());
             }
         }
 
@@ -462,7 +462,7 @@ namespace TDFactory
             {
                 if (lstKolonlar.SelectedIndex >= 0)
                 {
-                    lstSeciliKolonlar.Items.Add(lstKolonlar.SelectedItem.ToString().TabloluKolon(lstSeciliTablolar.SelectedItem.ToString()));
+                    lstSeciliKolonlar.Items.Add(lstKolonlar.SelectedItem.ToString().ColumnWithTable(lstSeciliTablolar.SelectedItem.ToString()));
                     lstKolonlar.Items.Remove(lstKolonlar.SelectedItem);
 
                     lstSeciliKolonlar.Enabled = true;
@@ -488,7 +488,7 @@ namespace TDFactory
             {
                 foreach (object item in lstKolonlar.Items)
                 {
-                    lstSeciliKolonlar.Items.Add(item.ToString().TabloluKolon(lstSeciliTablolar.SelectedItem.ToString()));
+                    lstSeciliKolonlar.Items.Add(item.ToString().ColumnWithTable(lstSeciliTablolar.SelectedItem.ToString()));
                 }
 
                 lstKolonlar.Items.Clear();
@@ -629,7 +629,7 @@ namespace TDFactory
                 foreach (ColumnInfo item2 in columnNames)
                 {
                     lstKolonlar.Items.Add(item2.ColumnName);
-                    lstSeciliKolonlar.Items.Add(item2.ColumnName.TabloluKolon(item.ToString()));
+                    lstSeciliKolonlar.Items.Add(item2.ColumnName.ColumnWithTable(item.ToString()));
                 }
             }
 

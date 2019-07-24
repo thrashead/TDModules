@@ -254,16 +254,16 @@ namespace TDFactory
 
         private void btnVTKolonSil_Click(object sender, EventArgs e)
         {
-            if (Relations.Where(a => a.ForeignColumn == lstVTKolonlar.SelectedItem.ToString().KolonAdi()).ToList().Count > 0)
+            if (Relations.Where(a => a.ForeignColumn == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList().Count > 0)
             {
-                Relations.Remove(Relations.Where(a => a.ForeignColumn == lstVTKolonlar.SelectedItem.ToString().KolonAdi()).FirstOrDefault());
+                Relations.Remove(Relations.Where(a => a.ForeignColumn == lstVTKolonlar.SelectedItem.ToString().ColumnName()).FirstOrDefault());
             }
 
             if (lstVTKolonlar.SelectedIndex >= 0)
             {
-                if (tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().KolonAdi()).ToList().Count > 0)
+                if (tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList().Count > 0)
                 {
-                    tempColumnNames.Remove(tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().KolonAdi()).ToList().FirstOrDefault());
+                    tempColumnNames.Remove(tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList().FirstOrDefault());
                 }
 
                 lstVTKolonlar.Items.RemoveAt(lstVTKolonlar.SelectedIndex);
@@ -341,7 +341,7 @@ namespace TDFactory
                     _cre.TableName = txtVTTabloAdi.Text;
                 }
 
-                List<ColumnInfo> collst = tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().KolonAdi()).ToList();
+                List<ColumnInfo> collst = tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList();
 
                 if (collst.Count > 0)
                 {
@@ -360,10 +360,10 @@ namespace TDFactory
                     _cre.ForeignInfo.SeedValue = numVTArtisMiktari.Value.ToString();
                     _cre.ForeignInfo.TableName = cmbVTTabloAdi.Text;
                     _cre.ForeignInfo.OrdinalPosition = lstVTKolonlar.SelectedIndex.ToString();
-                    _cre.ForeignInfo.ColumnName = lstVTKolonlar.SelectedItem.ToString().KolonAdi();
+                    _cre.ForeignInfo.ColumnName = lstVTKolonlar.SelectedItem.ToString().ColumnName();
                 }
 
-                _cre.ColumnName = lstVTKolonlar.SelectedItem.ToString().KolonAdi();
+                _cre.ColumnName = lstVTKolonlar.SelectedItem.ToString().ColumnName();
                 _cre.ConnectionInfo = new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text, Server = txtSunucu.Text };
 
                 _cre.ShowDialog();
