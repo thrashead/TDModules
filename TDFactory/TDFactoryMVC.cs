@@ -6593,7 +6593,6 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Collections.Generic;");
                         yaz.WriteLine("using System.Runtime.Serialization;");
                         yaz.WriteLine("using System.ServiceModel;");
@@ -6605,34 +6604,34 @@ namespace TDFactory
                         yaz.WriteLine("\tpublic interface I" + Table + "Service");
                         yaz.WriteLine("\t{");
                         yaz.WriteLine("\t\t[OperationContract]");
-                        yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Select/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                        yaz.WriteLine("\t\tList<" + Table + "Data> Select(int? top);");
+                        yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Select/?top={top}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                        yaz.WriteLine("\t\tList<" + Table + "Data> Select(string top);");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t[OperationContract]");
-                        yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                        yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                         yaz.WriteLine("\t\tbool Insert(" + Table + "Data table);");
 
                         if (identityColumns.Count > 0)
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t[OperationContract]");
-                            yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tbool Update(" + Table + "Data table);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t[OperationContract]");
-                            yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Copy/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                            yaz.WriteLine("\t\tbool Copy(int? id);");
+                            yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Copy/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\tbool Copy(string id);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t[OperationContract]");
-                            yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Delete/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                            yaz.WriteLine("\t\tbool Delete(int? id);");
+                            yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Delete/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\tbool Delete(string id);");
 
                             if (deleted)
                             {
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t[OperationContract]");
-                                yaz.WriteLine("\t\t[WebInvoke(UriTemplate = \"/Remove/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                                yaz.WriteLine("\t\tbool Remove(int? id);");
+                                yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Remove/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                                yaz.WriteLine("\t\tbool Remove(string id);");
                             }
                         }
 
@@ -6753,13 +6752,16 @@ namespace TDFactory
 
                         //Select
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\tpublic List<" + Table + "Data> Select(int? top)");
+                        yaz.WriteLine("\t\tpublic List<" + Table + "Data> Select(string top)");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\tList<" + Table + "Data> table;");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (top > 0)");
+                        yaz.WriteLine("\t\t\tint _top;");
+                        yaz.WriteLine("\t\t\tbool con = int.TryParse(top, out _top);");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tif (con)");
                         yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\ttable = entity.usp_" + Table + "SelectTop(null, (int)top).ToList().ChangeModelList<" + Table + "Data, usp_" + Table + "SelectTop_Result>();");
+                        yaz.WriteLine("\t\t\t\ttable = entity.usp_" + Table + "SelectTop(null, _top).ToList().ChangeModelList<" + Table + "Data, usp_" + Table + "SelectTop_Result>();");
                         yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t\telse");
                         yaz.WriteLine("\t\t\t{");
@@ -6807,52 +6809,56 @@ namespace TDFactory
                             yaz.WriteLine("");
 
                             //Copy
-                            yaz.WriteLine("\t\tpublic bool Copy(int? id)");
+                            yaz.WriteLine("\t\tpublic bool Copy(string id)");
                             yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\ttry");
+                            yaz.WriteLine("\t\t\tint _id;");
+                            yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (con)");
                             yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Copy(id);");
+                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Copy(_id);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\treturn true;");
                             yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\tcatch");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn false;");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
                             //Delete
-                            yaz.WriteLine("\t\tpublic bool Delete(int? id)");
+                            yaz.WriteLine("\t\tpublic bool Delete(string id)");
                             yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\ttry");
+                            yaz.WriteLine("\t\t\tint _id;");
+                            yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (con)");
                             yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
+                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(_id);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\treturn true;");
                             yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\tcatch");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn false;");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
 
                             if (deleted)
                             {
                                 //Remove
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic bool Remove(int? id)");
+                                yaz.WriteLine("\t\tpublic bool Remove(string id)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\tint _id;");
+                                yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (con)");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Remove(id);");
+                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Remove(_id);");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\t\treturn true;");
                                 yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("\t\t\tcatch");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\treturn false;");
-                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn false;");
                                 yaz.WriteLine("\t\t}");
                             }
                         }
