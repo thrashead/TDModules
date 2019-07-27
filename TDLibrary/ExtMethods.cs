@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
@@ -709,6 +710,78 @@ namespace TDLibrary
         public static bool GenericCompare<T>(this T x, T y) where T : class
         {
             return x == y;
+        }
+
+        #endregion
+
+        #region ToSelectList - Gönderilen jenerik listeyi seçilebilen dropdown türü nesneye çevirir.
+
+        public static List<TDListItem> ToSelectList<T>(this List<T> itemList, string value, string text, int? selectedItem = null, bool addEmpty = false, string emptyText = "-", string emptyValue = "0")
+        {
+            List<TDListItem> list = new List<TDListItem>();
+
+            if (addEmpty)
+            {
+                list.Add(new TDListItem()
+                {
+                    Text = emptyText,
+                    Value = emptyValue
+                });
+            }
+
+            foreach (var item in itemList)
+            {
+                string _value = item.GetType().GetProperties().Where(a => a.Name == value).FirstOrDefault().GetValue(item, null).ToString();
+                string _text = item.GetType().GetProperties().Where(a => a.Name == text).FirstOrDefault().GetValue(item, null).ToString();
+
+                if (selectedItem != null)
+                {
+                    if (_value == selectedItem.ToString())
+                        list.Add(new TDListItem() { Value = _value.ToString(), Text = _text, Selected = true });
+                    else
+                        list.Add(new TDListItem() { Value = _value.ToString(), Text = _text });
+                }
+                else
+                {
+                    list.Add(new TDListItem() { Value = _value.ToString(), Text = _text });
+                }
+            }
+
+            return list;
+        }
+
+        public static List<T2> ToSelectList<T, T2>(this List<T> itemList, string value, string text, int? selectedItem = null, bool addEmpty = false, string emptyText = "-", string emptyValue = "0")
+        {
+            List<TDListItem> list = new List<TDListItem>();
+
+            if (addEmpty)
+            {
+                list.Add(new TDListItem()
+                {
+                    Text = emptyText,
+                    Value = emptyValue
+                });
+            }
+
+            foreach (var item in itemList)
+            {
+                string _value = item.GetType().GetProperties().Where(a => a.Name == value).FirstOrDefault().GetValue(item, null).ToString();
+                string _text = item.GetType().GetProperties().Where(a => a.Name == text).FirstOrDefault().GetValue(item, null).ToString();
+
+                if (selectedItem != null)
+                {
+                    if (_value == selectedItem.ToString())
+                        list.Add(new TDListItem() { Value = _value.ToString(), Text = _text, Selected = true });
+                    else
+                        list.Add(new TDListItem() { Value = _value.ToString(), Text = _text });
+                }
+                else
+                {
+                    list.Add(new TDListItem() { Value = _value.ToString(), Text = _text });
+                }
+            }
+
+            return list.ChangeModelList<T2, TDListItem>();
         }
 
         #endregion
