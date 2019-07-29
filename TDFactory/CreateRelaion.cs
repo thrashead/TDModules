@@ -50,7 +50,7 @@ namespace TDFactory
 
                 foreach (string item in temptablenames.Where(a => a != TableName).ToList())
                 {
-                    List<ColumnInfo> tempcolinfolist = Helper.Helper.ColumnNames(ConnectionInfo, item.ToString()).Where(a => a.DataType == foreignColumn.DataType && a.IsPrimaryKey == "YES").ToList();
+                    List<ColumnInfo> tempcolinfolist = Helper.Helper.GetColumnsInfo(ConnectionInfo, item.ToString()).Where(a => a.DataType == foreignColumn.DataType && a.IsPrimaryKey).ToList();
 
                     if (tempcolinfolist.Count > 0)
                     {
@@ -76,7 +76,7 @@ namespace TDFactory
         {
             if (comboBox1.SelectedIndex >= 0)
             {
-                primaryColumns = Helper.Helper.ColumnNames(ConnectionInfo, comboBox1.Text).Where(a => a.DataType == foreignColumn.DataType && a.IsPrimaryKey == "YES").ToList();
+                primaryColumns = Helper.Helper.GetColumnsInfo(ConnectionInfo, comboBox1.Text).Where(a => a.DataType == foreignColumn.DataType && a.IsPrimaryKey).ToList();
 
                 textBox3.Text = TableName + "_" + comboBox1.Text;
 
@@ -108,7 +108,7 @@ namespace TDFactory
         {
             if (comboBox1.SelectedIndex >= 0 && comboBox2.SelectedIndex >= 0)
             {
-                if (primaryColumn.IsPrimaryKey == "YES")
+                if (primaryColumn.IsPrimaryKey)
                 {
                     if (TDFactory.Relations.Where(a => a.RelationName == "FK_" + textBox3.Text).ToList().Count <= 0)
                     {

@@ -12,6 +12,7 @@ namespace TDFactory
     {
         #region Katman
 
+        //Web
         private void btnVeriTabaniGetir_Click(object sender, EventArgs e)
         {
             cmbVeritabani.DataSource = null;
@@ -145,8 +146,8 @@ namespace TDFactory
 
                 if (!String.IsNullOrEmpty(DBName))
                 {
-                    tableColumnNames = GetTableColumnNames();
-                    selectedTables = GetSelectedTableNames(tableColumnNames);
+                    tableColumnInfos = GetTableColumnInfos();
+                    selectedTables = GetSelectedTableNames(tableColumnInfos);
 
                     UrlColumns = lstUrlColumns.Items.ToStringList();
                     DeletedColumns = lstDeletedColumns.Items.ToStringList();
@@ -226,14 +227,14 @@ namespace TDFactory
             {
                 if (chkWindowsAuthentication.Checked == true)
                 {
-                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, lstSeciliTablolar.Text);
+                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, lstSeciliTablolar.Text);
                 }
                 else
                 {
-                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, lstSeciliTablolar.Text);
+                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, lstSeciliTablolar.Text);
                 }
 
-                foreach (ColumnInfo item in columnNames)
+                foreach (ColumnInfo item in columnInfos)
                 {
                     lstKolonlar.Items.Add(item.ColumnName);
                 }
@@ -265,37 +266,6 @@ namespace TDFactory
                 btnKolonEkle.Enabled = false;
                 btnKolonlarEkle.Enabled = false;
             }
-        }
-
-        private void lstKolonlar_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (lstKolonlar.SelectedIndex == columnindex && columnselected == true)
-            {
-                lstKolonlar.SelectedIndex = -1;
-            }
-            else
-            {
-                ColumnInfo columnInfo = columnNames.Where(a => a.ColumnName == lstKolonlar.Text).FirstOrDefault();
-
-                if (columnInfo != null)
-                {
-                    lblKolonAdi.Text = columnInfo.ColumnName == "" ? "-" : columnInfo.ColumnName;
-                    lblKolonAdi.Text = columnInfo.IsPrimaryKey == "" ? lblKolonAdi.Text : lblKolonAdi.Text + " (" + columnInfo.IsPrimaryKey + ")";
-                    lblDataTipi.Text = columnInfo.DataType == "" ? "-" : columnInfo.DataType;
-                    lblMaksimumKarakter.Text = columnInfo.MaxLength == "" ? "-" : columnInfo.MaxLength == "-1" ? "Sınırsız" : columnInfo.MaxLength;
-                    lblSiraNo.Text = columnInfo.OrdinalPosition == "" ? "-" : columnInfo.OrdinalPosition;
-                    lblVarsayilanDeger.Text = columnInfo.DefaultValue == "" ? "-" : columnInfo.DefaultValue;
-                    lblBosVeri.Text = columnInfo.IsNullable == "" ? "-" : columnInfo.IsNullable == "YES" ? "Var" : "Yok";
-                }
-                else
-                {
-                    ClearLabel();
-                }
-
-                columnselected = true;
-            }
-
-            columnindex = lstKolonlar.SelectedIndex;
         }
 
         private void lstSeciliKolonlar_SelectedIndexChanged(object sender, EventArgs e)
@@ -617,16 +587,16 @@ namespace TDFactory
 
                 if (chkWindowsAuthentication.Checked == true)
                 {
-                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString());
+                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString());
                 }
                 else
                 {
-                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString());
+                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString());
                 }
 
                 lstKolonlar.Items.Clear();
 
-                foreach (ColumnInfo item2 in columnNames)
+                foreach (ColumnInfo item2 in columnInfos)
                 {
                     lstKolonlar.Items.Add(item2.ColumnName);
                     lstSeciliKolonlar.Items.Add(item2.ColumnName.ColumnWithTable(item.ToString()));
@@ -681,7 +651,7 @@ namespace TDFactory
         {
             if (chkMVCHepsi.Checked)
             {
-                chkMVCModel.Checked = false;
+                chkRepository.Checked = false;
                 chkMVCController.Checked = false;
                 chkMVCView.Checked = false;
                 chkMVCWebConfig.Checked = false;
@@ -819,6 +789,160 @@ namespace TDFactory
             lstSeciliTablolar.Items.Clear();
             lstKolonlar.Items.Clear();
             lstSeciliKolonlar.Items.Clear();
+        }
+
+
+        //Android
+        private void btnAndroidBaslat_Click(object sender, EventArgs e)
+        {
+            projectName = !String.IsNullOrEmpty(txtProjectName.Text) ? txtProjectName.Text : "Proje";
+            projectName = projectName.Replace(" ", "");
+
+            connectionInfo = new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = chkWindowsAuthentication.Checked, Username = txtKullaniciAdi.Text, Password = txtSifre.Text };
+
+            folderDialogKatmanOlustur.SelectedPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
+
+            if (folderDialogKatmanOlustur.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                if (!String.IsNullOrEmpty(DBName))
+                {
+                    PathAddress = folderDialogKatmanOlustur.SelectedPath;
+
+                    tableColumnInfos = GetTableColumnInfos();
+                    selectedTables = GetSelectedTableNames(tableColumnInfos);
+
+                    CreateAndroidDirectories();
+                    CreateAndroidGradle();
+
+                    if (chkAndHepsi.Checked)
+                    {
+                        CreateAndroidManifest();
+                        CreateAndroidLayout();
+                        CreateAndroidValues();
+                        CreateAndroidJava();
+                        CreateAndroidModel();
+
+                        if (rdAndSqlite.Checked)
+                        {
+                            CreateAndroidDataSQLite();
+                        }
+                        else
+                        {
+                            CreateAndroidDataWCF();
+                        }
+                    }
+                    else
+                    {
+                        if (chkAndManifest.Checked)
+                        {
+                            CreateAndroidManifest();
+                        }
+
+                        if (chkAndLayout.Checked)
+                        {
+                            CreateAndroidLayout();
+                            CreateAndroidValues();
+                        }
+
+                        if (chkAndJava.Checked)
+                        {
+                            CreateAndroidJava();
+                        }
+
+                        if (chkAndModel.Checked)
+                        {
+                            CreateAndroidModel();
+                        }
+
+                        if (chkAndData.Checked)
+                        {
+                            if (rdAndSqlite.Checked)
+                            {
+                                CreateAndroidDataSQLite();
+                            }
+                            else
+                            {
+                                CreateAndroidDataWCF();
+                            }
+                        }
+                    }
+
+                    MessageBox.Show("Android Katmanları Başarıyla Oluşturuldu.");
+
+                    if (chkKlasorAc.Checked)
+                    {
+                        try
+                        {
+                            Process.Start(folderDialogKatmanOlustur.SelectedPath + "\\" + projectName + "\\Android");
+                        }
+                        catch
+                        {
+                            MessageBox.Show("Klasör bulunamadı.");
+                        }
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Lütfen önce bir veritabanına bağlanın.");
+                }
+
+                PathAddress = null;
+            }
+        }
+
+        private void chkAndHepsi_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkAndHepsi.Checked)
+            {
+                chkAndJava.Checked = false;
+                chkAndLayout.Checked = false;
+                chkAndManifest.Checked = false;
+                chkAndModel.Checked = false;
+                chkAndData.Checked = false;
+                chkAndHepsi.Checked = true;
+                rdAndWcf.Checked = true;
+            }
+            else
+            {
+                rdAndSqlite.Checked = false;
+                rdAndWcf.Checked = false;
+            }
+        }
+
+        private void chkAndDiger_CheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox chk = (CheckBox)sender;
+
+            chkAndHepsi.Checked = false;
+
+            if (chk.Name == "chkAndData")
+            {
+                if (chk.Checked)
+                {
+                    rdAndWcf.Checked = true;
+                }
+                else
+                {
+                    rdAndSqlite.Checked = false;
+                    rdAndWcf.Checked = false;
+                }
+            }
+        }
+
+        private void rdAndData_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rdAndWcf.Checked)
+            {
+                lstAndIzin.SetSelected(0, true);
+                lstAndIzin.SetSelected(2, false);
+                lstAndIzin.SetSelected(3, false);
+            }
+            else if (rdAndSqlite.Checked)
+            {
+                lstAndIzin.SetSelected(0, false);
+                lstAndIzin.SetSelected(2, true);
+                lstAndIzin.SetSelected(3, true);
+            }
         }
 
         #endregion

@@ -14,161 +14,7 @@ namespace TDFactory
     {
         #region Android
 
-        private void btnAndroidBaslat_Click(object sender, EventArgs e)
-        {
-            projectName = !String.IsNullOrEmpty(txtProjectName.Text) ? txtProjectName.Text : "Proje";
-            projectName = projectName.Replace(" ", "");
-
-            connectionInfo = new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = chkWindowsAuthentication.Checked, Username = txtKullaniciAdi.Text, Password = txtSifre.Text };
-
-            folderDialogKatmanOlustur.SelectedPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-
-            tableColumnNames = GetTableColumnNames();
-            selectedTables = GetSelectedTableNames(tableColumnNames);
-
-            if (folderDialogKatmanOlustur.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                if (!String.IsNullOrEmpty(DBName))
-                {
-                    PathAddress = folderDialogKatmanOlustur.SelectedPath;
-
-                    tableColumnNames = GetTableColumnNames();
-
-                    AndKlasorOlustur();
-                    AndGradleOlustur();
-
-                    if (chkAndHepsi.Checked)
-                    {
-                        AndManifestOlustur();
-                        AndLayoutOlustur();
-                        AndValuesOlustur();
-                        AndJavaOlustur();
-                        AndModelOlustur();
-
-                        if (rdAndSqlite.Checked)
-                        {
-                            AndDataSQLite();
-                        }
-                        else
-                        {
-                            AndDataWCF();
-                        }
-                    }
-                    else
-                    {
-                        if (chkAndManifest.Checked)
-                        {
-                            AndManifestOlustur();
-                        }
-
-                        if (chkAndLayout.Checked)
-                        {
-                            AndLayoutOlustur();
-                            AndValuesOlustur();
-                        }
-
-                        if (chkAndJava.Checked)
-                        {
-                            AndJavaOlustur();
-                        }
-
-                        if (chkAndModel.Checked)
-                        {
-                            AndModelOlustur();
-                        }
-
-                        if (chkAndData.Checked)
-                        {
-                            if (rdAndSqlite.Checked)
-                            {
-                                AndDataSQLite();
-                            }
-                            else
-                            {
-                                AndDataWCF();
-                            }
-                        }
-                    }
-
-                    MessageBox.Show("Android Katmanları Başarıyla Oluşturuldu.");
-
-                    if (chkKlasorAc.Checked)
-                    {
-                        try
-                        {
-                            Process.Start(folderDialogKatmanOlustur.SelectedPath + "\\" + projectName + "\\Android");
-                        }
-                        catch
-                        {
-                            MessageBox.Show("Klasör bulunamadı.");
-                        }
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Lütfen önce bir veritabanına bağlanın.");
-                }
-
-                PathAddress = null;
-            }
-        }
-
-        private void chkAndHepsi_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkAndHepsi.Checked)
-            {
-                chkAndJava.Checked = false;
-                chkAndLayout.Checked = false;
-                chkAndManifest.Checked = false;
-                chkAndModel.Checked = false;
-                chkAndData.Checked = false;
-                chkAndHepsi.Checked = true;
-                rdAndWcf.Checked = true;
-            }
-            else
-            {
-                rdAndSqlite.Checked = false;
-                rdAndWcf.Checked = false;
-            }
-        }
-
-        private void chkAndDiger_CheckedChanged(object sender, EventArgs e)
-        {
-            CheckBox chk = (CheckBox)sender;
-
-            chkAndHepsi.Checked = false;
-
-            if (chk.Name == "chkAndData")
-            {
-                if (chk.Checked)
-                {
-                    rdAndWcf.Checked = true;
-                }
-                else
-                {
-                    rdAndSqlite.Checked = false;
-                    rdAndWcf.Checked = false;
-                }
-            }
-        }
-
-        private void rdAndData_CheckedChanged(object sender, EventArgs e)
-        {
-            if (rdAndWcf.Checked)
-            {
-                lstAndIzin.SetSelected(0, true);
-                lstAndIzin.SetSelected(2, false);
-                lstAndIzin.SetSelected(3, false);
-            }
-            else if (rdAndSqlite.Checked)
-            {
-                lstAndIzin.SetSelected(0, false);
-                lstAndIzin.SetSelected(2, true);
-                lstAndIzin.SetSelected(3, true);
-            }
-        }
-
-        void AndKlasorOlustur(string tabloAdi = null, bool res = false)
+        void CreateAndroidDirectories(string tabloAdi = null, bool res = false)
         {
             string projectNameKucuk = projectName.ToLower();
 
@@ -487,7 +333,7 @@ namespace TDFactory
             }
         }
 
-        void AndLayoutOlustur()
+        void CreateAndroidLayout()
         {
             //Aktivite Sayac
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\res\\layout\\aktivite_sayac.xml", FileMode.Create))
@@ -743,7 +589,7 @@ namespace TDFactory
             {
                 string _table = Table.ToUrl(true);
 
-                AndKlasorOlustur(_table, true);
+                CreateAndroidDirectories(_table, true);
 
                 List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
 
@@ -864,7 +710,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\tandroid:layout_height=\"wrap_content\"");
                         yaz.WriteLine("\t\t\tandroid:orientation=\"vertical\">");
 
-                        foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t<LinearLayout");
@@ -897,7 +743,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t\tandroid:text=\"" + column.ColumnName + " : \" />");
                                     yaz.WriteLine("");
 
-                                    string ct = column.TypeName.Name;
+                                    string ct = column.Type.Name;
 
                                     string[] tString = { "Char", "String", "TimeSpan", "Guid", "Object", "Byte", "Chars", "Bytes" };
                                     string[] tInt = { "Int16", "Int32", "Int64" };
@@ -1007,7 +853,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tandroid:layout_height=\"wrap_content\"");
                             yaz.WriteLine("\t\t\tandroid:orientation=\"vertical\">");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
                             {
                                 List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
                                 
@@ -1027,7 +873,7 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\tandroid:text=\"" + column.ColumnName + " : \" />");
                                 yaz.WriteLine("");
 
-                                if (column.TypeName.Name == "Boolean")
+                                if (column.Type.Name == "Boolean")
                                 {
                                     yaz.WriteLine("\t\t\t\t<CheckBox");
                                     yaz.WriteLine("\t\t\t\t\tandroid:id=\"@+id/chk" + column.ColumnName + "\"");
@@ -1114,7 +960,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tandroid:layout_height=\"wrap_content\"");
                             yaz.WriteLine("\t\t\tandroid:orientation=\"vertical\">");
 
-                            foreach (TableColumnNames column in tableColumnNames.Where(a => a.TableName == Table).ToList())
+                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
                             {
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\t<LinearLayout");
@@ -1155,7 +1001,7 @@ namespace TDFactory
                                         yaz.WriteLine("\t\t\t\t\tandroid:text=\"" + column.ColumnName + " : \" />");
                                         yaz.WriteLine("");
 
-                                        string ct = column.TypeName.Name;
+                                        string ct = column.Type.Name;
 
                                         string[] tString = { "Char", "String", "TimeSpan", "Guid", "Object", "Byte", "Chars", "Bytes" };
                                         string[] tInt = { "Int16", "Int32", "Int64" };
@@ -1235,7 +1081,7 @@ namespace TDFactory
             }
         }
 
-        void AndJavaOlustur()
+        void CreateAndroidJava()
         {
             string projectNameKucuk = projectName.ToLower();
 
@@ -1817,7 +1663,7 @@ namespace TDFactory
                 string foreignColumnId = "";
                 string foreignColumnText = "";
 
-                AndKlasorOlustur(Table);
+                CreateAndroidDirectories(Table);
 
                 List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
 
@@ -1831,16 +1677,16 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con, Table);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
+                List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
 
-                string columnText = GetColumnText(tableColumnNames.Where(a => a.TableName == Table).ToList());
+                string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
 
                 if (fkcListForeign.Count > 0)
                 {
                     foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                     {
                         PrimaryTableName = fkc.PrimaryTableName;
-                        foreignColumnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                        foreignColumnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList());
                         List<string> identityColumnsForeign = Helper.Helper.ReturnIdentityColumn(connectionInfo, fkc.PrimaryTableName);
                         foreignColumnId = identityColumnsForeign.Count > 0 ? identityColumnsForeign.FirstOrDefault() : "id";
                     }
@@ -2143,9 +1989,9 @@ namespace TDFactory
 
                         bool boolEditText = false, boolCheckBox = false, boolSpinner = false;
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
                                 List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -2161,7 +2007,7 @@ namespace TDFactory
                                     }
                                     else
                                     {
-                                        if (column.TypeName.Name == "Boolean")
+                                        if (column.Type.Name == "Boolean")
                                         {
                                             if (!boolCheckBox)
                                             {
@@ -2188,9 +2034,9 @@ namespace TDFactory
 
                         foreignTables = new List<string>();
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
                                 List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -2230,9 +2076,9 @@ namespace TDFactory
                         string lblCheckBox = "";
                         string lblSpinner = "";
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
                                 List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -2244,7 +2090,7 @@ namespace TDFactory
                                     }
                                     else
                                     {
-                                        if (column.TypeName.Name == "Boolean")
+                                        if (column.Type.Name == "Boolean")
                                         {
                                             lblCheckBox += "chk" + column.ColumnName + ", ";
                                         }
@@ -2354,9 +2200,9 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\tpublic void onClick(View v) {");
                         yaz.WriteLine("\t\t\t\ttry {");
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
                                 List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -2393,29 +2239,29 @@ namespace TDFactory
                                     }
                                     else
                                     {
-                                        if (column.TypeName.Name == "Boolean")
+                                        if (column.Type.Name == "Boolean")
                                         {
                                             yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(chk" + column.ColumnName + ".isChecked());");
                                         }
                                         else
                                         {
-                                            if (column.TypeName.Name == "String")
+                                            if (column.Type.Name == "String")
                                             {
                                                 yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(txt" + column.ColumnName + ".getText().toString());");
                                             }
-                                            else if (column.TypeName.Name == "Int16" || column.TypeName.Name == "Int32")
+                                            else if (column.Type.Name == "Int16" || column.Type.Name == "Int32")
                                             {
                                                 yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(Integer.valueOf(txt" + column.ColumnName + ".getText().toString()));");
                                             }
-                                            else if (column.TypeName.Name == "Int64")
+                                            else if (column.Type.Name == "Int64")
                                             {
                                                 yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(Long.valueOf(txt" + column.ColumnName + ".getText().toString()));");
                                             }
-                                            else if (column.TypeName.Name == "Decimal" || column.TypeName.Name == "Double" || column.TypeName.Name == "Single")
+                                            else if (column.Type.Name == "Decimal" || column.Type.Name == "Double" || column.Type.Name == "Single")
                                             {
                                                 yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(Float.valueOf(txt" + column.ColumnName + ".getText().toString()));");
                                             }
-                                            else if (column.TypeName.Name == "Byte")
+                                            else if (column.Type.Name == "Byte")
                                             {
                                                 yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(Byte.valueOf(txt" + column.ColumnName + ".getText().toString()));");
                                             }
@@ -2459,18 +2305,18 @@ namespace TDFactory
                         int i = 0;
                         PrimaryTableName = "";
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
                             string num = "";
 
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
                                 List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
 
                                 if (foreLst.Count > 0)
                                 {
                                     PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
-                                    foreignColumnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                    foreignColumnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList());
                                     List<string> identityColumnsForeign = Helper.Helper.ReturnIdentityColumn(connectionInfo, PrimaryTableName);
                                     foreignColumnId = identityColumnsForeign.Count > 0 ? identityColumnsForeign.FirstOrDefault() : "id";
 
@@ -2539,11 +2385,11 @@ namespace TDFactory
 
                             bool boolTextView = false, boolCheckBox = false;
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
                                 List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
-                                if (column.TypeName.Name == "Boolean")
+                                if (column.Type.Name == "Boolean")
                                 {
                                     if (!boolCheckBox)
                                     {
@@ -2566,9 +2412,9 @@ namespace TDFactory
 
                             foreignTables = new List<string>();
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -2604,14 +2450,14 @@ namespace TDFactory
                             string lblCheckBox = "";
                             string lblTextView = "";
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
 
-                                    if (column.TypeName.Name == "Boolean")
+                                    if (column.Type.Name == "Boolean")
                                     {
                                         lblCheckBox += "chk" + column.ColumnName + ", ";
                                     }
@@ -2769,9 +2615,9 @@ namespace TDFactory
 
                             int i = 1;
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
 
@@ -2780,7 +2626,7 @@ namespace TDFactory
                                         if (foreLst.Count > 0)
                                         {
                                             PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
-                                            foreignColumnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                            foreignColumnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList());
                                             List<string> identityColumnsForeign = Helper.Helper.ReturnIdentityColumn(connectionInfo, PrimaryTableName);
                                             foreignColumnId = identityColumnsForeign.Count > 0 ? identityColumnsForeign.FirstOrDefault() : "id";
 
@@ -2811,7 +2657,7 @@ namespace TDFactory
                                         }
                                         else
                                         {
-                                            if (column.TypeName.Name == "Boolean")
+                                            if (column.Type.Name == "Boolean")
                                             {
                                                 yaz.WriteLine("\t\t\t\tif (" + _table + "Data.get" + column.ColumnName + "() != null)");
                                                 yaz.WriteLine("\t\t\t\t{");
@@ -2880,9 +2726,9 @@ namespace TDFactory
 
                             bool boolEditText = false, boolCheckBox = false, boolSpinner = false;
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -2898,7 +2744,7 @@ namespace TDFactory
                                         }
                                         else
                                         {
-                                            if (column.TypeName.Name == "Boolean")
+                                            if (column.Type.Name == "Boolean")
                                             {
                                                 if (!boolCheckBox)
                                                 {
@@ -2929,9 +2775,9 @@ namespace TDFactory
 
                             foreignTables = new List<string>();
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -2971,9 +2817,9 @@ namespace TDFactory
                             string lblSpinner = "";
                             string lblTextView = "";
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -2985,7 +2831,7 @@ namespace TDFactory
                                         }
                                         else
                                         {
-                                            if (column.TypeName.Name == "Boolean")
+                                            if (column.Type.Name == "Boolean")
                                             {
                                                 lblCheckBox += "chk" + column.ColumnName + ", ";
                                             }
@@ -3118,9 +2964,9 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\twhere.setValues(listValues);");
                             yaz.WriteLine("");
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
@@ -3157,29 +3003,29 @@ namespace TDFactory
                                         }
                                         else
                                         {
-                                            if (column.TypeName.Name == "Boolean")
+                                            if (column.Type.Name == "Boolean")
                                             {
                                                 yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(chk" + column.ColumnName + ".isChecked());");
                                             }
                                             else
                                             {
-                                                if (column.TypeName.Name == "String")
+                                                if (column.Type.Name == "String")
                                                 {
                                                     yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(txt" + column.ColumnName + ".getText().toString());");
                                                 }
-                                                else if (column.TypeName.Name == "Int16" || column.TypeName.Name == "Int32")
+                                                else if (column.Type.Name == "Int16" || column.Type.Name == "Int32")
                                                 {
                                                     yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(Integer.valueOf(txt" + column.ColumnName + ".getText().toString()));");
                                                 }
-                                                else if (column.TypeName.Name == "Int64")
+                                                else if (column.Type.Name == "Int64")
                                                 {
                                                     yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(Long.valueOf(txt" + column.ColumnName + ".getText().toString()));");
                                                 }
-                                                else if (column.TypeName.Name == "Decimal" || column.TypeName.Name == "Double" || column.TypeName.Name == "Single")
+                                                else if (column.Type.Name == "Decimal" || column.Type.Name == "Double" || column.Type.Name == "Single")
                                                 {
                                                     yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(Float.valueOf(txt" + column.ColumnName + ".getText().toString()));");
                                                 }
-                                                else if (column.TypeName.Name == "Byte")
+                                                else if (column.Type.Name == "Byte")
                                                 {
                                                     yaz.WriteLine("\t\t\t\t\t" + _table + "Data.set" + column.ColumnName + "(Byte.valueOf(txt" + column.ColumnName + ".getText().toString()));");
                                                 }
@@ -3237,7 +3083,7 @@ namespace TDFactory
 
                             int i = 0;
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
                                 string num = "";
 
@@ -3247,7 +3093,7 @@ namespace TDFactory
                                     num = (i + 1).ToString();
                                 }
 
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
 
@@ -3256,7 +3102,7 @@ namespace TDFactory
                                         if (foreLst.Count > 0)
                                         {
                                             PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
-                                            foreignColumnText = GetColumnText(tableColumnNames.Where(a => a.TableName == PrimaryTableName).ToList());
+                                            foreignColumnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList());
                                             List<string> identityColumnsForeign = Helper.Helper.ReturnIdentityColumn(connectionInfo, PrimaryTableName);
                                             foreignColumnId = identityColumnsForeign.Count > 0 ? identityColumnsForeign.FirstOrDefault() : "id";
 
@@ -3306,7 +3152,7 @@ namespace TDFactory
                                         }
                                         else
                                         {
-                                            if (column.TypeName.Name == "Boolean")
+                                            if (column.Type.Name == "Boolean")
                                             {
                                                 yaz.WriteLine("\t\t\t\tif (" + _table + "Data.get" + column.ColumnName + "() != null)");
                                                 yaz.WriteLine("\t\t\t\t{");
@@ -3355,7 +3201,7 @@ namespace TDFactory
             }
         }
 
-        void AndModelOlustur()
+        void CreateAndroidModel()
         {
             string projectNameKucuk = projectName.ToLower();
 
@@ -3371,13 +3217,13 @@ namespace TDFactory
                         yaz.WriteLine("public class " + Table);
                         yaz.WriteLine("{");
 
-                        List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
+                        List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
-                                switch (column.TypeName.Name)
+                                switch (column.Type.Name)
                                 {
                                     case "Int16": yaz.WriteLine("\tprivate Integer " + column.ColumnName + ";"); break;
                                     case "Int32": yaz.WriteLine("\tprivate Integer " + column.ColumnName + ";"); break;
@@ -3409,11 +3255,11 @@ namespace TDFactory
                         yaz.WriteLine("\t/*********** Getterlar ******************/");
                         yaz.WriteLine("");
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
-                                switch (column.TypeName.Name)
+                                switch (column.Type.Name)
                                 {
                                     case "Int16": yaz.WriteLine("\tpublic Integer get" + column.ColumnName + "()"); break;
                                     case "Int32": yaz.WriteLine("\tpublic Integer get" + column.ColumnName + "()"); break;
@@ -3449,11 +3295,11 @@ namespace TDFactory
                         yaz.WriteLine("\t/*********** Setterlar ******************/");
                         yaz.WriteLine("");
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
-                                switch (column.TypeName.Name)
+                                switch (column.Type.Name)
                                 {
                                     case "Int16": yaz.WriteLine("\tpublic void set" + column.ColumnName + "(Integer _" + column.ColumnName + ")"); break;
                                     case "Int32": yaz.WriteLine("\tpublic void set" + column.ColumnName + "(Integer _" + column.ColumnName + ")"); break;
@@ -3493,7 +3339,7 @@ namespace TDFactory
             }
         }
 
-        void AndDataSQLite()
+        void CreateAndroidDataSQLite()
         {
             string projectNameKucuk = projectName.ToLower();
 
@@ -3512,7 +3358,7 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
+                List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
 
                 //Business
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\java\\com\\sinasalik\\thrashead\\" + projectNameKucuk + "\\DB\\Business\\" + Table + "Business.java", FileMode.Create))
@@ -3591,11 +3437,11 @@ namespace TDFactory
 
                         int i = 0;
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
-                                switch (column.TypeName.Name)
+                                switch (column.Type.Name)
                                 {
                                     case "Int16": yaz.WriteLine("\t\t\t\t" + _table + ".set" + column.ColumnName + "(cursor.getInt(" + i.ToString() + "));"); break;
                                     case "Int32": yaz.WriteLine("\t\t\t\t" + _table + ".set" + column.ColumnName + "(cursor.getInt(" + i.ToString() + "));"); break;
@@ -3717,11 +3563,11 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
-                                switch (column.TypeName.Name)
+                                switch (column.Type.Name)
                                 {
                                     case "Int16": yaz.WriteLine("\t\t\t\t" + _table + ".set" + column.ColumnName + "(cursor.getInt(" + i.ToString() + "));"); break;
                                     case "Int32": yaz.WriteLine("\t\t\t\t" + _table + ".set" + column.ColumnName + "(cursor.getInt(" + i.ToString() + "));"); break;
@@ -3912,9 +3758,9 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\tContentValues values = new ContentValues();");
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
                                 if (column.ColumnName != id)
                                 {
@@ -3961,9 +3807,9 @@ namespace TDFactory
                             yaz.WriteLine("\t\tWhereArgs whereArgs = WhereArgs.CreateArguments(whereList);");
                             yaz.WriteLine("");
 
-                            foreach (TableColumnNames column in columnNames)
+                            foreach (ColumnInfo column in columnNames)
                             {
-                                if (column.TypeName != null)
+                                if (column.Type != null)
                                 {
                                     if (column.ColumnName != id)
                                     {
@@ -4026,7 +3872,7 @@ namespace TDFactory
             }
         }
 
-        void AndDataWCF()
+        void CreateAndroidDataWCF()
         {
             string projectNameKucuk = projectName.ToLower();
 
@@ -4045,7 +3891,7 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                List<TableColumnNames> columnNames = tableColumnNames.Where(a => a.TableName == Table).ToList();
+                List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
 
                 //Business
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\java\\com\\sinasalik\\thrashead\\" + projectNameKucuk + "\\DB\\Business\\" + Table + "Business.java", FileMode.Create))
@@ -4341,11 +4187,11 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\tJSONObject object = array.getJSONObject(i);");
                         yaz.WriteLine("");
 
-                        foreach (TableColumnNames column in columnNames)
+                        foreach (ColumnInfo column in columnNames)
                         {
-                            if (column.TypeName != null)
+                            if (column.Type != null)
                             {
-                                switch (column.TypeName.Name)
+                                switch (column.Type.Name)
                                 {
                                     case "Int16": yaz.WriteLine("\t\t\t\t" + Table + ".set" + column.ColumnName + "(!object.get(\"" + column.ColumnName + "\").equals(null) ? object.getInt(\"" + column.ColumnName + "\") : -1);"); break;
                                     case "Int32": yaz.WriteLine("\t\t\t\t" + Table + ".set" + column.ColumnName + "(!object.get(\"" + column.ColumnName + "\").equals(null) ? object.getInt(\"" + column.ColumnName + "\") : -1);"); break;
@@ -4468,7 +4314,7 @@ namespace TDFactory
             }
         }
 
-        void AndValuesOlustur()
+        void CreateAndroidValues()
         {
             string projectNameKucuk = projectName.ToLower();
 
@@ -4641,7 +4487,7 @@ namespace TDFactory
             }
         }
 
-        void AndManifestOlustur()
+        void CreateAndroidManifest()
         {
             string projectNameKucuk = projectName.ToLower();
             bool izinVar = false;
@@ -4708,7 +4554,7 @@ namespace TDFactory
             }
         }
 
-        void AndGradleOlustur()
+        void CreateAndroidGradle()
         {
             string projectNameKucuk = projectName.ToLower();
 

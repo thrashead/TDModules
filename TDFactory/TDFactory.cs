@@ -24,9 +24,9 @@ namespace TDFactory
         public static List<Relation> Relations { get; set; }
         public static string PathAddress { get; set; }
 
-        List<ColumnInfo> columnNames;
-        List<ColumnInfo> tempColumnNames = new List<ColumnInfo>();
-        List<TableColumnNames> tableColumnNames = new List<TableColumnNames>();
+        List<ColumnInfo> columnInfos;
+        List<ColumnInfo> tempColumnInfos = new List<ColumnInfo>();
+        List<ColumnInfo> tableColumnInfos = new List<ColumnInfo>();
 
         List<string> foreignTables;
         List<string> tableNames;
@@ -39,8 +39,8 @@ namespace TDFactory
         string[] ImageColumns;
 
 
-        int tableindex, columnindex, selectedtableindex;
-        bool tableselected = false, columnselected = false;
+        int tableindex, selectedtableindex;
+        bool tableselected = false;
         string DBName = "";
         string selectedcolumn;
         string projectName = "Proje";
@@ -212,12 +212,12 @@ namespace TDFactory
             {
                 if (fkc.PrimaryColumnName != null)
                 {
-                    List<TableColumnNames> columns = tableColumnNames.Where(a => a.TableName == _tableName && a.ColumnName == fkc.PrimaryColumnName).ToList();
+                    List<ColumnInfo> columns = tableColumnInfos.Where(a => a.TableName == _tableName && a.ColumnName == fkc.PrimaryColumnName).ToList();
 
                     if (columns.Count > 0)
                     {
-                        fkc.PrimaryColumnType = columns.FirstOrDefault().TypeName.Name;
-                        fkc.ForeignColumnType = columns.FirstOrDefault().TypeName.Name;
+                        fkc.PrimaryColumnType = columns.FirstOrDefault().Type.Name;
+                        fkc.ForeignColumnType = columns.FirstOrDefault().Type.Name;
                     }
                 }
             }
@@ -225,41 +225,36 @@ namespace TDFactory
             return fkList;
         }
 
-        private List<TableColumnNames> GetTableColumnNames()
+        private List<ColumnInfo> GetTableColumnInfos()
         {
             List<ColumnInfo> columnInfo;
 
             string[] tablecolumn = new string[2];
 
-            tableColumnNames.Clear();
+            tableColumnInfos.Clear();
 
             foreach (object item in lstSeciliKolonlar.Items)
             {
                 if (chkWindowsAuthentication.Checked == true)
                 {
-                    columnInfo = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
+                    columnInfo = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
                 }
                 else
                 {
-                    columnInfo = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
+                    columnInfo = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
                 }
 
-                string charlength = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().MaxLength;
-                charlength = charlength.ToUpper() == "MAX" ? "" : charlength;
-                bool nullable = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsNullable == "YES" ? true : false;
-                bool identity = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsIdentity == "YES" ? true : false;
-                bool primarykey = columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().IsPrimaryKey == "YES" ? true : false;
-                tableColumnNames.Add(new TableColumnNames() { TableName = item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""), ColumnName = item.ToString().Split(' ')[0], TypeName = SqlTypes.ReturnType(columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault().DataType), IsNullable = nullable, CharLength = charlength, IsIdentity = identity, IsPrimaryKey = primarykey });
+                tableColumnInfos.Add(columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault());
             }
 
-            return tableColumnNames;
+            return tableColumnInfos;
         }
 
-        private List<string> GetSelectedTableNames(List<TableColumnNames> _tableColumnNames)
+        private List<string> GetSelectedTableNames(List<ColumnInfo> _tableColumnNames)
         {
             List<string> returnList = new List<string>();
 
-            foreach (TableColumnNames item in _tableColumnNames)
+            foreach (ColumnInfo item in _tableColumnNames)
             {
                 if (!returnList.Contains(item.TableName))
                 {
@@ -270,15 +265,15 @@ namespace TDFactory
             return returnList;
         }
 
-        private string GetColumnText(List<TableColumnNames> columns, bool toString = true)
+        private string GetColumnText(List<ColumnInfo> columns, bool toString = true)
         {
             string columnText = "";
 
             if (columns.Count > 1)
             {
-                foreach (TableColumnNames item in columns)
+                foreach (ColumnInfo item in columns)
                 {
-                    if (item.TypeName.Name == "String")
+                    if (item.Type.Name == "String")
                     {
                         columnText = item.ColumnName;
                         break;

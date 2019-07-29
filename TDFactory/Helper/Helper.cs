@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
@@ -23,14 +24,16 @@ namespace TDFactory.Helper
         public string TableName { get; set; }
         public string ColumnName { get; set; }
         public string DataType { get; set; }
-        public string IsNullable { get; set; }
+        public bool IsNullable { get; set; }
         public string MaxLength { get; set; }
         public string DefaultValue { get; set; }
         public string OrdinalPosition { get; set; }
-        public string IsPrimaryKey { get; set; }
-        public string IsIdentity { get; set; }
+        public bool IsPrimaryKey { get; set; }
+        public bool IsIdentity { get; set; }
         public string SeedValue { get; set; }
         public string IncrementValue { get; set; }
+        public Type Type { get; set; }
+        public int CharLength { get; set; }
     }
 
     public class Helper
@@ -146,7 +149,7 @@ namespace TDFactory.Helper
             return tableNames;
         }
 
-        public static List<ColumnInfo> ColumnNames(ConnectionInfo _conInfo, string _tableName)
+        public static List<ColumnInfo> GetColumnsInfo(ConnectionInfo _conInfo, string _tableName)
         {
             List<ColumnInfo> columnInfo = new List<ColumnInfo>();
 
@@ -189,17 +192,18 @@ namespace TDFactory.Helper
                         TableName = rd[0].ToString(),
                         ColumnName = rd[1].ToString(),
                         DataType = rd[2].ToString(),
-                        IsNullable = rd[3].ToString(),
+                        IsNullable = rd[3].ToString() == "YES" ? true : false,
                         MaxLength = rd[4].ToString(),
                         DefaultValue = rd[5].ToString() == "NULL" || rd[5].ToString() == "(NULL)" ? null : rd[5].ToString().Replace("(", "").Replace(")", ""),
                         OrdinalPosition = rd[6].ToString(),
-                        IsPrimaryKey = rd[7].ToString(),
-                        IsIdentity = rd[8].ToString(),
+                        IsPrimaryKey = rd[7].ToString() == "YES" ? true : false,
+                        IsIdentity = rd[8].ToString() == "YES" ? true : false,
                         SeedValue = rd[9].ToString(),
-                        IncrementValue = rd[10].ToString()
+                        IncrementValue = rd[10].ToString(),
+                        Type = SqlTypes.ReturnType(rd[2].ToString()),
+                        CharLength = rd[4].ToString().ToUpper() == "" || rd[4].ToString().ToUpper() == "MAX" ? -1 : Convert.ToInt32(rd[4].ToString())
                     });
                 }
-
             }
             catch
             {
@@ -239,7 +243,7 @@ namespace TDFactory.Helper
                 }
             }
 
-            cmd.CommandText = "Select c.COLUMN_NAME from sys.columns sc, sys.identity_columns sic, sys.tables st, INFORMATION_SCHEMA.COLUMNS c where sc.object_id = st.object_id and sic.object_id = st.object_id and st.name = c.TABLE_NAME and sc.name = c.COLUMN_NAME and sic.is_identity = sc.is_identity and c.TABLE_NAME = '" + _tableName +"'  AND c.TABLE_CATALOG = '" + _conInfo.DatabaseName + "'";
+            cmd.CommandText = "Select c.COLUMN_NAME from sys.columns sc, sys.identity_columns sic, sys.tables st, INFORMATION_SCHEMA.COLUMNS c where sc.object_id = st.object_id and sic.object_id = st.object_id and st.name = c.TABLE_NAME and sc.name = c.COLUMN_NAME and sic.is_identity = sc.is_identity and c.TABLE_NAME = '" + _tableName + "'  AND c.TABLE_CATALOG = '" + _conInfo.DatabaseName + "'";
             cmd.Connection = con;
 
             try
@@ -265,16 +269,5 @@ namespace TDFactory.Helper
 
             return identityColumns;
         }
-    }
-
-    public class TableColumnNames
-    {
-        public string TableName { get; set; }
-        public string ColumnName { get; set; }
-        public Type TypeName { get; set; }
-        public bool IsNullable { get; set; }
-        public bool IsIdentity { get; set; }
-        public bool IsPrimaryKey { get; set; }
-        public string CharLength { get; set; }
     }
 }

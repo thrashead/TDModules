@@ -149,12 +149,12 @@ namespace TDFactory
                 if (chkVTPrimaryKey.Checked)
                 {
                     kolon += "_PRIMARY KEY";
-                    tempColumn.IsPrimaryKey = "YES";
+                    tempColumn.IsPrimaryKey = true;
                 }
 
                 if (chkVTAutoIncrement.Checked)
                 {
-                    tempColumn.IsIdentity = "YES";
+                    tempColumn.IsIdentity = true;
 
                     if (numVTArtisMiktari.Enabled == true && numVTBaslangicSayisi.Enabled == true)
                     {
@@ -190,12 +190,12 @@ namespace TDFactory
                 if (chkVTAllowNull.Checked)
                 {
                     kolon += "_NULL";
-                    tempColumn.IsNullable = "YES";
+                    tempColumn.IsNullable = true;
                 }
                 else
                 {
                     kolon += "_NOT NULL";
-                    tempColumn.IsNullable = "NO";
+                    tempColumn.IsNullable = true;
                 }
 
                 if (!String.IsNullOrEmpty(txtVTVarsayilanDeger.Text))
@@ -218,7 +218,7 @@ namespace TDFactory
                 }
 
                 lstVTKolonlar.Items.Add(kolon);
-                tempColumnNames.Add(tempColumn);
+                tempColumnInfos.Add(tempColumn);
             }
             else
             {
@@ -261,9 +261,9 @@ namespace TDFactory
 
             if (lstVTKolonlar.SelectedIndex >= 0)
             {
-                if (tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList().Count > 0)
+                if (tempColumnInfos.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList().Count > 0)
                 {
-                    tempColumnNames.Remove(tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList().FirstOrDefault());
+                    tempColumnInfos.Remove(tempColumnInfos.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList().FirstOrDefault());
                 }
 
                 lstVTKolonlar.Items.RemoveAt(lstVTKolonlar.SelectedIndex);
@@ -310,7 +310,7 @@ namespace TDFactory
         private void btnVTKolonTemizle_Click(object sender, EventArgs e)
         {
             Relations.Clear();
-            tempColumnNames.Clear();
+            tempColumnInfos.Clear();
             lstVTKolonlar.Items.Clear();
 
             btnVTRelationOlustur.Enabled = false;
@@ -341,7 +341,7 @@ namespace TDFactory
                     _cre.TableName = txtVTTabloAdi.Text;
                 }
 
-                List<ColumnInfo> collst = tempColumnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList();
+                List<ColumnInfo> collst = tempColumnInfos.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().ColumnName()).ToList();
 
                 if (collst.Count > 0)
                 {
@@ -353,9 +353,9 @@ namespace TDFactory
                     _cre.ForeignInfo.DataType = cmbVTVeriTipi.Text;
                     _cre.ForeignInfo.DefaultValue = txtVTVarsayilanDeger.Text;
                     _cre.ForeignInfo.IncrementValue = numVTBaslangicSayisi.Value.ToString();
-                    _cre.ForeignInfo.IsIdentity = chkVTAutoIncrement.Checked == true ? "YES" : "NO";
-                    _cre.ForeignInfo.IsNullable = chkVTAllowNull.Checked == true ? "YES" : "NO";
-                    _cre.ForeignInfo.IsPrimaryKey = chkVTPrimaryKey.Checked == true ? "YES" : "NO";
+                    _cre.ForeignInfo.IsIdentity = chkVTAutoIncrement.Checked;
+                    _cre.ForeignInfo.IsNullable = chkVTAllowNull.Checked;
+                    _cre.ForeignInfo.IsPrimaryKey = chkVTPrimaryKey.Checked;
                     _cre.ForeignInfo.MaxLength = txtVTVeriBoyutu.Text;
                     _cre.ForeignInfo.SeedValue = numVTArtisMiktari.Value.ToString();
                     _cre.ForeignInfo.TableName = cmbVTTabloAdi.Text;
@@ -611,16 +611,16 @@ namespace TDFactory
 
                         if (chkWindowsAuthentication.Checked == true)
                         {
-                            columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, cmbVTTabloAdi.Text);
+                            columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, cmbVTTabloAdi.Text);
                         }
                         else
                         {
-                            columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, cmbVTTabloAdi.Text);
+                            columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, cmbVTTabloAdi.Text);
                         }
 
                         lstVTKolonlar.Items.Clear();
 
-                        foreach (ColumnInfo item in columnNames)
+                        foreach (ColumnInfo item in columnInfos)
                         {
                             string kolon = @"[" + item.ColumnName + "]";
                             kolon += "_" + item.DataType;
@@ -630,17 +630,17 @@ namespace TDFactory
                                 kolon += "(" + item.MaxLength + ")";
                             }
 
-                            if (item.IsPrimaryKey == "YES")
+                            if (item.IsPrimaryKey)
                             {
                                 kolon += "_PRIMARY KEY";
                             }
 
-                            if (item.IsIdentity == "YES" && !String.IsNullOrEmpty(item.IncrementValue) && !String.IsNullOrEmpty(item.SeedValue))
+                            if (item.IsIdentity && !String.IsNullOrEmpty(item.IncrementValue) && !String.IsNullOrEmpty(item.SeedValue))
                             {
                                 kolon += "_IDENTITY(" + item.SeedValue + "," + item.IncrementValue + ")";
                             }
 
-                            if (item.IsNullable == "YES")
+                            if (item.IsNullable)
                             {
                                 kolon += "_NULL";
                             }
@@ -807,14 +807,14 @@ namespace TDFactory
 
                 if (chkWindowsAuthentication.Checked == true)
                 {
-                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, cmbVTTabloAdi.Text);
+                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, cmbVTTabloAdi.Text);
                 }
                 else
                 {
-                    columnNames = Helper.Helper.ColumnNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, cmbVTTabloAdi.Text);
+                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, cmbVTTabloAdi.Text);
                 }
 
-                foreach (ColumnInfo item in columnNames)
+                foreach (ColumnInfo item in columnInfos)
                 {
                     string kolon = @"[" + item.ColumnName + "]";
                     kolon += "_" + item.DataType;
@@ -824,17 +824,17 @@ namespace TDFactory
                         kolon += "(" + item.MaxLength + ")";
                     }
 
-                    if (item.IsPrimaryKey == "YES")
+                    if (item.IsPrimaryKey)
                     {
                         kolon += "_PRIMARY KEY";
                     }
 
-                    if (item.IsIdentity == "YES" && !String.IsNullOrEmpty(item.IncrementValue) && !String.IsNullOrEmpty(item.SeedValue))
+                    if (item.IsIdentity && !String.IsNullOrEmpty(item.IncrementValue) && !String.IsNullOrEmpty(item.SeedValue))
                     {
                         kolon += "_IDENTITY(" + item.SeedValue + "," + item.IncrementValue + ")";
                     }
 
-                    if (item.IsNullable == "YES")
+                    if (item.IsNullable)
                     {
                         kolon += "_NULL";
                     }
@@ -914,14 +914,14 @@ namespace TDFactory
             {
                 try
                 {
-                    ColumnInfo ci = columnNames.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().Split(']')[0].Replace("[", "")).FirstOrDefault();
+                    ColumnInfo ci = columnInfos.Where(a => a.ColumnName == lstVTKolonlar.SelectedItem.ToString().Split(']')[0].Replace("[", "")).FirstOrDefault();
 
                     if (ci != null)
                     {
                         txtVTKolonAdi.Text = ci.ColumnName;
                         cmbVTVeriTipi.SelectedIndex = cmbVTVeriTipi.Items.IndexOf(ci.DataType);
-                        chkVTAllowNull.Checked = ci.IsNullable == "YES" ? true : false;
-                        chkVTPrimaryKey.Checked = ci.IsPrimaryKey == "YES" ? true : false;
+                        chkVTAllowNull.Checked = ci.IsNullable;
+                        chkVTPrimaryKey.Checked = ci.IsPrimaryKey;
                         txtVTVeriBoyutu.Text = ci.MaxLength;
                         txtVTVarsayilanDeger.Text = ci.DefaultValue.Replace("'", "");
 
@@ -939,7 +939,7 @@ namespace TDFactory
                             numVTBaslangicSayisi.Value = 1;
                             numVTArtisMiktari.Value = 1;
                         }
-                        chkVTAutoIncrement.Checked = ci.IsIdentity == "YES" ? true : false;
+                        chkVTAutoIncrement.Checked = ci.IsIdentity;
                         if (chkVTAutoIncrement.Checked)
                         {
                             numVTBaslangicSayisi.Enabled = true;
