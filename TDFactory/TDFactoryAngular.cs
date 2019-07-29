@@ -22,7 +22,11 @@ namespace TDFactory
 
             if (chkMVCHepsi.Checked == true)
             {
+                CreateRepository();
+
+                //Silinecek yerine RepositoryModel gelecek
                 CreateAngularModelLayer();
+
                 CreateAngularViewLayer();
                 CreateAngularControllerLayer();
                 CreateAngularServiceLayer();
@@ -39,6 +43,9 @@ namespace TDFactory
             {
                 if (chkRepository.Checked == true)
                 {
+                    CreateRepository();
+
+                    //Silinecek yerine RepositoryModel gelecek
                     CreateAngularModelLayer();
                 }
 
