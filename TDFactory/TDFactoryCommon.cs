@@ -33,8 +33,6 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                CreateMVCDirectories(Table);
-
                 //Class
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Repository\\" + Table + "\\" + Table + ".cs", FileMode.Create))
                 {

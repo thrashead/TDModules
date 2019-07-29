@@ -956,16 +956,7 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
-
-                int z = 0;
-                foreach (string item in lstSeciliKolonlar.Items)
-                {
-                    dizi[z] = item.Replace(" [" + Table + "]", "");
-                    z++;
-                }
-
-                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).ToList();
                 bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 string formdata = "";
@@ -1495,21 +1486,11 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
-
-                int z = 0;
-                foreach (string item in lstSeciliKolonlar.Items)
-                {
-                    dizi[z] = item.Replace(" [" + Table + "]", "");
-                    z++;
-                }
-
-                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
-
+                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).ToList();
                 List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
                 List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
                 List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 CreateMVCDirectories(Table);
 

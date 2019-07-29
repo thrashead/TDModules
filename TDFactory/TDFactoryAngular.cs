@@ -638,8 +638,8 @@ namespace TDFactory
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tngOnInit() {");
-                    yaz.WriteLine("\t\tthis.service.getLoginControl().subscribe((resData) => {");
-                    yaz.WriteLine("\t\t\tif (resData == false) {");
+                    yaz.WriteLine("\t\tthis.service.getLoginControl().subscribe((answer) => {");
+                    yaz.WriteLine("\t\t\tif (answer == false) {");
                     yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin']);");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
@@ -876,8 +876,8 @@ namespace TDFactory
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tonLogout() {");
-                    yaz.WriteLine("\t\tthis.service.getLogout().subscribe((resData) => {");
-                    yaz.WriteLine("\t\t\tif (resData == true) {");
+                    yaz.WriteLine("\t\tthis.service.getLogout().subscribe((answer) => {");
+                    yaz.WriteLine("\t\t\tif (answer == true) {");
                     yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/']);");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
@@ -1742,16 +1742,7 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
-
-                int z = 0;
-                foreach (string item in lstSeciliKolonlar.Items)
-                {
-                    dizi[z] = item.Replace(" [" + Table + "]", "");
-                    z++;
-                }
-
-                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).ToList();
                 bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 CreateAngularDirectories(Table);
@@ -2219,21 +2210,11 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
-
-                int z = 0;
-                foreach (string item in lstSeciliKolonlar.Items)
-                {
-                    dizi[z] = item.Replace(" [" + Table + "]", "");
-                    z++;
-                }
-
-                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
-
+                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).ToList();
                 List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
                 List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
                 List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 if (i <= 0)
                 {
@@ -2667,20 +2648,10 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
-
-                int z = 0;
-                foreach (string item in lstSeciliKolonlar.Items)
-                {
-                    dizi[z] = item.Replace(" [" + Table + "]", "");
-                    z++;
-                }
-
-                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
-
+                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).ToList();
                 List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
                 List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 if (i <= 0)
                 {
@@ -2809,20 +2780,10 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                string[] dizi = new string[lstSeciliKolonlar.Items.Count];
-
-                int z = 0;
-                foreach (string item in lstSeciliKolonlar.Items)
-                {
-                    dizi[z] = item.Replace(" [" + Table + "]", "");
-                    z++;
-                }
-
-                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
-
+                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).ToList();
                 List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
                 List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 CreateAngularDirectories(Table);
 
@@ -2860,8 +2821,8 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\tFillData() {");
                         yaz.WriteLine("\t\tif (this.callTable == true) {");
-                        yaz.WriteLine("\t\t\tthis.subscription = this.service.getIndex().subscribe((resData) => {");
-                        yaz.WriteLine("\t\t\t\tthis." + Table + "List = resData;");
+                        yaz.WriteLine("\t\t\tthis.subscription = this.service.getIndex().subscribe((answer) => {");
+                        yaz.WriteLine("\t\t\t\tthis." + Table + "List = answer;");
                         yaz.WriteLine("\t\t\t\tthis.callTable = false;");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\t\tsetTimeout(() => {");
@@ -2936,8 +2897,8 @@ namespace TDFactory
 
                         yaz.WriteLine("");
                         yaz.WriteLine("\tonCopy(id) {");
-                        yaz.WriteLine("\t\tthis.subscription = this.service.getCopy(id).subscribe((resData) => {");
-                        yaz.WriteLine("\t\t\tif (resData == true) {");
+                        yaz.WriteLine("\t\tthis.subscription = this.service.getCopy(id).subscribe((answer) => {");
+                        yaz.WriteLine("\t\t\tif (answer == true) {");
                         yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                         yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
@@ -2946,8 +2907,8 @@ namespace TDFactory
 
                         yaz.WriteLine("");
                         yaz.WriteLine("\tonDelete(id) {");
-                        yaz.WriteLine("\t\tthis.subscription = this.service.getDelete(id).subscribe((resData) => {");
-                        yaz.WriteLine("\t\t\tif (resData == true) {");
+                        yaz.WriteLine("\t\tthis.subscription = this.service.getDelete(id).subscribe((answer) => {");
+                        yaz.WriteLine("\t\t\tif (answer == true) {");
                         yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                         yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
@@ -2958,8 +2919,8 @@ namespace TDFactory
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\tonRemove(id) {");
-                            yaz.WriteLine("\t\tthis.subscription = this.service.getRemove(id).subscribe((resData) => {");
-                            yaz.WriteLine("\t\t\tif (resData == true) {");
+                            yaz.WriteLine("\t\tthis.subscription = this.service.getRemove(id).subscribe((answer) => {");
+                            yaz.WriteLine("\t\t\tif (answer == true) {");
                             yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
@@ -3034,8 +2995,8 @@ namespace TDFactory
 
                         if (fkcListForeign.Count > 0)
                         {
-                            yaz.WriteLine("\t\tthis.subscription = this.service.getInsert().subscribe((resData) => {");
-                            yaz.WriteLine("\t\t\tthis.model = resData;");
+                            yaz.WriteLine("\t\tthis.subscription = this.service.getInsert().subscribe((answer) => {");
+                            yaz.WriteLine("\t\t\tthis.model = answer;");
                             yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                             yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
                             yaz.WriteLine("");
@@ -3167,8 +3128,8 @@ namespace TDFactory
 
                             yaz.WriteLine("");
 
-                            yaz.WriteLine("\t\tthis.subscription = this.service.postInsertUpload(this.uploadData).subscribe((answer) => {");
-                            yaz.WriteLine("\t\t\tif (answer.Mesaj == null)");
+                            yaz.WriteLine("\t\tthis.subscription = this.service.postInsertUpload(this.uploadData).subscribe((answerUpload) => {");
+                            yaz.WriteLine("\t\t\tif (answerUpload.Mesaj == null)");
                             yaz.WriteLine("\t\t\t{");
                         }
 
@@ -3215,7 +3176,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t\telse");
                             yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
+                            yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(answerUpload.Mesaj);");
                             yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
@@ -3392,8 +3353,8 @@ namespace TDFactory
                             yaz.WriteLine("\t\tif (this.callTable == true) {");
                             yaz.WriteLine("\t\t\tthis.route.params.subscribe((params: Params) => {");
                             yaz.WriteLine("\t\t\t\tthis.id = params['id'];");
-                            yaz.WriteLine("\t\t\t\tthis.subscription = this.service.getUpdate(this.id).subscribe((resData) => {");
-                            yaz.WriteLine("\t\t\t\t\tthis.model = resData;");
+                            yaz.WriteLine("\t\t\t\tthis.subscription = this.service.getUpdate(this.id).subscribe((answer) => {");
+                            yaz.WriteLine("\t\t\t\t\tthis.model = answer;");
                             yaz.WriteLine("\t\t\t\t\tthis.callTable = false;");
 
                             if (fkcList.Count > 0)
@@ -3543,8 +3504,8 @@ namespace TDFactory
 
                                 yaz.WriteLine("");
 
-                                yaz.WriteLine("\t\tthis.subscription = this.service.postUpdateUpload(this.uploadData).subscribe((answer) => {");
-                                yaz.WriteLine("\t\t\tif (answer.Mesaj == null)");
+                                yaz.WriteLine("\t\tthis.subscription = this.service.postUpdateUpload(this.uploadData).subscribe((answerUpload) => {");
+                                yaz.WriteLine("\t\t\tif (answerUpload.Mesaj == null)");
                                 yaz.WriteLine("\t\t\t{");
                             }
 
@@ -3599,7 +3560,7 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("\t\t\telse");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
+                                yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(answerUpload.Mesaj);");
                                 yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
@@ -3618,8 +3579,8 @@ namespace TDFactory
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\ton" + ForeignTableName + "Copy(id) {");
-                                    yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getCopy(id).subscribe((resData) => {");
-                                    yaz.WriteLine("\t\t\tif (resData == true) {");
+                                    yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getCopy(id).subscribe((answer) => {");
+                                    yaz.WriteLine("\t\t\tif (answer == true) {");
                                     yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
@@ -3628,8 +3589,8 @@ namespace TDFactory
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\ton" + ForeignTableName + "Delete(id) {");
-                                    yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getDelete(id).subscribe((resData) => {");
-                                    yaz.WriteLine("\t\t\tif (resData == true) {");
+                                    yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getDelete(id).subscribe((answer) => {");
+                                    yaz.WriteLine("\t\t\tif (answer == true) {");
                                     yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
@@ -3640,8 +3601,8 @@ namespace TDFactory
                                     {
                                         yaz.WriteLine("");
                                         yaz.WriteLine("\ton" + ForeignTableName + "Remove(id) {");
-                                        yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getRemove(id).subscribe((resData) => {");
-                                        yaz.WriteLine("\t\t\tif (resData == true) {");
+                                        yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getRemove(id).subscribe((answer) => {");
+                                        yaz.WriteLine("\t\t\tif (answer == true) {");
                                         yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
                                         yaz.WriteLine("\t\t\t}");
                                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
