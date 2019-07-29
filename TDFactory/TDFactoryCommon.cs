@@ -49,7 +49,10 @@ namespace TDFactory
 
                         yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Collections.Generic;");
-                        yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
+                        if (!chkAngular.Checked)
+                        {
+                            yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
+                        }
                         yaz.WriteLine("using System.Web.Mvc;");
                         yaz.WriteLine("using System.Linq;");
                         yaz.WriteLine("using " + projectName + ".Data;");
@@ -232,6 +235,24 @@ namespace TDFactory
                             foreach (ColumnInfo item in imageColumns)
                             {
                                 yaz.WriteLine("\t\tpublic string Old" + item.ColumnName + " { get; set; }");
+                            }
+                        }
+
+                        if (chkAngular.Checked)
+                        {
+                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            {
+                                yaz.WriteLine("");
+
+                                foreach (ColumnInfo item in fileColumns)
+                                {
+                                    yaz.WriteLine("\t\tpublic bool " + item.ColumnName + "HasFile { get; set; }");
+                                }
+
+                                foreach (ColumnInfo item in imageColumns)
+                                {
+                                    yaz.WriteLine("\t\tpublic bool " + item.ColumnName + "HasFile { get; set; }");
+                                }
                             }
                         }
 
@@ -581,6 +602,24 @@ namespace TDFactory
                             foreach (ColumnInfo item in imageColumns)
                             {
                                 yaz.WriteLine("\t\tstring Old" + item.ColumnName + " { get; set; }");
+                            }
+                        }
+
+                        if (chkAngular.Checked)
+                        {
+                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            {
+                                yaz.WriteLine("");
+
+                                foreach (ColumnInfo item in fileColumns)
+                                {
+                                    yaz.WriteLine("\t\tbool " + item.ColumnName + "HasFile { get; set; }");
+                                }
+
+                                foreach (ColumnInfo item in imageColumns)
+                                {
+                                    yaz.WriteLine("\t\tbool " + item.ColumnName + "HasFile { get; set; }");
+                                }
                             }
                         }
 

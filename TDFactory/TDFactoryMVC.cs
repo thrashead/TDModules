@@ -128,11 +128,6 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax");
                     }
 
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Models"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Models");
-                    }
-
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Controllers"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Controllers");
@@ -1604,16 +1599,6 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
                         yaz.WriteLine("\t\t\t{");
 
-                        if (urlColumns.Count > 0)
-                        {
-                            foreach (ColumnInfo item in urlColumns)
-                            {
-                                yaz.WriteLine("\t\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToUrl();");
-                            }
-
-                            yaz.WriteLine("");
-                        }
-
                         if (fileColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\t\t\tList<Uploader> files = Uploader.UploadFiles(false);");
@@ -1706,16 +1691,6 @@ namespace TDFactory
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\tif (ModelState.IsValid)");
                             yaz.WriteLine("\t\t\t{");
-
-                            if (urlColumns.Count > 0)
-                            {
-                                foreach (ColumnInfo item in urlColumns)
-                                {
-                                    yaz.WriteLine("\t\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToUrl();");
-                                }
-
-                                yaz.WriteLine("");
-                            }
 
                             if (fileColumns.Count > 0)
                             {
@@ -1872,7 +1847,6 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpPost]");
                             yaz.WriteLine("\t\tpublic JsonResult Delete(" + columntype.ReturnCSharpType() + "? id)");
                             yaz.WriteLine("\t\t{");
-
                             if (fileColumns.Count > 0 || imageColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\t\ttry");
@@ -1897,7 +1871,6 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("");
                             }
-
                             yaz.WriteLine("\t\t\treturn Json(model.Delete(id));");
                             yaz.WriteLine("\t\t}");
 
@@ -1908,7 +1881,6 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t[HttpPost]");
                                 yaz.WriteLine("\t\tpublic JsonResult Remove(" + columntype.ReturnCSharpType() + "? id)");
                                 yaz.WriteLine("\t\t{");
-
                                 if (fileColumns.Count > 0 || imageColumns.Count > 0)
                                 {
                                     yaz.WriteLine("\t\t\ttry");
@@ -1933,7 +1905,6 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("");
                                 }
-
                                 yaz.WriteLine("\t\t\treturn Json(model.Remove(id));");
                                 yaz.WriteLine("\t\t}");
                             }
