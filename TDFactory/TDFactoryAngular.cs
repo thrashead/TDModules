@@ -627,8 +627,7 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\tselector: 'admin-layout',");
-                    yaz.WriteLine("\ttemplateUrl: './layoutAdmin.html',");
-                    yaz.WriteLine("\tproviders: [SharedService]");
+                    yaz.WriteLine("\ttemplateUrl: './layoutAdmin.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
                     yaz.WriteLine("export class AdminLayoutComponent {");
@@ -822,8 +821,7 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\tselector: 'admin-header',");
-                    yaz.WriteLine("\ttemplateUrl: './header.html',");
-                    yaz.WriteLine("\tproviders: [SharedService]");
+                    yaz.WriteLine("\ttemplateUrl: './header.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
                     yaz.WriteLine("export class AdminHeaderComponent {");
@@ -1194,7 +1192,6 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\ttemplateUrl: './login.html',");
-                    yaz.WriteLine("\tproviders: [SharedService],");
                     yaz.WriteLine("\tstyleUrls: [");
                     yaz.WriteLine("\t\t'../../../../../Content/admin/css/bootstrap.min.css',");
                     yaz.WriteLine("\t\t'../../../../../Content/admin/css/bootstrap-responsive.min.css',");
@@ -1272,7 +1269,7 @@ namespace TDFactory
                     yaz.WriteLine("import { HttpClient, HttpParams } from '@angular/common/http';");
                     yaz.WriteLine("import { Observable } from 'rxjs';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("@Injectable()");
+                    yaz.WriteLine("@Injectable({ providedIn: 'root' })");
                     yaz.WriteLine("export class SharedService {");
                     yaz.WriteLine("\tprivate linkLogin: string = \"Ajax/Shared/Login\";");
                     yaz.WriteLine("\tprivate linkLogout: string = \"Ajax/Shared/Logout\";");
@@ -1350,6 +1347,7 @@ namespace TDFactory
                 {
                     yaz.WriteLine("import { APP_BASE_HREF } from '@angular/common';");
                     yaz.WriteLine("import { NgModule } from '@angular/core';");
+                    yaz.WriteLine("import { ModuleWithProviders } from '@angular/compiler/src/core';");
                     yaz.WriteLine("import { BrowserModule } from '@angular/platform-browser';");
                     yaz.WriteLine("import { ReactiveFormsModule } from '@angular/forms';");
                     yaz.WriteLine("import { AppRoutingModule } from './app-routing.module';");
@@ -1379,6 +1377,8 @@ namespace TDFactory
                         yaz.WriteLine("");
                     }
 
+                    yaz.WriteLine("import { SharedService } from './admin/services/shared';");
+                    yaz.WriteLine("");
 
                     int i = 1;
 
@@ -1425,26 +1425,36 @@ namespace TDFactory
                     yaz.WriteLine("\t\tHttpClientModule");
                     yaz.WriteLine("\t],");
                     yaz.WriteLine("\t//'/' -> '/" + projectName + "/' Bu şekilde değişecek");
+                    yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/" + projectName + "/' }],");
+                    yaz.WriteLine("\tbootstrap: [AppComponent]");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AppModule {");
+                    yaz.WriteLine("\tstatic forRoot(): ModuleWithProviders {");
+                    yaz.WriteLine("\t\treturn {");
+                    yaz.WriteLine("\t\t\tngModule: AppModule,");
+                    yaz.WriteLine("\t\t\tproviders: [");
 
                     string virgul = selectedTables.Count > 0 ? "," : "";
 
-                    yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/" + projectName + "/' }" + virgul);
+                    yaz.WriteLine("\t\t\t\tSharedService" + virgul);
 
                     i = 1;
                     foreach (string Table in selectedTables)
                     {
                         if (i == selectedTables.Count)
-                            yaz.WriteLine("\t\t" + Table + "Service");
+                            yaz.WriteLine("\t\t\t\t" + Table + "Service");
                         else
-                            yaz.WriteLine("\t\t" + Table + "Service,");
+                            yaz.WriteLine("\t\t\t\t" + Table + "Service,");
 
                         i++;
                     }
 
-                    yaz.WriteLine("\t],");
-                    yaz.WriteLine("\tbootstrap: [AppComponent]");
-                    yaz.WriteLine("})");
-                    yaz.WriteLine("export class AppModule { }");
+                    yaz.WriteLine("\t\t\t],");
+                    yaz.WriteLine("\t\t};");
+                    yaz.WriteLine("\t}");
+
+                    yaz.WriteLine("}");
                     yaz.Close();
                 }
             }
@@ -2670,7 +2680,7 @@ namespace TDFactory
                         yaz.WriteLine("import { Observable } from 'rxjs';");
                         yaz.WriteLine("import { I" + Table + " } from '../models/I" + Table + "';");
                         yaz.WriteLine("");
-                        yaz.WriteLine("@Injectable()");
+                        yaz.WriteLine("@Injectable({ providedIn: 'root' })");
                         yaz.WriteLine("export class " + Table + "Service {");
                         yaz.WriteLine("\tprivate linkIndex: string = \"Ajax/" + Table + "/Index\";");
                         yaz.WriteLine("\tprivate linkInsert: string = \"Ajax/" + Table + "/Insert\";");
