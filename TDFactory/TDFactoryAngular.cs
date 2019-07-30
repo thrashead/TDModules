@@ -1347,7 +1347,6 @@ namespace TDFactory
                 {
                     yaz.WriteLine("import { APP_BASE_HREF } from '@angular/common';");
                     yaz.WriteLine("import { NgModule } from '@angular/core';");
-                    yaz.WriteLine("import { ModuleWithProviders } from '@angular/compiler/src/core';");
                     yaz.WriteLine("import { BrowserModule } from '@angular/platform-browser';");
                     yaz.WriteLine("import { ReactiveFormsModule } from '@angular/forms';");
                     yaz.WriteLine("import { AppRoutingModule } from './app-routing.module';");
@@ -1425,36 +1424,29 @@ namespace TDFactory
                     yaz.WriteLine("\t\tHttpClientModule");
                     yaz.WriteLine("\t],");
                     yaz.WriteLine("\t//'/' -> '/" + projectName + "/' Bu şekilde değişecek");
-                    yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/" + projectName + "/' }],");
-                    yaz.WriteLine("\tbootstrap: [AppComponent]");
-                    yaz.WriteLine("})");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("export class AppModule {");
-                    yaz.WriteLine("\tstatic forRoot(): ModuleWithProviders {");
-                    yaz.WriteLine("\t\treturn {");
-                    yaz.WriteLine("\t\t\tngModule: AppModule,");
-                    yaz.WriteLine("\t\t\tproviders: [");
+
+                    yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/" + projectName + "/' },");
 
                     string virgul = selectedTables.Count > 0 ? "," : "";
 
-                    yaz.WriteLine("\t\t\t\tSharedService" + virgul);
+                    yaz.WriteLine("\t\tSharedService" + virgul);
 
                     i = 1;
                     foreach (string Table in selectedTables)
                     {
                         if (i == selectedTables.Count)
-                            yaz.WriteLine("\t\t\t\t" + Table + "Service");
+                            yaz.WriteLine("\t\t" + Table + "Service");
                         else
-                            yaz.WriteLine("\t\t\t\t" + Table + "Service,");
+                            yaz.WriteLine("\t\t" + Table + "Service,");
 
                         i++;
                     }
 
-                    yaz.WriteLine("\t\t\t],");
-                    yaz.WriteLine("\t\t};");
-                    yaz.WriteLine("\t}");
-
-                    yaz.WriteLine("}");
+                    yaz.WriteLine("\t],");
+                    yaz.WriteLine("\tbootstrap: [AppComponent]");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AppModule { }");
                     yaz.Close();
                 }
             }
@@ -2680,7 +2672,7 @@ namespace TDFactory
                         yaz.WriteLine("import { Observable } from 'rxjs';");
                         yaz.WriteLine("import { I" + Table + " } from '../models/I" + Table + "';");
                         yaz.WriteLine("");
-                        yaz.WriteLine("@Injectable({ providedIn: 'root' })");
+                        yaz.WriteLine("@Injectable()");
                         yaz.WriteLine("export class " + Table + "Service {");
                         yaz.WriteLine("\tprivate linkIndex: string = \"Ajax/" + Table + "/Index\";");
                         yaz.WriteLine("\tprivate linkInsert: string = \"Ajax/" + Table + "/Insert\";");
@@ -2846,51 +2838,64 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\t\t\t$(\".btn-group\").remove();");
                         yaz.WriteLine("\t\t\t\t\t}");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \".fg-button\", () => {");
-                        yaz.WriteLine("\t\t\t\t\t\tsetTimeout(() => {");
-                        yaz.WriteLine("\t\t\t\t\t\t\tthis.FillData();");
-                        yaz.WriteLine("\t\t\t\t\t\t}, 1);");
-                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t\t$(document)");
+                        yaz.WriteLine("\t\t\t\t\t\t.off(\"click\", \".fg-button\")");
+                        yaz.WriteLine("\t\t\t\t\t\t.on(\"click\", \".fg-button\", () => {");
+                        yaz.WriteLine("\t\t\t\t\t\t\tsetTimeout(() => {");
+                        yaz.WriteLine("\t\t\t\t\t\t\t\tthis.FillData();");
+                        yaz.WriteLine("\t\t\t\t\t\t\t}, 1);");
+                        yaz.WriteLine("\t\t\t\t\t\t});");
 
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.cpyLink\", function () {");
-                        yaz.WriteLine("\t\t\t\t\t\t$(this).addClass(\"active-cpy\");");
-                        yaz.WriteLine("\t\t\t\t\t\t$(\"a.cpy-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
-                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t\t$(document)");
+                        yaz.WriteLine("\t\t\t\t\t\t.off(\"click\", \"a.cpyLink\")");
+                        yaz.WriteLine("\t\t\t\t\t\t.on(\"click\", \"a.cpyLink\", function () {");
+                        yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-cpy\");");
+                        yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.cpy-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                        yaz.WriteLine("\t\t\t\t\t\t});");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.cpy-yes\", () => {");
-                        yaz.WriteLine("\t\t\t\t\t\tlet id: string = $(\"a.cpy-yes\").attr(\"data-id\");");
-                        yaz.WriteLine("\t\t\t\t\t\tthis.onCopy(id);");
-                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t\t$(document)");
+                        yaz.WriteLine("\t\t\t\t\t\t.off(\"click\", \"a.cpy-yes\")");
+                        yaz.WriteLine("\t\t\t\t\t\t.on(\"click\", \"a.cpy-yes\", () => {");
+                        yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.cpy-yes\").attr(\"data-id\");");
+                        yaz.WriteLine("\t\t\t\t\t\t\tthis.onCopy(id);");
+                        yaz.WriteLine("\t\t\t\t\t\t});");
 
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.dltLink\", function () {");
-                        yaz.WriteLine("\t\t\t\t\t\t$(this).addClass(\"active-dlt\");");
-                        yaz.WriteLine("\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
-                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t\t$(document)");
+                        yaz.WriteLine("\t\t\t\t\t\t.off(\"click\", \"a.dltLink\")");
+                        yaz.WriteLine("\t\t\t\t\t\t.on(\"click\", \"a.dltLink\", function () {");
+                        yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-dlt\");");
+                        yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                        yaz.WriteLine("\t\t\t\t\t\t});");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.dlt-yes\", () => {");
-                        yaz.WriteLine("\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
-                        yaz.WriteLine("\t\t\t\t\t\tthis.onDelete(id);");
-                        yaz.WriteLine("\t\t\t\t\t});");
+                        yaz.WriteLine("\t\t\t\t\t$(document)");
+                        yaz.WriteLine("\t\t\t\t\t\t.off(\"click\", \"a.dlt-yes\")");
+                        yaz.WriteLine("\t\t\t\t\t\t.on(\"click\", \"a.dlt-yes\", () => {");
+                        yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
+                        yaz.WriteLine("\t\t\t\t\t\t\tthis.onDelete(id);");
+                        yaz.WriteLine("\t\t\t\t\t\t});");
 
                         if (deleted)
                         {
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.rmvLink\", function () {");
-                            yaz.WriteLine("\t\t\t\t\t\t$(this).addClass(\"active-rmv\");");
-                            yaz.WriteLine("\t\t\t\t\t\t$(\"a.rmv-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
-                            yaz.WriteLine("\t\t\t\t\t});");
+                            yaz.WriteLine("\t\t\t\t\t$(document)");
+                            yaz.WriteLine("\t\t\t\t\t\t.off(\"click\", \"a.rmvLink\")");
+                            yaz.WriteLine("\t\t\t\t\t\t.on(\"click\", \"a.rmvLink\", function () {");
+                            yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-rmv\");");
+                            yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.rmv-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                            yaz.WriteLine("\t\t\t\t\t\t});");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\t\t$(document).on(\"click\", \"a.rmv-yes\", () => {");
-                            yaz.WriteLine("\t\t\t\t\t\tlet id: string = $(\"a.rmv-yes\").attr(\"data-id\");");
-                            yaz.WriteLine("\t\t\t\t\t\tthis.onRemove(id);");
-                            yaz.WriteLine("\t\t\t\t\t});");
+                            yaz.WriteLine("\t\t\t\t\t$(document)");
+                            yaz.WriteLine("\t\t\t\t\t\t.off(\"click\", \"a.rmv-yes\")");
+                            yaz.WriteLine("\t\t\t\t\t\t.on(\"click\", \"a.rmv-yes\", () => {");
+                            yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.rmv-yes\").attr(\"data-id\");");
+                            yaz.WriteLine("\t\t\t\t\t\t\tthis.onRemove(id);");
+                            yaz.WriteLine("\t\t\t\t\t\t});");
                         }
 
                         yaz.WriteLine("\t\t\t\t}, 1);");
-                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError,");
-                        yaz.WriteLine("\t\t\t\t() => { this.subscription.unsubscribe(); });");
+                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\tsetTimeout(() => {");
@@ -2908,21 +2913,34 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\tonCopy(id) {");
                         yaz.WriteLine("\t\tthis.subscription = this.service.getCopy(id).subscribe((answer) => {");
+                        yaz.WriteLine("\t\t\t$(\"a.cpyLink.active-cpy\").removeClass(\"active-cpy\");");
+                        yaz.WriteLine("");
                         yaz.WriteLine("\t\t\tif (answer == true) {");
-                        yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
+                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Copy\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tlet currentUrl = this.router.url;");
+                        yaz.WriteLine("\t\t\t\tthis.router.navigate(['/'], { skipLocationChange: true }).then(() => { this.router.navigate([currentUrl]) });");
                         yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
-                        yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
+                        yaz.WriteLine("\t\t\telse {");
+                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"CopyNot\");");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                         yaz.WriteLine("\t}");
 
                         yaz.WriteLine("");
                         yaz.WriteLine("\tonDelete(id) {");
                         yaz.WriteLine("\t\tthis.subscription = this.service.getDelete(id).subscribe((answer) => {");
                         yaz.WriteLine("\t\t\tif (answer == true) {");
-                        yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
+                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Delete\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t$(\"a.dltLink.active-dlt\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                        yaz.WriteLine("\t\t\t\t\t$(this).remove();");
+                        yaz.WriteLine("\t\t\t\t});");
                         yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
-                        yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
+                        yaz.WriteLine("\t\t\telse {");
+                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"DeleteNot\");");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                         yaz.WriteLine("\t}");
 
                         if (deleted)
@@ -2931,12 +2949,27 @@ namespace TDFactory
                             yaz.WriteLine("\tonRemove(id) {");
                             yaz.WriteLine("\t\tthis.subscription = this.service.getRemove(id).subscribe((answer) => {");
                             yaz.WriteLine("\t\t\tif (answer == true) {");
-                            yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
+                            yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Remove\");");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\t$(\"a.rmvLink.active-rmv\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                            yaz.WriteLine("\t\t\t\t\t$(this).remove();");
+                            yaz.WriteLine("\t\t\t\t});");
                             yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
-                            yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
+                            yaz.WriteLine("\t\t\telse {");
+                            yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"RemoveNot\");");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                             yaz.WriteLine("\t}");
                         }
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tShowAlert(type: string) {");
+                        yaz.WriteLine("\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeIn(\"slow\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tsetInterval(function () {");
+                        yaz.WriteLine("\t\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeOut(\"slow\");");
+                        yaz.WriteLine("\t\t}, 2000);");
+                        yaz.WriteLine("\t}");
 
                         yaz.WriteLine("}");
                         yaz.Close();
@@ -3007,8 +3040,7 @@ namespace TDFactory
                         {
                             yaz.WriteLine("\t\tthis.subscription = this.service.getInsert().subscribe((answer) => {");
                             yaz.WriteLine("\t\t\tthis.model = answer;");
-                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
-                            yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
+                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                             yaz.WriteLine("");
                         }
 
@@ -3189,8 +3221,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(answerUpload.Mesaj);");
                             yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
                             yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
-                            yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
+                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                         }
 
                         yaz.WriteLine("\t}");
@@ -3381,23 +3412,29 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\t\t\t$(\".btn-group\").remove();");
                                 yaz.WriteLine("\t\t\t\t\t\t}");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \".fg-button\", () => {");
-                                yaz.WriteLine("\t\t\t\t\t\t\tsetTimeout(() => {");
-                                yaz.WriteLine("\t\t\t\t\t\t\t\tthis.FillData();");
-                                yaz.WriteLine("\t\t\t\t\t\t\t}, 1);");
-                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("\t\t\t\t\t\t$(document)");
+                                yaz.WriteLine("\t\t\t\t\t\t\t.off(\"click\", \".fg-button\")");
+                                yaz.WriteLine("\t\t\t\t\t\t\t.on(\"click\", \".fg-button\", () => {");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\tsetTimeout(() => {");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\tthis.FillData();");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t}, 1);");
+                                yaz.WriteLine("\t\t\t\t\t\t\t});");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.cpyLink\", function () {");
-                                yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-cpy\");");
-                                yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.cpy-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
-                                yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.cpy-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
-                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("\t\t\t\t\t\t$(document)");
+                                yaz.WriteLine("\t\t\t\t\t\t\t.off(\"click\", \"a.cpyLink\")");
+                                yaz.WriteLine("\t\t\t\t\t\t\t.on(\"click\", \"a.cpyLink\", function () {");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t$(this).addClass(\"active-cpy\");");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t$(\"a.cpy-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t$(\"a.cpy-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
+                                yaz.WriteLine("\t\t\t\t\t\t\t});");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.dltLink\", function () {");
-                                yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-dlt\");");
-                                yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
-                                yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
-                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("\t\t\t\t\t\t$(document)");
+                                yaz.WriteLine("\t\t\t\t\t\t\t.off(\"click\", \"a.dltLink\")");
+                                yaz.WriteLine("\t\t\t\t\t\t\t.on(\"click\", \"a.dltLink\", function () {");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t$(this).addClass(\"active-dlt\");");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t$(\"a.dlt-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
+                                yaz.WriteLine("\t\t\t\t\t\t\t});");
 
                                 int y = 0;
 
@@ -3408,44 +3445,51 @@ namespace TDFactory
                                     bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.cpy-yes[data-link='" + ForeignTableName + "']\", () => {");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.cpy-yes\").attr(\"data-id\");");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Copy(id);");
-                                    yaz.WriteLine("\t\t\t\t\t\t});");
+                                    yaz.WriteLine("\t\t\t\t\t\t$(document)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t.off(\"click\", \"a.cpy-yes[data-link='" + ForeignTableName + "']\")");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t.on(\"click\", \"a.cpy-yes[data-link='" + ForeignTableName + "']\", () => {");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\tlet id: string = $(\"a.cpy-yes\").attr(\"data-id\");");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Copy(id);");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t});");
 
                                     yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.dlt-yes[data-link='" + ForeignTableName + "']\", () => {");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Delete(id);");
-                                    yaz.WriteLine("\t\t\t\t\t\t});");
+                                    yaz.WriteLine("\t\t\t\t\t\t$(document)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t.off(\"click\", \"a.dlt-yes[data-link='" + ForeignTableName + "']\")");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t.on(\"click\", \"a.dlt-yes[data-link='" + ForeignTableName + "']\", () => {");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\tlet id: string = $(\"a.dlt-yes\").attr(\"data-id\");");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Delete(id);");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t});");
 
                                     if (fDeleted)
                                     {
                                         if (y == 0)
                                         {
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.rmvLink\", function () {");
-                                            yaz.WriteLine("\t\t\t\t\t\t\t$(this).addClass(\"active-rmv\");");
-                                            yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.rmv-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
-                                            yaz.WriteLine("\t\t\t\t\t\t\t$(\"a.rmv-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
-                                            yaz.WriteLine("\t\t\t\t\t\t});");
+                                            yaz.WriteLine("\t\t\t\t\t\t$(document)");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t.off(\"click\", \"a.rmvLink\")");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t.on(\"click\", \"a.rmvLink\", function () {");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t$(this).addClass(\"active-rmv\");");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t$(\"a.rmv-yes\").attr(\"data-id\", $(this).attr(\"data-id\"));");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t$(\"a.rmv-yes\").attr(\"data-link\", $(this).attr(\"data-controller\"));");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t});");
 
                                             y++;
                                         }
 
                                         yaz.WriteLine("");
-                                        yaz.WriteLine("\t\t\t\t\t\t$(document).on(\"click\", \"a.rmv-yes[data-link='" + ForeignTableName + "']\", () => {");
-                                        yaz.WriteLine("\t\t\t\t\t\t\tlet id: string = $(\"a.rmv-yes\").attr(\"data-id\");");
-                                        yaz.WriteLine("\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Remove(id);");
-                                        yaz.WriteLine("\t\t\t\t\t\t});");
+                                        yaz.WriteLine("\t\t\t\t\t\t$(document)");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t.off(\"click\", \"a.rmv-yes[data-link='" + ForeignTableName + "']\")");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t.on(\"click\", \"a.rmv-yes[data-link='" + ForeignTableName + "']\", () => {");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\tlet id: string = $(\"a.rmv-yes\").attr(\"data-id\");");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\tthis.on" + ForeignTableName + "Remove(id);");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t});");
                                     }
                                 }
 
                                 yaz.WriteLine("\t\t\t\t\t}, 1);");
                             }
 
-                            yaz.WriteLine("\t\t\t\t}, resError => this.errorMsg = resError,");
-                            yaz.WriteLine("\t\t\t\t\t() => { this.subscription.unsubscribe(); });");
+                            yaz.WriteLine("\t\t\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                             yaz.WriteLine("\t\t\t});");
                             yaz.WriteLine("\t\t}");
 
@@ -3573,8 +3617,7 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(answerUpload.Mesaj);");
                                 yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
                                 yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
-                                yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
+                                yaz.WriteLine("\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                             }
 
                             yaz.WriteLine("\t}");
@@ -3590,18 +3633,32 @@ namespace TDFactory
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\ton" + ForeignTableName + "Copy(id) {");
                                     yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getCopy(id).subscribe((answer) => {");
+                                    yaz.WriteLine("\t\t\t$(\"a.cpyLink.active-cpy\").removeClass(\"active-cpy\");");
+                                    yaz.WriteLine("");
                                     yaz.WriteLine("\t\t\tif (answer == true) {");
-                                    yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
+                                    yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Copy\");");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\tlet currentUrl = this.router.url;");
+                                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/'], { skipLocationChange: true }).then(() => { this.router.navigate([currentUrl]) });");
                                     yaz.WriteLine("\t\t\t}");
-                                    yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
-                                    yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
+                                    yaz.WriteLine("\t\t\telse {");
+                                    yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"CopyNot\");");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
                                     yaz.WriteLine("\t}");
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\ton" + ForeignTableName + "Delete(id) {");
                                     yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getDelete(id).subscribe((answer) => {");
                                     yaz.WriteLine("\t\t\tif (answer == true) {");
-                                    yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
+                                    yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Delete\");");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t$(\"a.dltLink.active-dlt\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                                    yaz.WriteLine("\t\t\t\t\t$(this).remove();");
+                                    yaz.WriteLine("\t\t\t\t});");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t\telse {");
+                                    yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"DeleteNot\");");
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                                     yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
@@ -3613,7 +3670,14 @@ namespace TDFactory
                                         yaz.WriteLine("\ton" + ForeignTableName + "Remove(id) {");
                                         yaz.WriteLine("\t\tthis.subscription = this.service" + ForeignTableName + ".getRemove(id).subscribe((answer) => {");
                                         yaz.WriteLine("\t\t\tif (answer == true) {");
-                                        yaz.WriteLine("\t\t\t\tthis.router.navigate([this.router.url]);");
+                                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"Remove\");");
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\t$(\"a.rmvLink.active-rmv\").parent(\"li\").parent(\"ul\").parent(\"div\").parent(\"td\").parent(\"tr\").fadeOut(\"slow\", function () {");
+                                        yaz.WriteLine("\t\t\t\t\t$(this).remove();");
+                                        yaz.WriteLine("\t\t\t\t});");
+                                        yaz.WriteLine("\t\t\t}");
+                                        yaz.WriteLine("\t\t\telse {");
+                                        yaz.WriteLine("\t\t\t\tthis.ShowAlert(\"RemoveNot\");");
                                         yaz.WriteLine("\t\t\t}");
                                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError,");
                                         yaz.WriteLine("\t\t\t() => { this.subscription.unsubscribe(); });");
@@ -3621,6 +3685,15 @@ namespace TDFactory
                                     }
                                 }
                             }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tShowAlert(type: string) {");
+                            yaz.WriteLine("\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeIn(\"slow\");");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\tsetInterval(function () {");
+                            yaz.WriteLine("\t\t\t$(\"#tdAlertMessage li.tdAlert\" + type).fadeOut(\"slow\");");
+                            yaz.WriteLine("\t\t}, 2000);");
+                            yaz.WriteLine("\t}");
 
                             yaz.WriteLine("}");
                             yaz.Close();
