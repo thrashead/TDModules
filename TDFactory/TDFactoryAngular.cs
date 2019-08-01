@@ -2194,7 +2194,7 @@ namespace TDFactory
 
         void CreateAngularControllerLayer()
         {
-            int i = 0;
+            CreateAngularHomeController();
 
             foreach (string Table in selectedTables)
             {
@@ -2218,46 +2218,29 @@ namespace TDFactory
                 List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
                 bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
-                if (i <= 0)
-                {
-                    CreateAngularHomeController();
-
-                    i++;
-                }
-
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\" + Table + "Controller.cs", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Web.Mvc;");
-                        if (fkcList.Count > 0 || fkcListForeign.Count > 0 || fileColumns.Count > 0 || imageColumns.Count > 0)
+
+                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
                         {
-                            yaz.WriteLine("using System.Collections.Generic;");
                             yaz.WriteLine("using System.Linq;");
-                            yaz.WriteLine("using " + projectName + ".Data;");
+                            yaz.WriteLine("using System.Collections.Generic;");
                             yaz.WriteLine("using TDLibrary;");
+                            yaz.WriteLine("using " + projectName + ".Data;");
                         }
 
                         yaz.WriteLine("using Repository." + Table + "Model;");
-
-                        if (fkcList.Count > 0)
-                        {
-                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                            {
-                                string ForeignTableName = fkc.ForeignTableName;
-                                yaz.WriteLine("using Repository." + ForeignTableName + "Model;");
-
-                            }
-                        }
-
                         yaz.WriteLine("");
+
                         yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
                         yaz.WriteLine("{");
                         yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
                         yaz.WriteLine("\t{");
 
-                        if (fkcList.Count > 0 || fkcListForeign.Count > 0 || fileColumns.Count > 0 || imageColumns.Count > 0)
+                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\treadonly " + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
                         }
@@ -2268,8 +2251,6 @@ namespace TDFactory
 
                         // Index
                         string searchText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
-
-                        string linked = fkcListForeign.Count > 0 ? "Linked" : "";
 
                         yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic JsonResult Index(int? id)");
@@ -2284,21 +2265,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Insert()");
                             yaz.WriteLine("\t\t{");
-
-                            if (fkcListForeign.Count > 0)
-                            {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
-
-                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\tmodel." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\",  \"" + columnText + "\");");
-                                    yaz.WriteLine("");
-                                }
-                            }
-
-                            yaz.WriteLine("\t\t\treturn Json(model, JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t\treturn Json(model.Insert(), JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
                         }
@@ -2310,27 +2277,25 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\tbool result = model.Insert(table);");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\tif (result)");
-                        yaz.WriteLine("\t\t\t{");
                         yaz.WriteLine("\t\t\t\treturn Json(table);");
-                        yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t\telse");
-                        yaz.WriteLine("\t\t\t{");
                         yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt eklenemedi.\";");
-                        yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("");
+
+                        string linkID = ", null";
 
                         if (fkcListForeign.Count > 0)
                         {
+                            linkID = "";
+
                             foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
-
-                                yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
-                                yaz.WriteLine("");
+                                linkID += ", table." + fkc.ForeignColumnName;
                             }
                         }
+
+                        yaz.WriteLine("\t\t\ttable = (" + Table + ")model.Insert(table" + linkID + ");");
+                        yaz.WriteLine("");
 
                         yaz.WriteLine("\t\t\treturn Json(table);");
                         yaz.WriteLine("\t\t}");
@@ -2388,7 +2353,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Update(" + columntype.ReturnCSharpType() + "? id)");
                             yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\treturn Json(model.Select(id), JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t\treturn Json(model.Update(id), JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
@@ -2434,44 +2399,15 @@ namespace TDFactory
 
                             yaz.WriteLine("\t\t\tbool result = model.Update(table);");
                             yaz.WriteLine("");
+
                             yaz.WriteLine("\t\t\tif (result)");
-                            yaz.WriteLine("\t\t\t{");
                             yaz.WriteLine("\t\t\t\treturn Json(table);");
-                            yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t\telse");
-                            yaz.WriteLine("\t\t\t{");
                             yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
-                            yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
 
-                            if (fkcListForeign.Count > 0)
-                            {
-                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    string PrimaryTableName = fkc.PrimaryTableName;
-                                    string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
-
-                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
-                                    yaz.WriteLine("");
-                                }
-                            }
-
-                            if (fkcList.Count > 0)
-                            {
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
-                                        string ForeignTableName = fkc2.ForeignTableName;
-
-                                        yaz.WriteLine("\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
-                                        yaz.WriteLine("\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
-                                        yaz.WriteLine("");
-                                    }
-                                }
-                            }
+                            yaz.WriteLine("\t\t\ttable = (" + Table + ")model.Update(table." + id + ", table);");
+                            yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\treturn Json(table);");
                             yaz.WriteLine("\t\t}");
@@ -3775,10 +3711,6 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
-                    yaz.WriteLine("using System;");
-                    yaz.WriteLine("using System.Collections.Generic;");
-                    yaz.WriteLine("using System.Linq;");
-                    yaz.WriteLine("using System.Web;");
                     yaz.WriteLine("using System.Web.Mvc;");
                     yaz.WriteLine("");
                     yaz.WriteLine("namespace " + projectName + ".Controllers");

@@ -1468,7 +1468,7 @@ namespace TDFactory
 
         void CreateMVCControllerLayer()
         {
-            int i = 0;
+            CreateMVCHomeController();
 
             foreach (string Table in selectedTables)
             {
@@ -1494,18 +1494,10 @@ namespace TDFactory
 
                 CreateMVCDirectories(Table);
 
-                if (i <= 0)
-                {
-                    CreateMVCHomeController();
-
-                    i++;
-                }
-
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Admin\\Controllers\\" + Table + "Controller.cs", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Web.Mvc;");
 
                         if (fileColumns.Count > 0 || imageColumns.Count > 0)
@@ -1535,18 +1527,23 @@ namespace TDFactory
                         // Index
                         string searchText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
 
+                        yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic ViewResult Index(int? id)");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\treturn View(model.List(id));");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-                        // Ekle
-                        yaz.WriteLine("\t\tpublic ActionResult Insert()");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\treturn View(model.Insert());");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
+                        if (fkcListForeign.Count > 0)
+                        {
+                            // Ekle
+                            yaz.WriteLine("\t\t[HttpGet]");
+                            yaz.WriteLine("\t\tpublic ActionResult Insert()");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\treturn View(model.Insert());");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                        }
 
                         yaz.WriteLine("\t\t[HttpPost]");
                         yaz.WriteLine("\t\tpublic ActionResult Insert(" + Table + " table)");
@@ -1638,11 +1635,13 @@ namespace TDFactory
                             string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
 
                             //Duzenle
+                            yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic ActionResult Update(" + columntype.ReturnCSharpType() + "? id)");
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\treturn View(model.Update(id));");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
+
                             yaz.WriteLine("\t\t[HttpPost]");
                             yaz.WriteLine("\t\tpublic ActionResult Update(" + Table + " table)");
                             yaz.WriteLine("\t\t{");

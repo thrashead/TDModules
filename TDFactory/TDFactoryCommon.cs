@@ -305,6 +305,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
+
                         // Insert
                         string linkID = ", bool? none = null";
                         string[] links = new string[fkcListForeign.Count];
@@ -796,6 +797,7 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("\t\tI" + Table + " Insert(I" + Table + " table" + linkID + ");");
+
                         yaz.WriteLine("\t\tbool Insert(I" + Table + " table);");
 
                         if (identityColumns.Count > 0)
