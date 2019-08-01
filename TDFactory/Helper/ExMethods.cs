@@ -222,5 +222,30 @@ namespace TDFactory.Helper
             ToUrl,
             ToUrlLower
         }
+
+        public static string FirstCharToLowerCase(this string text, bool toEnglish = false, char splitChar = ' ')
+        {
+            string s = "";
+
+            foreach (var item in text.Split(splitChar))
+            {
+                s += item[0].ToString().ToLower() + item.Remove(0, 1) + splitChar;
+            }
+
+            text = s.TrimEnd(splitChar);
+
+            if (toEnglish == true)
+            {
+                text = text.Replace("ğ", "g");
+                text = text.Replace("ü", "u");
+                text = text.Replace("ş", "s");
+                text = text.Replace("ı", "i");
+                text = text.Replace("ö", "o");
+                text = text.Replace("ç", "c");
+                text = text.Replace("â", "a");
+            }
+
+            return text;
+        }
     }
 }

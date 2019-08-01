@@ -346,7 +346,51 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-                        // Ekle
+                        // Insert
+                        string linkID = ", bool? none = null";
+                        string[] links = new string[fkcListForeign.Count];
+
+                        int l = 0;
+                        if (fkcListForeign.Count > 0)
+                        {
+                            linkID = "";
+
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                linkID += ", int? " + fkc.ForeignColumnName.FirstCharToLowerCase() + " = null";
+                                links[l] = fkc.ForeignColumnName.FirstCharToLowerCase();
+
+                                l++;
+                            }
+                        }
+
+                        yaz.WriteLine("\t\tpublic I" + Table + " Insert(I" + Table + " table = null" + linkID + ")");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tif (table == null)");
+                        yaz.WriteLine("\t\t\t\ttable = new " + Table + "();");
+                        yaz.WriteLine("");
+
+                        l = 0;
+                        if (fkcListForeign.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
+
+                                yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\",  \"" + columnText + "\", " + links[l] + ");");
+                                yaz.WriteLine("");
+
+                                l++;
+                            }
+                        }
+
+                        yaz.WriteLine("\t\t\treturn table;");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+                        // Insert
                         yaz.WriteLine("\t\tpublic bool Insert(I" + Table + " table)");
                         yaz.WriteLine("\t\t{");
 
@@ -384,7 +428,80 @@ namespace TDFactory
 
                         if (identityColumns.Count > 0)
                         {
-                            //Düzenle
+                            //Update
+                            yaz.WriteLine("\t\tpublic I" + Table + " Update(int? id, I" + Table + " table = null)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (table == null)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttable = Select(id);");
+                            yaz.WriteLine("\t\t\t}");
+
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\telse");
+                                yaz.WriteLine("\t\t\t{");
+                            }
+
+                            if (fkcListForeign.Count > 0)
+                            {
+                                l = 1;
+
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    if (l > 1)
+                                    {
+                                        yaz.WriteLine("");
+                                    }
+
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
+
+                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+
+                                    l++;
+
+                                    if (fkcList.Count > 0)
+                                    {
+                                        yaz.WriteLine("");
+                                    }
+                                }
+                            }
+
+                            if (fkcList.Count > 0)
+                            {
+                                l = 1;
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
+
+                                        yaz.WriteLine("\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
+                                        yaz.WriteLine("\t\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+
+                                        if (l != fkcList.Count)
+                                            yaz.WriteLine("");
+                                    }
+
+                                    l++;
+                                }
+                            }
+
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\t}");
+                            }
+
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\t\t\treturn table;");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+
+
+                            //Update
                             yaz.WriteLine("\t\tpublic bool Update(I" + Table + " table)");
                             yaz.WriteLine("\t\t{");
 
@@ -421,7 +538,7 @@ namespace TDFactory
 
 
 
-                            //Kopyala
+                            //Copy
                             yaz.WriteLine("\t\tpublic bool Copy(" + columntype.ReturnCSharpType() + " id)");
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\ttry");
@@ -437,7 +554,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
-                            //Sil
+                            //Delete
                             yaz.WriteLine("\t\tpublic bool Delete(" + columntype.ReturnCSharpType() + "? id)");
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\ttry");
@@ -454,7 +571,7 @@ namespace TDFactory
 
                             if (deleted)
                             {
-                                //Kaldır
+                                //Remove
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\tpublic bool Remove(" + columntype.ReturnCSharpType() + "? id)");
                                 yaz.WriteLine("\t\t{");
@@ -665,25 +782,44 @@ namespace TDFactory
                         // Select
                         yaz.WriteLine("\t\tI" + Table + " Select(int? id);");
 
-                        // Ekle
+                        // Insert
+                        string linkID = ", bool? none";
+                        string[] links = new string[fkcListForeign.Count];
+
+                        int l = 0;
+                        if (fkcListForeign.Count > 0)
+                        {
+                            linkID = "";
+
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                linkID += ", int? " + fkc.ForeignColumnName.FirstCharToLowerCase();
+                                links[l] = fkc.ForeignColumnName.FirstCharToLowerCase();
+
+                                l++;
+                            }
+                        }
+
+                        yaz.WriteLine("\t\tI" + Table + " Insert(I" + Table + " table" + linkID + ");");
                         yaz.WriteLine("\t\tbool Insert(I" + Table + " table);");
 
                         if (identityColumns.Count > 0)
                         {
                             string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
 
-                            //Düzenle
+                            //Update
+                            yaz.WriteLine("\t\tI" + Table + " Update(int? id, I" + Table + " table);");
                             yaz.WriteLine("\t\tbool Update(I" + Table + " table);");
 
-                            //Kopyala
+                            //Copy
                             yaz.WriteLine("\t\tbool Copy(" + columntype.ReturnCSharpType() + " id);");
 
-                            //Sil
+                            //Delete
                             yaz.WriteLine("\t\tbool Delete(" + columntype.ReturnCSharpType() + "? id);");
 
                             if (deleted)
                             {
-                                //Kaldır
+                                //Remove
                                 yaz.WriteLine("\t\tbool Remove(" + columntype.ReturnCSharpType() + "? id);");
                             }
                         }
