@@ -45,13 +45,37 @@ namespace TDFactory
                         List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
 
+                        bool allowHtml = false;
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (column.Type != null)
+                            {
+                                if (column.Type.Name == "String")
+                                {
+                                    if (column.CharLength == -1 && !column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                    {
+                                        allowHtml = true;
+
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
                         yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Collections.Generic;");
+
                         if (!chkAngular.Checked)
                         {
                             yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
                         }
-                        yaz.WriteLine("using System.Web.Mvc;");
+
+                        if (fkcListForeign.Count > 0 || allowHtml)
+                        {
+                            yaz.WriteLine("using System.Web.Mvc;");
+                        }
+
                         yaz.WriteLine("using System.Linq;");
                         yaz.WriteLine("using " + projectName + ".Data;");
                         yaz.WriteLine("using TDLibrary;");
@@ -91,7 +115,6 @@ namespace TDFactory
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
                                     yaz.WriteLine("\t\t\t" + ForeignTableName + "List = new List<I" + ForeignTableName + ">();");
-
                                 }
                             }
 
@@ -293,13 +316,26 @@ namespace TDFactory
                         // Index
                         string searchText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
 
-                        yaz.WriteLine("\t\tpublic List<" + Table + "> List(int? id)");
-                        yaz.WriteLine("\t\t{");
-
                         string linked = fkcListForeign.Count > 0 ? "Linked" : "";
 
-                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> tableTemp = entity.usp_" + Table + linked + "Select(id).ToList();");
-                        yaz.WriteLine("\t\t\tList<" + Table + "> table = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + linked + "Select_Result>();");
+                        yaz.WriteLine("\t\tpublic List<" + Table + "> List(int? id = null, int? top = null)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tList<" + Table + "> table;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> tableTemp;");
+                        yaz.WriteLine("\t\t\tList<usp_" + Table + "SelectTop_Result> tableTopTemp;");
+                        yaz.WriteLine("");
+
+                        yaz.WriteLine("\t\t\tif (top == null)");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\ttableTemp = entity.usp_" + Table + linked + "Select(id).ToList();");
+                        yaz.WriteLine("\t\t\t\ttable = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + linked + "Select_Result>();");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\telse");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\ttableTopTemp = entity.usp_" + Table + "SelectTop(id, top).ToList();");
+                        yaz.WriteLine("\t\t\t\ttable = tableTopTemp.ChangeModelList<" + Table + ", usp_" + Table + "SelectTop_Result>();");
+                        yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\treturn table;");
                         yaz.WriteLine("\t\t}");
@@ -346,14 +382,13 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-
                         foreach (ColumnInfo item in urlColumns)
                         {
                             // SelectByUrl
-                            yaz.WriteLine("\t\tpublic I" + Table + " SelectBy" + item.ColumnName + "(" + item.Type.Name.ReturnCSharpType() + " " + item.ColumnName.ToUrl().FirstCharToLowerCase() + ")");
+                            yaz.WriteLine("\t\tpublic I" + Table + " SelectBy" + item.ColumnName + "(string url)");
                             yaz.WriteLine("\t\t{");
 
-                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectBy" + item.ColumnName + "_Result tableTemp = entity.usp_" + Table + "SelectBy" + item.ColumnName + "(" + item.ColumnName.ToUrl().FirstCharToLowerCase() + ").FirstOrDefault();");
+                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectBy" + item.ColumnName + "_Result tableTemp = entity.usp_" + Table + "SelectBy" + item.ColumnName + "(url).FirstOrDefault();");
                             yaz.WriteLine("\t\t\t" + Table + " table = tableTemp.ChangeModel<" + Table + ">();");
                             yaz.WriteLine("");
 
@@ -390,7 +425,6 @@ namespace TDFactory
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
                         }
-
 
                         // Insert
                         string linkID = ", bool? none = null";
@@ -475,7 +509,7 @@ namespace TDFactory
                         if (identityColumns.Count > 0)
                         {
                             //Update
-                            yaz.WriteLine("\t\tpublic I" + Table + " Update(int? id, I" + Table + " table = null)");
+                            yaz.WriteLine("\t\tpublic I" + Table + " Update(int? id = null, I" + Table + " table = null)");
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\tif (table == null)");
                             yaz.WriteLine("\t\t\t{");
@@ -581,8 +615,6 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
 
-
-
                             //Copy
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\tpublic bool Copy(" + columntype.ReturnCSharpType() + " id)");
@@ -601,7 +633,7 @@ namespace TDFactory
 
                             //Delete
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\tpublic bool Delete(" + columntype.ReturnCSharpType() + "? id)");
+                            yaz.WriteLine("\t\tpublic bool Delete(" + columntype.ReturnCSharpType() + "? id = null)");
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\ttry");
                             yaz.WriteLine("\t\t\t{");
@@ -619,7 +651,7 @@ namespace TDFactory
                             {
                                 //Remove
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic bool Remove(" + columntype.ReturnCSharpType() + "? id)");
+                                yaz.WriteLine("\t\tpublic bool Remove(" + columntype.ReturnCSharpType() + "? id = null)");
                                 yaz.WriteLine("\t\t{");
                                 yaz.WriteLine("\t\t\ttry");
                                 yaz.WriteLine("\t\t\t{");
@@ -821,13 +853,15 @@ namespace TDFactory
                         string searchText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
 
                         // Index
-                        yaz.WriteLine("\t\tList<" + Table + "> List(int? id);");
+                        yaz.WriteLine("\t\tList<" + Table + "> List(int? id, int? top);");
+
+                        // Select
                         yaz.WriteLine("\t\tI" + Table + " Select(int? id);");
 
                         foreach (ColumnInfo item in urlColumns)
                         {
                             // SelectByUrl
-                            yaz.WriteLine("\t\tI" + Table + " SelectBy" + item.ColumnName + "(" + item.Type.Name.ReturnCSharpType() + " " + item.ColumnName.ToUrl().FirstCharToLowerCase() + ");");
+                            yaz.WriteLine("\t\tI" + Table + " SelectBy" + item.ColumnName + "(string url);");
                         }
 
                         // Insert
@@ -958,6 +992,7 @@ namespace TDFactory
                 string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
 
                 List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
+                List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
                 bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
                 columnNames = columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList();
 
@@ -975,10 +1010,25 @@ namespace TDFactory
                         yaz.WriteLine("\t[ServiceContract]");
                         yaz.WriteLine("\tpublic interface I" + Table + "Service");
                         yaz.WriteLine("\t{");
+
                         yaz.WriteLine("\t\t[OperationContract]");
                         yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Select/?top={top}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                         yaz.WriteLine("\t\tList<" + Table + "Data> Select(string top);");
                         yaz.WriteLine("");
+
+                        yaz.WriteLine("\t\t[OperationContract]");
+                        yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectByID/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                        yaz.WriteLine("\t\t" + Table + "Data SelectByID(string id);");
+                        yaz.WriteLine("");
+
+                        foreach (ColumnInfo item in urlColumns)
+                        {
+                            yaz.WriteLine("\t\t[OperationContract]");
+                            yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectBy" + item.ColumnName + "/?url={url}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\t" + Table + "Data SelectBy" + item.ColumnName + "(string url);");
+                            yaz.WriteLine("");
+                        }
+
                         yaz.WriteLine("\t\t[OperationContract]");
                         yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                         yaz.WriteLine("\t\tbool Insert(" + Table + "Data table);");
@@ -990,10 +1040,12 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tbool Update(" + Table + "Data table);");
                             yaz.WriteLine("");
+
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Copy/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tbool Copy(string id);");
                             yaz.WriteLine("");
+
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Delete/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tbool Delete(string id);");
@@ -1113,17 +1165,18 @@ namespace TDFactory
 
                         yaz.WriteLine("using System.Linq;");
                         yaz.WriteLine("using System.Collections.Generic;");
-                        yaz.WriteLine("using " + projectName + ".Data;");
                         yaz.WriteLine("using TDLibrary;");
+                        yaz.WriteLine("using Repository." + Table + "Model;");
                         yaz.WriteLine("");
                         yaz.WriteLine("namespace " + projectName + ".Service");
                         yaz.WriteLine("{");
                         yaz.WriteLine("\tpublic class " + Table + "Service : I" + Table + "Service");
                         yaz.WriteLine("\t{");
-                        yaz.WriteLine("\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+
+                        yaz.WriteLine("\t\t" + Table + " model = new " + Table + "();");
+                        yaz.WriteLine("");
 
                         //Select
-                        yaz.WriteLine("");
                         yaz.WriteLine("\t\tpublic List<" + Table + "Data> Select(string top)");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\tList<" + Table + "Data> table;");
@@ -1132,30 +1185,46 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\tbool con = int.TryParse(top, out _top);");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\tif (con)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\ttable = entity.usp_" + Table + "SelectTop(null, _top).ToList().ChangeModelList<" + Table + "Data, usp_" + Table + "SelectTop_Result>();");
-                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\t\ttable = model.List(null, _top).ChangeModelList<" + Table + "Data, " + Table + ">();");
                         yaz.WriteLine("\t\t\telse");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\ttable = entity.usp_" + Table + "Select(null).ToList().ChangeModelList<" + Table + "Data, usp_" + Table + "Select_Result>();");
-                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\t\ttable = model.List(null).ChangeModelList<" + Table + "Data, " + Table + ">();");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\treturn table;");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
+                        //SelectByID
+                        yaz.WriteLine("\t\tpublic " + Table + "Data SelectByID(string id)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\t" + Table + "Data table;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tint _id;");
+                        yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tif (con)");
+                        yaz.WriteLine("\t\t\t\ttable = model.Select(_id).ChangeModel<" + Table + "Data>();");
+                        yaz.WriteLine("\t\t\telse");
+                        yaz.WriteLine("\t\t\t\ttable = model.List(null).FirstOrDefault().ChangeModel<" + Table + "Data>();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn table;");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+
+                        foreach (ColumnInfo item in urlColumns)
+                        {
+                            //SelectByUrl
+                            yaz.WriteLine("\t\tpublic " + Table + "Data SelectBy" + item.ColumnName + "(string url)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\treturn model.SelectBy" + item.ColumnName + "(url).ChangeModel<" + Table + "Data>();");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                        }
+
                         //Insert
                         yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data table)");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\tif (table != null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\tvar result = entity.usp_" + Table + "Insert(" + columns + ").FirstOrDefault();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\tif (result != null)");
-                        yaz.WriteLine("\t\t\t\t{");
-                        yaz.WriteLine("\t\t\t\t\treturn true;");
-                        yaz.WriteLine("\t\t\t\t}");
-                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\t\treturn model.Insert(table.ChangeModel<" + Table + ">());");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\treturn false;");
                         yaz.WriteLine("\t\t}");
@@ -1167,14 +1236,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\tpublic bool Update(" + Table + "Data table)");
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\tif (table != null)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tvar result = entity.usp_" + Table + "Update(" + idcolumns + columns + ").FirstOrDefault();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\tif (result != null)");
-                            yaz.WriteLine("\t\t\t\t{");
-                            yaz.WriteLine("\t\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\t\t}");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\t\treturn model.Update(table.ChangeModel<" + Table + ">());");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
@@ -1187,11 +1249,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tif (con)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Copy(_id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\t\treturn model.Copy(_id);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
@@ -1204,11 +1262,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tif (con)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(_id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\t\treturn model.Delete(_id);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
@@ -1224,11 +1278,7 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\tif (con)");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Remove(_id);");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\t\treturn true;");
-                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\t\treturn model.Remove(_id);");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn false;");
                                 yaz.WriteLine("\t\t}");
