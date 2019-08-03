@@ -1000,6 +1000,7 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
+                        yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Collections.Generic;");
                         yaz.WriteLine("using System.Runtime.Serialization;");
                         yaz.WriteLine("using System.ServiceModel;");
@@ -1163,6 +1164,7 @@ namespace TDFactory
 
                         columns = columns.TrimEnd(' ').TrimEnd(',');
 
+                        yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Linq;");
                         yaz.WriteLine("using System.Collections.Generic;");
                         yaz.WriteLine("using TDLibrary;");
