@@ -1815,17 +1815,17 @@ namespace TDFactory
                         {
                             if (!column.IsIdentity)
                             {
-                                if (column.ColumnName == searchText)
+                                if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                {
+                                    sqlText = sqlText + "'Kopya_' + A.[" + column.ColumnName + "],";
+                                }
+                                else if(column.ColumnName == searchText)
                                 {
                                     sqlText = sqlText + "A.[" + column.ColumnName + "] + ' (Kopya)',";
                                 }
                                 else if (column.ColumnName.In(UrlColumns, InType.ToUrlLower))
                                 {
                                     sqlText = sqlText + "A.[" + column.ColumnName + "] + '-(Kopya)',";
-                                }
-                                else if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
-                                {
-                                    sqlText = sqlText + "'Kopya_' + A.[" + column.ColumnName + "],";
                                 }
                                 else
                                     sqlText = sqlText + "A.[" + column.ColumnName + "],";
