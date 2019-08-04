@@ -1053,7 +1053,7 @@ namespace TDFactory
                                 else
                                 {
                                     if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a href=\"@AppMgr.UploadPath/@item." + column.ColumnName + "\" target=\"_blank\"><img src=\"@AppMgr.UploadPath/@item." + column.ColumnName + "\" style=\"height:40px; max-width:80px;\" /></a></td>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a href=\"@AppMgr.UploadPath/@item." + column.ColumnName + "\" target=\"_blank\"><img src=\"@AppMgr.UploadPath/thumb_@item." + column.ColumnName + "\" style=\"height:40px; max-width:80px;\" /></a></td>");
                                     else if (column.ColumnName.In(FileColumns, InType.ToUrlLower))
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"@AppMgr.UploadPath/@item." + column.ColumnName + "\" target=\"_blank\">@item." + column.ColumnName + "</a></td>");
                                     else
@@ -1274,7 +1274,7 @@ namespace TDFactory
 
                                         if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                         {
-                                            yaz.WriteLine("\t\t\t\t\t<img src=\"@(AppMgr.UploadPath + \"/\" + Model." + column.ColumnName + ")\" style=\"height:40px; max-width:80px;\" /><br /><br />");
+                                            yaz.WriteLine("\t\t\t\t\t<a href=\"@AppMgr.UploadPath/@Model." + column.ColumnName + "\" target=\"_blank\"><img src=\"@(AppMgr.UploadPath + \"/thumb_\" + Model." + column.ColumnName + ")\" style=\"height:40px; max-width:80px;\" /></a><br /><br />");
                                             yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model." + column.ColumnName + ")");
                                             yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model.Old" + column.ColumnName + ")");
                                             yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ", new { type = \"file\", name = Model." + column.ColumnName + ",  accept = \"image/*\" })");
@@ -1400,7 +1400,7 @@ namespace TDFactory
                                                 if (item.Type.Name != "Boolean")
                                                 {
                                                     if (item.ColumnName.In(ImageColumns, InType.ToUrlLower))
-                                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><img src=\"@AppMgr.UploadPath/@item." + item.ColumnName + "\" style=\"height:40px; max-width:80px;\" /></td>");
+                                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a href=\"@AppMgr.UploadPath/@item." + item.ColumnName + "\" target=\"_blank\"><img src=\"@AppMgr.UploadPath/thumb_@item." + item.ColumnName + "\" style=\"height:40px; max-width:80px;\" /></a></td>");
                                                     else if (item.ColumnName.In(FileColumns, InType.ToUrlLower))
                                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"@AppMgr.UploadPath/@item." + item.ColumnName + "\" target=\"_blank\">@item." + item.ColumnName + "</a></td>");
                                                     else
@@ -1559,7 +1559,7 @@ namespace TDFactory
 
                         if (imageColumns.Count > 0)
                         {
-                            yaz.WriteLine("\t\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false, null, false);");
+                            yaz.WriteLine("\t\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\tforeach (var item in pictures)");
                             yaz.WriteLine("\t\t\t\t{");
@@ -1693,7 +1693,7 @@ namespace TDFactory
 
                             if (imageColumns.Count > 0)
                             {
-                                yaz.WriteLine("\t\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false, null, false);");
+                                yaz.WriteLine("\t\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false);");
                                 yaz.WriteLine("");
 
                                 yaz.WriteLine("\t\t\t\tforeach (var item in pictures)");
@@ -1714,6 +1714,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t\ttry");
                                     yaz.WriteLine("\t\t\t\t\t{");
                                     yaz.WriteLine("\t\t\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table.Old" + item.ColumnName + "));");
+                                    yaz.WriteLine("\t\t\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_\" + table.Old" + item.ColumnName + "));");
                                     yaz.WriteLine("\t\t\t\t\t}");
                                     yaz.WriteLine("\t\t\t\t\tcatch");
                                     yaz.WriteLine("\t\t\t\t\t{");
@@ -1765,6 +1766,7 @@ namespace TDFactory
                                 foreach (ColumnInfo item in imageColumns)
                                 {
                                     yaz.WriteLine("\t\t\t\tSystem.IO.File.Copy(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/Kopya_\" + table." + item.ColumnName + "));");
+                                    yaz.WriteLine("\t\t\t\tSystem.IO.File.Copy(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_Kopya_\" + table." + item.ColumnName + "));");
                                 }
 
                                 yaz.WriteLine("\t\t\t}");
@@ -1798,6 +1800,7 @@ namespace TDFactory
                                 foreach (ColumnInfo item in imageColumns)
                                 {
                                     yaz.WriteLine("\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "));");
+                                    yaz.WriteLine("\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_\" + table." + item.ColumnName + "));");
                                 }
 
                                 yaz.WriteLine("\t\t\t}");
@@ -1832,6 +1835,7 @@ namespace TDFactory
                                     foreach (ColumnInfo item in imageColumns)
                                     {
                                         yaz.WriteLine("\t\t\t\tSystem.IO.File.Move(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/Deleted/\" + table." + item.ColumnName + "));");
+                                        yaz.WriteLine("\t\t\t\tSystem.IO.File.Move(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/Deleted/thumb_\" + table." + item.ColumnName + "));");
                                     }
 
                                     yaz.WriteLine("\t\t\t}");
