@@ -34,13 +34,16 @@
             this.grpIslem = new System.Windows.Forms.GroupBox();
             this.pnlKaydet = new System.Windows.Forms.Panel();
             this.lblImageColumns = new System.Windows.Forms.Label();
+            this.lblCodeColumns = new System.Windows.Forms.Label();
             this.lblDeletedColumns = new System.Windows.Forms.Label();
             this.lblFileColumns = new System.Windows.Forms.Label();
             this.lblUrlColumns = new System.Windows.Forms.Label();
             this.btnImageColumnsSub = new System.Windows.Forms.Button();
             this.btnImageColumnsAdd = new System.Windows.Forms.Button();
             this.btnFileColumnsSub = new System.Windows.Forms.Button();
+            this.btnCodeColumnsSub = new System.Windows.Forms.Button();
             this.btnFileColumnsAdd = new System.Windows.Forms.Button();
+            this.btnCodeColumnsAdd = new System.Windows.Forms.Button();
             this.btnDeletedColumnsSub = new System.Windows.Forms.Button();
             this.btnDeletedColumnsAdd = new System.Windows.Forms.Button();
             this.btnUrlColumnsSub = new System.Windows.Forms.Button();
@@ -48,8 +51,10 @@
             this.txtImageColumns = new System.Windows.Forms.TextBox();
             this.txtFileColumns = new System.Windows.Forms.TextBox();
             this.lstImageColumns = new System.Windows.Forms.ListBox();
+            this.txtCodeColumns = new System.Windows.Forms.TextBox();
             this.lstFileColumns = new System.Windows.Forms.ListBox();
             this.txtDeletedColumns = new System.Windows.Forms.TextBox();
+            this.lstCodeColumns = new System.Windows.Forms.ListBox();
             this.txtUrlColumns = new System.Windows.Forms.TextBox();
             this.lstDeletedColumns = new System.Windows.Forms.ListBox();
             this.lstUrlColumns = new System.Windows.Forms.ListBox();
@@ -235,13 +240,16 @@
             // pnlKaydet
             // 
             this.pnlKaydet.Controls.Add(this.lblImageColumns);
+            this.pnlKaydet.Controls.Add(this.lblCodeColumns);
             this.pnlKaydet.Controls.Add(this.lblDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lblFileColumns);
             this.pnlKaydet.Controls.Add(this.lblUrlColumns);
             this.pnlKaydet.Controls.Add(this.btnImageColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnImageColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnFileColumnsSub);
+            this.pnlKaydet.Controls.Add(this.btnCodeColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnFileColumnsAdd);
+            this.pnlKaydet.Controls.Add(this.btnCodeColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnDeletedColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnDeletedColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnUrlColumnsSub);
@@ -249,8 +257,10 @@
             this.pnlKaydet.Controls.Add(this.txtImageColumns);
             this.pnlKaydet.Controls.Add(this.txtFileColumns);
             this.pnlKaydet.Controls.Add(this.lstImageColumns);
+            this.pnlKaydet.Controls.Add(this.txtCodeColumns);
             this.pnlKaydet.Controls.Add(this.lstFileColumns);
             this.pnlKaydet.Controls.Add(this.txtDeletedColumns);
+            this.pnlKaydet.Controls.Add(this.lstCodeColumns);
             this.pnlKaydet.Controls.Add(this.txtUrlColumns);
             this.pnlKaydet.Controls.Add(this.lstDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lstUrlColumns);
@@ -295,17 +305,27 @@
             // 
             this.lblImageColumns.AutoSize = true;
             this.lblImageColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblImageColumns.Location = new System.Drawing.Point(853, 205);
+            this.lblImageColumns.Location = new System.Drawing.Point(874, 206);
             this.lblImageColumns.Name = "lblImageColumns";
             this.lblImageColumns.Size = new System.Drawing.Size(94, 13);
             this.lblImageColumns.TabIndex = 92;
             this.lblImageColumns.Text = "Resim Kolonları";
             // 
+            // lblCodeColumns
+            // 
+            this.lblCodeColumns.AutoSize = true;
+            this.lblCodeColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblCodeColumns.Location = new System.Drawing.Point(584, 206);
+            this.lblCodeColumns.Name = "lblCodeColumns";
+            this.lblCodeColumns.Size = new System.Drawing.Size(82, 13);
+            this.lblCodeColumns.TabIndex = 92;
+            this.lblCodeColumns.Text = "Kod Kolonları";
+            // 
             // lblDeletedColumns
             // 
             this.lblDeletedColumns.AutoSize = true;
             this.lblDeletedColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblDeletedColumns.Location = new System.Drawing.Point(852, 53);
+            this.lblDeletedColumns.Location = new System.Drawing.Point(729, 63);
             this.lblDeletedColumns.Name = "lblDeletedColumns";
             this.lblDeletedColumns.Size = new System.Drawing.Size(74, 13);
             this.lblDeletedColumns.TabIndex = 92;
@@ -315,7 +335,7 @@
             // 
             this.lblFileColumns.AutoSize = true;
             this.lblFileColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblFileColumns.Location = new System.Drawing.Point(685, 205);
+            this.lblFileColumns.Location = new System.Drawing.Point(877, 63);
             this.lblFileColumns.Name = "lblFileColumns";
             this.lblFileColumns.Size = new System.Drawing.Size(95, 13);
             this.lblFileColumns.TabIndex = 92;
@@ -325,7 +345,7 @@
             // 
             this.lblUrlColumns.AutoSize = true;
             this.lblUrlColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblUrlColumns.Location = new System.Drawing.Point(684, 53);
+            this.lblUrlColumns.Location = new System.Drawing.Point(587, 63);
             this.lblUrlColumns.Name = "lblUrlColumns";
             this.lblUrlColumns.Size = new System.Drawing.Size(76, 13);
             this.lblUrlColumns.TabIndex = 92;
@@ -333,7 +353,7 @@
             // 
             // btnImageColumnsSub
             // 
-            this.btnImageColumnsSub.Location = new System.Drawing.Point(996, 219);
+            this.btnImageColumnsSub.Location = new System.Drawing.Point(989, 220);
             this.btnImageColumnsSub.Name = "btnImageColumnsSub";
             this.btnImageColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnImageColumnsSub.TabIndex = 91;
@@ -343,7 +363,7 @@
             // 
             // btnImageColumnsAdd
             // 
-            this.btnImageColumnsAdd.Location = new System.Drawing.Point(969, 219);
+            this.btnImageColumnsAdd.Location = new System.Drawing.Point(962, 220);
             this.btnImageColumnsAdd.Name = "btnImageColumnsAdd";
             this.btnImageColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnImageColumnsAdd.TabIndex = 91;
@@ -353,7 +373,7 @@
             // 
             // btnFileColumnsSub
             // 
-            this.btnFileColumnsSub.Location = new System.Drawing.Point(825, 219);
+            this.btnFileColumnsSub.Location = new System.Drawing.Point(989, 77);
             this.btnFileColumnsSub.Name = "btnFileColumnsSub";
             this.btnFileColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnFileColumnsSub.TabIndex = 91;
@@ -361,9 +381,19 @@
             this.btnFileColumnsSub.UseVisualStyleBackColor = true;
             this.btnFileColumnsSub.Click += new System.EventHandler(this.btnFileColumnsSub_Click);
             // 
+            // btnCodeColumnsSub
+            // 
+            this.btnCodeColumnsSub.Location = new System.Drawing.Point(701, 220);
+            this.btnCodeColumnsSub.Name = "btnCodeColumnsSub";
+            this.btnCodeColumnsSub.Size = new System.Drawing.Size(25, 23);
+            this.btnCodeColumnsSub.TabIndex = 91;
+            this.btnCodeColumnsSub.Text = "-";
+            this.btnCodeColumnsSub.UseVisualStyleBackColor = true;
+            this.btnCodeColumnsSub.Click += new System.EventHandler(this.btnCodeColumnsSub_Click);
+            // 
             // btnFileColumnsAdd
             // 
-            this.btnFileColumnsAdd.Location = new System.Drawing.Point(798, 219);
+            this.btnFileColumnsAdd.Location = new System.Drawing.Point(962, 77);
             this.btnFileColumnsAdd.Name = "btnFileColumnsAdd";
             this.btnFileColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnFileColumnsAdd.TabIndex = 91;
@@ -371,9 +401,19 @@
             this.btnFileColumnsAdd.UseVisualStyleBackColor = true;
             this.btnFileColumnsAdd.Click += new System.EventHandler(this.btnFileColumns_Click);
             // 
+            // btnCodeColumnsAdd
+            // 
+            this.btnCodeColumnsAdd.Location = new System.Drawing.Point(673, 220);
+            this.btnCodeColumnsAdd.Name = "btnCodeColumnsAdd";
+            this.btnCodeColumnsAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnCodeColumnsAdd.TabIndex = 91;
+            this.btnCodeColumnsAdd.Text = "+";
+            this.btnCodeColumnsAdd.UseVisualStyleBackColor = true;
+            this.btnCodeColumnsAdd.Click += new System.EventHandler(this.btnCodeColumns_Click);
+            // 
             // btnDeletedColumnsSub
             // 
-            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(996, 67);
+            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(846, 77);
             this.btnDeletedColumnsSub.Name = "btnDeletedColumnsSub";
             this.btnDeletedColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsSub.TabIndex = 91;
@@ -383,7 +423,7 @@
             // 
             // btnDeletedColumnsAdd
             // 
-            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(968, 67);
+            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(818, 77);
             this.btnDeletedColumnsAdd.Name = "btnDeletedColumnsAdd";
             this.btnDeletedColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsAdd.TabIndex = 91;
@@ -393,7 +433,7 @@
             // 
             // btnUrlColumnsSub
             // 
-            this.btnUrlColumnsSub.Location = new System.Drawing.Point(824, 67);
+            this.btnUrlColumnsSub.Location = new System.Drawing.Point(700, 77);
             this.btnUrlColumnsSub.Name = "btnUrlColumnsSub";
             this.btnUrlColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsSub.TabIndex = 91;
@@ -403,7 +443,7 @@
             // 
             // btnUrlColumnsAdd
             // 
-            this.btnUrlColumnsAdd.Location = new System.Drawing.Point(797, 67);
+            this.btnUrlColumnsAdd.Location = new System.Drawing.Point(673, 77);
             this.btnUrlColumnsAdd.Name = "btnUrlColumnsAdd";
             this.btnUrlColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsAdd.TabIndex = 91;
@@ -413,16 +453,16 @@
             // 
             // txtImageColumns
             // 
-            this.txtImageColumns.Location = new System.Drawing.Point(856, 221);
+            this.txtImageColumns.Location = new System.Drawing.Point(877, 222);
             this.txtImageColumns.Name = "txtImageColumns";
-            this.txtImageColumns.Size = new System.Drawing.Size(109, 20);
+            this.txtImageColumns.Size = new System.Drawing.Size(80, 20);
             this.txtImageColumns.TabIndex = 90;
             // 
             // txtFileColumns
             // 
-            this.txtFileColumns.Location = new System.Drawing.Point(685, 221);
+            this.txtFileColumns.Location = new System.Drawing.Point(877, 79);
             this.txtFileColumns.Name = "txtFileColumns";
-            this.txtFileColumns.Size = new System.Drawing.Size(109, 20);
+            this.txtFileColumns.Size = new System.Drawing.Size(80, 20);
             this.txtFileColumns.TabIndex = 90;
             // 
             // lstImageColumns
@@ -432,33 +472,50 @@
             "pictureurl",
             "imageurl",
             "thumburl"});
-            this.lstImageColumns.Location = new System.Drawing.Point(856, 247);
+            this.lstImageColumns.Location = new System.Drawing.Point(877, 248);
             this.lstImageColumns.Name = "lstImageColumns";
-            this.lstImageColumns.Size = new System.Drawing.Size(165, 95);
+            this.lstImageColumns.Size = new System.Drawing.Size(139, 95);
             this.lstImageColumns.TabIndex = 89;
+            // 
+            // txtCodeColumns
+            // 
+            this.txtCodeColumns.Location = new System.Drawing.Point(587, 222);
+            this.txtCodeColumns.Name = "txtCodeColumns";
+            this.txtCodeColumns.Size = new System.Drawing.Size(80, 20);
+            this.txtCodeColumns.TabIndex = 90;
             // 
             // lstFileColumns
             // 
             this.lstFileColumns.FormattingEnabled = true;
             this.lstFileColumns.Items.AddRange(new object[] {
             "fileurl"});
-            this.lstFileColumns.Location = new System.Drawing.Point(685, 247);
+            this.lstFileColumns.Location = new System.Drawing.Point(877, 105);
             this.lstFileColumns.Name = "lstFileColumns";
-            this.lstFileColumns.Size = new System.Drawing.Size(165, 95);
+            this.lstFileColumns.Size = new System.Drawing.Size(139, 95);
             this.lstFileColumns.TabIndex = 89;
             // 
             // txtDeletedColumns
             // 
-            this.txtDeletedColumns.Location = new System.Drawing.Point(855, 69);
+            this.txtDeletedColumns.Location = new System.Drawing.Point(732, 79);
             this.txtDeletedColumns.Name = "txtDeletedColumns";
-            this.txtDeletedColumns.Size = new System.Drawing.Size(109, 20);
+            this.txtDeletedColumns.Size = new System.Drawing.Size(80, 20);
             this.txtDeletedColumns.TabIndex = 90;
+            // 
+            // lstCodeColumns
+            // 
+            this.lstCodeColumns.FormattingEnabled = true;
+            this.lstCodeColumns.Items.AddRange(new object[] {
+            "code"});
+            this.lstCodeColumns.Location = new System.Drawing.Point(587, 248);
+            this.lstCodeColumns.Name = "lstCodeColumns";
+            this.lstCodeColumns.Size = new System.Drawing.Size(139, 95);
+            this.lstCodeColumns.TabIndex = 89;
             // 
             // txtUrlColumns
             // 
-            this.txtUrlColumns.Location = new System.Drawing.Point(684, 69);
+            this.txtUrlColumns.Location = new System.Drawing.Point(587, 79);
             this.txtUrlColumns.Name = "txtUrlColumns";
-            this.txtUrlColumns.Size = new System.Drawing.Size(109, 20);
+            this.txtUrlColumns.Size = new System.Drawing.Size(80, 20);
             this.txtUrlColumns.TabIndex = 90;
             // 
             // lstDeletedColumns
@@ -466,9 +523,9 @@
             this.lstDeletedColumns.FormattingEnabled = true;
             this.lstDeletedColumns.Items.AddRange(new object[] {
             "deleted"});
-            this.lstDeletedColumns.Location = new System.Drawing.Point(855, 95);
+            this.lstDeletedColumns.Location = new System.Drawing.Point(732, 105);
             this.lstDeletedColumns.Name = "lstDeletedColumns";
-            this.lstDeletedColumns.Size = new System.Drawing.Size(165, 95);
+            this.lstDeletedColumns.Size = new System.Drawing.Size(139, 238);
             this.lstDeletedColumns.TabIndex = 89;
             // 
             // lstUrlColumns
@@ -478,9 +535,9 @@
             "url",
             "routeurl",
             "rewriteurl"});
-            this.lstUrlColumns.Location = new System.Drawing.Point(684, 95);
+            this.lstUrlColumns.Location = new System.Drawing.Point(587, 105);
             this.lstUrlColumns.Name = "lstUrlColumns";
-            this.lstUrlColumns.Size = new System.Drawing.Size(165, 95);
+            this.lstUrlColumns.Size = new System.Drawing.Size(139, 95);
             this.lstUrlColumns.TabIndex = 89;
             // 
             // chkAngular
@@ -506,17 +563,18 @@
             // 
             this.pnlAndroidService.Controls.Add(this.rdAndWcf);
             this.pnlAndroidService.Controls.Add(this.rdAndSqlite);
-            this.pnlAndroidService.Location = new System.Drawing.Point(551, 293);
+            this.pnlAndroidService.Location = new System.Drawing.Point(504, 265);
             this.pnlAndroidService.Name = "pnlAndroidService";
-            this.pnlAndroidService.Size = new System.Drawing.Size(116, 21);
+            this.pnlAndroidService.Size = new System.Drawing.Size(66, 49);
             this.pnlAndroidService.TabIndex = 87;
             // 
             // rdAndWcf
             // 
             this.rdAndWcf.AutoSize = true;
             this.rdAndWcf.Checked = true;
-            this.rdAndWcf.Location = new System.Drawing.Point(4, 3);
+            this.rdAndWcf.Location = new System.Drawing.Point(13, 3);
             this.rdAndWcf.Name = "rdAndWcf";
+            this.rdAndWcf.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.rdAndWcf.Size = new System.Drawing.Size(49, 17);
             this.rdAndWcf.TabIndex = 83;
             this.rdAndWcf.TabStop = true;
@@ -527,8 +585,9 @@
             // rdAndSqlite
             // 
             this.rdAndSqlite.AutoSize = true;
-            this.rdAndSqlite.Location = new System.Drawing.Point(59, 3);
+            this.rdAndSqlite.Location = new System.Drawing.Point(5, 26);
             this.rdAndSqlite.Name = "rdAndSqlite";
+            this.rdAndSqlite.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.rdAndSqlite.Size = new System.Drawing.Size(57, 17);
             this.rdAndSqlite.TabIndex = 82;
             this.rdAndSqlite.Text = "SQLite";
@@ -549,7 +608,7 @@
             // 
             this.chkAndData.AutoSize = true;
             this.chkAndData.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndData.Location = new System.Drawing.Point(594, 270);
+            this.chkAndData.Location = new System.Drawing.Point(497, 234);
             this.chkAndData.Name = "chkAndData";
             this.chkAndData.Size = new System.Drawing.Size(73, 17);
             this.chkAndData.TabIndex = 81;
@@ -708,16 +767,16 @@
             "WRITE_SECURE_SETTINGS",
             "WRITE_SETTINGS",
             "WRITE_SYNC_SETTINGS"});
-            this.lstAndIzin.Location = new System.Drawing.Point(338, 114);
+            this.lstAndIzin.Location = new System.Drawing.Point(308, 114);
             this.lstAndIzin.Name = "lstAndIzin";
             this.lstAndIzin.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
-            this.lstAndIzin.Size = new System.Drawing.Size(205, 199);
+            this.lstAndIzin.Size = new System.Drawing.Size(183, 199);
             this.lstAndIzin.TabIndex = 79;
             // 
             // lblAndIzinler
             // 
             this.lblAndIzinler.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblAndIzinler.Location = new System.Drawing.Point(338, 93);
+            this.lblAndIzinler.Location = new System.Drawing.Point(308, 93);
             this.lblAndIzinler.Name = "lblAndIzinler";
             this.lblAndIzinler.Size = new System.Drawing.Size(43, 18);
             this.lblAndIzinler.TabIndex = 80;
@@ -726,7 +785,7 @@
             // lblAndroidKatmanlar
             // 
             this.lblAndroidKatmanlar.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblAndroidKatmanlar.Location = new System.Drawing.Point(336, 54);
+            this.lblAndroidKatmanlar.Location = new System.Drawing.Point(306, 54);
             this.lblAndroidKatmanlar.Name = "lblAndroidKatmanlar";
             this.lblAndroidKatmanlar.Size = new System.Drawing.Size(127, 18);
             this.lblAndroidKatmanlar.TabIndex = 69;
@@ -736,7 +795,7 @@
             // 
             this.chkAndManifest.AutoSize = true;
             this.chkAndManifest.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndManifest.Location = new System.Drawing.Point(601, 250);
+            this.chkAndManifest.Location = new System.Drawing.Point(504, 214);
             this.chkAndManifest.Name = "chkAndManifest";
             this.chkAndManifest.Size = new System.Drawing.Size(66, 17);
             this.chkAndManifest.TabIndex = 78;
@@ -768,7 +827,7 @@
             // 
             this.chkAndModel.AutoSize = true;
             this.chkAndModel.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndModel.Location = new System.Drawing.Point(612, 231);
+            this.chkAndModel.Location = new System.Drawing.Point(515, 195);
             this.chkAndModel.Name = "chkAndModel";
             this.chkAndModel.Size = new System.Drawing.Size(55, 17);
             this.chkAndModel.TabIndex = 77;
@@ -780,7 +839,7 @@
             // 
             this.chkAndJava.AutoSize = true;
             this.chkAndJava.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndJava.Location = new System.Drawing.Point(618, 212);
+            this.chkAndJava.Location = new System.Drawing.Point(521, 176);
             this.chkAndJava.Name = "chkAndJava";
             this.chkAndJava.Size = new System.Drawing.Size(49, 17);
             this.chkAndJava.TabIndex = 77;
@@ -792,7 +851,7 @@
             // 
             this.chkAndLayout.AutoSize = true;
             this.chkAndLayout.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkAndLayout.Location = new System.Drawing.Point(609, 193);
+            this.chkAndLayout.Location = new System.Drawing.Point(512, 157);
             this.chkAndLayout.Name = "chkAndLayout";
             this.chkAndLayout.Size = new System.Drawing.Size(58, 17);
             this.chkAndLayout.TabIndex = 77;
@@ -806,7 +865,7 @@
             this.chkAndHepsi.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkAndHepsi.Checked = true;
             this.chkAndHepsi.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkAndHepsi.Location = new System.Drawing.Point(614, 173);
+            this.chkAndHepsi.Location = new System.Drawing.Point(517, 137);
             this.chkAndHepsi.Name = "chkAndHepsi";
             this.chkAndHepsi.Size = new System.Drawing.Size(53, 17);
             this.chkAndHepsi.TabIndex = 77;
@@ -816,7 +875,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(324, 72);
+            this.groupBox1.Location = new System.Drawing.Point(292, 73);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(5, 270);
             this.groupBox1.TabIndex = 2;
@@ -825,7 +884,7 @@
             // 
             // grpSplitter1
             // 
-            this.grpSplitter1.Location = new System.Drawing.Point(673, 73);
+            this.grpSplitter1.Location = new System.Drawing.Point(576, 73);
             this.grpSplitter1.Name = "grpSplitter1";
             this.grpSplitter1.Size = new System.Drawing.Size(5, 270);
             this.grpSplitter1.TabIndex = 2;
@@ -854,7 +913,7 @@
             // 
             this.txtWCSifre.Location = new System.Drawing.Point(60, 294);
             this.txtWCSifre.Name = "txtWCSifre";
-            this.txtWCSifre.Size = new System.Drawing.Size(149, 20);
+            this.txtWCSifre.Size = new System.Drawing.Size(118, 20);
             this.txtWCSifre.TabIndex = 73;
             this.txtWCSifre.Text = "123456";
             this.txtWCSifre.UseSystemPasswordChar = true;
@@ -863,7 +922,7 @@
             // 
             this.txtWCKullanici.Location = new System.Drawing.Point(60, 269);
             this.txtWCKullanici.Name = "txtWCKullanici";
-            this.txtWCKullanici.Size = new System.Drawing.Size(149, 20);
+            this.txtWCKullanici.Size = new System.Drawing.Size(118, 20);
             this.txtWCKullanici.TabIndex = 72;
             this.txtWCKullanici.Text = "user";
             // 
@@ -871,7 +930,7 @@
             // 
             this.chkMVCStilScript.AutoSize = true;
             this.chkMVCStilScript.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCStilScript.Location = new System.Drawing.Point(245, 251);
+            this.chkMVCStilScript.Location = new System.Drawing.Point(213, 254);
             this.chkMVCStilScript.Name = "chkMVCStilScript";
             this.chkMVCStilScript.Size = new System.Drawing.Size(73, 17);
             this.chkMVCStilScript.TabIndex = 0;
@@ -883,7 +942,7 @@
             // 
             this.chkMVCWcfServis.AutoSize = true;
             this.chkMVCWcfServis.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCWcfServis.Location = new System.Drawing.Point(240, 293);
+            this.chkMVCWcfServis.Location = new System.Drawing.Point(208, 296);
             this.chkMVCWcfServis.Name = "chkMVCWcfServis";
             this.chkMVCWcfServis.Size = new System.Drawing.Size(78, 17);
             this.chkMVCWcfServis.TabIndex = 0;
@@ -895,7 +954,7 @@
             // 
             this.chkMVCWebConfig.AutoSize = true;
             this.chkMVCWebConfig.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCWebConfig.Location = new System.Drawing.Point(236, 272);
+            this.chkMVCWebConfig.Location = new System.Drawing.Point(204, 275);
             this.chkMVCWebConfig.Name = "chkMVCWebConfig";
             this.chkMVCWebConfig.Size = new System.Drawing.Size(82, 17);
             this.chkMVCWebConfig.TabIndex = 0;
@@ -907,7 +966,7 @@
             // 
             this.chkMVCStoredProc.AutoSize = true;
             this.chkMVCStoredProc.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCStoredProc.Location = new System.Drawing.Point(209, 231);
+            this.chkMVCStoredProc.Location = new System.Drawing.Point(177, 234);
             this.chkMVCStoredProc.Name = "chkMVCStoredProc";
             this.chkMVCStoredProc.Size = new System.Drawing.Size(109, 17);
             this.chkMVCStoredProc.TabIndex = 0;
@@ -919,7 +978,7 @@
             // 
             this.chkMVCController.AutoSize = true;
             this.chkMVCController.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCController.Location = new System.Drawing.Point(248, 212);
+            this.chkMVCController.Location = new System.Drawing.Point(216, 215);
             this.chkMVCController.Name = "chkMVCController";
             this.chkMVCController.Size = new System.Drawing.Size(70, 17);
             this.chkMVCController.TabIndex = 0;
@@ -930,9 +989,9 @@
             // btnAndroidBaslat
             // 
             this.btnAndroidBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnAndroidBaslat.Location = new System.Drawing.Point(333, 320);
+            this.btnAndroidBaslat.Location = new System.Drawing.Point(303, 320);
             this.btnAndroidBaslat.Name = "btnAndroidBaslat";
-            this.btnAndroidBaslat.Size = new System.Drawing.Size(336, 23);
+            this.btnAndroidBaslat.Size = new System.Drawing.Size(267, 23);
             this.btnAndroidBaslat.TabIndex = 27;
             this.btnAndroidBaslat.Text = "Android Katmanları Oluştur";
             this.btnAndroidBaslat.UseVisualStyleBackColor = true;
@@ -943,7 +1002,7 @@
             this.btnBaslat.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.btnBaslat.Location = new System.Drawing.Point(8, 320);
             this.btnBaslat.Name = "btnBaslat";
-            this.btnBaslat.Size = new System.Drawing.Size(310, 23);
+            this.btnBaslat.Size = new System.Drawing.Size(278, 23);
             this.btnBaslat.TabIndex = 27;
             this.btnBaslat.Text = "Web Katmanları Oluştur";
             this.btnBaslat.UseVisualStyleBackColor = true;
@@ -953,7 +1012,7 @@
             // 
             this.chkMVCView.AutoSize = true;
             this.chkMVCView.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkMVCView.Location = new System.Drawing.Point(269, 192);
+            this.chkMVCView.Location = new System.Drawing.Point(237, 195);
             this.chkMVCView.Name = "chkMVCView";
             this.chkMVCView.Size = new System.Drawing.Size(49, 17);
             this.chkMVCView.TabIndex = 0;
@@ -965,7 +1024,7 @@
             // 
             this.chkRepository.AutoSize = true;
             this.chkRepository.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.chkRepository.Location = new System.Drawing.Point(242, 171);
+            this.chkRepository.Location = new System.Drawing.Point(210, 174);
             this.chkRepository.Name = "chkRepository";
             this.chkRepository.Size = new System.Drawing.Size(76, 17);
             this.chkRepository.TabIndex = 0;
@@ -979,7 +1038,7 @@
             this.chkMVCHepsi.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.chkMVCHepsi.Checked = true;
             this.chkMVCHepsi.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.chkMVCHepsi.Location = new System.Drawing.Point(265, 151);
+            this.chkMVCHepsi.Location = new System.Drawing.Point(233, 154);
             this.chkMVCHepsi.Name = "chkMVCHepsi";
             this.chkMVCHepsi.Size = new System.Drawing.Size(53, 17);
             this.chkMVCHepsi.TabIndex = 0;
@@ -2330,5 +2389,10 @@
         private System.Windows.Forms.Button btnFileColumnsSub;
         private System.Windows.Forms.Button btnDeletedColumnsSub;
         private System.Windows.Forms.Button btnUrlColumnsSub;
+        private System.Windows.Forms.Label lblCodeColumns;
+        private System.Windows.Forms.Button btnCodeColumnsSub;
+        private System.Windows.Forms.Button btnCodeColumnsAdd;
+        private System.Windows.Forms.TextBox txtCodeColumns;
+        private System.Windows.Forms.ListBox lstCodeColumns;
     }
 }

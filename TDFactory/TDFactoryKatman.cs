@@ -153,6 +153,7 @@ namespace TDFactory
                     DeletedColumns = lstDeletedColumns.Items.ToStringList();
                     FileColumns = lstFileColumns.Items.ToStringList();
                     ImageColumns = lstImageColumns.Items.ToStringList();
+                    CodeColumns = lstCodeColumns.Items.ToStringList();
 
                     if (chkAngular.Checked)
                     {
@@ -753,6 +754,19 @@ namespace TDFactory
             }
         }
 
+        private void btnCodeColumns_Click(object sender, EventArgs e)
+        {
+            string column = txtCodeColumns.Text.Trim().Replace(" ", "").ToUrl(true);
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstCodeColumns.Items.Contains(column))
+                {
+                    lstCodeColumns.Items.Add(column);
+                }
+            }
+        }
+
         private void btnUrlColumnsSub_Click(object sender, EventArgs e)
         {
             lstUrlColumns.Items.Remove(lstUrlColumns.SelectedItem);
@@ -771,6 +785,11 @@ namespace TDFactory
         private void btnImageColumnsSub_Click(object sender, EventArgs e)
         {
             lstImageColumns.Items.Remove(lstImageColumns.SelectedItem);
+        }
+
+        private void btnCodeColumnsSub_Click(object sender, EventArgs e)
+        {
+            lstCodeColumns.Items.Remove(lstCodeColumns.SelectedItem);
         }
 
         void ClearLabel()
