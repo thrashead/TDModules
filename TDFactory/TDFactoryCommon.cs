@@ -814,6 +814,17 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
+                        if (guidColumns.Count > 0)
+                        {
+                            foreach (ColumnInfo item in guidColumns)
+                            {
+                                if (item.CharLength > 0)
+                                    yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = Guider.GetGuid(" + item.CharLength + ");");
+                            }
+
+                            yaz.WriteLine("");
+                        }
+
                         string insertSql = "var result = entity.usp_" + Table + "Insert(";
                         foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
                         {
@@ -930,7 +941,7 @@ namespace TDFactory
                             string updateSql = "var result = entity.usp_" + Table + "Update(";
                             foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
                             {
-                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
                                     updateSql += "table." + column.ColumnName + ", ";
                             }
                             updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
@@ -2241,7 +2252,7 @@ namespace TDFactory
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
 
                         i = 1;
-                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
+                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                         {
                             string extra = "";
 
@@ -2250,7 +2261,7 @@ namespace TDFactory
 
                             extra += column.IsNullable ? " = NULL" : "";
 
-                            if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count)
+                            if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList().Count)
                                 yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
                             else
                                 yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
@@ -2271,7 +2282,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in columnNames)
                         {
-                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
                             {
                                 if (!column.IsIdentity)
                                 {

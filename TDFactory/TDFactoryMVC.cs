@@ -1134,7 +1134,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\t<fieldset>");
 
-                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
+                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                         {
                             if (!identityColumns.Contains(column.ColumnName))
                             {
@@ -1249,7 +1249,7 @@ namespace TDFactory
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t<fieldset>");
 
-                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList())
+                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                             {
                                 if (!identityColumns.Contains(column.ColumnName))
                                 {
