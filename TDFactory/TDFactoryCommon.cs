@@ -428,8 +428,8 @@ namespace TDFactory
                                 string PrimaryTableName = fkc.PrimaryTableName;
                                 string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                yaz.WriteLine("\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
 
                                 if (j < fkcListForeign.Count)
                                     yaz.WriteLine("");
@@ -453,8 +453,8 @@ namespace TDFactory
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     string ForeignTableName = fkc2.ForeignTableName;
 
-                                    yaz.WriteLine("\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(item." + fkc.PrimaryColumnName + ").ToList();"); ;
-                                    yaz.WriteLine("\t\t\t\titem." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(item." + fkc.PrimaryColumnName + ").ToList();"); ;
+                                    yaz.WriteLine("\t\t\t\t\titem." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
 
                                     if (j < fkcList.Count)
                                         yaz.WriteLine("");
