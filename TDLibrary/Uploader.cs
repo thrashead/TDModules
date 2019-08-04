@@ -70,7 +70,7 @@ namespace TDLibrary
 
                             if (createThumb)
                             {
-                                var thumbName = fileName.Split('.')[0] + "_t." + fileName.Split('.')[1];
+                                var thumbName = "thumb_" + fileName;
                                 CreateThumb(320, 240, file.InputStream, Path.Combine(uploadPath, thumbName));
                                 uploader.ThumbName = thumbName;
                             }
@@ -144,7 +144,7 @@ namespace TDLibrary
 
                                 if (createThumb)
                                 {
-                                    var thumbName = fileName.Split('.')[0] + "_t." + fileName.Split('.')[1];
+                                    var thumbName = "thumb_" + fileName;
                                     CreateThumb(320, 240, file.InputStream, Path.Combine(uploadPath, thumbName));
                                     uploader.ThumbName = thumbName;
                                 }
@@ -226,7 +226,7 @@ namespace TDLibrary
 
                                 if (createThumb)
                                 {
-                                    var thumbName = fileName.Split('.')[0] + "_t." + fileName.Split('.')[1];
+                                    var thumbName = "thumb_" + fileName;
                                     CreateThumb(320, 240, file.InputStream, Path.Combine(uploadPath, galleryName + "/" + thumbName));
                                     uploader.ThumbName = thumbName;
                                 }
