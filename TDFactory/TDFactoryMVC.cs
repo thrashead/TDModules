@@ -1160,12 +1160,12 @@ namespace TDFactory
                                     if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                     {
 
-                                        yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model.Old" + column.ColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model." + column.ColumnName + ")");
                                         yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ", new { type = \"file\", name = \"" + column.ColumnName.ToUrl(true) + "Temp\",  accept = \"image/*\" })");
                                     }
                                     else if (column.ColumnName.In(FileColumns, InType.ToUrlLower))
                                     {
-                                        yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model.Old" + column.ColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t\t@Html.HiddenFor(model => model." + column.ColumnName + ")");
                                         yaz.WriteLine("\t\t\t\t\t@Html.TextBoxFor(model => model." + column.ColumnName + ", new { type = \"file\", name = \"" + column.ColumnName.ToUrl(true) + "Temp\" })");
                                     }
                                     else
@@ -1502,10 +1502,8 @@ namespace TDFactory
 
                         if (fileColumns.Count > 0 || imageColumns.Count > 0)
                         {
-                            yaz.WriteLine("using System.Linq;");
                             yaz.WriteLine("using System.Collections.Generic;");
                             yaz.WriteLine("using TDLibrary;");
-                            yaz.WriteLine("using " + projectName + ".Data;");
                         }
 
                         yaz.WriteLine("using Repository." + Table + "Model;");
@@ -1515,11 +1513,6 @@ namespace TDFactory
                         yaz.WriteLine("{");
                         yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
                         yaz.WriteLine("\t{");
-
-                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
-                        {
-                            yaz.WriteLine("\t\treadonly " + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
-                        }
 
                         yaz.WriteLine("\t\t" + Table + " model = new " + Table + "();");
                         yaz.WriteLine("");
@@ -1534,16 +1527,13 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-                        if (fkcListForeign.Count > 0)
-                        {
-                            // Ekle
-                            yaz.WriteLine("\t\t[HttpGet]");
-                            yaz.WriteLine("\t\tpublic ActionResult Insert()");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\treturn View(model.Insert());");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-                        }
+                        // Ekle
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic ActionResult Insert()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn View(model.Insert());");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
 
                         yaz.WriteLine("\t\t[HttpPost]");
                         yaz.WriteLine("\t\tpublic ActionResult Insert(" + Table + " table)");
@@ -1554,13 +1544,6 @@ namespace TDFactory
                         if (fileColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\t\t\tList<Uploader> files = Uploader.UploadFiles(false);");
-                            yaz.WriteLine("");
-
-                            foreach (ColumnInfo item in fileColumns)
-                            {
-                                yaz.WriteLine("\t\t\t\ttable." + item.ColumnName + " = table.Old" + item.ColumnName + ";");
-                            }
-
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\tforeach (var item in files)");
                             yaz.WriteLine("\t\t\t\t{");
@@ -1576,14 +1559,7 @@ namespace TDFactory
 
                         if (imageColumns.Count > 0)
                         {
-                            yaz.WriteLine("\t\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false);");
-                            yaz.WriteLine("");
-
-                            foreach (ColumnInfo item in imageColumns)
-                            {
-                                yaz.WriteLine("\t\t\t\ttable." + item.ColumnName + " = table.Old" + item.ColumnName + ";");
-                            }
-
+                            yaz.WriteLine("\t\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false, null, false);");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\tforeach (var item in pictures)");
                             yaz.WriteLine("\t\t\t\t{");
@@ -1638,7 +1614,39 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic ActionResult Update(" + columntype.ReturnCSharpType() + "? id)");
                             yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\treturn View(model.Update(id));");
+                            yaz.WriteLine("\t\t\t" + Table + " table = (" + Table + ")model.Update(id);");
+                            yaz.WriteLine("");
+
+                            int j = 1;
+                            if (fileColumns.Count > 0)
+                            {
+                                foreach (ColumnInfo item in fileColumns)
+                                {
+                                    yaz.WriteLine("\t\t\ttable.Old" + item.ColumnName + " = table." + item.ColumnName + ";");
+
+                                    if (j == fileColumns.Count)
+                                        yaz.WriteLine("");
+
+                                    j++;
+                                }
+
+                                if (imageColumns.Count > 0)
+                                    yaz.WriteLine("");
+                            }
+
+                            j = 1;
+                            if (imageColumns.Count > 0)
+                            {
+                                foreach (ColumnInfo item in imageColumns)
+                                {
+                                    yaz.WriteLine("\t\t\ttable.Old" + item.ColumnName + " = table." + item.ColumnName + ";");
+
+                                    if (j == imageColumns.Count)
+                                        yaz.WriteLine("");
+                                }
+                            }
+
+                            yaz.WriteLine("\t\t\treturn View(table);");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
@@ -1653,25 +1661,6 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\tList<Uploader> files = Uploader.UploadFiles(false);");
                                 yaz.WriteLine("");
 
-                                foreach (ColumnInfo item in fileColumns)
-                                {
-                                    yaz.WriteLine("\t\t\t\tif (!table.Old" + item.ColumnName + ".IsNull())");
-                                    yaz.WriteLine("\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\ttry");
-                                    yaz.WriteLine("\t\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "));");
-                                    yaz.WriteLine("\t\t\t\t\t\ttable." + item.ColumnName + " = table.Old" + item.ColumnName + ";");
-                                    yaz.WriteLine("\t\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t\t\tcatch");
-                                    yaz.WriteLine("\t\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\t\ttable.Mesaj = \"Eski dosya silinemedi.\";");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\t\treturn View(\"Update\", table);");
-                                    yaz.WriteLine("\t\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t\t}");
-                                    yaz.WriteLine("");
-                                }
-
                                 yaz.WriteLine("\t\t\t\tforeach (var item in files)");
                                 yaz.WriteLine("\t\t\t\t{");
                                 yaz.WriteLine("\t\t\t\t\tif (item.UploadError != null)");
@@ -1682,21 +1671,14 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\t}");
                                 yaz.WriteLine("\t\t\t\t}");
                                 yaz.WriteLine("");
-                            }
 
-                            if (imageColumns.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t\t\tList<Uploader> pictures = Uploader.UploadFiles(false);");
-                                yaz.WriteLine("");
-
-                                foreach (ColumnInfo item in imageColumns)
+                                foreach (ColumnInfo item in fileColumns)
                                 {
-                                    yaz.WriteLine("\t\t\t\tif (!table.Old" + item.ColumnName + ".IsNull())");
+                                    yaz.WriteLine("\t\t\t\tif (table." + item.ColumnName + " != table.Old" + item.ColumnName + ")");
                                     yaz.WriteLine("\t\t\t\t{");
                                     yaz.WriteLine("\t\t\t\t\ttry");
                                     yaz.WriteLine("\t\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "));");
-                                    yaz.WriteLine("\t\t\t\t\t\ttable." + item.ColumnName + " = table.Old" + item.ColumnName + ";");
+                                    yaz.WriteLine("\t\t\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table.Old" + item.ColumnName + "));");
                                     yaz.WriteLine("\t\t\t\t\t}");
                                     yaz.WriteLine("\t\t\t\t\tcatch");
                                     yaz.WriteLine("\t\t\t\t\t{");
@@ -1707,6 +1689,12 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t}");
                                     yaz.WriteLine("");
                                 }
+                            }
+
+                            if (imageColumns.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false, null, false);");
+                                yaz.WriteLine("");
 
                                 yaz.WriteLine("\t\t\t\tforeach (var item in pictures)");
                                 yaz.WriteLine("\t\t\t\t{");
@@ -1718,6 +1706,24 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\t}");
                                 yaz.WriteLine("\t\t\t\t}");
                                 yaz.WriteLine("");
+
+                                foreach (ColumnInfo item in imageColumns)
+                                {
+                                    yaz.WriteLine("\t\t\t\tif (table." + item.ColumnName + " != table.Old" + item.ColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\ttry");
+                                    yaz.WriteLine("\t\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table.Old" + item.ColumnName + "));");
+                                    yaz.WriteLine("\t\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\t\tcatch");
+                                    yaz.WriteLine("\t\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\t\ttable.Mesaj = \"Eski dosya silinemedi.\";");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\t\treturn View(\"Update\", table);");
+                                    yaz.WriteLine("\t\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("");
+                                }
                             }
 
                             yaz.WriteLine("\t\t\t\tbool result = model.Update(table);");
@@ -1748,7 +1754,7 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\t\t\ttry");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tusp_" + Table + "SelectTop_Result table = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                                yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                 yaz.WriteLine("");
 
                                 foreach (ColumnInfo item in fileColumns)
@@ -1781,7 +1787,7 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\t\t\ttry");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tusp_" + Table + "SelectTop_Result table = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                                yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                 yaz.WriteLine("");
 
                                 foreach (ColumnInfo item in fileColumns)
@@ -1815,7 +1821,7 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\t\t\ttry");
                                     yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\tusp_" + Table + "SelectTop_Result table = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                                    yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                     yaz.WriteLine("");
 
                                     foreach (ColumnInfo item in fileColumns)

@@ -2226,10 +2226,8 @@ namespace TDFactory
 
                         if (fileColumns.Count > 0 || imageColumns.Count > 0)
                         {
-                            yaz.WriteLine("using System.Linq;");
                             yaz.WriteLine("using System.Collections.Generic;");
                             yaz.WriteLine("using TDLibrary;");
-                            yaz.WriteLine("using " + projectName + ".Data;");
                         }
 
                         yaz.WriteLine("using Repository." + Table + "Model;");
@@ -2239,11 +2237,6 @@ namespace TDFactory
                         yaz.WriteLine("{");
                         yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
                         yaz.WriteLine("\t{");
-
-                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
-                        {
-                            yaz.WriteLine("\t\treadonly " + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
-                        }
 
                         yaz.WriteLine("\t\t" + Table + " model = new " + Table + "();");
 
@@ -2326,7 +2319,7 @@ namespace TDFactory
 
                             if (imageColumns.Count > 0)
                             {
-                                yaz.WriteLine("\t\t\tList<Uploader> pictures = Uploader.UploadPictures();");
+                                yaz.WriteLine("\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false, null, false);");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\tforeach (var item in pictures)");
                                 yaz.WriteLine("\t\t\t{");
@@ -2438,7 +2431,7 @@ namespace TDFactory
 
                                 if (imageColumns.Count > 0)
                                 {
-                                    yaz.WriteLine("\t\t\tList<Uploader> pictures = Uploader.UploadPictures();");
+                                    yaz.WriteLine("\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false, null, false);");
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t\tforeach (var item in pictures)");
                                     yaz.WriteLine("\t\t\t{");
@@ -2465,7 +2458,7 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\t\t\ttry");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tusp_" + Table + "SelectTop_Result table = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                                yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                 yaz.WriteLine("");
 
                                 foreach (ColumnInfo item in fileColumns)
@@ -2498,7 +2491,7 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\t\t\ttry");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tusp_" + Table + "SelectTop_Result table = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                                yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                 yaz.WriteLine("");
 
                                 foreach (ColumnInfo item in fileColumns)
@@ -2532,7 +2525,7 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\t\t\ttry");
                                     yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\tusp_" + Table + "SelectTop_Result table = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+                                    yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                     yaz.WriteLine("");
 
                                     foreach (ColumnInfo item in fileColumns)

@@ -3280,8 +3280,8 @@ namespace TDFactory
                         yaz.WriteLine("\t});");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t$(document).on(\"change\", \"input[type=file]\", function () {");
-                        yaz.WriteLine("\t\tvar oldid = \"#Old\" + $(this).attr(\"id\");");
-                        yaz.WriteLine("\t\t$(oldid).val($(this).val().replace(\"C:\\\\fakepath\\\\\", \"\"));");
+                        yaz.WriteLine("\t\tvar fileid = \"#\" + $(this).attr(\"id\");");
+                        yaz.WriteLine("\t\t$(fileid).val($(this).val().replace(\"C:\\\\fakepath\\\\\", \"\"));");
                         yaz.WriteLine("\t});");
                         yaz.WriteLine("");
 
