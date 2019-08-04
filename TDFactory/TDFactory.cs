@@ -34,6 +34,7 @@ namespace TDFactory
         List<string> ckEditors;
 
         string[] UrlColumns;
+        string[] GuidColumns;
         string[] CodeColumns;
         string[] DeletedColumns;
         string[] FileColumns;

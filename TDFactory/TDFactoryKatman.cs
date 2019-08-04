@@ -150,6 +150,7 @@ namespace TDFactory
                     selectedTables = GetSelectedTableNames(tableColumnInfos);
 
                     UrlColumns = lstUrlColumns.Items.ToStringList();
+                    GuidColumns = lstGuidColumns.Items.ToStringList();
                     DeletedColumns = lstDeletedColumns.Items.ToStringList();
                     FileColumns = lstFileColumns.Items.ToStringList();
                     ImageColumns = lstImageColumns.Items.ToStringList();
@@ -728,6 +729,19 @@ namespace TDFactory
             }
         }
 
+        private void btnGuidColumns_Click(object sender, EventArgs e)
+        {
+            string column = txtGuidColumns.Text.Trim().Replace(" ", "").ToUrl(true);
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstGuidColumns.Items.Contains(column))
+                {
+                    lstGuidColumns.Items.Add(column);
+                }
+            }
+        }
+
         private void btnFileColumns_Click(object sender, EventArgs e)
         {
             string column = txtFileColumns.Text.Trim().Replace(" ", "").ToUrl(true);
@@ -775,6 +789,11 @@ namespace TDFactory
         private void btnDeletedColumnsSub_Click(object sender, EventArgs e)
         {
             lstDeletedColumns.Items.Remove(lstDeletedColumns.SelectedItem);
+        }
+
+        private void btnGuidColumnsSub_Click(object sender, EventArgs e)
+        {
+            lstGuidColumns.Items.Remove(lstGuidColumns.SelectedItem);
         }
 
         private void btnFileColumnsSub_Click(object sender, EventArgs e)

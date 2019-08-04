@@ -35,6 +35,7 @@
             this.pnlKaydet = new System.Windows.Forms.Panel();
             this.lblImageColumns = new System.Windows.Forms.Label();
             this.lblCodeColumns = new System.Windows.Forms.Label();
+            this.lblGuidColumns = new System.Windows.Forms.Label();
             this.lblDeletedColumns = new System.Windows.Forms.Label();
             this.lblFileColumns = new System.Windows.Forms.Label();
             this.lblUrlColumns = new System.Windows.Forms.Label();
@@ -44,7 +45,9 @@
             this.btnCodeColumnsSub = new System.Windows.Forms.Button();
             this.btnFileColumnsAdd = new System.Windows.Forms.Button();
             this.btnCodeColumnsAdd = new System.Windows.Forms.Button();
+            this.btnGuidColumnsSub = new System.Windows.Forms.Button();
             this.btnDeletedColumnsSub = new System.Windows.Forms.Button();
+            this.btnGuidColumnsAdd = new System.Windows.Forms.Button();
             this.btnDeletedColumnsAdd = new System.Windows.Forms.Button();
             this.btnUrlColumnsSub = new System.Windows.Forms.Button();
             this.btnUrlColumnsAdd = new System.Windows.Forms.Button();
@@ -53,9 +56,11 @@
             this.lstImageColumns = new System.Windows.Forms.ListBox();
             this.txtCodeColumns = new System.Windows.Forms.TextBox();
             this.lstFileColumns = new System.Windows.Forms.ListBox();
+            this.txtGuidColumns = new System.Windows.Forms.TextBox();
             this.txtDeletedColumns = new System.Windows.Forms.TextBox();
             this.lstCodeColumns = new System.Windows.Forms.ListBox();
             this.txtUrlColumns = new System.Windows.Forms.TextBox();
+            this.lstGuidColumns = new System.Windows.Forms.ListBox();
             this.lstDeletedColumns = new System.Windows.Forms.ListBox();
             this.lstUrlColumns = new System.Windows.Forms.ListBox();
             this.chkAngular = new System.Windows.Forms.CheckBox();
@@ -241,6 +246,7 @@
             // 
             this.pnlKaydet.Controls.Add(this.lblImageColumns);
             this.pnlKaydet.Controls.Add(this.lblCodeColumns);
+            this.pnlKaydet.Controls.Add(this.lblGuidColumns);
             this.pnlKaydet.Controls.Add(this.lblDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lblFileColumns);
             this.pnlKaydet.Controls.Add(this.lblUrlColumns);
@@ -250,7 +256,9 @@
             this.pnlKaydet.Controls.Add(this.btnCodeColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnFileColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnCodeColumnsAdd);
+            this.pnlKaydet.Controls.Add(this.btnGuidColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnDeletedColumnsSub);
+            this.pnlKaydet.Controls.Add(this.btnGuidColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnDeletedColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnUrlColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnUrlColumnsAdd);
@@ -259,9 +267,11 @@
             this.pnlKaydet.Controls.Add(this.lstImageColumns);
             this.pnlKaydet.Controls.Add(this.txtCodeColumns);
             this.pnlKaydet.Controls.Add(this.lstFileColumns);
+            this.pnlKaydet.Controls.Add(this.txtGuidColumns);
             this.pnlKaydet.Controls.Add(this.txtDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lstCodeColumns);
             this.pnlKaydet.Controls.Add(this.txtUrlColumns);
+            this.pnlKaydet.Controls.Add(this.lstGuidColumns);
             this.pnlKaydet.Controls.Add(this.lstDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lstUrlColumns);
             this.pnlKaydet.Controls.Add(this.chkAngular);
@@ -315,17 +325,27 @@
             // 
             this.lblCodeColumns.AutoSize = true;
             this.lblCodeColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblCodeColumns.Location = new System.Drawing.Point(584, 206);
+            this.lblCodeColumns.Location = new System.Drawing.Point(729, 63);
             this.lblCodeColumns.Name = "lblCodeColumns";
             this.lblCodeColumns.Size = new System.Drawing.Size(82, 13);
             this.lblCodeColumns.TabIndex = 92;
             this.lblCodeColumns.Text = "Kod Kolonları";
             // 
+            // lblGuidColumns
+            // 
+            this.lblGuidColumns.AutoSize = true;
+            this.lblGuidColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblGuidColumns.Location = new System.Drawing.Point(729, 206);
+            this.lblGuidColumns.Name = "lblGuidColumns";
+            this.lblGuidColumns.Size = new System.Drawing.Size(86, 13);
+            this.lblGuidColumns.TabIndex = 92;
+            this.lblGuidColumns.Text = "Guid Kolonları";
+            // 
             // lblDeletedColumns
             // 
             this.lblDeletedColumns.AutoSize = true;
             this.lblDeletedColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblDeletedColumns.Location = new System.Drawing.Point(729, 63);
+            this.lblDeletedColumns.Location = new System.Drawing.Point(584, 206);
             this.lblDeletedColumns.Name = "lblDeletedColumns";
             this.lblDeletedColumns.Size = new System.Drawing.Size(74, 13);
             this.lblDeletedColumns.TabIndex = 92;
@@ -383,7 +403,7 @@
             // 
             // btnCodeColumnsSub
             // 
-            this.btnCodeColumnsSub.Location = new System.Drawing.Point(701, 220);
+            this.btnCodeColumnsSub.Location = new System.Drawing.Point(846, 77);
             this.btnCodeColumnsSub.Name = "btnCodeColumnsSub";
             this.btnCodeColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnCodeColumnsSub.TabIndex = 91;
@@ -403,7 +423,7 @@
             // 
             // btnCodeColumnsAdd
             // 
-            this.btnCodeColumnsAdd.Location = new System.Drawing.Point(673, 220);
+            this.btnCodeColumnsAdd.Location = new System.Drawing.Point(818, 77);
             this.btnCodeColumnsAdd.Name = "btnCodeColumnsAdd";
             this.btnCodeColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnCodeColumnsAdd.TabIndex = 91;
@@ -411,9 +431,19 @@
             this.btnCodeColumnsAdd.UseVisualStyleBackColor = true;
             this.btnCodeColumnsAdd.Click += new System.EventHandler(this.btnCodeColumns_Click);
             // 
+            // btnGuidColumnsSub
+            // 
+            this.btnGuidColumnsSub.Location = new System.Drawing.Point(846, 220);
+            this.btnGuidColumnsSub.Name = "btnGuidColumnsSub";
+            this.btnGuidColumnsSub.Size = new System.Drawing.Size(25, 23);
+            this.btnGuidColumnsSub.TabIndex = 91;
+            this.btnGuidColumnsSub.Text = "-";
+            this.btnGuidColumnsSub.UseVisualStyleBackColor = true;
+            this.btnGuidColumnsSub.Click += new System.EventHandler(this.btnGuidColumnsSub_Click);
+            // 
             // btnDeletedColumnsSub
             // 
-            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(846, 77);
+            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(701, 220);
             this.btnDeletedColumnsSub.Name = "btnDeletedColumnsSub";
             this.btnDeletedColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsSub.TabIndex = 91;
@@ -421,9 +451,19 @@
             this.btnDeletedColumnsSub.UseVisualStyleBackColor = true;
             this.btnDeletedColumnsSub.Click += new System.EventHandler(this.btnDeletedColumnsSub_Click);
             // 
+            // btnGuidColumnsAdd
+            // 
+            this.btnGuidColumnsAdd.Location = new System.Drawing.Point(818, 220);
+            this.btnGuidColumnsAdd.Name = "btnGuidColumnsAdd";
+            this.btnGuidColumnsAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnGuidColumnsAdd.TabIndex = 91;
+            this.btnGuidColumnsAdd.Text = "+";
+            this.btnGuidColumnsAdd.UseVisualStyleBackColor = true;
+            this.btnGuidColumnsAdd.Click += new System.EventHandler(this.btnGuidColumns_Click);
+            // 
             // btnDeletedColumnsAdd
             // 
-            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(818, 77);
+            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(673, 220);
             this.btnDeletedColumnsAdd.Name = "btnDeletedColumnsAdd";
             this.btnDeletedColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsAdd.TabIndex = 91;
@@ -479,7 +519,7 @@
             // 
             // txtCodeColumns
             // 
-            this.txtCodeColumns.Location = new System.Drawing.Point(587, 222);
+            this.txtCodeColumns.Location = new System.Drawing.Point(732, 79);
             this.txtCodeColumns.Name = "txtCodeColumns";
             this.txtCodeColumns.Size = new System.Drawing.Size(80, 20);
             this.txtCodeColumns.TabIndex = 90;
@@ -494,9 +534,16 @@
             this.lstFileColumns.Size = new System.Drawing.Size(139, 95);
             this.lstFileColumns.TabIndex = 89;
             // 
+            // txtGuidColumns
+            // 
+            this.txtGuidColumns.Location = new System.Drawing.Point(732, 222);
+            this.txtGuidColumns.Name = "txtGuidColumns";
+            this.txtGuidColumns.Size = new System.Drawing.Size(80, 20);
+            this.txtGuidColumns.TabIndex = 90;
+            // 
             // txtDeletedColumns
             // 
-            this.txtDeletedColumns.Location = new System.Drawing.Point(732, 79);
+            this.txtDeletedColumns.Location = new System.Drawing.Point(587, 222);
             this.txtDeletedColumns.Name = "txtDeletedColumns";
             this.txtDeletedColumns.Size = new System.Drawing.Size(80, 20);
             this.txtDeletedColumns.TabIndex = 90;
@@ -506,7 +553,7 @@
             this.lstCodeColumns.FormattingEnabled = true;
             this.lstCodeColumns.Items.AddRange(new object[] {
             "code"});
-            this.lstCodeColumns.Location = new System.Drawing.Point(587, 248);
+            this.lstCodeColumns.Location = new System.Drawing.Point(732, 105);
             this.lstCodeColumns.Name = "lstCodeColumns";
             this.lstCodeColumns.Size = new System.Drawing.Size(139, 95);
             this.lstCodeColumns.TabIndex = 89;
@@ -518,14 +565,24 @@
             this.txtUrlColumns.Size = new System.Drawing.Size(80, 20);
             this.txtUrlColumns.TabIndex = 90;
             // 
+            // lstGuidColumns
+            // 
+            this.lstGuidColumns.FormattingEnabled = true;
+            this.lstGuidColumns.Items.AddRange(new object[] {
+            "guid"});
+            this.lstGuidColumns.Location = new System.Drawing.Point(732, 248);
+            this.lstGuidColumns.Name = "lstGuidColumns";
+            this.lstGuidColumns.Size = new System.Drawing.Size(139, 95);
+            this.lstGuidColumns.TabIndex = 89;
+            // 
             // lstDeletedColumns
             // 
             this.lstDeletedColumns.FormattingEnabled = true;
             this.lstDeletedColumns.Items.AddRange(new object[] {
             "deleted"});
-            this.lstDeletedColumns.Location = new System.Drawing.Point(732, 105);
+            this.lstDeletedColumns.Location = new System.Drawing.Point(587, 248);
             this.lstDeletedColumns.Name = "lstDeletedColumns";
-            this.lstDeletedColumns.Size = new System.Drawing.Size(139, 238);
+            this.lstDeletedColumns.Size = new System.Drawing.Size(139, 95);
             this.lstDeletedColumns.TabIndex = 89;
             // 
             // lstUrlColumns
@@ -2394,5 +2451,10 @@
         private System.Windows.Forms.Button btnCodeColumnsAdd;
         private System.Windows.Forms.TextBox txtCodeColumns;
         private System.Windows.Forms.ListBox lstCodeColumns;
+        private System.Windows.Forms.Label lblGuidColumns;
+        private System.Windows.Forms.Button btnGuidColumnsSub;
+        private System.Windows.Forms.Button btnGuidColumnsAdd;
+        private System.Windows.Forms.TextBox txtGuidColumns;
+        private System.Windows.Forms.ListBox lstGuidColumns;
     }
 }

@@ -42,6 +42,7 @@ namespace TDFactory
                         bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                         List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
+                        List<ColumnInfo> guidColumns = columnNames.Where(a => a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> codeColumns = columnNames.Where(a => a.ColumnName.In(CodeColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
@@ -612,6 +613,76 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
+                        foreach (ColumnInfo item in guidColumns)
+                        {
+                            // SelectByGuid
+                            yaz.WriteLine("\t\tpublic I" + Table + " SelectBy" + item.ColumnName + "(string guid, bool relation = true)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tusp_" + Table + "SelectBy" + item.ColumnName + "_Result tableTemp = entity.usp_" + Table + "SelectBy" + item.ColumnName + "(guid).FirstOrDefault();");
+                            yaz.WriteLine("\t\t\t" + Table + " table = tableTemp.ChangeModel<" + Table + ">();");
+                            yaz.WriteLine("");
+
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\tif (relation)");
+                                yaz.WriteLine("\t\t\t{");
+                            }
+
+                            j = 1;
+                            if (fkcListForeign.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
+
+                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+
+                                    if (j < fkcList.Count)
+                                        yaz.WriteLine("");
+
+                                    j++;
+                                }
+
+                                if (fkcList.Count > 0)
+                                {
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            if (fkcList.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    j = 1;
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
+
+                                        yaz.WriteLine("\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + fkc.PrimaryColumnName + ").ToList();"); ;
+                                        yaz.WriteLine("\t\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+
+                                        if (j < fkcList.Count)
+                                            yaz.WriteLine("");
+
+                                        j++;
+                                    }
+                                }
+                            }
+
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                            }
+
+                            yaz.WriteLine("\t\t\treturn table;");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                        }
+
                         foreach (ColumnInfo item in codeColumns)
                         {
                             // SelectByCode
@@ -943,6 +1014,7 @@ namespace TDFactory
                         bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                         List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
+                        List<ColumnInfo> guidColumns = columnNames.Where(a => a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> codeColumns = columnNames.Where(a => a.ColumnName.In(CodeColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
@@ -1128,6 +1200,12 @@ namespace TDFactory
                             yaz.WriteLine("\t\tI" + Table + " SelectBy" + item.ColumnName + "(string url, bool relation);");
                         }
 
+                        foreach (ColumnInfo item in guidColumns)
+                        {
+                            // SelectByGuid
+                            yaz.WriteLine("\t\tI" + Table + " SelectBy" + item.ColumnName + "(string guid, bool relation);");
+                        }
+
                         foreach (ColumnInfo item in codeColumns)
                         {
                             // SelectByCode
@@ -1262,6 +1340,7 @@ namespace TDFactory
                 string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
 
                 List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
+                List<ColumnInfo> guidColumns = columnNames.Where(a => a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
                 List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
                 List<ColumnInfo> codeColumns = columnNames.Where(a => a.ColumnName.In(CodeColumns, InType.ToUrlLower)).ToList();
                 bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
@@ -1283,16 +1362,19 @@ namespace TDFactory
                         yaz.WriteLine("\tpublic interface I" + Table + "Service");
                         yaz.WriteLine("\t{");
 
+                        // Select
                         yaz.WriteLine("\t\t[OperationContract]");
                         yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Select/?top={top}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                         yaz.WriteLine("\t\tList<" + Table + "Data> Select(string top);");
                         yaz.WriteLine("");
 
+                        // SelectAll
                         yaz.WriteLine("\t\t[OperationContract]");
                         yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectAll/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                         yaz.WriteLine("\t\tList<" + Table + "Data> SelectAll(string id);");
                         yaz.WriteLine("");
 
+                        // SelectByID
                         yaz.WriteLine("\t\t[OperationContract]");
                         yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectByID/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                         yaz.WriteLine("\t\t" + Table + "Data SelectByID(string id);");
@@ -1300,43 +1382,59 @@ namespace TDFactory
 
                         foreach (ColumnInfo item in urlColumns)
                         {
+                            // SelectByUrl
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectBy" + item.ColumnName + "/?url={url}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\t" + Table + "Data SelectBy" + item.ColumnName + "(string url);");
                             yaz.WriteLine("");
                         }
 
+                        foreach (ColumnInfo item in guidColumns)
+                        {
+                            // SelectByGuid
+                            yaz.WriteLine("\t\t[OperationContract]");
+                            yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectBy" + item.ColumnName + "/?guid={guid}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\t" + Table + "Data SelectBy" + item.ColumnName + "(string guid);");
+                            yaz.WriteLine("");
+                        }
+
                         foreach (ColumnInfo item in codeColumns)
                         {
+                            // SelectByCode
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectBy" + item.ColumnName + "/?code={code}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tList<" + Table + "Data> SelectBy" + item.ColumnName + "(string code);");
                             yaz.WriteLine("");
                         }
 
+                        // Insert
                         yaz.WriteLine("\t\t[OperationContract]");
                         yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                         yaz.WriteLine("\t\tbool Insert(" + Table + "Data table);");
 
                         if (identityColumns.Count > 0)
                         {
+                            // Update
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tbool Update(" + Table + "Data table);");
                             yaz.WriteLine("");
 
+                            // Copy
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Copy/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tbool Copy(string id);");
                             yaz.WriteLine("");
 
+                            // Delete
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Delete/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tbool Delete(string id);");
 
                             if (deleted)
                             {
+                                // Remove
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t[OperationContract]");
                                 yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Remove/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
@@ -1511,6 +1609,16 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
+                        foreach (ColumnInfo item in guidColumns)
+                        {
+                            //SelectByGuid
+                            yaz.WriteLine("\t\tpublic " + Table + "Data SelectBy" + item.ColumnName + "(string guid)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\treturn model.SelectBy" + item.ColumnName + "(guid).ChangeModel<" + Table + "Data>();");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                        }
+
                         foreach (ColumnInfo item in codeColumns)
                         {
                             //SelectByCode
@@ -1645,6 +1753,7 @@ namespace TDFactory
                         }
 
                         List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
+                        List<ColumnInfo> guidColumns = columnNames.Where(a => a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
                         List<ColumnInfo> codeColumns = columnNames.Where(a => a.ColumnName.In(CodeColumns, InType.ToUrlLower)).ToList();
                         string deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
@@ -1789,6 +1898,50 @@ namespace TDFactory
                             yaz.WriteLine("GO");
                             yaz.WriteLine("");
                             //SelectByUrl//
+                        }
+
+                        foreach (ColumnInfo item in guidColumns)
+                        {
+                            //SelectByGuid//
+                            yaz.WriteLine("/* SelectBy" + item.ColumnName + " */");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tSELECT Top (1) ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText += "[" + column.ColumnName + "],";
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
+                            }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //SelectByGuid//
                         }
 
                         foreach (ColumnInfo item in codeColumns)
