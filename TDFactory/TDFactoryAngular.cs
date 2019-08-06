@@ -802,7 +802,7 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("<div id=\"user-nav\" class=\"navbar navbar-inverse\">");
                     yaz.WriteLine("\t<ul class=\"nav\">");
-                    yaz.WriteLine("\t\t<li><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"/Admin\"><i class=\"icon icon-user\"></i> <span class=\"text\"> Hoşgeldiniz (Kullanıcı Adı)</span></a></li>");
+                    yaz.WriteLine("\t\t<li><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"/Admin/Index\"><i class=\"icon icon-user\"></i> <span class=\"text\"> Hoşgeldiniz (Kullanıcı Adı)</span></a></li>");
                     yaz.WriteLine("\t\t<li><a class=\"logout\" (click)=\"onLogout()\"><i class=\"icon icon-share-alt\"></i> <span class=\"text\"> Çıkış</span></a></li>");
                     yaz.WriteLine("\t\t<li><a target=\"_blank\" href=\"{{ website }}\" ><i class=\"icon icon-home\"></i> <span class=\"text\"> Web Sitesine Git</span></a></li>");
                     yaz.WriteLine("\t</ul>");
@@ -903,8 +903,8 @@ namespace TDFactory
                     yaz.WriteLine("<div id=\"sidebar\">");
                     yaz.WriteLine("\t<a href=\"javascript:;\" class=\"visible-phone\"><i class=\"icon icon-reorder\"></i> Menü</a>");
                     yaz.WriteLine("\t<ul>");
-                    yaz.WriteLine("\t\t<li data-url=\"Home\" class=\"active\">");
-                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin\"><i class=\"icon icon-home\"></i> <span>Ana Sayfa</span></a>");
+                    yaz.WriteLine("\t\t<li data-url=\"Index\" class=\"active\">");
+                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/Index\"><i class=\"icon icon-home\"></i> <span>Ana Sayfa</span></a>");
                     yaz.WriteLine("\t\t</li>");
 
                     List<string> addedTables = new List<string>();
@@ -1237,7 +1237,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\tthis.service.postLogin(this.loginData)");
                     yaz.WriteLine("\t\t\t.subscribe((answer) => {");
                     yaz.WriteLine("\t\t\t\tif (answer == true) {");
-                    yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin']);");
+                    yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/Index']);");
                     yaz.WriteLine("\t\t\t\t}");
                     yaz.WriteLine("\t\t\t\telse {");
                     yaz.WriteLine("\t\t\t\t\tthis.hataMesaj = \"Lütfen kullanıcı adı ve şifrenizi kontrol ediniz.\";");
