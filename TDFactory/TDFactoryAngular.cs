@@ -135,19 +135,24 @@ namespace TDFactory
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls");
             }
 
-            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared"))
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\views"))
             {
-                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared");
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\views");
             }
 
-            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls"))
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared"))
             {
-                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls");
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared");
             }
 
-            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\home"))
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\controls"))
             {
-                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\home");
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\controls");
+            }
+
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\home"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\home");
             }
 
             if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\models"))
@@ -520,7 +525,7 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\layout.html", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\layout.html", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
@@ -530,7 +535,7 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\layout.ts", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\layout.ts", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
@@ -549,19 +554,19 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\shared\\controls\\scripts.ts", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\controls\\scripts.ts", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
-                    yaz.WriteLine("import '../../../../Content/js/pathscript.js';");
-                    yaz.WriteLine("import '../../../../Content/js/main.js';");
+                    yaz.WriteLine("import '../../../../../Content/js/pathscript.js';");
+                    yaz.WriteLine("import '../../../../../Content/js/main.js';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToUrl(true) + "-scripts',");
                     yaz.WriteLine("\ttemplate: '',");
                     yaz.WriteLine("\tstyleUrls: [");
-                    yaz.WriteLine("\t\t'../../../../Content/css/main.css'");
+                    yaz.WriteLine("\t\t'../../../../../Content/css/main.css'");
                     yaz.WriteLine("\t],");
                     yaz.WriteLine("\tencapsulation: ViewEncapsulation.None");
                     yaz.WriteLine("})");
@@ -572,7 +577,7 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\home\\index.html", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\home\\index.html", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
@@ -581,7 +586,7 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\home\\index.ts", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\home\\index.ts", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
@@ -591,7 +596,7 @@ namespace TDFactory
                     yaz.WriteLine("\ttemplateUrl: './index.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
-                    yaz.WriteLine("export class HomeComponent {");
+                    yaz.WriteLine("export class IndexComponent {");
                     yaz.WriteLine("\tngOnInit() {");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
@@ -639,7 +644,7 @@ namespace TDFactory
                     yaz.WriteLine("\tngOnInit() {");
                     yaz.WriteLine("\t\tthis.service.getLoginControl().subscribe((answer) => {");
                     yaz.WriteLine("\t\t\tif (answer == false) {");
-                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin']);");
+                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/Login']);");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                     yaz.WriteLine("\t}");
@@ -797,7 +802,7 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("<div id=\"user-nav\" class=\"navbar navbar-inverse\">");
                     yaz.WriteLine("\t<ul class=\"nav\">");
-                    yaz.WriteLine("\t\t<li><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"/Admin/Home\"><i class=\"icon icon-user\"></i> <span class=\"text\"> Hoşgeldiniz (Kullanıcı Adı)</span></a></li>");
+                    yaz.WriteLine("\t\t<li><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"/Admin\"><i class=\"icon icon-user\"></i> <span class=\"text\"> Hoşgeldiniz (Kullanıcı Adı)</span></a></li>");
                     yaz.WriteLine("\t\t<li><a class=\"logout\" (click)=\"onLogout()\"><i class=\"icon icon-share-alt\"></i> <span class=\"text\"> Çıkış</span></a></li>");
                     yaz.WriteLine("\t\t<li><a target=\"_blank\" href=\"{{ website }}\" ><i class=\"icon icon-home\"></i> <span class=\"text\"> Web Sitesine Git</span></a></li>");
                     yaz.WriteLine("\t</ul>");
@@ -876,7 +881,7 @@ namespace TDFactory
                     yaz.WriteLine("\tonLogout() {");
                     yaz.WriteLine("\t\tthis.service.getLogout().subscribe((answer) => {");
                     yaz.WriteLine("\t\t\tif (answer == true) {");
-                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/']);");
+                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/Login']);");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                     yaz.WriteLine("\t}");
@@ -899,7 +904,7 @@ namespace TDFactory
                     yaz.WriteLine("\t<a href=\"javascript:;\" class=\"visible-phone\"><i class=\"icon icon-reorder\"></i> Menü</a>");
                     yaz.WriteLine("\t<ul>");
                     yaz.WriteLine("\t\t<li data-url=\"Home\" class=\"active\">");
-                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/Home\"><i class=\"icon icon-home\"></i> <span>Ana Sayfa</span></a>");
+                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin\"><i class=\"icon icon-home\"></i> <span>Ana Sayfa</span></a>");
                     yaz.WriteLine("\t\t</li>");
 
                     List<string> addedTables = new List<string>();
@@ -1140,7 +1145,7 @@ namespace TDFactory
                     yaz.WriteLine("\ttemplateUrl: './index.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
-                    yaz.WriteLine("export class AdminHomeComponent {");
+                    yaz.WriteLine("export class AdminIndexComponent {");
                     yaz.WriteLine("\tngOnInit() {");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
@@ -1232,7 +1237,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\tthis.service.postLogin(this.loginData)");
                     yaz.WriteLine("\t\t\t.subscribe((answer) => {");
                     yaz.WriteLine("\t\t\t\tif (answer == true) {");
-                    yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin/Home']);");
+                    yaz.WriteLine("\t\t\t\t\tthis.router.navigate(['/Admin']);");
                     yaz.WriteLine("\t\t\t\t}");
                     yaz.WriteLine("\t\t\t\telse {");
                     yaz.WriteLine("\t\t\t\t\tthis.hataMesaj = \"Lütfen kullanıcı adı ve şifrenizi kontrol ediniz.\";");
@@ -1354,13 +1359,13 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("import { AppComponent } from './app';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("import { LayoutComponent } from './shared/layout';");
-                    yaz.WriteLine("import { HomeComponent } from './home/index';");
-                    yaz.WriteLine("import { ScriptsComponent } from './shared/controls/scripts';");
+                    yaz.WriteLine("import { LayoutComponent } from './views/shared/layout';");
+                    yaz.WriteLine("import { IndexComponent } from './views/home/index';");
+                    yaz.WriteLine("import { ScriptsComponent } from './views/shared/controls/scripts';");
                     yaz.WriteLine("");
                     yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
                     yaz.WriteLine("import { AdminLayoutComponent } from './admin/views/shared/layoutAdmin';");
-                    yaz.WriteLine("import { AdminHomeComponent } from './admin/views/home/index';");
+                    yaz.WriteLine("import { AdminIndexComponent } from './admin/views/home/index';");
                     yaz.WriteLine("import { AdminHeaderComponent } from './admin/views/shared/controls/header';");
                     yaz.WriteLine("import { AdminLeftMenuComponent } from './admin/views/shared/controls/leftmenu';");
                     yaz.WriteLine("import { AdminScriptsComponent } from './admin/views/shared/controls/scripts';");
@@ -1396,12 +1401,12 @@ namespace TDFactory
                     yaz.WriteLine("\t\tAppComponent,");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tLayoutComponent,");
-                    yaz.WriteLine("\t\tHomeComponent,");
+                    yaz.WriteLine("\t\tIndexComponent,");
                     yaz.WriteLine("\t\tScriptsComponent,");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tAdminLoginComponent,");
                     yaz.WriteLine("\t\tAdminLayoutComponent,");
-                    yaz.WriteLine("\t\tAdminHomeComponent,");
+                    yaz.WriteLine("\t\tAdminIndexComponent,");
                     yaz.WriteLine("\t\tAdminHeaderComponent,");
                     yaz.WriteLine("\t\tAdminLeftMenuComponent,");
                     yaz.WriteLine("\t\tAdminScriptsComponent,");
@@ -1461,11 +1466,11 @@ namespace TDFactory
                     yaz.WriteLine("import { NgModule } from '@angular/core';");
                     yaz.WriteLine("import { Routes, RouterModule } from '@angular/router';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("import { LayoutComponent } from './shared/layout';");
-                    yaz.WriteLine("import { HomeComponent } from './home/index';");
+                    yaz.WriteLine("import { LayoutComponent } from './views/shared/layout';");
+                    yaz.WriteLine("import { IndexComponent } from './views/home/index';");
                     yaz.WriteLine("");
                     yaz.WriteLine("import { AdminLayoutComponent } from './admin/views/shared/layoutAdmin';");
-                    yaz.WriteLine("import { AdminHomeComponent } from './admin/views/home/index';");
+                    yaz.WriteLine("import { AdminIndexComponent } from './admin/views/home/index';");
                     yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
                     yaz.WriteLine("");
 
@@ -1478,15 +1483,14 @@ namespace TDFactory
                     }
 
                     yaz.WriteLine("const routes: Routes = [");
-                    yaz.WriteLine("\t{ path: 'Admin', component: AdminLoginComponent, runGuardsAndResolvers: 'always' },");
                     yaz.WriteLine("\t{ path: 'Admin/Login', component: AdminLoginComponent, runGuardsAndResolvers: 'always' },");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t{");
                     yaz.WriteLine("\t\tpath: '',");
                     yaz.WriteLine("\t\tcomponent: LayoutComponent,");
                     yaz.WriteLine("\t\tchildren: [");
-                    yaz.WriteLine("\t\t\t//{ path: '', redirectTo: 'Home', pathMatch: 'full' },");
-                    yaz.WriteLine("\t\t\t{ path: '', component: HomeComponent, pathMatch: 'full' },");
+                    yaz.WriteLine("\t\t\t//{ path: '', redirectTo: 'Index', pathMatch: 'full' },");
+                    yaz.WriteLine("\t\t\t{ path: '', component: IndexComponent, pathMatch: 'full' },");
                     yaz.WriteLine("\t\t], runGuardsAndResolvers: 'always'");
                     yaz.WriteLine("\t},");
                     yaz.WriteLine("");
@@ -1494,7 +1498,8 @@ namespace TDFactory
                     yaz.WriteLine("\t\tpath: '',");
                     yaz.WriteLine("\t\tcomponent: AdminLayoutComponent,");
                     yaz.WriteLine("\t\tchildren: [");
-                    yaz.WriteLine("\t\t\t{ path: 'Admin/Home', component: AdminHomeComponent },");
+                    yaz.WriteLine("\t\t\t{ path: 'Admin', component: AdminIndexComponent },");
+                    yaz.WriteLine("\t\t\t{ path: 'Admin/Index', component: AdminIndexComponent },");
 
                     foreach (string Table in selectedTables)
                     {
