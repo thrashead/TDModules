@@ -2647,7 +2647,6 @@ namespace TDFactory
             {
                 CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\css\\main.css");
                 CopyFromResource(StringToByteArray(Properties.Resources.Shared_Content_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\js\\main.js");
-                CopyFromResource(StringToByteArray(Properties.Resources.Angular_Content_admin_css_main_css), PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\main.css");
                 CopyFromResource(StringToByteArray(Properties.Resources.Angular_Content_admin_js_main_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\main.js");
                 CopyFromResource(StringToByteArray(Properties.Resources.Angular_Content_admin_js_matrix_js), PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\matrix.js");
 
@@ -2659,7 +2658,72 @@ namespace TDFactory
                         yaz.Close();
                     }
                 }
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\main.css", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                    {
+                        yaz.WriteLine("fieldset {width: 546px;text-align: center;margin: 20px auto 0px auto;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("fieldset > p {margin-top: 50px;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".field-validation-error {color: #ff0000;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".editor-label {font-weight: bold;padding-bottom: 5px;}");
+                        yaz.WriteLine(".editor-label label {font-weight: bold;font-size: 12px;}");
+                        yaz.WriteLine(".editor-field {padding-bottom: 10px;}");
+                        yaz.WriteLine(".editor-field > input[type='text'][disabled='disabled'] {display: inline-block;font-size: 11.844px;font-weight: bold;line-height: 14px;color: #fff;text-shadow: 0 -1px 0 rgba(0,0,0,0.25);");
+                        yaz.WriteLine("\twhite-space: nowrap;vertical-align: baseline;background-color: #3a87ad;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".ck-content {text-align: left;height: 400px;width: 530px;}");
+                        yaz.WriteLine("input[type='text'],input[type='password'] {text-align: left;width: 530px;}");
+                        yaz.WriteLine("input[type='file'] {width: 220px;}");
+                        yaz.WriteLine("input[type='number'] {width: 100px;}");
+                        yaz.WriteLine("select {width: 546px;}");
+                        yaz.WriteLine("label > select {width: auto!important; }");
+                        yaz.WriteLine("label > input[type='text'] {width: auto!important; }");
+                        yaz.WriteLine("input[type='checkbox'] {-webkit-appearance: none;height: 30px;width: 30px;background-image: url(/" + projectName + "/Content/admin/img/passive.png);background-size: 30px 30px;}");
+                        yaz.WriteLine("input[type='checkbox']:hover {opacity:0.7;}");
+                        yaz.WriteLine("input[type='checkbox']:checked {background-image: url(/" + projectName + "/Content/admin/img/active.png);}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".pagelinks {width: 220px;margin: 20px auto 0px auto;text-align: center;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("img.active {background-image:url(/" + projectName + "/Content/admin/img/active.png);width:20px;height:20px;background-size: 20px 20px;background-repeat: no-repeat;}");
+                        yaz.WriteLine("img.passive {background-image:url(/" + projectName + "/Content/admin/img/passive.png);width:20px;height:20px;background-size: 20px 20px;background-repeat: no-repeat;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine(".tdAlert {position:fixed;top:10px;right:10px;list-style-type:none;padding: 0px 0px 0px 0px;z-index:9999;top: 10px; right: 10px;}");
+                        yaz.WriteLine(".tdAlert li {margin: 0px 0px 20px 0px;padding: 5px 5px 5px 5px;background-color: red; border-color: red;display:none;width:200px;");
+                        yaz.WriteLine("\t\t  -webkit-border-radius: 10px;-moz-border-radius: 10px;border-radius: 10px;}");
+                        yaz.WriteLine(".tdAlert li .tdAlertMessage {margin-top: 5px;color: white; background-color: red;}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@media only screen and (min-width: 414px) and (max-width: 600px) {");
+                        yaz.WriteLine("\tfieldset {width: 378px;}");
+                        yaz.WriteLine("\t.ck-content {width: 362px;}");
+                        yaz.WriteLine("\tinput[type='text'],input[type='password'] {width: 360px;}");
+                        yaz.WriteLine("\tselect {width: 370px; }");
+                        yaz.WriteLine("\tlabel > select {width: auto!important; }");
+                        yaz.WriteLine("\tlabel > input[type='text'] {width: auto!important; }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@media only screen and (max-width: 413px) {");
+                        yaz.WriteLine("\tfieldset {width: 228px;}");
+                        yaz.WriteLine("\t.ck-content {width: 212px;}");
+                        yaz.WriteLine("\tinput[type='text'],input[type='password'] {width: 210px;}");
+                        yaz.WriteLine("\tselect {width: 220px; }");
+                        yaz.WriteLine("\tlabel > select {width: auto!important; }");
+                        yaz.WriteLine("\tlabel > input[type='text'] {width: auto!important; }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@media (max-width: 375px) {");
+                        yaz.WriteLine("\t.hideColumn2 { display: none; }");
+                        yaz.WriteLine("}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("@media (max-width: 480px) {");
+                        yaz.WriteLine("\t.hideColumn {display: none;}");
+                        yaz.WriteLine("}");
 
+                        yaz.Close();
+                    }
+                }
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Content\\admin\\css\\font-awesome\\css\\font-awesome.css", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
