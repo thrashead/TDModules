@@ -38,14 +38,13 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
-                        bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
-
-                        List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> guidColumns = columnNames.Where(a => a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> codeColumns = columnNames.Where(a => a.ColumnName.In(CodeColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                        List<ColumnInfo> columnNames = TableColumns(Table);
+                        List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
+                        List<ColumnInfo> guidColumns = TableColumns(Table, ColumnType.GuidColumns);
+                        List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
+                        List<ColumnInfo> fileColumns = TableColumns(Table, ColumnType.FileColumns);
+                        List<ColumnInfo> imageColumns = TableColumns(Table, ColumnType.ImageColumns);
+                        bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
 
                         bool allowHtml = false;
 
@@ -155,7 +154,7 @@ namespace TDFactory
 
                                 if (!chkAngular.Checked)
                                 {
-                                    if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(UrlColumns, InType.ToUrlLower))
+                                    if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(UrlColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
                                     {
                                         if (!column.IsIdentity)
                                         {
@@ -1021,14 +1020,13 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
-                        bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
-
-                        List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> guidColumns = columnNames.Where(a => a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> codeColumns = columnNames.Where(a => a.ColumnName.In(CodeColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                        List<ColumnInfo> columnNames = TableColumns(Table);
+                        List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
+                        List<ColumnInfo> guidColumns = TableColumns(Table, ColumnType.GuidColumns);
+                        List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
+                        List<ColumnInfo> fileColumns = TableColumns(Table, ColumnType.FileColumns);
+                        List<ColumnInfo> imageColumns = TableColumns(Table, ColumnType.ImageColumns);
+                        bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
 
                         yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Collections.Generic;");
@@ -1350,11 +1348,11 @@ namespace TDFactory
 
                 string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
 
-                List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
-                List<ColumnInfo> guidColumns = columnNames.Where(a => a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
-                List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
-                List<ColumnInfo> codeColumns = columnNames.Where(a => a.ColumnName.In(CodeColumns, InType.ToUrlLower)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
+                List<ColumnInfo> columnNames = TableColumns(Table);
+                List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
+                List<ColumnInfo> guidColumns = TableColumns(Table, ColumnType.GuidColumns);
+                List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
+                bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
                 columnNames = columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList();
 
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Service\\I" + Table + "Service.cs", FileMode.Create))
@@ -1738,20 +1736,14 @@ namespace TDFactory
                         List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                         fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                        string[] dizi = new string[lstSeciliKolonlar.Items.Count];
                         string[] diziML = new string[] { "nvarchar", "varchar", "binary", "char", "nchar", "varbinary" };
 
                         int i = 0;
-                        foreach (string item in lstSeciliKolonlar.Items)
-                        {
-                            dizi[i] = item.Replace(" [" + Table + "]", "");
-                            i++;
-                        }
 
-                        List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).Where(a => a.ColumnName.In(dizi)).ToList();
-                        List<ColumnInfo> guidColumns = columnNames.Where(a => a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
-                        List<ColumnInfo> codeColumns = columnNames.Where(a => a.ColumnName.In(CodeColumns, InType.ToUrlLower)).ToList();
+                        List<ColumnInfo> columnNames = TableColumns(Table);
+                        List<ColumnInfo> guidColumns = TableColumns(Table, ColumnType.GuidColumns);
+                        List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
+                        List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
                         string deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
 
                         string idType = null;

@@ -90,11 +90,6 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\bin");
                     }
 
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Models"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Models");
-                    }
-
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository");
@@ -956,7 +951,7 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).ToList();
+                List<ColumnInfo> columnNames = TableColumns(Table);
                 bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 string formdata = "";
@@ -1486,11 +1481,11 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                List<ColumnInfo> columnNames = Helper.Helper.GetColumnsInfo(connectionInfo, Table).ToList();
-                List<ColumnInfo> urlColumns = columnNames.Where(a => a.ColumnName.In(UrlColumns, InType.ToUrlLower)).ToList();
-                List<ColumnInfo> fileColumns = columnNames.Where(a => a.ColumnName.In(FileColumns, InType.ToUrlLower)).ToList();
-                List<ColumnInfo> imageColumns = columnNames.Where(a => a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
-                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
+                List<ColumnInfo> columnNames = TableColumns(Table);
+                List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
+                List<ColumnInfo> fileColumns = TableColumns(Table, ColumnType.FileColumns);
+                List<ColumnInfo> imageColumns = TableColumns(Table, ColumnType.ImageColumns);
+                bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
 
                 CreateMVCDirectories(Table);
 

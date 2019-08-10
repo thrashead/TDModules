@@ -1677,7 +1677,7 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con, Table);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
+                List<ColumnInfo> columnNames = TableColumns(Table);
 
                 string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
 
@@ -3217,7 +3217,7 @@ namespace TDFactory
                         yaz.WriteLine("public class " + Table);
                         yaz.WriteLine("{");
 
-                        List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
+                        List<ColumnInfo> columnNames = TableColumns(Table);
 
                         foreach (ColumnInfo column in columnNames)
                         {
@@ -3358,7 +3358,7 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
+                List<ColumnInfo> columnNames = TableColumns(Table);
 
                 //Business
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\java\\com\\sinasalik\\thrashead\\" + projectNameKucuk + "\\DB\\Business\\" + Table + "Business.java", FileMode.Create))
@@ -3891,7 +3891,7 @@ namespace TDFactory
                 List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
-                List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
+                List<ColumnInfo> columnNames = TableColumns(Table);
 
                 //Business
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\java\\com\\sinasalik\\thrashead\\" + projectNameKucuk + "\\DB\\Business\\" + Table + "Business.java", FileMode.Create))

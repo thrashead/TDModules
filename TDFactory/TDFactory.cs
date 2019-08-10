@@ -299,5 +299,39 @@ namespace TDFactory
 
             return columnText;
         }
+
+        public List<ColumnInfo> TableColumns(string Table, ColumnType? columnType = null)
+        {
+            List<ColumnInfo> columnNames = tableColumnInfos.Where(a => a.TableName == Table).ToList();
+
+            switch (columnType)
+            {
+                case ColumnType.UrlColumns:
+                    return columnNames.Where(a => a.ColumnName.In(UrlColumns, ExMethods.InType.ToUrlLower)).ToList();
+                case ColumnType.GuidColumns:
+                    return columnNames.Where(a => a.ColumnName.In(GuidColumns, ExMethods.InType.ToUrlLower)).ToList();
+                case ColumnType.CodeColumns:
+                    return columnNames.Where(a => a.ColumnName.In(CodeColumns, ExMethods.InType.ToUrlLower)).ToList();
+                case ColumnType.DeletedColumns:
+                    return columnNames.Where(a => a.ColumnName.In(DeletedColumns, ExMethods.InType.ToUrlLower)).ToList();
+                case ColumnType.FileColumns:
+                    return columnNames.Where(a => a.ColumnName.In(FileColumns, ExMethods.InType.ToUrlLower)).ToList();
+                case ColumnType.ImageColumns:
+                    return columnNames.Where(a => a.ColumnName.In(ImageColumns, ExMethods.InType.ToUrlLower)).ToList();
+                default:
+                    return columnNames;
+            }
+
+        }
+
+        public enum ColumnType
+        {
+            UrlColumns,
+            GuidColumns,
+            CodeColumns,
+            DeletedColumns,
+            FileColumns,
+            ImageColumns
+        }
     }
 }
