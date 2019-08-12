@@ -72,16 +72,16 @@ namespace TDFactory
 
         void ListControl()
         {
+            SetResultCallBack d = new SetResultCallBack(SetResult);
+
             while (Application.OpenForms.Count > 0)
             {
                 if (lstSeciliKolonlar.Items.Count > 0)
                 {
-                    SetResultCallBack d = new SetResultCallBack(SetResult);
                     this.Invoke(d, new object[] { true });
                 }
                 else
                 {
-                    SetResultCallBack d = new SetResultCallBack(SetResult);
                     this.Invoke(d, new object[] { false });
                 }
 

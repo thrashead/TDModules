@@ -188,6 +188,67 @@ namespace TDFactory
             }
         }
 
+        private void btnButunTabloAlanlar_Click(object sender, EventArgs e)
+        {
+
+            lstSeciliKolonlar.Items.Clear();
+            lstKolonlar.Items.Clear();
+
+            foreach (object item in lstSeciliTablolar.Items)
+            {
+                lstTablolar.Items.Add(item);
+            }
+
+            lstSeciliTablolar.Items.Clear();
+
+            ClearLabel();
+
+            foreach (object item in lstTablolar.Items)
+            {
+                lstSeciliTablolar.Items.Add(item);
+
+                if (chkWindowsAuthentication.Checked == true)
+                {
+                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString());
+                }
+                else
+                {
+                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString());
+                }
+
+                lstKolonlar.Items.Clear();
+
+                foreach (ColumnInfo item2 in columnInfos)
+                {
+                    lstKolonlar.Items.Add(item2.ColumnName);
+                    lstSeciliKolonlar.Items.Add(item2.ColumnName.ColumnWithTable(item.ToString()));
+                }
+            }
+
+            lstTablolar.Items.Clear();
+            lstKolonlar.Items.Clear();
+
+            btnButunTabloAlanlar.Enabled = false;
+
+            lstTablolar.Enabled = false;
+            btnTabloEkle.Enabled = false;
+            btnTablolarEkle.Enabled = false;
+            btnTabloTumunuSec.Enabled = false;
+            btnTabloTumunuBirak.Enabled = false;
+            btnKolonEkle.Enabled = false;
+            btnKolonlarEkle.Enabled = false;
+
+            lstSeciliTablolar.Enabled = true;
+            lstKolonlar.Enabled = true;
+            lstSeciliKolonlar.Enabled = true;
+            btnTabloCikar.Enabled = true;
+            btnTablolarCikar.Enabled = true;
+            btnKolonCikar.Enabled = true;
+            btnKolonlarCikar.Enabled = true;
+            btnKolonTumunuSec.Enabled = true;
+            btnKolonTumunuBirak.Enabled = true;
+        }
+
         private void cmbVeritabani_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = true;
@@ -566,67 +627,6 @@ namespace TDFactory
             {
                 lstTablolar.SetSelected(i, false);
             }
-        }
-
-        private void btnButunTabloAlanlar_Click(object sender, EventArgs e)
-        {
-
-            lstSeciliKolonlar.Items.Clear();
-            lstKolonlar.Items.Clear();
-
-            foreach (object item in lstSeciliTablolar.Items)
-            {
-                lstTablolar.Items.Add(item);
-            }
-
-            lstSeciliTablolar.Items.Clear();
-
-            ClearLabel();
-
-            foreach (object item in lstTablolar.Items)
-            {
-                lstSeciliTablolar.Items.Add(item);
-
-                if (chkWindowsAuthentication.Checked == true)
-                {
-                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString());
-                }
-                else
-                {
-                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString());
-                }
-
-                lstKolonlar.Items.Clear();
-
-                foreach (ColumnInfo item2 in columnInfos)
-                {
-                    lstKolonlar.Items.Add(item2.ColumnName);
-                    lstSeciliKolonlar.Items.Add(item2.ColumnName.ColumnWithTable(item.ToString()));
-                }
-            }
-
-            lstTablolar.Items.Clear();
-            lstKolonlar.Items.Clear();
-
-            btnButunTabloAlanlar.Enabled = false;
-
-            lstTablolar.Enabled = false;
-            btnTabloEkle.Enabled = false;
-            btnTablolarEkle.Enabled = false;
-            btnTabloTumunuSec.Enabled = false;
-            btnTabloTumunuBirak.Enabled = false;
-            btnKolonEkle.Enabled = false;
-            btnKolonlarEkle.Enabled = false;
-
-            lstSeciliTablolar.Enabled = true;
-            lstKolonlar.Enabled = true;
-            lstSeciliKolonlar.Enabled = true;
-            btnTabloCikar.Enabled = true;
-            btnTablolarCikar.Enabled = true;
-            btnKolonCikar.Enabled = true;
-            btnKolonlarCikar.Enabled = true;
-            btnKolonTumunuSec.Enabled = true;
-            btnKolonTumunuBirak.Enabled = true;
         }
 
         private void btnKolonTumunuSec_Click(object sender, EventArgs e)
