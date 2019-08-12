@@ -175,12 +175,22 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository");
                     }
 
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Models"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Models");
+                    }
+
                     foreach (string Table in selectedTables)
                     {
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\" + Table))
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table))
                         {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\" + Table);
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table);
                         }
+                    }
+
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Data"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Data");
                     }
 
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\App_Start"))
@@ -308,11 +318,6 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Service");
                     }
 
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Data"))
-                    {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Data");
-                    }
-
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Uploads"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Uploads");
@@ -332,12 +337,22 @@ namespace TDFactory
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository");
                         }
 
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Models"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Models");
+                        }
+
                         foreach (string Table in selectedTables)
                         {
-                            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\" + Table))
+                            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table))
                             {
-                                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\" + Table);
+                                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table);
                             }
+                        }
+
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Data"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Data");
                         }
                     }
 
@@ -1726,20 +1741,8 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
-
+                Table table = new Table(Table, connectionInfo);
                 SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-
-                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                List<ColumnInfo> columnNames = TableColumns(Table);
-                bool deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                 CreateAngularDirectories(Table);
 
@@ -1777,7 +1780,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
                         {
-                            List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                            List<ForeignKeyChecker> frchkForeignLst2 = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                             string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
@@ -1793,7 +1796,7 @@ namespace TDFactory
                             i++;
                         }
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
                         }
@@ -1805,9 +1808,9 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
+                        foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
                         {
-                            List<ForeignKeyChecker> frchkForeignLst2 = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                            List<ForeignKeyChecker> frchkForeignLst2 = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                             string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
@@ -1835,19 +1838,19 @@ namespace TDFactory
                             i++;
                         }
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + Table + "/Update/' + item?." + id + "]\">Düzenle</a></li>");
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + id + "\">Kopyala</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + Table + "/Update/' + item?." + table.ID + "]\">Düzenle</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Kopyala</a></li>");
 
-                            if (deleted)
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + id + "\">Kaldır</a></li>");
+                            if (table.Deleted)
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Kaldır</a></li>");
 
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + id + "\">Sil</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Sil</a></li>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -1885,11 +1888,11 @@ namespace TDFactory
                         yaz.WriteLine("\t\t<form [formGroup]=\"insertForm\" (ngSubmit)=\"onSubmit()\">");
                         yaz.WriteLine("\t\t\t<fieldset>");
 
-                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
+                        foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                         {
-                            if (!identityColumns.Contains(column.ColumnName))
+                            if (!table.IdentityColumns.Contains(column.ColumnName))
                             {
-                                List<ForeignKeyChecker> frchkLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                List<ForeignKeyChecker> frchkLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                 yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
 
@@ -1964,7 +1967,7 @@ namespace TDFactory
                 }
 
                 //Duzenle
-                if (identityColumns.Count > 0)
+                if (table.IdentityColumns.Count > 0)
                 {
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\update.html", FileMode.Create))
                     {
@@ -1978,9 +1981,9 @@ namespace TDFactory
                             yaz.WriteLine("\t\t<form [formGroup]=\"updateForm\" (ngSubmit)=\"onSubmit()\">");
                             yaz.WriteLine("\t\t\t<fieldset>");
 
-                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
+                            foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                             {
-                                if (identityColumns.Contains(column.ColumnName))
+                                if (table.IdentityColumns.Contains(column.ColumnName))
                                 {
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
                                     yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"hidden\" value=\"{{ model?." + column.ColumnName + " }}\" />");
@@ -1988,7 +1991,7 @@ namespace TDFactory
                                 }
                                 else
                                 {
-                                    List<ForeignKeyChecker> frchkLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                    List<ForeignKeyChecker> frchkLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
 
@@ -2062,22 +2065,24 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t</fieldset>");
                             yaz.WriteLine("\t\t</form>");
 
-                            if (fkcList.Count > 0)
+                            if (table.FkcList.Count > 0)
                             {
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                foreach (ForeignKeyChecker fkc in table.FkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                 {
-                                    string ForeignTableName = fkc.ForeignTableName;
+                                    Table tableFrgn = new Table(fkc.ForeignTableName, connectionInfo);
 
-                                    List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
-                                    string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
+                                    //string ForeignTableName = fkc.ForeignTableName;
 
-                                    List<ColumnInfo> foreignColumns = tableColumnInfos.Where(a => a.TableName == ForeignTableName && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList();
+                                    //List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
+                                    //string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
 
-                                    List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
-                                    fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
+                                    List<ColumnInfo> foreignColumns = tableFrgn.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList();
 
-                                    List<ColumnInfo> fColumnNames = Helper.Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
-                                    bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
+                                    //List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
+                                    //fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
+
+                                    //List<ColumnInfo> fColumnNames = Helper.Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
+                                    //bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"row-fluid\">");
@@ -2085,7 +2090,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
                                     yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
                                     yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
-                                    yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + ForeignTableName + "</h5>");
+                                    yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + tableFrgn.TableName + "</h5>");
                                     yaz.WriteLine("\t\t\t\t\t</div>");
                                     yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
                                     yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
@@ -2096,7 +2101,7 @@ namespace TDFactory
 
                                     foreach (ColumnInfo item in foreignColumns)
                                     {
-                                        List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
+                                        List<ForeignKeyChecker> frchkForeignLst = tableFrgn.FkcForeignList.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
 
                                         string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
@@ -2107,7 +2112,7 @@ namespace TDFactory
                                         }
                                     }
 
-                                    if (identityForeignColumns.Count > 0)
+                                    if (tableFrgn.IdentityColumns.Count > 0)
                                     {
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
                                     }
@@ -2115,13 +2120,13 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
                                     yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
                                     yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t<tr *ngFor=\"let item of model?." + ForeignTableName + "List\">");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t<tr *ngFor=\"let item of model?." + tableFrgn.TableName + "List\">");
 
                                     i = 0;
 
                                     foreach (ColumnInfo item in foreignColumns)
                                     {
-                                        List<ForeignKeyChecker> frchkForeignLst = fkcListForeign2.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
+                                        List<ForeignKeyChecker> frchkForeignLst = tableFrgn.FkcForeignList.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
 
                                         string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
 
@@ -2138,19 +2143,19 @@ namespace TDFactory
                                         }
                                     }
 
-                                    if (identityForeignColumns.Count > 0)
+                                    if (tableFrgn.IdentityColumns.Count > 0)
                                     {
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + ForeignTableName + "/Update/' + item?." + idFrgn + "]\">Düzenle</a></li>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kopyala</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + tableFrgn.TableName + "/Update/' + item?." + tableFrgn.ID + "]\">Düzenle</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Kopyala</a></li>");
 
-                                        if (fDeleted)
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Kaldır</a></li>");
+                                        if (tableFrgn.Deleted)
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Kaldır</a></li>");
 
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + ForeignTableName + "\" [attr.data-id]=\"item?." + idFrgn + "\">Sil</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Sil</a></li>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -2165,7 +2170,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t</div>");
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"pagelinks\">");
-                                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + ForeignTableName + "/Insert\" class=\"btn btn-primary btn-add\">" + ForeignTableName + " Ekle</a>");
+                                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + tableFrgn.TableName + "/Insert\" class=\"btn btn-primary btn-add\">" + tableFrgn.TableName + " Ekle</a>");
                                     yaz.WriteLine("\t\t</div>");
                                 }
                             }
@@ -2173,7 +2178,7 @@ namespace TDFactory
                             yaz.WriteLine("\t</div>");
                             yaz.WriteLine("</div>");
 
-                            if (fkcList.Count > 0)
+                            if (table.FkcList.Count > 0)
                             {
                                 yaz.WriteLine("");
                                 yaz.WriteLine("<admin-copydelete></admin-copydelete>");
@@ -2193,25 +2198,8 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
-
-                identityColumns = identityColumns.IdentityCheck(lstSeciliKolonlar);
-
+                Table table = new Table(Table, connectionInfo);
                 SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-
-                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                List<ColumnInfo> columnNames = TableColumns(Table);
-                List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
-                List<ColumnInfo> fileColumns = TableColumns(Table, ColumnType.FileColumns);
-                List<ColumnInfo> imageColumns = TableColumns(Table, ColumnType.ImageColumns);
-                bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
 
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\" + Table + "Controller.cs", FileMode.Create))
                 {
@@ -2219,7 +2207,7 @@ namespace TDFactory
                     {
                         yaz.WriteLine("using System.Web.Mvc;");
 
-                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
                             yaz.WriteLine("using System.Collections.Generic;");
                             yaz.WriteLine("using TDLibrary;");
@@ -2233,13 +2221,11 @@ namespace TDFactory
                         yaz.WriteLine("\tpublic class " + Table + "Controller : Controller");
                         yaz.WriteLine("\t{");
 
-                        yaz.WriteLine("\t\t" + Table + " model = new " + Table + "();");
+                        yaz.WriteLine("\t\treadonly " + Table + " model = new " + Table + "();");
 
                         yaz.WriteLine("");
 
                         // Index
-                        string searchText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
-
                         yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic JsonResult Index(int? id)");
                         yaz.WriteLine("\t\t{");
@@ -2247,7 +2233,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-                        if (fkcListForeign.Count > 0)
+                        if (table.FkcForeignList.Count > 0)
                         {
                             // Ekle
                             yaz.WriteLine("\t\t[HttpGet]");
@@ -2272,11 +2258,11 @@ namespace TDFactory
 
                         string linkID = ", null";
 
-                        if (fkcListForeign.Count > 0)
+                        if (table.FkcForeignList.Count > 0)
                         {
                             linkID = "";
 
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            foreach (ForeignKeyChecker fkc in table.FkcForeignList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                             {
                                 linkID += ", table." + fkc.ForeignColumnName;
                             }
@@ -2289,14 +2275,14 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
                             // EkleYukle
                             yaz.WriteLine("\t\t[HttpPost]");
                             yaz.WriteLine("\t\tpublic JsonResult InsertUpload([System.Web.Http.FromBody] " + Table + " table)");
                             yaz.WriteLine("\t\t{");
 
-                            if (fileColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\t\tList<Uploader> files = Uploader.UploadFiles(false);");
                                 yaz.WriteLine("");
@@ -2312,7 +2298,7 @@ namespace TDFactory
                                 yaz.WriteLine("");
                             }
 
-                            if (imageColumns.Count > 0)
+                            if (table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false);");
                                 yaz.WriteLine("");
@@ -2333,9 +2319,9 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
-                            string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
+                            string columntype = table.Columns.Where(a => a.ColumnName == table.ID).FirstOrDefault().Type.Name.ToString();
 
                             //Duzenle
                             yaz.WriteLine("\t\t[HttpGet]");
@@ -2349,7 +2335,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\tpublic JsonResult Update([System.Web.Http.FromBody] " + Table + " table)");
                             yaz.WriteLine("\t\t{");
 
-                            foreach (ColumnInfo item in fileColumns)
+                            foreach (ColumnInfo item in table.FILEColumns)
                             {
                                 yaz.WriteLine("\t\t\tif (table." + item.ColumnName + "HasFile)");
                                 yaz.WriteLine("\t\t\t{");
@@ -2367,7 +2353,7 @@ namespace TDFactory
                                 yaz.WriteLine("");
                             }
 
-                            foreach (ColumnInfo item in imageColumns)
+                            foreach (ColumnInfo item in table.IMAGEColumns)
                             {
                                 yaz.WriteLine("\t\t\tif (table." + item.ColumnName + "HasFile)");
                                 yaz.WriteLine("\t\t\t{");
@@ -2395,21 +2381,21 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
                             yaz.WriteLine("");
 
-                            yaz.WriteLine("\t\t\ttable = (" + Table + ")model.Update(table." + id + ", table);");
+                            yaz.WriteLine("\t\t\ttable = (" + Table + ")model.Update(table." + table.ID + ", table);");
                             yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\treturn Json(table);");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 //DuzenleYukle
                                 yaz.WriteLine("\t\t[HttpPost]");
                                 yaz.WriteLine("\t\tpublic JsonResult UpdateUpload([System.Web.Http.FromBody] " + Table + " table)");
                                 yaz.WriteLine("\t\t{");
 
-                                if (fileColumns.Count > 0)
+                                if (table.FILEColumns.Count > 0)
                                 {
                                     yaz.WriteLine("\t\t\tList<Uploader> files = Uploader.UploadFiles(false);");
                                     yaz.WriteLine("");
@@ -2425,7 +2411,7 @@ namespace TDFactory
                                     yaz.WriteLine("");
                                 }
 
-                                if (imageColumns.Count > 0)
+                                if (table.IMAGEColumns.Count > 0)
                                 {
                                     yaz.WriteLine("\t\t\tList<Uploader> pictures = Uploader.UploadPictures(false);");
                                     yaz.WriteLine("");
@@ -2450,19 +2436,19 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Copy(" + columntype.ReturnCSharpType() + " id)");
                             yaz.WriteLine("\t\t{");
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\t\ttry");
                                 yaz.WriteLine("\t\t\t{");
                                 yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                 yaz.WriteLine("");
 
-                                foreach (ColumnInfo item in fileColumns)
+                                foreach (ColumnInfo item in table.FILEColumns)
                                 {
                                     yaz.WriteLine("\t\t\t\tSystem.IO.File.Copy(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/Kopya_\" + table." + item.ColumnName + "));");
                                 }
 
-                                foreach (ColumnInfo item in imageColumns)
+                                foreach (ColumnInfo item in table.IMAGEColumns)
                                 {
                                     yaz.WriteLine("\t\t\t\tSystem.IO.File.Copy(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/Kopya_\" + table." + item.ColumnName + "));");
                                     yaz.WriteLine("\t\t\t\tSystem.IO.File.Copy(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_Kopya_\" + table." + item.ColumnName + "));");
@@ -2484,19 +2470,19 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Delete(" + columntype.ReturnCSharpType() + "? id)");
                             yaz.WriteLine("\t\t{");
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\t\ttry");
                                 yaz.WriteLine("\t\t\t{");
                                 yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                 yaz.WriteLine("");
 
-                                foreach (ColumnInfo item in fileColumns)
+                                foreach (ColumnInfo item in table.FILEColumns)
                                 {
                                     yaz.WriteLine("\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "));");
                                 }
 
-                                foreach (ColumnInfo item in imageColumns)
+                                foreach (ColumnInfo item in table.IMAGEColumns)
                                 {
                                     yaz.WriteLine("\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "));");
                                     yaz.WriteLine("\t\t\t\tSystem.IO.File.Delete(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_\" + table." + item.ColumnName + "));");
@@ -2512,26 +2498,26 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\treturn Json(model.Delete(id), JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t}");
 
-                            if (deleted)
+                            if (table.Deleted)
                             {
                                 //Kaldır
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t[HttpGet]");
                                 yaz.WriteLine("\t\tpublic JsonResult Remove(" + columntype.ReturnCSharpType() + "? id)");
                                 yaz.WriteLine("\t\t{");
-                                if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                                if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                                 {
                                     yaz.WriteLine("\t\t\ttry");
                                     yaz.WriteLine("\t\t\t{");
                                     yaz.WriteLine("\t\t\t\t" + Table + " table = (" + Table + ")model.Select(id, false);");
                                     yaz.WriteLine("");
 
-                                    foreach (ColumnInfo item in fileColumns)
+                                    foreach (ColumnInfo item in table.FILEColumns)
                                     {
                                         yaz.WriteLine("\t\t\t\tSystem.IO.File.Move(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/Deleted/\" + table." + item.ColumnName + "));");
                                     }
 
-                                    foreach (ColumnInfo item in imageColumns)
+                                    foreach (ColumnInfo item in table.IMAGEColumns)
                                     {
                                         yaz.WriteLine("\t\t\t\tSystem.IO.File.Move(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/Deleted/\" + table." + item.ColumnName + "));");
                                         yaz.WriteLine("\t\t\t\tSystem.IO.File.Move(Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/thumb_\" + table." + item.ColumnName + "), Server.MapPath(\"~/\" + AppMgr.UploadPath.Replace(AppMgr.MainPath, \"\") + \"/Deleted/thumb_\" + table." + item.ColumnName + "));");
@@ -2562,24 +2548,8 @@ namespace TDFactory
         {
             foreach (string Table in selectedTables)
             {
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
-
-                identityColumns = identityColumns.IdentityCheck(lstSeciliKolonlar);
-
+                Table table = new Table(Table, connectionInfo);
                 SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-
-                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                List<ColumnInfo> columnNames = TableColumns(Table);
-                List<ColumnInfo> fileColumns = TableColumns(Table, ColumnType.FileColumns);
-                List<ColumnInfo> imageColumns = TableColumns(Table, ColumnType.ImageColumns);
-                bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
 
                 CreateAngularDirectories(Table);
 
@@ -2661,7 +2631,7 @@ namespace TDFactory
 
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && a.Type.Name == "String" && a.CharLength == -1).ToList())
+                        foreach (ColumnInfo column in table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1).ToList())
                         {
                             yaz.WriteLine("import ClassicEditor from '../../../../../Content/admin/js/ckeditor/ckeditor.js';");
                             break;
@@ -2681,16 +2651,16 @@ namespace TDFactory
                         yaz.WriteLine("\tmodel: any;");
                         yaz.WriteLine("");
 
-                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
                             yaz.WriteLine("\tuploadData: any;");
 
-                            foreach (ColumnInfo item in fileColumns)
+                            foreach (ColumnInfo item in table.FILEColumns)
                             {
                                 yaz.WriteLine("\tfile" + item.ColumnName + " : any;");
                             }
 
-                            foreach (ColumnInfo item in imageColumns)
+                            foreach (ColumnInfo item in table.IMAGEColumns)
                             {
                                 yaz.WriteLine("\timage" + item.ColumnName + ": any;");
                             }
@@ -2709,7 +2679,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\tthis.data = new Object();");
                         yaz.WriteLine("");
 
-                        if (fkcListForeign.Count > 0)
+                        if (table.FkcForeignList.Count > 0)
                         {
                             yaz.WriteLine("\t\tthis.subscription = this.service.get(\"" + Table + "\", \"Insert\").subscribe((answer: any) => {");
                             yaz.WriteLine("\t\t\tthis.model = answer;");
@@ -2719,7 +2689,7 @@ namespace TDFactory
 
                         int i = 0;
 
-                        List<ColumnInfo> tempTableColumns = tableColumnInfos.Where(a => a.TableName == Table && a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(FileColumns, InType.ToUrlLower) && !a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                        List<ColumnInfo> tempTableColumns = table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(FileColumns, InType.ToUrlLower) && !a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
 
                         foreach (ColumnInfo column in tempTableColumns)
                         {
@@ -2751,7 +2721,7 @@ namespace TDFactory
 
                         yaz.WriteLine("\t\tthis.insertForm = this.formBuilder.group({");
 
-                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
+                        foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                         {
                             if (!column.IsIdentity)
                             {
@@ -2791,9 +2761,9 @@ namespace TDFactory
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
 
-                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
-                            foreach (ColumnInfo item in fileColumns)
+                            foreach (ColumnInfo item in table.FILEColumns)
                             {
                                 yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                 yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
@@ -2805,7 +2775,7 @@ namespace TDFactory
                                 yaz.WriteLine("");
                             }
 
-                            foreach (ColumnInfo item in imageColumns)
+                            foreach (ColumnInfo item in table.IMAGEColumns)
                             {
                                 yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                 yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
@@ -2825,18 +2795,18 @@ namespace TDFactory
 
                         yaz.WriteLine("\tonSubmit() {");
 
-                        string tttab = fileColumns.Count > 0 || imageColumns.Count > 0 ? "\t\t" : "";
+                        string tttab = table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 ? "\t\t" : "";
 
-                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\tthis.uploadData = new FormData();");
 
-                            foreach (ColumnInfo item in fileColumns)
+                            foreach (ColumnInfo item in table.FILEColumns)
                             {
                                 yaz.WriteLine("\t\tthis.uploadData.append(\"file\", this.file" + item.ColumnName + ");");
                             }
 
-                            foreach (ColumnInfo item in imageColumns)
+                            foreach (ColumnInfo item in table.IMAGEColumns)
                             {
                                 yaz.WriteLine("\t\tthis.uploadData.append(\"file\", this.image" + item.ColumnName + ");");
                             }
@@ -2848,11 +2818,11 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t{");
                         }
 
-                        int tcCount = tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList().Count;
+                        int tcCount = table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList().Count;
 
                         i = 0;
 
-                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
+                        foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                         {
                             if (!column.IsIdentity)
                             {
@@ -2886,7 +2856,7 @@ namespace TDFactory
                         yaz.WriteLine(tttab + "\t\t\t},");
                         yaz.WriteLine(tttab + "\t\t\t\tresError => this.errorMsg = resError);");
 
-                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t\telse");
@@ -2904,7 +2874,7 @@ namespace TDFactory
                 }
 
                 //Duzenle
-                if (identityColumns.Count > 0)
+                if (table.IdentityColumns.Count > 0)
                 {
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\update.ts", FileMode.Create))
                     {
@@ -2916,14 +2886,14 @@ namespace TDFactory
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
+                            foreach (ColumnInfo column in table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
                             {
                                 yaz.WriteLine("import * as $ from 'jquery';");
                                 yaz.WriteLine("import ClassicEditor from \"../../../../../Content/admin/js/ckeditor/ckeditor.js\";");
                                 break;
                             }
 
-                            if (fkcList.Count > 0)
+                            if (table.FkcList.Count > 0)
                             {
                                 yaz.WriteLine("declare var DataTable;");
                             }
@@ -2945,16 +2915,16 @@ namespace TDFactory
                             yaz.WriteLine("\tcallTable: boolean;");
                             yaz.WriteLine("");
 
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\tuploadData: any;");
 
-                                foreach (ColumnInfo item in fileColumns)
+                                foreach (ColumnInfo item in table.FILEColumns)
                                 {
                                     yaz.WriteLine("\tfile" + item.ColumnName + ": any;");
                                 }
 
-                                foreach (ColumnInfo item in imageColumns)
+                                foreach (ColumnInfo item in table.IMAGEColumns)
                                 {
                                     yaz.WriteLine("\timage" + item.ColumnName + ": any;");
                                 }
@@ -2976,7 +2946,7 @@ namespace TDFactory
                             yaz.WriteLine("");
 
                             int i = 0;
-                            List<ColumnInfo> tempTableColumns = tableColumnInfos.Where(a => a.TableName == Table && a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(FileColumns, InType.ToUrlLower) && !a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                            List<ColumnInfo> tempTableColumns = table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(FileColumns, InType.ToUrlLower) && !a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
 
                             foreach (ColumnInfo column in tempTableColumns)
                             {
@@ -3006,7 +2976,7 @@ namespace TDFactory
 
                             yaz.WriteLine("\t\tthis.updateForm = this.formBuilder.group({");
 
-                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
+                            foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                             {
                                 if (column.Type.Name == "Boolean")
                                 {
@@ -3050,7 +3020,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\tthis.model = answer;");
                             yaz.WriteLine("\t\t\t\t\tthis.callTable = false;");
 
-                            if (fkcList.Count > 0)
+                            if (table.FkcList.Count > 0)
                             {
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\t\t\tsetTimeout(() => {");
@@ -3070,7 +3040,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t});");
                             yaz.WriteLine("\t\t}");
 
-                            if (fkcList.Count > 0)
+                            if (table.FkcList.Count > 0)
                             {
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\tsetTimeout(() => {");
@@ -3083,9 +3053,9 @@ namespace TDFactory
                             yaz.WriteLine("\t}");
                             yaz.WriteLine("");
 
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
-                                foreach (ColumnInfo item in fileColumns)
+                                foreach (ColumnInfo item in table.FILEColumns)
                                 {
                                     yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                     yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
@@ -3097,7 +3067,7 @@ namespace TDFactory
                                     yaz.WriteLine("");
                                 }
 
-                                foreach (ColumnInfo item in imageColumns)
+                                foreach (ColumnInfo item in table.IMAGEColumns)
                                 {
                                     yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                     yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
@@ -3117,18 +3087,18 @@ namespace TDFactory
 
                             yaz.WriteLine("\tonSubmit() {");
 
-                            string tttab = fileColumns.Count > 0 || imageColumns.Count > 0 ? "\t\t" : "";
+                            string tttab = table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 ? "\t\t" : "";
 
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\tthis.uploadData = new FormData();");
 
-                                foreach (ColumnInfo item in fileColumns)
+                                foreach (ColumnInfo item in table.FILEColumns)
                                 {
                                     yaz.WriteLine("\t\tthis.uploadData.append(\"file\", this.file" + item.ColumnName + ");");
                                 }
 
-                                foreach (ColumnInfo item in imageColumns)
+                                foreach (ColumnInfo item in table.IMAGEColumns)
                                 {
                                     yaz.WriteLine("\t\tthis.uploadData.append(\"file\", this.image" + item.ColumnName + ");");
                                 }
@@ -3140,11 +3110,11 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t{");
                             }
 
-                            int tcCount = tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList().Count;
+                            int tcCount = table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList().Count;
 
                             i = 0;
 
-                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
+                            foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                             {
                                 if (column.Type.Name == "String" && column.CharLength == -1 && !column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
@@ -3186,7 +3156,7 @@ namespace TDFactory
                             yaz.WriteLine(tttab + "\t\t\t},");
                             yaz.WriteLine(tttab + "\t\t\t\tresError => this.errorMsg = resError);");
 
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("\t\t\telse");

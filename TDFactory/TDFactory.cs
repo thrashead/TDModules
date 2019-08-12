@@ -33,12 +33,12 @@ namespace TDFactory
         List<string> selectedTables;
         List<string> ckEditors;
 
-        string[] UrlColumns;
-        string[] GuidColumns;
-        string[] CodeColumns;
-        string[] DeletedColumns;
-        string[] FileColumns;
-        string[] ImageColumns;
+        public string[] UrlColumns;
+        public string[] GuidColumns;
+        public string[] CodeColumns;
+        public string[] DeletedColumns;
+        public string[] FileColumns;
+        public string[] ImageColumns;
 
 
         int tableindex, selectedtableindex;
@@ -227,7 +227,7 @@ namespace TDFactory
             return fkList;
         }
 
-        private List<ColumnInfo> GetTableColumnInfos()
+        public List<ColumnInfo> GetTableColumnInfos()
         {
             List<ColumnInfo> columnInfo;
 
@@ -252,7 +252,7 @@ namespace TDFactory
             return tableColumnInfos;
         }
 
-        private List<string> GetSelectedTableNames(List<ColumnInfo> _tableColumnNames)
+        public List<string> GetSelectedTableNames(List<ColumnInfo> _tableColumnNames)
         {
             List<string> returnList = new List<string>();
 
@@ -267,7 +267,7 @@ namespace TDFactory
             return returnList;
         }
 
-        private string GetColumnText(List<ColumnInfo> columns, bool toString = true)
+        public string GetColumnText(List<ColumnInfo> columns, bool toString = true)
         {
             string columnText = "";
 

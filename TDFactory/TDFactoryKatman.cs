@@ -840,7 +840,7 @@ namespace TDFactory
 
             folderDialogKatmanOlustur.SelectedPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
 
-            if (folderDialogKatmanOlustur.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (folderDialogKatmanOlustur.ShowDialog() == DialogResult.OK)
             {
                 if (!String.IsNullOrEmpty(DBName))
                 {

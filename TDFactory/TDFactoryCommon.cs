@@ -34,7 +34,7 @@ namespace TDFactory
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
                 //Class
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Repository\\" + Table + "\\" + Table + ".cs", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table + "\\" + Table + ".cs", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
@@ -66,11 +66,7 @@ namespace TDFactory
 
                         yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Collections.Generic;");
-
-                        if (!chkAngular.Checked)
-                        {
-                            yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
-                        }
+                        yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
 
                         if (fkcListForeign.Count > 0 || allowHtml)
                         {
@@ -78,7 +74,7 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("using System.Linq;");
-                        yaz.WriteLine("using " + projectName + ".Data;");
+                        yaz.WriteLine("using Repository.Data;");
                         yaz.WriteLine("using TDLibrary;");
 
                         if (fkcList.Count > 0)
@@ -152,32 +148,29 @@ namespace TDFactory
                                     }
                                 }
 
-                                if (!chkAngular.Checked)
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(UrlColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
                                 {
-                                    if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(UrlColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
+                                    if (!column.IsIdentity)
                                     {
-                                        if (!column.IsIdentity)
+                                        if (column.Type.Name != "Boolean")
                                         {
-                                            if (column.Type.Name != "Boolean")
+                                            if (!column.IsNullable)
                                             {
-                                                if (!column.IsNullable)
+                                                if (column.Type.Name.In(new string[] { "Int16", "Int32", "Int64" }))
                                                 {
-                                                    if (column.Type.Name.In(new string[] { "Int16", "Int32", "Int64" }))
+                                                    yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve " + column.ColumnName + " alanına en az 0 değeri girmelisiniz.\")]");
+                                                    yaz.WriteLine("\t\t[Range(0, int.MaxValue, ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve " + column.ColumnName + " alanına en az 0 değeri girmelisiniz.\")]");
+                                                }
+                                                else if (column.Type.Name == "String")
+                                                {
+                                                    if (column.Type.Name == "String" && column.CharLength == -1)
                                                     {
-                                                        yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve " + column.ColumnName + " alanına en az 0 değeri girmelisiniz.\")]");
-                                                        yaz.WriteLine("\t\t[Range(0, int.MaxValue, ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve " + column.ColumnName + " alanına en az 0 değeri girmelisiniz.\")]");
+                                                        yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz.\")]");
                                                     }
-                                                    else if (column.Type.Name == "String")
+                                                    else
                                                     {
-                                                        if (column.Type.Name == "String" && column.CharLength == -1)
-                                                        {
-                                                            yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz.\")]");
-                                                        }
-                                                        else
-                                                        {
-                                                            yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve en fazla " + column.CharLength + " karakter olmalıdır.\")]");
-                                                            yaz.WriteLine("\t\t[StringLength(" + column.CharLength + ")]");
-                                                        }
+                                                        yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve en fazla " + column.CharLength + " karakter olmalıdır.\")]");
+                                                        yaz.WriteLine("\t\t[StringLength(" + column.CharLength + ")]");
                                                     }
                                                 }
                                             }
@@ -260,21 +253,18 @@ namespace TDFactory
                             }
                         }
 
-                        if (chkAngular.Checked)
+                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
                         {
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            yaz.WriteLine("");
+
+                            foreach (ColumnInfo item in fileColumns)
                             {
-                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic bool " + item.ColumnName + "HasFile { get; set; }");
+                            }
 
-                                foreach (ColumnInfo item in fileColumns)
-                                {
-                                    yaz.WriteLine("\t\tpublic bool " + item.ColumnName + "HasFile { get; set; }");
-                                }
-
-                                foreach (ColumnInfo item in imageColumns)
-                                {
-                                    yaz.WriteLine("\t\tpublic bool " + item.ColumnName + "HasFile { get; set; }");
-                                }
+                            foreach (ColumnInfo item in imageColumns)
+                            {
+                                yaz.WriteLine("\t\tpublic bool " + item.ColumnName + "HasFile { get; set; }");
                             }
                         }
 
@@ -1016,7 +1006,7 @@ namespace TDFactory
                 }
 
                 //Interface
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Repository\\" + Table + "\\I" + Table + ".cs", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table + "\\I" + Table + ".cs", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
@@ -1138,21 +1128,19 @@ namespace TDFactory
                             }
                         }
 
-                        if (chkAngular.Checked)
+
+                        if (fileColumns.Count > 0 || imageColumns.Count > 0)
                         {
-                            if (fileColumns.Count > 0 || imageColumns.Count > 0)
+                            yaz.WriteLine("");
+
+                            foreach (ColumnInfo item in fileColumns)
                             {
-                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tbool " + item.ColumnName + "HasFile { get; set; }");
+                            }
 
-                                foreach (ColumnInfo item in fileColumns)
-                                {
-                                    yaz.WriteLine("\t\tbool " + item.ColumnName + "HasFile { get; set; }");
-                                }
-
-                                foreach (ColumnInfo item in imageColumns)
-                                {
-                                    yaz.WriteLine("\t\tbool " + item.ColumnName + "HasFile { get; set; }");
-                                }
+                            foreach (ColumnInfo item in imageColumns)
+                            {
+                                yaz.WriteLine("\t\tbool " + item.ColumnName + "HasFile { get; set; }");
                             }
                         }
 

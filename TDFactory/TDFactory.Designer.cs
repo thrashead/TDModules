@@ -2426,22 +2426,22 @@
         private System.Windows.Forms.GroupBox grpBaglanti;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ListBox lstUrlColumns;
+        public System.Windows.Forms.ListBox lstUrlColumns;
         private System.Windows.Forms.Button btnUrlColumnsAdd;
         private System.Windows.Forms.TextBox txtUrlColumns;
         private System.Windows.Forms.Button btnImageColumnsAdd;
         private System.Windows.Forms.Button btnFileColumnsAdd;
         private System.Windows.Forms.TextBox txtImageColumns;
         private System.Windows.Forms.TextBox txtFileColumns;
-        private System.Windows.Forms.ListBox lstImageColumns;
-        private System.Windows.Forms.ListBox lstFileColumns;
+        public System.Windows.Forms.ListBox lstImageColumns;
+        public System.Windows.Forms.ListBox lstFileColumns;
         private System.Windows.Forms.Label lblImageColumns;
         private System.Windows.Forms.Label lblDeletedColumns;
         private System.Windows.Forms.Label lblFileColumns;
         private System.Windows.Forms.Label lblUrlColumns;
         private System.Windows.Forms.Button btnDeletedColumnsAdd;
         private System.Windows.Forms.TextBox txtDeletedColumns;
-        private System.Windows.Forms.ListBox lstDeletedColumns;
+        public System.Windows.Forms.ListBox lstDeletedColumns;
         private System.Windows.Forms.Button btnImageColumnsSub;
         private System.Windows.Forms.Button btnFileColumnsSub;
         private System.Windows.Forms.Button btnDeletedColumnsSub;
@@ -2450,11 +2450,11 @@
         private System.Windows.Forms.Button btnCodeColumnsSub;
         private System.Windows.Forms.Button btnCodeColumnsAdd;
         private System.Windows.Forms.TextBox txtCodeColumns;
-        private System.Windows.Forms.ListBox lstCodeColumns;
+        public System.Windows.Forms.ListBox lstCodeColumns;
         private System.Windows.Forms.Label lblGuidColumns;
         private System.Windows.Forms.Button btnGuidColumnsSub;
         private System.Windows.Forms.Button btnGuidColumnsAdd;
         private System.Windows.Forms.TextBox txtGuidColumns;
-        private System.Windows.Forms.ListBox lstGuidColumns;
+        public System.Windows.Forms.ListBox lstGuidColumns;
     }
 }
