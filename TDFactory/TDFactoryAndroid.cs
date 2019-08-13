@@ -587,20 +587,12 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
+                Table table = new Table(Table, connectionInfo);
+                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+
                 string _table = Table.ToUrl(true);
 
                 CreateAndroidDirectories(_table, true);
-
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
-
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
                 //FrameLayout
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\res\\layouts\\" + _table + "\\layout\\admin_" + _table + "_sayfa.xml", FileMode.Create))
@@ -720,7 +712,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\tandroid:orientation=\"horizontal\">");
                             yaz.WriteLine("");
 
-                            if (column.ColumnName != id)
+                            if (column.ColumnName != table.ID)
                             {
                                 yaz.WriteLine("\t\t\t\t<TextView");
                                 yaz.WriteLine("\t\t\t\t\tandroid:layout_width=\"match_parent\"");
@@ -728,7 +720,7 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\tandroid:layout_weight=\"2\"");
                                 yaz.WriteLine("\t\t\t\t\tandroid:textStyle=\"bold\"");
 
-                                List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                 if (foreLst.Count > 0)
                                 {
@@ -819,7 +811,7 @@ namespace TDFactory
                     }
                 }
 
-                if (identityColumns.Count > 0)
+                if (table.IdentityColumns.Count > 0)
                 {
                     //Detay
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\res\\layouts\\" + _table + "\\layout\\admin_" + _table + "_detay.xml", FileMode.Create))
@@ -855,8 +847,8 @@ namespace TDFactory
 
                             foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
                             {
-                                List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
-                                
+                                List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\t<LinearLayout");
                                 yaz.WriteLine("\t\t\t\tandroid:layout_width=\"match_parent\"");
@@ -976,7 +968,7 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\tandroid:layout_weight=\"2\"");
                                 yaz.WriteLine("\t\t\t\t\tandroid:textStyle=\"bold\"");
 
-                                if (column.ColumnName == id)
+                                if (column.ColumnName == table.ID)
                                 {
                                     yaz.WriteLine("\t\t\t\t\tandroid:text=\"" + column.ColumnName + " : \" />");
                                     yaz.WriteLine("");
@@ -986,7 +978,7 @@ namespace TDFactory
                                 }
                                 else
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                    List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                     if (foreLst.Count > 0)
                                     {
@@ -1658,38 +1650,18 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
+                Table table = new Table(Table, connectionInfo);
+                Table tableFrgn = new Table(null, connectionInfo);
+                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+
                 string _table = Table.ToUrl(true);
-                string PrimaryTableName = "";
-                string foreignColumnId = "";
-                string foreignColumnText = "";
 
                 CreateAndroidDirectories(Table);
 
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
-
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-
-                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con, Table);
-                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                List<ColumnInfo> columnNames = TableColumns(Table);
-
-                string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
-
-                if (fkcListForeign.Count > 0)
+                if (table.FkcForeignList.Count > 0)
                 {
-                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                    {
-                        PrimaryTableName = fkc.PrimaryTableName;
-                        foreignColumnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList());
-                        List<string> identityColumnsForeign = Helper.Helper.ReturnIdentityColumn(connectionInfo, fkc.PrimaryTableName);
-                        foreignColumnId = identityColumnsForeign.Count > 0 ? identityColumnsForeign.FirstOrDefault() : "id";
-                    }
+                    ForeignKeyChecker fkc = table.FkcForeignList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).FirstOrDefault();
+                    tableFrgn = new Table(fkc.PrimaryTableName, connectionInfo);
                 }
 
                 //Sayfa
@@ -1862,7 +1834,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\tprivate " + Table + "Ekle " + _table + "Ekle;");
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("\tprivate " + Table + "Detay " + _table + "Detay;");
                         }
@@ -1893,7 +1865,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t" + _table + "Ekle = new " + Table + "Ekle();");
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\t" + _table + "Detay = new " + Table + "Detay();");
                         }
@@ -1919,23 +1891,23 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\tfor (" + Table + " " + _table + " : " + _table + "DataList) {");
                         yaz.WriteLine("\t\t\t\tsatir = new Satir();");
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
-                            yaz.WriteLine("\t\t\t\tsatir.setID(String.valueOf(" + _table + ".get" + id + "()));");
+                            yaz.WriteLine("\t\t\t\tsatir.setID(String.valueOf(" + _table + ".get" + table.ID + "()));");
                         }
                         else
                         {
                             yaz.WriteLine("\t\t\t\tsatir.setID(\"0\");");
                         }
 
-                        yaz.WriteLine("\t\t\t\tsatir.setBaslik(" + _table + ".get" + columnText + "());");
+                        yaz.WriteLine("\t\t\t\tsatir.setBaslik(" + _table + ".get" + table.SearchTextColumn + "());");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\t\tsatirList.add(satir);");
                         yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\tlvListe.setAdapter(new Adaptor(context, satirList));");
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tlvListe.setOnItemClickListener(new AdapterView.OnItemClickListener() {");
@@ -1980,7 +1952,7 @@ namespace TDFactory
                         yaz.WriteLine("import android.view.View;");
                         yaz.WriteLine("import android.view.ViewGroup;");
 
-                        if (!String.IsNullOrEmpty(PrimaryTableName))
+                        if (!String.IsNullOrEmpty(tableFrgn.TableName))
                         {
                             yaz.WriteLine("import android.widget.ArrayAdapter;");
                         }
@@ -1989,13 +1961,13 @@ namespace TDFactory
 
                         bool boolEditText = false, boolCheckBox = false, boolSpinner = false;
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             if (column.Type != null)
                             {
-                                List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
-                                if (column.ColumnName != id)
+                                if (column.ColumnName != table.ID)
                                 {
                                     if (foreLst.Count > 0)
                                     {
@@ -2034,23 +2006,21 @@ namespace TDFactory
 
                         foreignTables = new List<string>();
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             if (column.Type != null)
                             {
-                                List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                 if (foreLst.Count > 0)
                                 {
-                                    PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
-
-                                    if (!foreignTables.Contains(PrimaryTableName))
+                                    if (!foreignTables.Contains(tableFrgn.TableName))
                                     {
-                                        yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".DB.Business." + PrimaryTableName + "Business;");
-                                        yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".Model." + PrimaryTableName + ";");
+                                        yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".DB.Business." + tableFrgn.TableName + "Business;");
+                                        yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".Model." + tableFrgn.TableName + ";");
                                     }
 
-                                    foreignTables.Add(PrimaryTableName);
+                                    foreignTables.Add(tableFrgn.TableName);
                                 }
                             }
                         }
@@ -2060,7 +2030,7 @@ namespace TDFactory
                         yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".R;");
                         yaz.WriteLine("");
 
-                        if (!String.IsNullOrEmpty(PrimaryTableName))
+                        if (!String.IsNullOrEmpty(table.TableName))
                         {
                             yaz.WriteLine("import java.util.ArrayList;");
                             yaz.WriteLine("");
@@ -2076,13 +2046,13 @@ namespace TDFactory
                         string lblCheckBox = "";
                         string lblSpinner = "";
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             if (column.Type != null)
                             {
-                                List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
-                                if (column.ColumnName != id)
+                                if (column.ColumnName != table.ID)
                                 {
                                     if (foreLst.Count > 0)
                                     {
@@ -2144,7 +2114,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\tNesneler();");
                         yaz.WriteLine("\t\tOlaylar();");
 
-                        if (!String.IsNullOrEmpty(PrimaryTableName))
+                        if (!String.IsNullOrEmpty(tableFrgn.TableName))
                         {
                             yaz.WriteLine("\t\tVeriDoldur();");
                         }
@@ -2156,7 +2126,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\tcontext = getContext();");
                         yaz.WriteLine("");
 
-                        if (columnNames.Count > 0)
+                        if (table.Columns.Count > 0)
                         {
                             foreach (string item in lblEditText.Split(','))
                             {
@@ -2200,13 +2170,13 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\tpublic void onClick(View v) {");
                         yaz.WriteLine("\t\t\t\ttry {");
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             if (column.Type != null)
                             {
-                                List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
-                                if (column.ColumnName != id)
+                                if (column.ColumnName != table.ID)
                                 {
                                     if (foreLst.Count > 0)
                                     {
@@ -2303,23 +2273,18 @@ namespace TDFactory
                         yaz.WriteLine("");
 
                         int i = 0;
-                        PrimaryTableName = "";
+                        tableFrgn.TableName = "";
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             string num = "";
 
                             if (column.Type != null)
                             {
-                                List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
+                                List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
 
                                 if (foreLst.Count > 0)
                                 {
-                                    PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
-                                    foreignColumnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList());
-                                    List<string> identityColumnsForeign = Helper.Helper.ReturnIdentityColumn(connectionInfo, PrimaryTableName);
-                                    foreignColumnId = identityColumnsForeign.Count > 0 ? identityColumnsForeign.FirstOrDefault() : "id";
-
                                     if (i == 0)
                                     {
                                         yaz.WriteLine("\tprivate void VeriDoldur() {");
@@ -2330,14 +2295,14 @@ namespace TDFactory
                                         num = (i + 1).ToString();
                                     }
 
-                                    yaz.WriteLine("\t\t\tArrayList<" + PrimaryTableName + "> " + PrimaryTableName + "DataList" + num + " = " + PrimaryTableName + "Business.Select(context);");
-                                    yaz.WriteLine("\t\t\tArrayList<String> " + PrimaryTableName + "Dizi" + num + " = new ArrayList<>();");
+                                    yaz.WriteLine("\t\t\tArrayList<" + tableFrgn.TableName + "> " + tableFrgn.TableName + "DataList" + num + " = " + tableFrgn.TableName + "Business.Select(context);");
+                                    yaz.WriteLine("\t\t\tArrayList<String> " + tableFrgn.TableName + "Dizi" + num + " = new ArrayList<>();");
                                     yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tfor (" + PrimaryTableName + " data : " + PrimaryTableName + "DataList" + num + ") {");
-                                    yaz.WriteLine("\t\t\t\t" + PrimaryTableName + "Dizi" + num + ".add(data.get" + foreignColumnText + "() + \" (\" + data.get" + foreignColumnId + "() + \")\");");
+                                    yaz.WriteLine("\t\t\tfor (" + tableFrgn.TableName + " data : " + tableFrgn.TableName + "DataList" + num + ") {");
+                                    yaz.WriteLine("\t\t\t\t" + tableFrgn.TableName + "Dizi" + num + ".add(data.get" + tableFrgn.SearchTextColumn + "() + \" (\" + data.get" + tableFrgn.ID + "() + \")\");");
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tspin" + column.ColumnName + ".setAdapter(new ArrayAdapter(context, android.R.layout.simple_list_item_1, " + PrimaryTableName + "Dizi" + num + "));");
+                                    yaz.WriteLine("\t\t\tspin" + column.ColumnName + ".setAdapter(new ArrayAdapter(context, android.R.layout.simple_list_item_1, " + tableFrgn.TableName + "Dizi" + num + "));");
                                     yaz.WriteLine("");
 
                                     i++;
@@ -2345,7 +2310,7 @@ namespace TDFactory
                             }
                         }
 
-                        if (!String.IsNullOrEmpty(PrimaryTableName))
+                        if (!String.IsNullOrEmpty(tableFrgn.TableName))
                         {
                             yaz.WriteLine("\t\t} catch (Exception e) {");
                             yaz.WriteLine("\t\t\te.printStackTrace();");
@@ -2364,7 +2329,7 @@ namespace TDFactory
                     }
                 }
 
-                if (identityColumns.Count > 0)
+                if (table.IdentityColumns.Count > 0)
                 {
                     //Detay
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\java\\com\\sinasalik\\thrashead\\" + projectNameKucuk + "\\Admin\\" + Table + "\\" + Table + "Detay.java", FileMode.Create))
@@ -2385,9 +2350,9 @@ namespace TDFactory
 
                             bool boolTextView = false, boolCheckBox = false;
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
-                                List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                 if (column.Type.Name == "Boolean")
                                 {
@@ -2412,23 +2377,23 @@ namespace TDFactory
 
                             foreignTables = new List<string>();
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 if (column.Type != null)
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                    List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                     if (foreLst.Count > 0)
                                     {
-                                        PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
+                                        tableFrgn.TableName = foreLst.FirstOrDefault().PrimaryTableName;
 
-                                        if (!foreignTables.Contains(PrimaryTableName))
+                                        if (!foreignTables.Contains(tableFrgn.TableName))
                                         {
-                                            yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".DB.Business." + PrimaryTableName + "Business;");
-                                            yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".Model." + PrimaryTableName + ";");
+                                            yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".DB.Business." + tableFrgn.TableName + "Business;");
+                                            yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".Model." + tableFrgn.TableName + ";");
                                         }
 
-                                        foreignTables.Add(PrimaryTableName);
+                                        foreignTables.Add(tableFrgn.TableName);
                                     }
                                 }
                             }
@@ -2450,11 +2415,11 @@ namespace TDFactory
                             string lblCheckBox = "";
                             string lblTextView = "";
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 if (column.Type != null)
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                    List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
 
                                     if (column.Type.Name == "Boolean")
@@ -2510,7 +2475,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\tbundle = getArguments();");
                             yaz.WriteLine("");
 
-                            if (columnNames.Count > 0)
+                            if (table.Columns.Count > 0)
                             {
                                 foreach (string item in lblTextView.Split(','))
                                 {
@@ -2562,7 +2527,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\tlistValues = new ArrayList<>();");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\t\twhere = new Where();");
-                            yaz.WriteLine("\t\t\t\t\twhere.setColumn(\"" + id + "\");");
+                            yaz.WriteLine("\t\t\t\t\twhere.setColumn(\"" + table.ID + "\");");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\t\tlistValues.add(bundle.getString(\"id\"));");
                             yaz.WriteLine("");
@@ -2602,7 +2567,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tlistValues = new ArrayList<>();");
                             yaz.WriteLine("\t\t\t");
                             yaz.WriteLine("\t\t\twhere = new Where();");
-                            yaz.WriteLine("\t\t\twhere.setColumn(\"" + id + "\");");
+                            yaz.WriteLine("\t\t\twhere.setColumn(\"" + table.ID + "\");");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tlistValues.add(bundle.getString(\"id\"));");
                             yaz.WriteLine("");
@@ -2615,21 +2580,16 @@ namespace TDFactory
 
                             int i = 1;
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 if (column.Type != null)
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
-
-                                    if (column.ColumnName != id)
+                                    if (column.ColumnName != table.ID)
                                     {
+                                        List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
+
                                         if (foreLst.Count > 0)
                                         {
-                                            PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
-                                            foreignColumnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList());
-                                            List<string> identityColumnsForeign = Helper.Helper.ReturnIdentityColumn(connectionInfo, PrimaryTableName);
-                                            foreignColumnId = identityColumnsForeign.Count > 0 ? identityColumnsForeign.FirstOrDefault() : "id";
-
                                             string ptNum = i > 1 ? i.ToString() : "";
 
                                             yaz.WriteLine("\t\t\t\tif (" + _table + "Data.get" + column.ColumnName + "() != null)");
@@ -2637,16 +2597,16 @@ namespace TDFactory
                                             yaz.WriteLine("\t\t\t\tlistValues = new ArrayList<>();");
                                             yaz.WriteLine("");
                                             yaz.WriteLine("\t\t\t\twhere = new Where();");
-                                            yaz.WriteLine("\t\t\t\twhere.setColumn(\"" + foreignColumnId + "\");");
+                                            yaz.WriteLine("\t\t\t\twhere.setColumn(\"" + tableFrgn.ID + "\");");
                                             yaz.WriteLine("");
                                             yaz.WriteLine("\t\t\t\tlistValues.add(" + _table + "Data.get" + column.ColumnName + "().toString());");
                                             yaz.WriteLine("");
                                             yaz.WriteLine("\t\t\t\twhere.setValues(listValues);");
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\t" + PrimaryTableName + " " + PrimaryTableName + "Data" + ptNum + " = " + PrimaryTableName + "Business.SelectSingle(context, where);");
+                                            yaz.WriteLine("\t\t\t\t\t" + tableFrgn.TableName + " " + tableFrgn.TableName + "Data" + ptNum + " = " + tableFrgn.TableName + "Business.SelectSingle(context, where);");
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\tif (" + PrimaryTableName + "Data" + ptNum + " != null) {");
-                                            yaz.WriteLine("\t\t\t\t\t\tlbl" + column.ColumnName + ".setText(" + PrimaryTableName + "Data" + ptNum + ".get" + foreignColumnText + "().toString());");
+                                            yaz.WriteLine("\t\t\t\t\tif (" + tableFrgn.TableName + "Data" + ptNum + " != null) {");
+                                            yaz.WriteLine("\t\t\t\t\t\tlbl" + column.ColumnName + ".setText(" + tableFrgn.TableName + "Data" + ptNum + ".get" + tableFrgn.SearchTextColumn + "().toString());");
                                             yaz.WriteLine("\t\t\t\t\t} else {");
                                             yaz.WriteLine("\t\t\t\t\t\tlbl" + column.ColumnName + ".setText(" + _table + "Data.get" + column.ColumnName + "().toString());");
                                             yaz.WriteLine("\t\t\t\t\t}");
@@ -2717,7 +2677,7 @@ namespace TDFactory
                             yaz.WriteLine("import android.view.View;");
                             yaz.WriteLine("import android.view.ViewGroup;");
 
-                            if (!String.IsNullOrEmpty(PrimaryTableName))
+                            if (!String.IsNullOrEmpty(tableFrgn.TableName))
                             {
                                 yaz.WriteLine("import android.widget.ArrayAdapter;");
                             }
@@ -2726,13 +2686,13 @@ namespace TDFactory
 
                             bool boolEditText = false, boolCheckBox = false, boolSpinner = false;
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 if (column.Type != null)
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                    List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
-                                    if (column.ColumnName != id)
+                                    if (column.ColumnName != table.ID)
                                     {
                                         if (foreLst.Count > 0)
                                         {
@@ -2775,23 +2735,23 @@ namespace TDFactory
 
                             foreignTables = new List<string>();
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 if (column.Type != null)
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                    List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
                                     if (foreLst.Count > 0)
                                     {
-                                        PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
+                                        tableFrgn.TableName = foreLst.FirstOrDefault().PrimaryTableName;
 
-                                        if (!foreignTables.Contains(PrimaryTableName))
+                                        if (!foreignTables.Contains(tableFrgn.TableName))
                                         {
-                                            yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".DB.Business." + PrimaryTableName + "Business;");
-                                            yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".Model." + PrimaryTableName + ";");
+                                            yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".DB.Business." + tableFrgn.TableName + "Business;");
+                                            yaz.WriteLine("import com.sinasalik.thrashead." + projectNameKucuk + ".Model." + tableFrgn.TableName + ";");
                                         }
 
-                                        foreignTables.Add(PrimaryTableName);
+                                        foreignTables.Add(tableFrgn.TableName);
                                     }
                                 }
                             }
@@ -2817,13 +2777,13 @@ namespace TDFactory
                             string lblSpinner = "";
                             string lblTextView = "";
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 if (column.Type != null)
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                    List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
-                                    if (column.ColumnName != id)
+                                    if (column.ColumnName != table.ID)
                                     {
                                         if (foreLst.Count > 0)
                                         {
@@ -2905,7 +2865,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\tbundle = getArguments();");
                             yaz.WriteLine("");
 
-                            if (columnNames.Count > 0)
+                            if (table.Columns.Count > 0)
                             {
                                 foreach (string item in lblEditText.Split(','))
                                 {
@@ -2957,20 +2917,20 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\tlistValues = new ArrayList<>();");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\t\twhere = new Where();");
-                            yaz.WriteLine("\t\t\t\t\twhere.setColumn(\"" + id + "\");");
+                            yaz.WriteLine("\t\t\t\t\twhere.setColumn(\"" + table.ID + "\");");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\t\tlistValues.add(bundle.getString(\"id\"));");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\t\t\twhere.setValues(listValues);");
                             yaz.WriteLine("");
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 if (column.Type != null)
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+                                    List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
 
-                                    if (column.ColumnName != id)
+                                    if (column.ColumnName != table.ID)
                                     {
                                         if (foreLst.Count > 0)
                                         {
@@ -3071,7 +3031,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tArrayList<String> listValues = new ArrayList<>();");
                             yaz.WriteLine("\t\t\t");
                             yaz.WriteLine("\t\t\twhere = new Where();");
-                            yaz.WriteLine("\t\t\twhere.setColumn(\"" + id + "\");");
+                            yaz.WriteLine("\t\t\twhere.setColumn(\"" + table.ID + "\");");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tlistValues.add(bundle.getString(\"id\"));");
                             yaz.WriteLine("");
@@ -3083,7 +3043,7 @@ namespace TDFactory
 
                             int i = 0;
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 string num = "";
 
@@ -3095,47 +3055,42 @@ namespace TDFactory
 
                                 if (column.Type != null)
                                 {
-                                    List<ForeignKeyChecker> foreLst = fkcListForeign.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
-
-                                    if (column.ColumnName != id)
+                                    if (column.ColumnName != table.ID)
                                     {
+                                        List<ForeignKeyChecker> foreLst = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).GroupBy(a => a.PrimaryTableName).Select(a => a.FirstOrDefault()).ToList();
+
                                         if (foreLst.Count > 0)
                                         {
-                                            PrimaryTableName = foreLst.FirstOrDefault().PrimaryTableName;
-                                            foreignColumnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList());
-                                            List<string> identityColumnsForeign = Helper.Helper.ReturnIdentityColumn(connectionInfo, PrimaryTableName);
-                                            foreignColumnId = identityColumnsForeign.Count > 0 ? identityColumnsForeign.FirstOrDefault() : "id";
-
                                             yaz.WriteLine("\t\t\t\tif (" + _table + "Data.get" + column.ColumnName + "() != null)");
                                             yaz.WriteLine("\t\t\t\t{");
-                                            yaz.WriteLine("\t\t\t\t\tArrayList<" + PrimaryTableName + "> " + PrimaryTableName + "DataList" + num + " = " + PrimaryTableName + "Business.Select(context);");
-                                            yaz.WriteLine("\t\t\t\t\tArrayList<String> " + PrimaryTableName + "Dizi" + num + " = new ArrayList<>();");
+                                            yaz.WriteLine("\t\t\t\t\tArrayList<" + tableFrgn.TableName + "> " + tableFrgn.TableName + "DataList" + num + " = " + tableFrgn.TableName + "Business.Select(context);");
+                                            yaz.WriteLine("\t\t\t\t\tArrayList<String> " + tableFrgn.TableName + "Dizi" + num + " = new ArrayList<>();");
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\tfor (" + PrimaryTableName + " data : " + PrimaryTableName + "DataList" + num + ") {");
-                                            yaz.WriteLine("\t\t\t\t\t\t" + PrimaryTableName + "Dizi" + num + ".add(data.get" + foreignColumnText + "() + \" (\" + data.get" + foreignColumnId + "() + \")\");");
+                                            yaz.WriteLine("\t\t\t\t\tfor (" + tableFrgn.TableName + " data : " + tableFrgn.TableName + "DataList" + num + ") {");
+                                            yaz.WriteLine("\t\t\t\t\t\t" + tableFrgn.TableName + "Dizi" + num + ".add(data.get" + tableFrgn.SearchTextColumn + "() + \" (\" + data.get" + tableFrgn.ID + "() + \")\");");
                                             yaz.WriteLine("\t\t\t\t\t}");
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\tspin" + column.ColumnName + ".setAdapter(new ArrayAdapter(context, android.R.layout.simple_list_item_1, " + PrimaryTableName + "Dizi" + num + "));");
+                                            yaz.WriteLine("\t\t\t\t\tspin" + column.ColumnName + ".setAdapter(new ArrayAdapter(context, android.R.layout.simple_list_item_1, " + tableFrgn.TableName + "Dizi" + num + "));");
                                             yaz.WriteLine("");
                                             yaz.WriteLine("\t\t\t\t\tlistValues = new ArrayList<>();");
                                             yaz.WriteLine("");
                                             yaz.WriteLine("\t\t\t\t\twhere = new Where();");
-                                            yaz.WriteLine("\t\t\t\t\twhere.setColumn(\"" + foreignColumnId + "\");");
+                                            yaz.WriteLine("\t\t\t\t\twhere.setColumn(\"" + tableFrgn.ID + "\");");
                                             yaz.WriteLine("");
                                             yaz.WriteLine("\t\t\t\t\tlistValues.add(" + _table + "Data.get" + column.ColumnName + "().toString());");
                                             yaz.WriteLine("");
                                             yaz.WriteLine("\t\t\t\t\twhere.setValues(listValues);");
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\t" + PrimaryTableName + " " + PrimaryTableName + "Data" + num + " = " + PrimaryTableName + "Business.SelectSingle(context, where);");
+                                            yaz.WriteLine("\t\t\t\t\t" + tableFrgn.TableName + " " + tableFrgn.TableName + "Data" + num + " = " + tableFrgn.TableName + "Business.SelectSingle(context, where);");
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\tif (" + PrimaryTableName + "Data" + num + " != null) {");
+                                            yaz.WriteLine("\t\t\t\t\tif (" + tableFrgn.TableName + "Data" + num + " != null) {");
                                             yaz.WriteLine("\t\t\t\t\t\tint i = 0;");
                                             yaz.WriteLine("\t\t\t\t\t\tint indis = 0;");
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\t\tfor (String " + PrimaryTableName + " : " + PrimaryTableName + "Dizi" + num + ") {");
-                                            yaz.WriteLine("\t\t\t\t\t\t\tString id = " + PrimaryTableName + ".split(\"\\\\(\")[1].replace(\")\", \"\");");
+                                            yaz.WriteLine("\t\t\t\t\t\tfor (String " + tableFrgn.TableName + " : " + tableFrgn.TableName + "Dizi" + num + ") {");
+                                            yaz.WriteLine("\t\t\t\t\t\t\tString id = " + tableFrgn.TableName + ".split(\"\\\\(\")[1].replace(\")\", \"\");");
                                             yaz.WriteLine("");
-                                            yaz.WriteLine("\t\t\t\t\t\t\tif (id.equals(" + PrimaryTableName + "Data" + num + ".get" + foreignColumnId + "().toString())) {");
+                                            yaz.WriteLine("\t\t\t\t\t\t\tif (id.equals(" + tableFrgn.TableName + "Data" + num + ".get" + tableFrgn.ID + "().toString())) {");
                                             yaz.WriteLine("\t\t\t\t\t\t\t\tindis = i;");
                                             yaz.WriteLine("\t\t\t\t\t\t\t\tbreak;");
                                             yaz.WriteLine("\t\t\t\t\t\t\t}");
@@ -3345,20 +3300,10 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                string _table = Table.ToUrl(true);
-
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
-
+                Table table = new Table(Table, connectionInfo);
                 SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
 
-                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                List<ColumnInfo> columnNames = TableColumns(Table);
+                string _table = Table.ToUrl(true);
 
                 //Business
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\java\\com\\sinasalik\\thrashead\\" + projectNameKucuk + "\\DB\\Business\\" + Table + "Business.java", FileMode.Create))
@@ -3437,7 +3382,7 @@ namespace TDFactory
 
                         int i = 0;
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             if (column.Type != null)
                             {
@@ -3563,7 +3508,7 @@ namespace TDFactory
 
                         i = 0;
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             if (column.Type != null)
                             {
@@ -3608,7 +3553,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\treturn " + Table + "Access.Insert(context, " + _table + ");");
                         yaz.WriteLine("\t}");
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\tpublic static Boolean Update(Context context, " + Table + " " + _table + ") {");
@@ -3758,11 +3703,11 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\tContentValues values = new ContentValues();");
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             if (column.Type != null)
                             {
-                                if (column.ColumnName != id)
+                                if (column.ColumnName != table.ID)
                                 {
                                     yaz.WriteLine("\t\tvalues.put(\"" + column.ColumnName + "\", " + _table + ".get" + column.ColumnName + "());");
                                 }
@@ -3782,7 +3727,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\treturn result;");
                         yaz.WriteLine("\t}");
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\tpublic static Boolean Update(Context context, " + Table + " " + _table + ", ArrayList<Where> whereList) {");
@@ -3807,11 +3752,11 @@ namespace TDFactory
                             yaz.WriteLine("\t\tWhereArgs whereArgs = WhereArgs.CreateArguments(whereList);");
                             yaz.WriteLine("");
 
-                            foreach (ColumnInfo column in columnNames)
+                            foreach (ColumnInfo column in table.Columns)
                             {
                                 if (column.Type != null)
                                 {
-                                    if (column.ColumnName != id)
+                                    if (column.ColumnName != table.ID)
                                     {
                                         yaz.WriteLine("\t\tif (" + _table + ".get" + column.ColumnName + "() != null) {");
                                         yaz.WriteLine("\t\t\tvalues.put(\"" + column.ColumnName + "\", " + _table + ".get" + column.ColumnName + "());");
@@ -3878,20 +3823,10 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                string _table = Table.ToUrl(true);
-
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
-
+                Table table = new Table(Table, connectionInfo);
                 SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-                List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
 
-                List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                List<ColumnInfo> columnNames = TableColumns(Table);
+                string _table = Table.ToUrl(true);
 
                 //Business
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectName + "\\Android\\java\\com\\sinasalik\\thrashead\\" + projectNameKucuk + "\\DB\\Business\\" + Table + "Business.java", FileMode.Create))
@@ -4069,7 +4004,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\treturn " + Table + "Access.Insert(context, " + _table + ");");
                         yaz.WriteLine("\t}");
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\tpublic static Boolean Update(Context context, " + Table + " " + _table + ") {");
@@ -4187,7 +4122,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\tJSONObject object = array.getJSONObject(i);");
                         yaz.WriteLine("");
 
-                        foreach (ColumnInfo column in columnNames)
+                        foreach (ColumnInfo column in table.Columns)
                         {
                             if (column.Type != null)
                             {
@@ -4252,7 +4187,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\treturn result;");
                         yaz.WriteLine("\t}");
 
-                        if (identityColumns.Count > 0)
+                        if (table.IdentityColumns.Count > 0)
                         {
                             yaz.WriteLine("");
 
