@@ -2251,9 +2251,13 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\tbool result = model.Insert(table);");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\tif (result)");
+                        yaz.WriteLine("\t\t\t{");
                         yaz.WriteLine("\t\t\t\treturn Json(table);");
+                        yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t\telse");
+                        yaz.WriteLine("\t\t\t{");
                         yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt eklenemedi.\";");
+                        yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("");
 
                         string linkID = ", null";
@@ -2376,9 +2380,13 @@ namespace TDFactory
                             yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\tif (result)");
+                            yaz.WriteLine("\t\t\t{");
                             yaz.WriteLine("\t\t\t\treturn Json(table);");
+                            yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t\telse");
+                            yaz.WriteLine("\t\t\t{");
                             yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
+                            yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\ttable = (" + Table + ")model.Update(table." + table.ID + ", table);");
@@ -2457,12 +2465,19 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("\t\t\tcatch");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\treturn Json(false);");
+                                yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
                                 yaz.WriteLine("\t\t\t}");
 
                                 yaz.WriteLine("");
                             }
-                            yaz.WriteLine("\t\t\treturn Json(model.Copy(id), JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t\tbool result = model.Copy(id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (result)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
@@ -2491,11 +2506,18 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("\t\t\tcatch");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\treturn Json(false);");
+                                yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("");
                             }
-                            yaz.WriteLine("\t\t\treturn Json(model.Delete(id), JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t\tbool result = model.Delete(id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (result)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t}");
 
                             if (table.Deleted)
@@ -2526,11 +2548,19 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t\tcatch");
                                     yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\treturn Json(false);");
+                                    yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("");
                                 }
-                                yaz.WriteLine("\t\t\treturn Json(model.Remove(id), JsonRequestBehavior.AllowGet);");
+
+                                yaz.WriteLine("\t\t\tbool result = model.Remove(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (result)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
                                 yaz.WriteLine("\t\t}");
                             }
                         }

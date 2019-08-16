@@ -1565,14 +1565,20 @@ namespace TDFactory
 
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\t\tif(result)");
+                        yaz.WriteLine("\t\t\t\t{");
                         yaz.WriteLine("\t\t\t\t\treturn RedirectToAction(\"Index\");");
+                        yaz.WriteLine("\t\t\t\t}");
                         yaz.WriteLine("\t\t\t\telse");
+                        yaz.WriteLine("\t\t\t\t{");
                         yaz.WriteLine("\t\t\t\t\ttable.Mesaj = \"Kayıt eklenemedi.\";");
+                        yaz.WriteLine("\t\t\t\t}");
                         yaz.WriteLine("\t\t\t}");
 
 
                         yaz.WriteLine("\t\t\telse");
+                        yaz.WriteLine("\t\t\t{");
                         yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Model uygun değil.\";");
+                        yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("");
 
                         string linkID = ", null";
@@ -1719,13 +1725,18 @@ namespace TDFactory
                             yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\t\tif(result)");
+                            yaz.WriteLine("\t\t\t\t{");
                             yaz.WriteLine("\t\t\t\t\treturn RedirectToAction(\"Index\");");
+                            yaz.WriteLine("\t\t\t\t}");
                             yaz.WriteLine("\t\t\t\telse");
+                            yaz.WriteLine("\t\t\t\t{");
                             yaz.WriteLine("\t\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
-
+                            yaz.WriteLine("\t\t\t\t}");
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t\telse");
+                            yaz.WriteLine("\t\t\t{");
                             yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Model uygun değil.\";");
+                            yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\ttable = (" + Table + ")model.Update(table." + table.ID + ", table);");
@@ -1765,7 +1776,14 @@ namespace TDFactory
 
                                 yaz.WriteLine("");
                             }
-                            yaz.WriteLine("\t\t\treturn Json(model.Copy(id));");
+                            yaz.WriteLine("\t\t\tbool result = model.Copy(id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (result)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn Json(true);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn Json(false);");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
@@ -1798,7 +1816,15 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("");
                             }
-                            yaz.WriteLine("\t\t\treturn Json(model.Delete(id));");
+
+                            yaz.WriteLine("\t\t\tbool result = model.Delete(id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (result)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn Json(true);");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn Json(false);");
                             yaz.WriteLine("\t\t}");
 
                             if (table.Deleted)
@@ -1833,7 +1859,14 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("");
                                 }
-                                yaz.WriteLine("\t\t\treturn Json(model.Remove(id));");
+                                yaz.WriteLine("\t\t\tbool result = model.Remove(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (result)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn Json(true);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn Json(false);");
                                 yaz.WriteLine("\t\t}");
                             }
                         }
