@@ -67,7 +67,11 @@ namespace TDFactory
 
                         yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Collections.Generic;");
-                        yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
+
+                        if ((chkRepositoryInternal.Checked && !chkAngular.Checked) || !chkRepositoryInternal.Checked)
+                        {
+                            yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
+                        }
 
                         if (fkcListForeign.Count > 0 || allowHtml)
                         {
@@ -149,29 +153,32 @@ namespace TDFactory
                                     }
                                 }
 
-                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(UrlColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
+                                if ((chkRepositoryInternal.Checked && !chkAngular.Checked) || !chkRepositoryInternal.Checked)
                                 {
-                                    if (!column.IsIdentity)
+                                    if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(UrlColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
                                     {
-                                        if (column.Type.Name != "Boolean")
+                                        if (!column.IsIdentity)
                                         {
-                                            if (!column.IsNullable)
+                                            if (column.Type.Name != "Boolean")
                                             {
-                                                if (column.Type.Name.In(new string[] { "Int16", "Int32", "Int64" }))
+                                                if (!column.IsNullable)
                                                 {
-                                                    yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve " + column.ColumnName + " alanına en az 0 değeri girmelisiniz.\")]");
-                                                    yaz.WriteLine("\t\t[Range(0, int.MaxValue, ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve " + column.ColumnName + " alanına en az 0 değeri girmelisiniz.\")]");
-                                                }
-                                                else if (column.Type.Name == "String")
-                                                {
-                                                    if (column.Type.Name == "String" && column.CharLength == -1)
+                                                    if (column.Type.Name.In(new string[] { "Int16", "Int32", "Int64" }))
                                                     {
-                                                        yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz.\")]");
+                                                        yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve " + column.ColumnName + " alanına en az 0 değeri girmelisiniz.\")]");
+                                                        yaz.WriteLine("\t\t[Range(0, int.MaxValue, ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve " + column.ColumnName + " alanına en az 0 değeri girmelisiniz.\")]");
                                                     }
-                                                    else
+                                                    else if (column.Type.Name == "String")
                                                     {
-                                                        yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve en fazla " + column.CharLength + " karakter olmalıdır.\")]");
-                                                        yaz.WriteLine("\t\t[StringLength(" + column.CharLength + ")]");
+                                                        if (column.Type.Name == "String" && column.CharLength == -1)
+                                                        {
+                                                            yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz.\")]");
+                                                        }
+                                                        else
+                                                        {
+                                                            yaz.WriteLine("\t\t[Required(ErrorMessage = \"" + column.ColumnName + " alanı boş olamaz ve en fazla " + column.CharLength + " karakter olmalıdır.\")]");
+                                                            yaz.WriteLine("\t\t[StringLength(" + column.CharLength + ")]");
+                                                        }
                                                     }
                                                 }
                                             }
