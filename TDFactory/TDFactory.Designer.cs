@@ -96,6 +96,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.grpSplitter1 = new System.Windows.Forms.GroupBox();
             this.lblWCSifre = new System.Windows.Forms.Label();
+            this.lblRepository = new System.Windows.Forms.Label();
             this.lblWCKullanici = new System.Windows.Forms.Label();
             this.txtWCSifre = new System.Windows.Forms.TextBox();
             this.txtRepository = new System.Windows.Forms.TextBox();
@@ -203,7 +204,6 @@
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBaglanti = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.lblRepository = new System.Windows.Forms.Label();
             this.tbconTablar.SuspendLayout();
             this.tabpageKatmanlariOlustur.SuspendLayout();
             this.grpIslem.SuspendLayout();
@@ -1125,6 +1125,16 @@
             this.lblWCSifre.TabIndex = 75;
             this.lblWCSifre.Text = "Şifre : ";
             // 
+            // lblRepository
+            // 
+            this.lblRepository.AutoSize = true;
+            this.lblRepository.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblRepository.Location = new System.Drawing.Point(7, 120);
+            this.lblRepository.Name = "lblRepository";
+            this.lblRepository.Size = new System.Drawing.Size(123, 13);
+            this.lblRepository.TabIndex = 74;
+            this.lblRepository.Text = "Repository Namespace :";
+            // 
             // lblWCKullanici
             // 
             this.lblWCKullanici.AutoSize = true;
@@ -1145,9 +1155,9 @@
             // 
             // txtRepository
             // 
-            this.txtRepository.Location = new System.Drawing.Point(94, 117);
+            this.txtRepository.Location = new System.Drawing.Point(10, 137);
             this.txtRepository.Name = "txtRepository";
-            this.txtRepository.Size = new System.Drawing.Size(83, 20);
+            this.txtRepository.Size = new System.Drawing.Size(150, 20);
             this.txtRepository.TabIndex = 72;
             this.txtRepository.Text = "Repository";
             // 
@@ -2421,16 +2431,6 @@
             this.panel1.Size = new System.Drawing.Size(10, 10);
             this.panel1.TabIndex = 61;
             this.panel1.Visible = false;
-            // 
-            // lblRepository
-            // 
-            this.lblRepository.AutoSize = true;
-            this.lblRepository.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblRepository.Location = new System.Drawing.Point(7, 120);
-            this.lblRepository.Name = "lblRepository";
-            this.lblRepository.Size = new System.Drawing.Size(81, 13);
-            this.lblRepository.TabIndex = 74;
-            this.lblRepository.Text = "Repository Adı :";
             // 
             // TDFactory
             // 

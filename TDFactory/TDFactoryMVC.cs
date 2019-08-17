@@ -694,20 +694,28 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\Controls\\_Footer.cshtml", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("");
-                    yaz.Close();
-                }
-            }
-
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\Controls\\_Header.cshtml", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
+                    yaz.WriteLine("@using TDLibrary");
                     yaz.WriteLine("");
+                    yaz.WriteLine("<ul class=\"menu\">");
+                    yaz.WriteLine("\t<li><a href=\"@AppMgr.MainPath\">Ana Sayfa</a></li>");
+                    yaz.WriteLine("</ul>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Views\\Shared\\Controls\\_Footer.cshtml", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("@using TDLibrary");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<ul class=\"menu\">");
+                    yaz.WriteLine("\t<li><a href=\"@AppMgr.MainPath\">Ana Sayfa</a></li>");
+                    yaz.WriteLine("</ul>");
                     yaz.Close();
                 }
             }
@@ -819,51 +827,28 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t<a href=\"@AppMgr.AdminPath/Home/Index\"><i class=\"icon icon-home\"></i> <span>Ana Sayfa</span></a>");
                     yaz.WriteLine("\t\t</li>");
 
-                    List<string> addedTables = new List<string>();
-
-                    foreach (string Table in selectedTables)
+                    foreach (AdminMenu item in adminMenu)
                     {
-                        if (!addedTables.Contains(Table))
+                        if (item.SubMenu.Count <= 0)
                         {
-                            List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+                            yaz.WriteLine("\t\t<li data-url=\"" + item.Title + "\">");
+                            yaz.WriteLine("\t\t\t<a href=\"@AppMgr.AdminPath/" + item.Title + "\"><i class=\"icon icon-home\"></i> <span>" + item.Title + "</span></a>");
+                            yaz.WriteLine("\t\t</li>");
+                        }
+                        else
+                        {
+                            yaz.WriteLine("\t\t<li class=\"submenu\">");
+                            yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + item.Title + "</span></a>");
+                            yaz.WriteLine("\t\t\t<ul>");
+                            yaz.WriteLine("\t\t\t\t<li data-url=\"" + item.Title + "\"><a href=\"@AppMgr.AdminPath/" + item.Title + "\">" + item.Title + "</a></li>");
 
-                            SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-
-                            List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                            fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                            List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                            fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                            if (fkcList.Count <= 0)
+                            foreach (AdminMenu subItem in item.SubMenu)
                             {
-                                yaz.WriteLine("\t\t<li data-url=\"" + Table + "\">");
-                                yaz.WriteLine("\t\t\t<a href=\"@AppMgr.AdminPath/" + Table + "\"><i class=\"icon icon-home\"></i> <span>" + Table + "</span></a>");
-                                yaz.WriteLine("\t\t</li>");
-                            }
-                            else
-                            {
-                                yaz.WriteLine("\t\t<li class=\"submenu\">");
-                                yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + Table + "</span></a>");
-                                yaz.WriteLine("\t\t\t<ul>");
-                                yaz.WriteLine("\t\t\t\t<li data-url=\"" + Table + "\"><a href=\"@AppMgr.AdminPath/" + Table + "\">" + Table + "</a></li>");
-
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                {
-                                    string ForeignTableName = fkc.ForeignTableName;
-
-                                    if (!addedTables.Contains(ForeignTableName))
-                                    {
-                                        yaz.WriteLine("\t\t\t\t<li data-url=\"" + ForeignTableName + "\"><a href=\"@AppMgr.AdminPath/" + ForeignTableName + "\">" + ForeignTableName + "</a></li>");
-                                        addedTables.Add(ForeignTableName);
-                                    }
-                                }
-
-                                yaz.WriteLine("\t\t\t</ul>");
-                                yaz.WriteLine("\t\t</li>");
+                                yaz.WriteLine("\t\t\t\t<li data-url=\"" + subItem.Title + "\"><a href=\"@AppMgr.AdminPath/" + subItem.Title + "\">" + subItem.Title + "</a></li>");
                             }
 
-                            addedTables.Add(Table);
+                            yaz.WriteLine("\t\t\t</ul>");
+                            yaz.WriteLine("\t\t</li>");
                         }
                     }
 
@@ -1990,44 +1975,12 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t<ul class=\"quick-actions\">");
 
                     string[] colors = new string[] { "bg_lb", "bg_lg", "bg_ly", "bg_lo", "bg_ls", "bg_lr", "bg_lv" };
-                    List<string> addedTables = new List<string>();
-                    List<string> tempTables = new List<string>();
                     int i = 0;
 
-                    foreach (string Table in selectedTables)
+                    foreach (AdminMenu item in adminMenu)
                     {
-                        if (!addedTables.Contains(Table))
-                        {
-                            List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                            SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-
-                            List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                            fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                            if (fkcList.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a href=\"@AppMgr.AdminPath/" + Table + "\"> <i class=\"icon-home\"></i> " + Table + "</a> </li>");
-
-                                tempTables.Add(Table);
-
-                                i++;
-                            }
-
-                            addedTables.Add(Table);
-                        }
-                    }
-
-                    if (tempTables.Count == 0)
-                    {
-                        i = 0;
-
-                        foreach (string Table in selectedTables)
-                        {
-                            yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a href=\"@AppMgr.AdminPath/" + Table + "\"> <i class=\"icon-home\"></i> " + Table + "</a> </li>");
-
-                            i++;
-                        }
+                        yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a href=\"@AppMgr.AdminPath/" + item.Title + "\"> <i class=\"icon-home\"></i> " + item.Title + "</a> </li>");
+                        i++;
                     }
 
                     yaz.WriteLine("\t\t\t</ul>");

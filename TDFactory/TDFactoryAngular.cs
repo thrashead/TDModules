@@ -540,7 +540,10 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
+
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-scripts></" + projectName.Substring(0, 3).ToUrl(true) + "-header>");
                     yaz.WriteLine("<router-outlet></router-outlet>");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-scripts></" + projectName.Substring(0, 3).ToUrl(true) + "-footer>");
                     yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-scripts></" + projectName.Substring(0, 3).ToUrl(true) + "-scripts>");
                     yaz.Close();
                 }
@@ -565,11 +568,73 @@ namespace TDFactory
                 }
             }
 
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\controls\\header.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<ul class=\"menu\">");
+                    yaz.WriteLine("\t<li><a routerLink=\"/\">Ana Sayfa</a></li>");
+                    yaz.WriteLine("</ul>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\controls\\header.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToUrl(true) + "-header',");
+                    yaz.WriteLine("\ttemplateUrl: './header.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class HeaderComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\controls\\footer.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<ul class=\"menu\">");
+                    yaz.WriteLine("\t<li><a routerLink=\"/\">Ana Sayfa</a></li>");
+                    yaz.WriteLine("</ul>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\controls\\footer.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToUrl(true) + "-footer',");
+                    yaz.WriteLine("\ttemplateUrl: './footer.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class FooterComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\views\\shared\\controls\\scripts.ts", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
+                    yaz.WriteLine("import { Router, ActivationEnd, RouterEvent } from '@angular/router';");
+                    yaz.WriteLine("");
                     yaz.WriteLine("import '../../../../../Content/js/pathscript.js';");
                     yaz.WriteLine("import '../../../../../Content/js/main.js';");
                     yaz.WriteLine("");
@@ -583,6 +648,58 @@ namespace TDFactory
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
                     yaz.WriteLine("export class ScriptsComponent {");
+                    yaz.WriteLine("\tconstructor(private router: Router) {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\tthis.LoadScripts();");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tthis.router.events.subscribe((event: RouterEvent) => {");
+                    yaz.WriteLine("\t\t\tif (event instanceof ActivationEnd) {");
+                    yaz.WriteLine("\t\t\t\tthis.LoadScripts();");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tLoadScripts() {");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\tthis.MenuActive();");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t//MenuActive");
+                    yaz.WriteLine("\tMenuActive() {");
+                    yaz.WriteLine("\t\t$(\"#hdnUrl\").val(location.href);");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tvar MainPath = \"http://localhost/" + projectName + "\";");
+                    yaz.WriteLine("\t\tvar Url = location.href;");
+                    yaz.WriteLine("\t\tvar Urling = Object();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (Url != undefined) {");
+                    yaz.WriteLine("\t\t\tvar tempurl = Url.replace(MainPath + \"/\", \"\");");
+                    yaz.WriteLine("\t\t\tvar extParams = tempurl.split('?')[1];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\ttempurl = tempurl.replace(\"?\" + extParams, \"\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tUrling.path = tempurl;");
+                    yaz.WriteLine("\t\t\tUrling.controller = tempurl.split('/')[0];");
+                    yaz.WriteLine("\t\t\tUrling.action = tempurl.split('/')[1];");
+                    yaz.WriteLine("\t\t\tUrling.parameter = tempurl.split('/')[2];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (extParams != undefined)");
+                    yaz.WriteLine("\t\t\t\tUrling.parameters = extParams.split('&');");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t$(\"ul.menu li a\").removeClass(\"active\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (Urling.controller != \"\") {");
+                    yaz.WriteLine("\t\t\t$(\"ul.menu li a[data-url='\" + Urling.controller + \"']\").addClass(\"active\");");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse {");
+                    yaz.WriteLine("\t\t\t$(\"ul.menu li a[data-url='Index']\").addClass(\"active\");");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
                 }
@@ -927,49 +1044,28 @@ namespace TDFactory
 
                     List<string> addedTables = new List<string>();
 
-                    foreach (string Table in selectedTables)
+                    foreach (AdminMenu item in adminMenu)
                     {
-                        if (!addedTables.Contains(Table))
+                        if (item.SubMenu.Count <= 0)
                         {
-                            List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+                            yaz.WriteLine("\t\t<li data-url=\"" + item.Title + "\">");
+                            yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + item.Title + "\"><i class=\"icon icon-home\"></i> <span>" + item.Title + "</span></a>");
+                            yaz.WriteLine("\t\t</li>");
+                        }
+                        else
+                        {
+                            yaz.WriteLine("\t\t<li class=\"submenu\">");
+                            yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + item.Title + "</span></a>");
+                            yaz.WriteLine("\t\t\t<ul>");
+                            yaz.WriteLine("\t\t\t\t<li data-url=\"" + item.Title + "\"><a routerLink=\"/Admin/" + item.Title + "\">" + item.Title + "</a></li>");
 
-                            SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-
-                            List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                            fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                            List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
-                            fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
-
-                            if (fkcList.Count <= 0)
+                            foreach (AdminMenu subItem in item.SubMenu)
                             {
-                                yaz.WriteLine("\t\t<li data-url=\"" + Table + "\">");
-                                yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "\"><i class=\"icon icon-home\"></i> <span>" + Table + "</span></a>");
-                                yaz.WriteLine("\t\t</li>");
-                            }
-                            else
-                            {
-                                yaz.WriteLine("\t\t<li class=\"submenu\">");
-                                yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + Table + "</span></a>");
-                                yaz.WriteLine("\t\t\t<ul>");
-                                yaz.WriteLine("\t\t\t\t<li data-url=\"" + Table + "\"><a routerLink=\"/Admin/" + Table + "\">" + Table + "</a></li>");
-
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                {
-                                    string ForeignTableName = fkc.ForeignTableName;
-
-                                    if (!addedTables.Contains(ForeignTableName))
-                                    {
-                                        yaz.WriteLine("\t\t\t\t<li data-url=\"" + ForeignTableName + "\"><a routerLink=\"/Admin/" + ForeignTableName + "\">" + ForeignTableName + "</a></li>");
-                                        addedTables.Add(ForeignTableName);
-                                    }
-                                }
-
-                                yaz.WriteLine("\t\t\t</ul>");
-                                yaz.WriteLine("\t\t</li>");
+                                yaz.WriteLine("\t\t\t\t<li data-url=\"" + subItem.Title + "\"><a routerLink=\"/Admin/" + subItem.Title + "\">" + subItem.Title + "</a></li>");
                             }
 
-                            addedTables.Add(Table);
+                            yaz.WriteLine("\t\t\t</ul>");
+                            yaz.WriteLine("\t\t</li>");
                         }
                     }
 
@@ -1266,39 +1362,12 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t<ul class=\"quick-actions\">");
 
                     string[] colors = new string[] { "bg_lb", "bg_lg", "bg_ly", "bg_lo", "bg_ls", "bg_lr", "bg_lv" };
-                    List<string> addedTables = new List<string>();
-                    List<string> tempTables = new List<string>();
                     int i = 0;
 
-                    foreach (string Table in selectedTables)
+                    foreach (AdminMenu item in adminMenu)
                     {
-                        if (!addedTables.Contains(Table))
-                        {
-                            List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
-
-                            SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
-
-                            List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
-                            fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
-
-                            if (fkcList.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a routerLink=\"/Admin/" + Table + "\"> <i class=\"icon-home\"></i> " + Table + "</a> </li>");
-                                tempTables.Add(Table);
-                                i++;
-                            }
-
-                            addedTables.Add(Table);
-                        }
-                    }
-
-                    if (tempTables.Count == 0)
-                    {
-                        foreach (string Table in selectedTables)
-                        {
-                            yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a routerLink=\"/Admin/" + Table + "\"> <i class=\"icon-home\"></i> " + Table + "</a> </li>");
-                            i++;
-                        }
+                        yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a routerLink=\"/Admin/" + item.Title + "\"> <i class=\"icon-home\"></i> " + item.Title + "</a> </li>");
+                        i++;
                     }
 
                     yaz.WriteLine("\t\t\t</ul>");
@@ -1523,6 +1592,8 @@ namespace TDFactory
                     yaz.WriteLine("import { AppComponent } from './app';");
                     yaz.WriteLine("");
                     yaz.WriteLine("import { LayoutComponent } from './views/shared/layout';");
+                    yaz.WriteLine("import { HeaderComponent } from './views/shared/controls/header';");
+                    yaz.WriteLine("import { FooterComponent } from './views/shared/controls/footer';");
                     yaz.WriteLine("import { IndexComponent } from './views/home/index';");
                     yaz.WriteLine("import { ScriptsComponent } from './views/shared/controls/scripts';");
                     yaz.WriteLine("");
@@ -1553,6 +1624,8 @@ namespace TDFactory
                     yaz.WriteLine("\t\tAppComponent,");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tLayoutComponent,");
+                    yaz.WriteLine("\t\tHeaderComponent,");
+                    yaz.WriteLine("\t\tFooterComponent,");
                     yaz.WriteLine("\t\tIndexComponent,");
                     yaz.WriteLine("\t\tScriptsComponent,");
                     yaz.WriteLine("");

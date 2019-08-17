@@ -24,6 +24,8 @@ namespace TDFactory
         public static List<Relation> Relations { get; set; }
         public static string PathAddress { get; set; }
 
+        List<AdminMenu> adminMenu = new List<AdminMenu>();
+
         List<ColumnInfo> columnInfos;
         List<ColumnInfo> tempColumnInfos = new List<ColumnInfo>();
         List<ColumnInfo> tableColumnInfos = new List<ColumnInfo>();
