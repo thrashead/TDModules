@@ -701,7 +701,7 @@ namespace TDFactory
                     yaz.WriteLine("@using TDLibrary");
                     yaz.WriteLine("");
                     yaz.WriteLine("<ul class=\"menu\">");
-                    yaz.WriteLine("\t<li><a href=\"@AppMgr.MainPath\">Ana Sayfa</a></li>");
+                    yaz.WriteLine("\t<li><a data-url=\"Index\" href=\"@AppMgr.MainPath\">Ana Sayfa</a></li>");
                     yaz.WriteLine("</ul>");
                     yaz.Close();
                 }
@@ -714,7 +714,7 @@ namespace TDFactory
                     yaz.WriteLine("@using TDLibrary");
                     yaz.WriteLine("");
                     yaz.WriteLine("<ul class=\"menu\">");
-                    yaz.WriteLine("\t<li><a href=\"@AppMgr.MainPath\">Ana Sayfa</a></li>");
+                    yaz.WriteLine("\t<li><a data-url=\"Index\" href=\"@AppMgr.MainPath\">Ana Sayfa</a></li>");
                     yaz.WriteLine("</ul>");
                     yaz.Close();
                 }

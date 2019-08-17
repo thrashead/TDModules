@@ -573,7 +573,7 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("<ul class=\"menu\">");
-                    yaz.WriteLine("\t<li><a routerLink=\"/\">Ana Sayfa</a></li>");
+                    yaz.WriteLine("\t<li><a data-url=\"Index\" routerLink=\"/\">Ana Sayfa</a></li>");
                     yaz.WriteLine("</ul>");
                     yaz.Close();
                 }
@@ -603,7 +603,7 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("<ul class=\"menu\">");
-                    yaz.WriteLine("\t<li><a routerLink=\"/\">Ana Sayfa</a></li>");
+                    yaz.WriteLine("\t<li><a data-url=\"Index\" routerLink=\"/\">Ana Sayfa</a></li>");
                     yaz.WriteLine("</ul>");
                     yaz.Close();
                 }
