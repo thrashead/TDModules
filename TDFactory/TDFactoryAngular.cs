@@ -664,7 +664,6 @@ namespace TDFactory
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tLoadScripts() {");
-                    yaz.WriteLine("\t{");
                     yaz.WriteLine("\t\tthis.MenuActive();");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
