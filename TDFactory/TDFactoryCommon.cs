@@ -34,7 +34,7 @@ namespace TDFactory
                 fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
 
                 //Class
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table + "\\" + Table + ".cs", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models\\" + Table + "\\" + Table + ".cs", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
@@ -75,7 +75,7 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("using System.Linq;");
-                        yaz.WriteLine(RepositoryType);
+                        yaz.WriteLine(repositoryType);
                         yaz.WriteLine("using TDLibrary;");
 
                         if (fkcList.Count > 0)
@@ -83,14 +83,14 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                             {
                                 string ForeignTableName = fkc.ForeignTableName;
-                                yaz.WriteLine("using Repository." + ForeignTableName + "Model;");
+                                yaz.WriteLine("using " + repositoryName + "." + ForeignTableName + "Model;");
 
                             }
                         }
 
                         yaz.WriteLine("");
 
-                        yaz.WriteLine("namespace Repository." + Table + "Model");
+                        yaz.WriteLine("namespace " + repositoryName + "." + Table + "Model");
                         yaz.WriteLine("{");
 
                         yaz.WriteLine("\tpublic class " + Table + " : I" + Table);
@@ -1080,7 +1080,7 @@ namespace TDFactory
                 }
 
                 //Interface
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table + "\\I" + Table + ".cs", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models\\" + Table + "\\I" + Table + ".cs", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
@@ -1105,14 +1105,14 @@ namespace TDFactory
                             foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                             {
                                 string ForeignTableName = fkc.ForeignTableName;
-                                yaz.WriteLine("using Repository." + ForeignTableName + "Model;");
+                                yaz.WriteLine("using " + repositoryName + "." + ForeignTableName + "Model;");
 
                             }
                         }
 
                         yaz.WriteLine("");
 
-                        yaz.WriteLine("namespace Repository." + Table + "Model");
+                        yaz.WriteLine("namespace " + repositoryName + "." + Table + "Model");
                         yaz.WriteLine("{");
 
                         yaz.WriteLine("\tpublic interface I" + Table + "");
@@ -1638,7 +1638,7 @@ namespace TDFactory
                         yaz.WriteLine("using System.Linq;");
                         yaz.WriteLine("using System.Collections.Generic;");
                         yaz.WriteLine("using TDLibrary;");
-                        yaz.WriteLine("using Repository." + Table + "Model;");
+                        yaz.WriteLine("using " + repositoryName + "." + Table + "Model;");
                         yaz.WriteLine("");
                         yaz.WriteLine("namespace " + projectName + ".Service");
                         yaz.WriteLine("{");

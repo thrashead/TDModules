@@ -90,27 +90,27 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\bin");
                     }
 
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository"))
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\" + repositoryName))
                     {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository");
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\" + repositoryName);
                     }
 
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Models"))
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models"))
                     {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Models");
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models");
                     }
 
                     foreach (string Table in selectedTables)
                     {
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table))
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models\\" + Table))
                         {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table);
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models\\" + Table);
                         }
                     }
 
-                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Data"))
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Data"))
                     {
-                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Data");
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Data");
                     }
 
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\App_Start"))
@@ -292,27 +292,27 @@ namespace TDFactory
                 {
                     if (chkRepository.Checked)
                     {
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository"))
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\" + repositoryName))
                         {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository");
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\" + repositoryName);
                         }
 
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Models"))
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models"))
                         {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Models");
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models");
                         }
 
                         foreach (string Table in selectedTables)
                         {
-                            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table))
+                            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models\\" + Table))
                             {
-                                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Models\\" + Table);
+                                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Models\\" + Table);
                             }
                         }
 
-                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Repository\\Data"))
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Data"))
                         {
-                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Repository\\Data");
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\" + repositoryName + "\\Data");
                         }
                     }
 
@@ -975,8 +975,8 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        yaz.WriteLine("@model List<Repository." + Table + "Model." + Table + ">");
-                        yaz.WriteLine("@using Repository." + Table + "Model");
+                        yaz.WriteLine("@model List<" + repositoryName + "." + Table + "Model." + Table + ">");
+                        yaz.WriteLine("@using " + repositoryName + "." + Table + "Model");
                         yaz.WriteLine("@using TDLibrary");
 
                         yaz.WriteLine("");
@@ -1111,7 +1111,7 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                     {
-                        yaz.WriteLine("@model Repository." + Table + "Model." + Table);
+                        yaz.WriteLine("@model " + repositoryName + "." + Table + "Model." + Table);
                         yaz.WriteLine("");
                         yaz.WriteLine("@{");
                         yaz.WriteLine("\tViewBag.Title = \"" + Table + " Ekle\";");
@@ -1216,7 +1216,7 @@ namespace TDFactory
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                         {
-                            yaz.WriteLine("@model Repository." + Table + "Model." + Table);
+                            yaz.WriteLine("@model " + repositoryName + "." + Table + "Model." + Table);
 
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.FkcList.Count > 0)
                                 yaz.WriteLine("@using TDLibrary");
@@ -1226,7 +1226,7 @@ namespace TDFactory
                                 foreach (ForeignKeyChecker fkc in table.FkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
                                 {
                                     string ForeignTableName = fkc.ForeignTableName;
-                                    yaz.WriteLine("@using Repository." + ForeignTableName + "Model");
+                                    yaz.WriteLine("@using " + repositoryName + "." + ForeignTableName + "Model");
 
                                 }
                             }
@@ -1496,7 +1496,7 @@ namespace TDFactory
                             yaz.WriteLine("using TDLibrary;");
                         }
 
-                        yaz.WriteLine("using Repository." + Table + "Model;");
+                        yaz.WriteLine("using " + repositoryName + "." + Table + "Model;");
                         yaz.WriteLine("");
 
                         yaz.WriteLine("namespace " + projectName + ".Areas.Admin.Controllers");

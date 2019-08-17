@@ -98,6 +98,7 @@
             this.lblWCSifre = new System.Windows.Forms.Label();
             this.lblWCKullanici = new System.Windows.Forms.Label();
             this.txtWCSifre = new System.Windows.Forms.TextBox();
+            this.txtRepository = new System.Windows.Forms.TextBox();
             this.txtWCKullanici = new System.Windows.Forms.TextBox();
             this.chkMVCStilScript = new System.Windows.Forms.CheckBox();
             this.chkMVCWcfServis = new System.Windows.Forms.CheckBox();
@@ -202,6 +203,7 @@
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBaglanti = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblRepository = new System.Windows.Forms.Label();
             this.tbconTablar.SuspendLayout();
             this.tabpageKatmanlariOlustur.SuspendLayout();
             this.grpIslem.SuspendLayout();
@@ -318,8 +320,10 @@
             this.pnlKaydet.Controls.Add(this.groupBox1);
             this.pnlKaydet.Controls.Add(this.grpSplitter1);
             this.pnlKaydet.Controls.Add(this.lblWCSifre);
+            this.pnlKaydet.Controls.Add(this.lblRepository);
             this.pnlKaydet.Controls.Add(this.lblWCKullanici);
             this.pnlKaydet.Controls.Add(this.txtWCSifre);
+            this.pnlKaydet.Controls.Add(this.txtRepository);
             this.pnlKaydet.Controls.Add(this.txtWCKullanici);
             this.pnlKaydet.Controls.Add(this.chkMVCStilScript);
             this.pnlKaydet.Controls.Add(this.chkMVCWcfServis);
@@ -759,6 +763,7 @@
             this.chkRepositoryInternal.TabIndex = 88;
             this.chkRepositoryInternal.Text = "Dahili Repository";
             this.chkRepositoryInternal.UseVisualStyleBackColor = true;
+            this.chkRepositoryInternal.CheckedChanged += new System.EventHandler(this.ChkRepositoryInternal_CheckedChanged);
             // 
             // chkAngular
             // 
@@ -1137,6 +1142,14 @@
             this.txtWCSifre.TabIndex = 73;
             this.txtWCSifre.Text = "123456";
             this.txtWCSifre.UseSystemPasswordChar = true;
+            // 
+            // txtRepository
+            // 
+            this.txtRepository.Location = new System.Drawing.Point(94, 117);
+            this.txtRepository.Name = "txtRepository";
+            this.txtRepository.Size = new System.Drawing.Size(83, 20);
+            this.txtRepository.TabIndex = 72;
+            this.txtRepository.Text = "Repository";
             // 
             // txtWCKullanici
             // 
@@ -2409,6 +2422,16 @@
             this.panel1.TabIndex = 61;
             this.panel1.Visible = false;
             // 
+            // lblRepository
+            // 
+            this.lblRepository.AutoSize = true;
+            this.lblRepository.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Italic | System.Drawing.FontStyle.Underline))), System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblRepository.Location = new System.Drawing.Point(7, 120);
+            this.lblRepository.Name = "lblRepository";
+            this.lblRepository.Size = new System.Drawing.Size(81, 13);
+            this.lblRepository.TabIndex = 74;
+            this.lblRepository.Text = "Repository Adı :";
+            // 
             // TDFactory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2632,5 +2655,7 @@
         private System.Windows.Forms.Button btnGuidColumnsClear;
         private System.Windows.Forms.Button btnDeletedColumnsClear;
         private System.Windows.Forms.Button btnSearchColumnsClear;
+        private System.Windows.Forms.TextBox txtRepository;
+        private System.Windows.Forms.Label lblRepository;
     }
 }

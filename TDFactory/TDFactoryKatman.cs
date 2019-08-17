@@ -136,7 +136,10 @@ namespace TDFactory
             projectName = !String.IsNullOrEmpty(txtProjectName.Text) ? txtProjectName.Text : "ProjectName";
             projectName = projectName.Replace(" ", "");
 
-            RepositoryType = chkRepositoryInternal.Checked ? "using " + projectName + ".Data;" : "using Repository.Data;";
+            repositoryName = !String.IsNullOrEmpty(txtRepository.Text) ? txtRepository.Text : "Repository";
+            repositoryName = repositoryName.Replace(" ", "");
+
+            repositoryType = chkRepositoryInternal.Checked ? "using " + projectName + ".Data;" : "using " + repositoryName + ".Data;";
 
             connectionInfo = new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = chkWindowsAuthentication.Checked, Username = txtKullaniciAdi.Text, Password = txtSifre.Text };
 
@@ -705,6 +708,13 @@ namespace TDFactory
                     txtProjectName.Text = txtProjectName.Text.Replace("Angular", "").Replace("angular", "").Replace("ANGULAR", "");
                 }
             }
+        }
+
+        private void ChkRepositoryInternal_CheckedChanged(object sender, EventArgs e)
+        {
+            txtRepository.Enabled = !((CheckBox)sender).Checked;
+            txtRepository.Visible = !((CheckBox)sender).Checked;
+            lblRepository.Visible = !((CheckBox)sender).Checked;
         }
 
         private void btnUrlColumnsAdd_Click(object sender, EventArgs e)
