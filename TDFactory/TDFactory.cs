@@ -39,6 +39,7 @@ namespace TDFactory
         public string[] DeletedColumns;
         public string[] FileColumns;
         public string[] ImageColumns;
+        public string[] SearchColumns;
 
 
         int tableindex, selectedtableindex;
@@ -47,6 +48,7 @@ namespace TDFactory
         string selectedcolumn;
         string projectName = "Proje";
         string projectFolder = "";
+        string RepositoryType = "";
         string[] aliases = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
 
         private void TDFactoryForm_Load(object sender, EventArgs e)
@@ -318,10 +320,11 @@ namespace TDFactory
                     return columnNames.Where(a => a.ColumnName.In(FileColumns, ExMethods.InType.ToUrlLower)).ToList();
                 case ColumnType.ImageColumns:
                     return columnNames.Where(a => a.ColumnName.In(ImageColumns, ExMethods.InType.ToUrlLower)).ToList();
+                case ColumnType.SearchColumns:
+                    return columnNames.Where(a => a.ColumnName.In(SearchColumns, ExMethods.InType.ToUrlLower)).ToList();
                 default:
                     return columnNames;
             }
-
         }
 
         public enum ColumnType
@@ -331,7 +334,8 @@ namespace TDFactory
             CodeColumns,
             DeletedColumns,
             FileColumns,
-            ImageColumns
+            ImageColumns,
+            SearchColumns
         }
     }
 }

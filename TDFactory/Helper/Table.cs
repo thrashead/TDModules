@@ -23,6 +23,7 @@ namespace TDFactory.Helper
                 DELETEDColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstDeletedColumns))).ToList();
                 FILEColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstFileColumns))).ToList();
                 IMAGEColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstImageColumns))).ToList();
+                SEARCHColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstSearchColumns))).ToList();
                 FkcList = ForeignKeyCheck(con, tableName).Where(a => a.PrimaryTableName == tableName).ToList();
                 FkcForeignList = ForeignKeyCheck(con).Where(a => a.ForeignTableName == tableName).ToList();
                 IdentityColumns = Helper.ReturnIdentityColumn(conInfo, tableName);
@@ -42,6 +43,7 @@ namespace TDFactory.Helper
         public List<ColumnInfo> DELETEDColumns { get; set; }
         public List<ColumnInfo> FILEColumns { get; set; }
         public List<ColumnInfo> IMAGEColumns { get; set; }
+        public List<ColumnInfo> SEARCHColumns { get; set; }
         public List<ForeignKeyChecker> FkcList { get; set; }
         public List<ForeignKeyChecker> FkcForeignList { get; set; }
         public List<string> IdentityColumns { get; set; }

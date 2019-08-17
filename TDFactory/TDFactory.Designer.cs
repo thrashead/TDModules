@@ -36,17 +36,27 @@
             this.lblImageColumns = new System.Windows.Forms.Label();
             this.lblCodeColumns = new System.Windows.Forms.Label();
             this.lblGuidColumns = new System.Windows.Forms.Label();
+            this.lblSearchColumns = new System.Windows.Forms.Label();
             this.lblDeletedColumns = new System.Windows.Forms.Label();
             this.lblFileColumns = new System.Windows.Forms.Label();
             this.lblUrlColumns = new System.Windows.Forms.Label();
+            this.btnSearchColumnsClear = new System.Windows.Forms.Button();
+            this.btnDeletedColumnsClear = new System.Windows.Forms.Button();
+            this.btnGuidColumnsClear = new System.Windows.Forms.Button();
+            this.btnUrlColumnsClear = new System.Windows.Forms.Button();
+            this.btnCodeColumnsClear = new System.Windows.Forms.Button();
+            this.btnFileColumnsClear = new System.Windows.Forms.Button();
+            this.button1 = new System.Windows.Forms.Button();
             this.btnImageColumnsSub = new System.Windows.Forms.Button();
             this.btnImageColumnsAdd = new System.Windows.Forms.Button();
             this.btnFileColumnsSub = new System.Windows.Forms.Button();
             this.btnCodeColumnsSub = new System.Windows.Forms.Button();
             this.btnFileColumnsAdd = new System.Windows.Forms.Button();
             this.btnCodeColumnsAdd = new System.Windows.Forms.Button();
+            this.btnSearchColumnsSub = new System.Windows.Forms.Button();
             this.btnGuidColumnsSub = new System.Windows.Forms.Button();
             this.btnDeletedColumnsSub = new System.Windows.Forms.Button();
+            this.btnSearchColumnsAdd = new System.Windows.Forms.Button();
             this.btnGuidColumnsAdd = new System.Windows.Forms.Button();
             this.btnDeletedColumnsAdd = new System.Windows.Forms.Button();
             this.btnUrlColumnsSub = new System.Windows.Forms.Button();
@@ -56,13 +66,16 @@
             this.lstImageColumns = new System.Windows.Forms.ListBox();
             this.txtCodeColumns = new System.Windows.Forms.TextBox();
             this.lstFileColumns = new System.Windows.Forms.ListBox();
+            this.txtSearchColumns = new System.Windows.Forms.TextBox();
             this.txtGuidColumns = new System.Windows.Forms.TextBox();
             this.txtDeletedColumns = new System.Windows.Forms.TextBox();
             this.lstCodeColumns = new System.Windows.Forms.ListBox();
             this.txtUrlColumns = new System.Windows.Forms.TextBox();
+            this.lstSearchColumns = new System.Windows.Forms.ListBox();
             this.lstGuidColumns = new System.Windows.Forms.ListBox();
             this.lstDeletedColumns = new System.Windows.Forms.ListBox();
             this.lstUrlColumns = new System.Windows.Forms.ListBox();
+            this.chkRepositoryInternal = new System.Windows.Forms.CheckBox();
             this.chkAngular = new System.Windows.Forms.CheckBox();
             this.txtProjectName = new System.Windows.Forms.TextBox();
             this.pnlAndroidService = new System.Windows.Forms.Panel();
@@ -247,17 +260,27 @@
             this.pnlKaydet.Controls.Add(this.lblImageColumns);
             this.pnlKaydet.Controls.Add(this.lblCodeColumns);
             this.pnlKaydet.Controls.Add(this.lblGuidColumns);
+            this.pnlKaydet.Controls.Add(this.lblSearchColumns);
             this.pnlKaydet.Controls.Add(this.lblDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lblFileColumns);
             this.pnlKaydet.Controls.Add(this.lblUrlColumns);
+            this.pnlKaydet.Controls.Add(this.btnSearchColumnsClear);
+            this.pnlKaydet.Controls.Add(this.btnDeletedColumnsClear);
+            this.pnlKaydet.Controls.Add(this.btnGuidColumnsClear);
+            this.pnlKaydet.Controls.Add(this.btnUrlColumnsClear);
+            this.pnlKaydet.Controls.Add(this.btnCodeColumnsClear);
+            this.pnlKaydet.Controls.Add(this.btnFileColumnsClear);
+            this.pnlKaydet.Controls.Add(this.button1);
             this.pnlKaydet.Controls.Add(this.btnImageColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnImageColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnFileColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnCodeColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnFileColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnCodeColumnsAdd);
+            this.pnlKaydet.Controls.Add(this.btnSearchColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnGuidColumnsSub);
             this.pnlKaydet.Controls.Add(this.btnDeletedColumnsSub);
+            this.pnlKaydet.Controls.Add(this.btnSearchColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnGuidColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnDeletedColumnsAdd);
             this.pnlKaydet.Controls.Add(this.btnUrlColumnsSub);
@@ -267,13 +290,16 @@
             this.pnlKaydet.Controls.Add(this.lstImageColumns);
             this.pnlKaydet.Controls.Add(this.txtCodeColumns);
             this.pnlKaydet.Controls.Add(this.lstFileColumns);
+            this.pnlKaydet.Controls.Add(this.txtSearchColumns);
             this.pnlKaydet.Controls.Add(this.txtGuidColumns);
             this.pnlKaydet.Controls.Add(this.txtDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lstCodeColumns);
             this.pnlKaydet.Controls.Add(this.txtUrlColumns);
+            this.pnlKaydet.Controls.Add(this.lstSearchColumns);
             this.pnlKaydet.Controls.Add(this.lstGuidColumns);
             this.pnlKaydet.Controls.Add(this.lstDeletedColumns);
             this.pnlKaydet.Controls.Add(this.lstUrlColumns);
+            this.pnlKaydet.Controls.Add(this.chkRepositoryInternal);
             this.pnlKaydet.Controls.Add(this.chkAngular);
             this.pnlKaydet.Controls.Add(this.txtProjectName);
             this.pnlKaydet.Controls.Add(this.pnlAndroidService);
@@ -315,7 +341,7 @@
             // 
             this.lblImageColumns.AutoSize = true;
             this.lblImageColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblImageColumns.Location = new System.Drawing.Point(874, 206);
+            this.lblImageColumns.Location = new System.Drawing.Point(584, 54);
             this.lblImageColumns.Name = "lblImageColumns";
             this.lblImageColumns.Size = new System.Drawing.Size(94, 13);
             this.lblImageColumns.TabIndex = 92;
@@ -325,7 +351,7 @@
             // 
             this.lblCodeColumns.AutoSize = true;
             this.lblCodeColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblCodeColumns.Location = new System.Drawing.Point(729, 63);
+            this.lblCodeColumns.Location = new System.Drawing.Point(729, 206);
             this.lblCodeColumns.Name = "lblCodeColumns";
             this.lblCodeColumns.Size = new System.Drawing.Size(82, 13);
             this.lblCodeColumns.TabIndex = 92;
@@ -335,17 +361,27 @@
             // 
             this.lblGuidColumns.AutoSize = true;
             this.lblGuidColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblGuidColumns.Location = new System.Drawing.Point(729, 206);
+            this.lblGuidColumns.Location = new System.Drawing.Point(873, 53);
             this.lblGuidColumns.Name = "lblGuidColumns";
             this.lblGuidColumns.Size = new System.Drawing.Size(86, 13);
             this.lblGuidColumns.TabIndex = 92;
             this.lblGuidColumns.Text = "Guid Kolonları";
             // 
+            // lblSearchColumns
+            // 
+            this.lblSearchColumns.AutoSize = true;
+            this.lblSearchColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblSearchColumns.Location = new System.Drawing.Point(877, 255);
+            this.lblSearchColumns.Name = "lblSearchColumns";
+            this.lblSearchColumns.Size = new System.Drawing.Size(95, 13);
+            this.lblSearchColumns.TabIndex = 92;
+            this.lblSearchColumns.Text = "Arama Kolonları";
+            // 
             // lblDeletedColumns
             // 
             this.lblDeletedColumns.AutoSize = true;
             this.lblDeletedColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblDeletedColumns.Location = new System.Drawing.Point(584, 206);
+            this.lblDeletedColumns.Location = new System.Drawing.Point(873, 154);
             this.lblDeletedColumns.Name = "lblDeletedColumns";
             this.lblDeletedColumns.Size = new System.Drawing.Size(74, 13);
             this.lblDeletedColumns.TabIndex = 92;
@@ -355,7 +391,7 @@
             // 
             this.lblFileColumns.AutoSize = true;
             this.lblFileColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblFileColumns.Location = new System.Drawing.Point(877, 63);
+            this.lblFileColumns.Location = new System.Drawing.Point(587, 206);
             this.lblFileColumns.Name = "lblFileColumns";
             this.lblFileColumns.Size = new System.Drawing.Size(95, 13);
             this.lblFileColumns.TabIndex = 92;
@@ -365,15 +401,92 @@
             // 
             this.lblUrlColumns.AutoSize = true;
             this.lblUrlColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblUrlColumns.Location = new System.Drawing.Point(587, 63);
+            this.lblUrlColumns.Location = new System.Drawing.Point(732, 54);
             this.lblUrlColumns.Name = "lblUrlColumns";
             this.lblUrlColumns.Size = new System.Drawing.Size(76, 13);
             this.lblUrlColumns.TabIndex = 92;
             this.lblUrlColumns.Text = "Url Kolonları";
             // 
+            // btnSearchColumnsClear
+            // 
+            this.btnSearchColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnSearchColumnsClear.Location = new System.Drawing.Point(995, 269);
+            this.btnSearchColumnsClear.Name = "btnSearchColumnsClear";
+            this.btnSearchColumnsClear.Size = new System.Drawing.Size(25, 23);
+            this.btnSearchColumnsClear.TabIndex = 91;
+            this.btnSearchColumnsClear.Text = "Ø";
+            this.btnSearchColumnsClear.UseVisualStyleBackColor = true;
+            this.btnSearchColumnsClear.Click += new System.EventHandler(this.btnSearchColumnsClear_Click);
+            // 
+            // btnDeletedColumnsClear
+            // 
+            this.btnDeletedColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnDeletedColumnsClear.Location = new System.Drawing.Point(990, 168);
+            this.btnDeletedColumnsClear.Name = "btnDeletedColumnsClear";
+            this.btnDeletedColumnsClear.Size = new System.Drawing.Size(25, 23);
+            this.btnDeletedColumnsClear.TabIndex = 91;
+            this.btnDeletedColumnsClear.Text = "Ø";
+            this.btnDeletedColumnsClear.UseVisualStyleBackColor = true;
+            this.btnDeletedColumnsClear.Click += new System.EventHandler(this.btnDeletedColumnsClear_Click);
+            // 
+            // btnGuidColumnsClear
+            // 
+            this.btnGuidColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnGuidColumnsClear.Location = new System.Drawing.Point(990, 67);
+            this.btnGuidColumnsClear.Name = "btnGuidColumnsClear";
+            this.btnGuidColumnsClear.Size = new System.Drawing.Size(25, 23);
+            this.btnGuidColumnsClear.TabIndex = 91;
+            this.btnGuidColumnsClear.Text = "Ø";
+            this.btnGuidColumnsClear.UseVisualStyleBackColor = true;
+            this.btnGuidColumnsClear.Click += new System.EventHandler(this.btnGuidColumnsClear_Click);
+            // 
+            // btnUrlColumnsClear
+            // 
+            this.btnUrlColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnUrlColumnsClear.Location = new System.Drawing.Point(846, 68);
+            this.btnUrlColumnsClear.Name = "btnUrlColumnsClear";
+            this.btnUrlColumnsClear.Size = new System.Drawing.Size(25, 23);
+            this.btnUrlColumnsClear.TabIndex = 91;
+            this.btnUrlColumnsClear.Text = "Ø";
+            this.btnUrlColumnsClear.UseVisualStyleBackColor = true;
+            this.btnUrlColumnsClear.Click += new System.EventHandler(this.btnUrlColumnsClear_Click);
+            // 
+            // btnCodeColumnsClear
+            // 
+            this.btnCodeColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnCodeColumnsClear.Location = new System.Drawing.Point(846, 220);
+            this.btnCodeColumnsClear.Name = "btnCodeColumnsClear";
+            this.btnCodeColumnsClear.Size = new System.Drawing.Size(25, 23);
+            this.btnCodeColumnsClear.TabIndex = 91;
+            this.btnCodeColumnsClear.Text = "Ø";
+            this.btnCodeColumnsClear.UseVisualStyleBackColor = true;
+            this.btnCodeColumnsClear.Click += new System.EventHandler(this.btnCodeColumnsClear_Click);
+            // 
+            // btnFileColumnsClear
+            // 
+            this.btnFileColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnFileColumnsClear.Location = new System.Drawing.Point(701, 220);
+            this.btnFileColumnsClear.Name = "btnFileColumnsClear";
+            this.btnFileColumnsClear.Size = new System.Drawing.Size(25, 23);
+            this.btnFileColumnsClear.TabIndex = 91;
+            this.btnFileColumnsClear.Text = "Ø";
+            this.btnFileColumnsClear.UseVisualStyleBackColor = true;
+            this.btnFileColumnsClear.Click += new System.EventHandler(this.btnFileColumnsClear_Click);
+            // 
+            // button1
+            // 
+            this.button1.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.button1.Location = new System.Drawing.Point(701, 68);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(25, 23);
+            this.button1.TabIndex = 91;
+            this.button1.Text = "Ø";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.btnImageColumnsClear_Click);
+            // 
             // btnImageColumnsSub
             // 
-            this.btnImageColumnsSub.Location = new System.Drawing.Point(989, 220);
+            this.btnImageColumnsSub.Location = new System.Drawing.Point(675, 68);
             this.btnImageColumnsSub.Name = "btnImageColumnsSub";
             this.btnImageColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnImageColumnsSub.TabIndex = 91;
@@ -383,17 +496,17 @@
             // 
             // btnImageColumnsAdd
             // 
-            this.btnImageColumnsAdd.Location = new System.Drawing.Point(962, 220);
+            this.btnImageColumnsAdd.Location = new System.Drawing.Point(649, 68);
             this.btnImageColumnsAdd.Name = "btnImageColumnsAdd";
             this.btnImageColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnImageColumnsAdd.TabIndex = 91;
             this.btnImageColumnsAdd.Text = "+";
             this.btnImageColumnsAdd.UseVisualStyleBackColor = true;
-            this.btnImageColumnsAdd.Click += new System.EventHandler(this.btnImageColumns_Click);
+            this.btnImageColumnsAdd.Click += new System.EventHandler(this.btnImageColumnsAdd_Click);
             // 
             // btnFileColumnsSub
             // 
-            this.btnFileColumnsSub.Location = new System.Drawing.Point(989, 77);
+            this.btnFileColumnsSub.Location = new System.Drawing.Point(675, 220);
             this.btnFileColumnsSub.Name = "btnFileColumnsSub";
             this.btnFileColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnFileColumnsSub.TabIndex = 91;
@@ -403,7 +516,7 @@
             // 
             // btnCodeColumnsSub
             // 
-            this.btnCodeColumnsSub.Location = new System.Drawing.Point(846, 77);
+            this.btnCodeColumnsSub.Location = new System.Drawing.Point(820, 220);
             this.btnCodeColumnsSub.Name = "btnCodeColumnsSub";
             this.btnCodeColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnCodeColumnsSub.TabIndex = 91;
@@ -413,27 +526,37 @@
             // 
             // btnFileColumnsAdd
             // 
-            this.btnFileColumnsAdd.Location = new System.Drawing.Point(962, 77);
+            this.btnFileColumnsAdd.Location = new System.Drawing.Point(649, 220);
             this.btnFileColumnsAdd.Name = "btnFileColumnsAdd";
             this.btnFileColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnFileColumnsAdd.TabIndex = 91;
             this.btnFileColumnsAdd.Text = "+";
             this.btnFileColumnsAdd.UseVisualStyleBackColor = true;
-            this.btnFileColumnsAdd.Click += new System.EventHandler(this.btnFileColumns_Click);
+            this.btnFileColumnsAdd.Click += new System.EventHandler(this.btnFileColumnsAdd_Click);
             // 
             // btnCodeColumnsAdd
             // 
-            this.btnCodeColumnsAdd.Location = new System.Drawing.Point(818, 77);
+            this.btnCodeColumnsAdd.Location = new System.Drawing.Point(794, 220);
             this.btnCodeColumnsAdd.Name = "btnCodeColumnsAdd";
             this.btnCodeColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnCodeColumnsAdd.TabIndex = 91;
             this.btnCodeColumnsAdd.Text = "+";
             this.btnCodeColumnsAdd.UseVisualStyleBackColor = true;
-            this.btnCodeColumnsAdd.Click += new System.EventHandler(this.btnCodeColumns_Click);
+            this.btnCodeColumnsAdd.Click += new System.EventHandler(this.btnCodeColumnsAdd_Click);
+            // 
+            // btnSearchColumnsSub
+            // 
+            this.btnSearchColumnsSub.Location = new System.Drawing.Point(968, 269);
+            this.btnSearchColumnsSub.Name = "btnSearchColumnsSub";
+            this.btnSearchColumnsSub.Size = new System.Drawing.Size(25, 23);
+            this.btnSearchColumnsSub.TabIndex = 91;
+            this.btnSearchColumnsSub.Text = "-";
+            this.btnSearchColumnsSub.UseVisualStyleBackColor = true;
+            this.btnSearchColumnsSub.Click += new System.EventHandler(this.btnSearchColumnsSub_Click);
             // 
             // btnGuidColumnsSub
             // 
-            this.btnGuidColumnsSub.Location = new System.Drawing.Point(846, 220);
+            this.btnGuidColumnsSub.Location = new System.Drawing.Point(964, 67);
             this.btnGuidColumnsSub.Name = "btnGuidColumnsSub";
             this.btnGuidColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnGuidColumnsSub.TabIndex = 91;
@@ -443,7 +566,7 @@
             // 
             // btnDeletedColumnsSub
             // 
-            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(701, 220);
+            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(964, 168);
             this.btnDeletedColumnsSub.Name = "btnDeletedColumnsSub";
             this.btnDeletedColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsSub.TabIndex = 91;
@@ -451,29 +574,39 @@
             this.btnDeletedColumnsSub.UseVisualStyleBackColor = true;
             this.btnDeletedColumnsSub.Click += new System.EventHandler(this.btnDeletedColumnsSub_Click);
             // 
+            // btnSearchColumnsAdd
+            // 
+            this.btnSearchColumnsAdd.Location = new System.Drawing.Point(942, 269);
+            this.btnSearchColumnsAdd.Name = "btnSearchColumnsAdd";
+            this.btnSearchColumnsAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnSearchColumnsAdd.TabIndex = 91;
+            this.btnSearchColumnsAdd.Text = "+";
+            this.btnSearchColumnsAdd.UseVisualStyleBackColor = true;
+            this.btnSearchColumnsAdd.Click += new System.EventHandler(this.btnSearchColumnsAdd_Click);
+            // 
             // btnGuidColumnsAdd
             // 
-            this.btnGuidColumnsAdd.Location = new System.Drawing.Point(818, 220);
+            this.btnGuidColumnsAdd.Location = new System.Drawing.Point(938, 67);
             this.btnGuidColumnsAdd.Name = "btnGuidColumnsAdd";
             this.btnGuidColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnGuidColumnsAdd.TabIndex = 91;
             this.btnGuidColumnsAdd.Text = "+";
             this.btnGuidColumnsAdd.UseVisualStyleBackColor = true;
-            this.btnGuidColumnsAdd.Click += new System.EventHandler(this.btnGuidColumns_Click);
+            this.btnGuidColumnsAdd.Click += new System.EventHandler(this.btnGuidColumnsAdd_Click);
             // 
             // btnDeletedColumnsAdd
             // 
-            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(673, 220);
+            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(938, 168);
             this.btnDeletedColumnsAdd.Name = "btnDeletedColumnsAdd";
             this.btnDeletedColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsAdd.TabIndex = 91;
             this.btnDeletedColumnsAdd.Text = "+";
             this.btnDeletedColumnsAdd.UseVisualStyleBackColor = true;
-            this.btnDeletedColumnsAdd.Click += new System.EventHandler(this.btnDeletedColumns_Click);
+            this.btnDeletedColumnsAdd.Click += new System.EventHandler(this.btnDeletedColumnsAdd_Click);
             // 
             // btnUrlColumnsSub
             // 
-            this.btnUrlColumnsSub.Location = new System.Drawing.Point(700, 77);
+            this.btnUrlColumnsSub.Location = new System.Drawing.Point(820, 68);
             this.btnUrlColumnsSub.Name = "btnUrlColumnsSub";
             this.btnUrlColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsSub.TabIndex = 91;
@@ -483,96 +616,116 @@
             // 
             // btnUrlColumnsAdd
             // 
-            this.btnUrlColumnsAdd.Location = new System.Drawing.Point(673, 77);
+            this.btnUrlColumnsAdd.Location = new System.Drawing.Point(794, 68);
             this.btnUrlColumnsAdd.Name = "btnUrlColumnsAdd";
             this.btnUrlColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsAdd.TabIndex = 91;
             this.btnUrlColumnsAdd.Text = "+";
             this.btnUrlColumnsAdd.UseVisualStyleBackColor = true;
-            this.btnUrlColumnsAdd.Click += new System.EventHandler(this.btnUrlColumns_Click);
+            this.btnUrlColumnsAdd.Click += new System.EventHandler(this.btnUrlColumnsAdd_Click);
             // 
             // txtImageColumns
             // 
-            this.txtImageColumns.Location = new System.Drawing.Point(877, 222);
+            this.txtImageColumns.Location = new System.Drawing.Point(587, 70);
             this.txtImageColumns.Name = "txtImageColumns";
-            this.txtImageColumns.Size = new System.Drawing.Size(80, 20);
+            this.txtImageColumns.Size = new System.Drawing.Size(59, 20);
             this.txtImageColumns.TabIndex = 90;
             // 
             // txtFileColumns
             // 
-            this.txtFileColumns.Location = new System.Drawing.Point(877, 79);
+            this.txtFileColumns.Location = new System.Drawing.Point(587, 222);
             this.txtFileColumns.Name = "txtFileColumns";
-            this.txtFileColumns.Size = new System.Drawing.Size(80, 20);
+            this.txtFileColumns.Size = new System.Drawing.Size(59, 20);
             this.txtFileColumns.TabIndex = 90;
             // 
             // lstImageColumns
             // 
             this.lstImageColumns.FormattingEnabled = true;
             this.lstImageColumns.Items.AddRange(new object[] {
+            "picture",
             "pictureurl",
+            "image",
             "imageurl",
+            "thumb",
             "thumburl"});
-            this.lstImageColumns.Location = new System.Drawing.Point(877, 248);
+            this.lstImageColumns.Location = new System.Drawing.Point(587, 96);
             this.lstImageColumns.Name = "lstImageColumns";
             this.lstImageColumns.Size = new System.Drawing.Size(139, 95);
             this.lstImageColumns.TabIndex = 89;
             // 
             // txtCodeColumns
             // 
-            this.txtCodeColumns.Location = new System.Drawing.Point(732, 79);
+            this.txtCodeColumns.Location = new System.Drawing.Point(732, 222);
             this.txtCodeColumns.Name = "txtCodeColumns";
-            this.txtCodeColumns.Size = new System.Drawing.Size(80, 20);
+            this.txtCodeColumns.Size = new System.Drawing.Size(59, 20);
             this.txtCodeColumns.TabIndex = 90;
             // 
             // lstFileColumns
             // 
             this.lstFileColumns.FormattingEnabled = true;
             this.lstFileColumns.Items.AddRange(new object[] {
+            "file",
             "fileurl"});
-            this.lstFileColumns.Location = new System.Drawing.Point(877, 105);
+            this.lstFileColumns.Location = new System.Drawing.Point(587, 248);
             this.lstFileColumns.Name = "lstFileColumns";
             this.lstFileColumns.Size = new System.Drawing.Size(139, 95);
             this.lstFileColumns.TabIndex = 89;
             // 
+            // txtSearchColumns
+            // 
+            this.txtSearchColumns.Location = new System.Drawing.Point(880, 271);
+            this.txtSearchColumns.Name = "txtSearchColumns";
+            this.txtSearchColumns.Size = new System.Drawing.Size(59, 20);
+            this.txtSearchColumns.TabIndex = 90;
+            // 
             // txtGuidColumns
             // 
-            this.txtGuidColumns.Location = new System.Drawing.Point(732, 222);
+            this.txtGuidColumns.Location = new System.Drawing.Point(876, 69);
             this.txtGuidColumns.Name = "txtGuidColumns";
-            this.txtGuidColumns.Size = new System.Drawing.Size(80, 20);
+            this.txtGuidColumns.Size = new System.Drawing.Size(59, 20);
             this.txtGuidColumns.TabIndex = 90;
             // 
             // txtDeletedColumns
             // 
-            this.txtDeletedColumns.Location = new System.Drawing.Point(587, 222);
+            this.txtDeletedColumns.Location = new System.Drawing.Point(876, 170);
             this.txtDeletedColumns.Name = "txtDeletedColumns";
-            this.txtDeletedColumns.Size = new System.Drawing.Size(80, 20);
+            this.txtDeletedColumns.Size = new System.Drawing.Size(59, 20);
             this.txtDeletedColumns.TabIndex = 90;
             // 
             // lstCodeColumns
             // 
             this.lstCodeColumns.FormattingEnabled = true;
             this.lstCodeColumns.Items.AddRange(new object[] {
-            "code"});
-            this.lstCodeColumns.Location = new System.Drawing.Point(732, 105);
+            "code",
+            "shortcode"});
+            this.lstCodeColumns.Location = new System.Drawing.Point(732, 248);
             this.lstCodeColumns.Name = "lstCodeColumns";
             this.lstCodeColumns.Size = new System.Drawing.Size(139, 95);
             this.lstCodeColumns.TabIndex = 89;
             // 
             // txtUrlColumns
             // 
-            this.txtUrlColumns.Location = new System.Drawing.Point(587, 79);
+            this.txtUrlColumns.Location = new System.Drawing.Point(732, 70);
             this.txtUrlColumns.Name = "txtUrlColumns";
-            this.txtUrlColumns.Size = new System.Drawing.Size(80, 20);
+            this.txtUrlColumns.Size = new System.Drawing.Size(59, 20);
             this.txtUrlColumns.TabIndex = 90;
+            // 
+            // lstSearchColumns
+            // 
+            this.lstSearchColumns.FormattingEnabled = true;
+            this.lstSearchColumns.Location = new System.Drawing.Point(880, 297);
+            this.lstSearchColumns.Name = "lstSearchColumns";
+            this.lstSearchColumns.Size = new System.Drawing.Size(139, 43);
+            this.lstSearchColumns.TabIndex = 89;
             // 
             // lstGuidColumns
             // 
             this.lstGuidColumns.FormattingEnabled = true;
             this.lstGuidColumns.Items.AddRange(new object[] {
             "guid"});
-            this.lstGuidColumns.Location = new System.Drawing.Point(732, 248);
+            this.lstGuidColumns.Location = new System.Drawing.Point(876, 95);
             this.lstGuidColumns.Name = "lstGuidColumns";
-            this.lstGuidColumns.Size = new System.Drawing.Size(139, 95);
+            this.lstGuidColumns.Size = new System.Drawing.Size(139, 43);
             this.lstGuidColumns.TabIndex = 89;
             // 
             // lstDeletedColumns
@@ -580,9 +733,9 @@
             this.lstDeletedColumns.FormattingEnabled = true;
             this.lstDeletedColumns.Items.AddRange(new object[] {
             "deleted"});
-            this.lstDeletedColumns.Location = new System.Drawing.Point(587, 248);
+            this.lstDeletedColumns.Location = new System.Drawing.Point(876, 196);
             this.lstDeletedColumns.Name = "lstDeletedColumns";
-            this.lstDeletedColumns.Size = new System.Drawing.Size(139, 95);
+            this.lstDeletedColumns.Size = new System.Drawing.Size(139, 43);
             this.lstDeletedColumns.TabIndex = 89;
             // 
             // lstUrlColumns
@@ -592,15 +745,25 @@
             "url",
             "routeurl",
             "rewriteurl"});
-            this.lstUrlColumns.Location = new System.Drawing.Point(587, 105);
+            this.lstUrlColumns.Location = new System.Drawing.Point(732, 96);
             this.lstUrlColumns.Name = "lstUrlColumns";
             this.lstUrlColumns.Size = new System.Drawing.Size(139, 95);
             this.lstUrlColumns.TabIndex = 89;
             // 
+            // chkRepositoryInternal
+            // 
+            this.chkRepositoryInternal.AutoSize = true;
+            this.chkRepositoryInternal.Location = new System.Drawing.Point(8, 100);
+            this.chkRepositoryInternal.Name = "chkRepositoryInternal";
+            this.chkRepositoryInternal.Size = new System.Drawing.Size(105, 17);
+            this.chkRepositoryInternal.TabIndex = 88;
+            this.chkRepositoryInternal.Text = "Dahili Repository";
+            this.chkRepositoryInternal.UseVisualStyleBackColor = true;
+            // 
             // chkAngular
             // 
             this.chkAngular.AutoSize = true;
-            this.chkAngular.Location = new System.Drawing.Point(116, 53);
+            this.chkAngular.Location = new System.Drawing.Point(8, 77);
             this.chkAngular.Name = "chkAngular";
             this.chkAngular.Size = new System.Drawing.Size(62, 17);
             this.chkAngular.TabIndex = 88;
@@ -2456,5 +2619,18 @@
         private System.Windows.Forms.Button btnGuidColumnsAdd;
         private System.Windows.Forms.TextBox txtGuidColumns;
         public System.Windows.Forms.ListBox lstGuidColumns;
+        private System.Windows.Forms.CheckBox chkRepositoryInternal;
+        private System.Windows.Forms.Label lblSearchColumns;
+        private System.Windows.Forms.Button btnSearchColumnsSub;
+        private System.Windows.Forms.Button btnSearchColumnsAdd;
+        private System.Windows.Forms.TextBox txtSearchColumns;
+        public System.Windows.Forms.ListBox lstSearchColumns;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnFileColumnsClear;
+        private System.Windows.Forms.Button btnCodeColumnsClear;
+        private System.Windows.Forms.Button btnUrlColumnsClear;
+        private System.Windows.Forms.Button btnGuidColumnsClear;
+        private System.Windows.Forms.Button btnDeletedColumnsClear;
+        private System.Windows.Forms.Button btnSearchColumnsClear;
     }
 }

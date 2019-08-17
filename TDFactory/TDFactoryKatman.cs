@@ -136,6 +136,8 @@ namespace TDFactory
             projectName = !String.IsNullOrEmpty(txtProjectName.Text) ? txtProjectName.Text : "ProjectName";
             projectName = projectName.Replace(" ", "");
 
+            RepositoryType = chkRepositoryInternal.Checked ? "using " + projectName + ".Data;" : "using Repository.Data;";
+
             connectionInfo = new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = chkWindowsAuthentication.Checked, Username = txtKullaniciAdi.Text, Password = txtSifre.Text };
 
             folderDialogKatmanOlustur.SelectedPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
@@ -155,6 +157,7 @@ namespace TDFactory
                     FileColumns = lstFileColumns.Items.ToStringList();
                     ImageColumns = lstImageColumns.Items.ToStringList();
                     CodeColumns = lstCodeColumns.Items.ToStringList();
+                    SearchColumns = lstSearchColumns.Items.ToStringList();
 
                     if (chkAngular.Checked)
                     {
@@ -688,7 +691,8 @@ namespace TDFactory
 
         private void chkAngular_CheckedChanged(object sender, EventArgs e)
         {
-            if(((CheckBox)sender).Checked) {
+            if (((CheckBox)sender).Checked)
+            {
                 if (!txtProjectName.Text.ToUrl(true).Contains("angular"))
                 {
                     txtProjectName.Text = txtProjectName.Text + "Angular";
@@ -703,7 +707,7 @@ namespace TDFactory
             }
         }
 
-        private void btnUrlColumns_Click(object sender, EventArgs e)
+        private void btnUrlColumnsAdd_Click(object sender, EventArgs e)
         {
             string column = txtUrlColumns.Text.Trim().Replace(" ", "").ToUrl(true);
 
@@ -712,11 +716,12 @@ namespace TDFactory
                 if (!lstUrlColumns.Items.Contains(column))
                 {
                     lstUrlColumns.Items.Add(column);
+                    txtUrlColumns.Text = "";
                 }
             }
         }
 
-        private void btnDeletedColumns_Click(object sender, EventArgs e)
+        private void btnDeletedColumnsAdd_Click(object sender, EventArgs e)
         {
             string column = txtDeletedColumns.Text.Trim().Replace(" ", "").ToUrl(true);
 
@@ -725,11 +730,12 @@ namespace TDFactory
                 if (!lstDeletedColumns.Items.Contains(column))
                 {
                     lstDeletedColumns.Items.Add(column);
+                    txtDeletedColumns.Text = "";
                 }
             }
         }
 
-        private void btnGuidColumns_Click(object sender, EventArgs e)
+        private void btnGuidColumnsAdd_Click(object sender, EventArgs e)
         {
             string column = txtGuidColumns.Text.Trim().Replace(" ", "").ToUrl(true);
 
@@ -738,11 +744,12 @@ namespace TDFactory
                 if (!lstGuidColumns.Items.Contains(column))
                 {
                     lstGuidColumns.Items.Add(column);
+                    txtGuidColumns.Text = "";
                 }
             }
         }
 
-        private void btnFileColumns_Click(object sender, EventArgs e)
+        private void btnFileColumnsAdd_Click(object sender, EventArgs e)
         {
             string column = txtFileColumns.Text.Trim().Replace(" ", "").ToUrl(true);
 
@@ -751,11 +758,12 @@ namespace TDFactory
                 if (!lstFileColumns.Items.Contains(column))
                 {
                     lstFileColumns.Items.Add(column);
+                    txtFileColumns.Text = "";
                 }
             }
         }
 
-        private void btnImageColumns_Click(object sender, EventArgs e)
+        private void btnImageColumnsAdd_Click(object sender, EventArgs e)
         {
             string column = txtImageColumns.Text.Trim().Replace(" ", "").ToUrl(true);
 
@@ -764,11 +772,12 @@ namespace TDFactory
                 if (!lstImageColumns.Items.Contains(column))
                 {
                     lstImageColumns.Items.Add(column);
+                    txtImageColumns.Text = "";
                 }
             }
         }
 
-        private void btnCodeColumns_Click(object sender, EventArgs e)
+        private void btnCodeColumnsAdd_Click(object sender, EventArgs e)
         {
             string column = txtCodeColumns.Text.Trim().Replace(" ", "").ToUrl(true);
 
@@ -777,6 +786,21 @@ namespace TDFactory
                 if (!lstCodeColumns.Items.Contains(column))
                 {
                     lstCodeColumns.Items.Add(column);
+                    txtCodeColumns.Text = "";
+                }
+            }
+        }
+
+        private void btnSearchColumnsAdd_Click(object sender, EventArgs e)
+        {
+            string column = txtSearchColumns.Text.Trim().Replace(" ", "").ToUrl(true);
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstSearchColumns.Items.Contains(column))
+                {
+                    lstSearchColumns.Items.Add(column);
+                    txtSearchColumns.Text = "";
                 }
             }
         }
@@ -809,6 +833,46 @@ namespace TDFactory
         private void btnCodeColumnsSub_Click(object sender, EventArgs e)
         {
             lstCodeColumns.Items.Remove(lstCodeColumns.SelectedItem);
+        }
+
+        private void btnSearchColumnsSub_Click(object sender, EventArgs e)
+        {
+            lstSearchColumns.Items.Remove(lstSearchColumns.SelectedItem);
+        }
+
+        private void btnImageColumnsClear_Click(object sender, EventArgs e)
+        {
+            lstImageColumns.Items.Clear();
+        }
+
+        private void btnFileColumnsClear_Click(object sender, EventArgs e)
+        {
+            lstFileColumns.Items.Clear();
+        }
+
+        private void btnUrlColumnsClear_Click(object sender, EventArgs e)
+        {
+            lstUrlColumns.Items.Clear();
+        }
+
+        private void btnCodeColumnsClear_Click(object sender, EventArgs e)
+        {
+            lstCodeColumns.Items.Clear();
+        }
+
+        private void btnGuidColumnsClear_Click(object sender, EventArgs e)
+        {
+            lstGuidColumns.Items.Clear();
+        }
+
+        private void btnDeletedColumnsClear_Click(object sender, EventArgs e)
+        {
+            lstDeletedColumns.Items.Clear();
+        }
+
+        private void btnSearchColumnsClear_Click(object sender, EventArgs e)
+        {
+            lstSearchColumns.Items.Clear();
         }
 
         void ClearLabel()

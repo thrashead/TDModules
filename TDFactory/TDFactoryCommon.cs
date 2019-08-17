@@ -44,6 +44,7 @@ namespace TDFactory
                         List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
                         List<ColumnInfo> fileColumns = TableColumns(Table, ColumnType.FileColumns);
                         List<ColumnInfo> imageColumns = TableColumns(Table, ColumnType.ImageColumns);
+                        List<ColumnInfo> searchColumns = TableColumns(Table, ColumnType.SearchColumns);
                         bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
 
                         bool allowHtml = false;
@@ -74,7 +75,7 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("using System.Linq;");
-                        yaz.WriteLine("using Repository.Data;");
+                        yaz.WriteLine(RepositoryType);
                         yaz.WriteLine("using TDLibrary;");
 
                         if (fkcList.Count > 0)
@@ -745,6 +746,79 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
+                        foreach (ColumnInfo item in searchColumns)
+                        {
+                            // SelectBySearch
+                            yaz.WriteLine("\t\tpublic List<" + Table + "> SelectBy" + item.ColumnName + "(string searchText, bool relation = true)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tList<usp_" + Table + "SelectBy" + item.ColumnName + "_Result> tableTemp = entity.usp_" + Table + "SelectBy" + item.ColumnName + "(searchText).ToList();");
+                            yaz.WriteLine("\t\t\tList<" + Table + "> table = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + "SelectBy" + item.ColumnName + "_Result>();");
+                            yaz.WriteLine("");
+
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\tif (relation)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tforeach(" + Table + " item in table)");
+                                yaz.WriteLine("\t\t\t\t{");
+                            }
+
+                            j = 1;
+                            if (fkcListForeign.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
+
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+
+                                    if (j < fkcListForeign.Count)
+                                        yaz.WriteLine("");
+
+                                    j++;
+                                }
+
+                                if (fkcList.Count > 0)
+                                {
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            if (fkcList.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    j = 1;
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
+
+                                        yaz.WriteLine("\t\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(item." + fkc.PrimaryColumnName + ").ToList();"); ;
+                                        yaz.WriteLine("\t\t\t\t\titem." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+
+                                        if (j < fkcList.Count)
+                                            yaz.WriteLine("");
+
+                                        j++;
+                                    }
+                                }
+                            }
+
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                            }
+
+                            yaz.WriteLine("\t\t\treturn table;");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                        }
+
                         // Insert
                         string linkID = ", bool? none = null";
                         string[] links = new string[fkcListForeign.Count];
@@ -1016,6 +1090,7 @@ namespace TDFactory
                         List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
                         List<ColumnInfo> fileColumns = TableColumns(Table, ColumnType.FileColumns);
                         List<ColumnInfo> imageColumns = TableColumns(Table, ColumnType.ImageColumns);
+                        List<ColumnInfo> searchColumns = TableColumns(Table, ColumnType.SearchColumns);
                         bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
 
                         yaz.WriteLine("using System;");
@@ -1209,6 +1284,12 @@ namespace TDFactory
                             yaz.WriteLine("\t\tList<" + Table + "> SelectBy" + item.ColumnName + "(string code, bool relation);");
                         }
 
+                        foreach (ColumnInfo item in searchColumns)
+                        {
+                            // SelectBySearch
+                            yaz.WriteLine("\t\tList<" + Table + "> SelectBy" + item.ColumnName + "(string searchText, bool relation);");
+                        }
+
                         // Insert
                         string linkID = ", bool? none";
                         string[] links = new string[fkcListForeign.Count];
@@ -1340,6 +1421,7 @@ namespace TDFactory
                 List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
                 List<ColumnInfo> guidColumns = TableColumns(Table, ColumnType.GuidColumns);
                 List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
+                List<ColumnInfo> searchColumns = TableColumns(Table, ColumnType.SearchColumns);
                 bool deleted = TableColumns(Table, ColumnType.DeletedColumns).Count > 0 ? true : false;
                 columnNames = columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList();
 
@@ -1401,6 +1483,15 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[OperationContract]");
                             yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectBy" + item.ColumnName + "/?code={code}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
                             yaz.WriteLine("\t\tList<" + Table + "Data> SelectBy" + item.ColumnName + "(string code);");
+                            yaz.WriteLine("");
+                        }
+
+                        foreach (ColumnInfo item in searchColumns)
+                        {
+                            // SelectBySearch
+                            yaz.WriteLine("\t\t[OperationContract]");
+                            yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectBy" + item.ColumnName + "/?searchText={searchText}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\tList<" + Table + "Data> SelectBy" + item.ColumnName + "(string searchText);");
                             yaz.WriteLine("");
                         }
 
@@ -1626,6 +1717,16 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
+                        foreach (ColumnInfo item in searchColumns)
+                        {
+                            //SelectBySearch
+                            yaz.WriteLine("\t\tpublic List<" + Table + "Data> SelectBy" + item.ColumnName + "(string searchText)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\treturn model.SelectBy" + item.ColumnName + "(searchText).ChangeModelList<" + Table + "Data, " + Table + ">();");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                        }
+
                         //Insert
                         yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data table)");
                         yaz.WriteLine("\t\t{");
@@ -1732,6 +1833,7 @@ namespace TDFactory
                         List<ColumnInfo> guidColumns = TableColumns(Table, ColumnType.GuidColumns);
                         List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
                         List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
+                        List<ColumnInfo> searchColumns = TableColumns(Table, ColumnType.SearchColumns);
                         string deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
 
                         string idType = null;
@@ -1852,12 +1954,7 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
-
-                            if (idType != null)
-                            {
-                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
-                            }
-
+                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
                             yaz.WriteLine("AS");
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
@@ -1878,12 +1975,7 @@ namespace TDFactory
 
                             yaz.WriteLine(sqlText);
                             yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
-
-                            if (idType != null)
-                            {
-                                yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
-                            }
-
+                            yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
                             yaz.WriteLine("");
                             yaz.WriteLine("\tCOMMIT");
                             yaz.WriteLine("GO");
@@ -1901,12 +1993,7 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
-
-                            if (idType != null)
-                            {
-                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
-                            }
-
+                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
                             yaz.WriteLine("AS");
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
@@ -1927,12 +2014,7 @@ namespace TDFactory
 
                             yaz.WriteLine(sqlText);
                             yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
-
-                            if (idType != null)
-                            {
-                                yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
-                            }
-
+                            yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
                             yaz.WriteLine("");
                             yaz.WriteLine("\tCOMMIT");
                             yaz.WriteLine("GO");
@@ -1950,10 +2032,53 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
 
-                            if (idType != null)
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText += "[" + column.ColumnName + "],";
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+                            yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //SelectByCode//
+                        }
+
+                        foreach (ColumnInfo item in searchColumns)
+                        {
+                            //SelectBySearch//
+                            yaz.WriteLine("/* SelectBy" + item.ColumnName + " */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+
+                            if (item.Type.Name == "String")
                             {
                                 yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
                             }
 
                             yaz.WriteLine("AS");
@@ -1977,16 +2102,23 @@ namespace TDFactory
                             yaz.WriteLine(sqlText);
                             yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
-                            if (idType != null)
+                            string whereClause;
+
+                            if (item.Type.Name == "String")
                             {
-                                yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
+                                whereClause = "\tWHERE ([" + item.ColumnName + "] LIKE '%' + @" + item.ColumnName + " + '%' OR @" + item.ColumnName + " IS NULL)" + deleted;
+                            }
+                            else
+                            {
+                                whereClause = "\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted;
                             }
 
+                            yaz.WriteLine(whereClause);
                             yaz.WriteLine("");
                             yaz.WriteLine("\tCOMMIT");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("");
-                            //SelectByCode//
+                            //SelectBySearch//
                         }
 
                         //LinkedSelect//
