@@ -2679,6 +2679,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\tvar extParams = tempurl.split('?')[1];");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\ttempurl = tempurl.replace(\"?\" + extParams, \"\");");
+                    yaz.WriteLine("\t\ttempurl = tempurl.replace(MainPath, \"\");");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tUrling.path = tempurl;");
                     yaz.WriteLine("\t\tUrling.controller = tempurl.split('/')[0];");
@@ -2687,6 +2688,15 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tif (extParams != undefined)");
                     yaz.WriteLine("\t\t\tUrling.parameters = extParams.split('&');");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t$(\"ul.menu li a\").removeClass(\"active\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (Urling.controller != \"\") {");
+                    yaz.WriteLine("\t\t\t$(\"ul.menu li a[data-url='\" + Urling.controller + \"']\").addClass(\"active\");");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse {");
+                    yaz.WriteLine("\t\t\t$(\"ul.menu li a[data-url='Index']\").addClass(\"active\");");
+                    yaz.WriteLine("\t\t}");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("});");
 
@@ -2742,6 +2752,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\tvar extParams = tempurl.split('?')[1];");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\ttempurl = tempurl.replace(\"?\" + extParams, \"\");");
+                    yaz.WriteLine("\t\ttempurl = tempurl.replace(AdminPath, \"\");");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tUrling.path = tempurl;");
                     yaz.WriteLine("\t\tUrling.controller = tempurl.split('/')[0];");
