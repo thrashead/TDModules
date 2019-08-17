@@ -541,9 +541,9 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
 
-                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-scripts></" + projectName.Substring(0, 3).ToUrl(true) + "-header>");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-header></" + projectName.Substring(0, 3).ToUrl(true) + "-header>");
                     yaz.WriteLine("<router-outlet></router-outlet>");
-                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-scripts></" + projectName.Substring(0, 3).ToUrl(true) + "-footer>");
+                    yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-footer></" + projectName.Substring(0, 3).ToUrl(true) + "-footer>");
                     yaz.WriteLine("<" + projectName.Substring(0, 3).ToUrl(true) + "-scripts></" + projectName.Substring(0, 3).ToUrl(true) + "-scripts>");
                     yaz.Close();
                 }
