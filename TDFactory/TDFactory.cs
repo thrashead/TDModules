@@ -43,7 +43,6 @@ namespace TDFactory
         public string[] ImageColumns;
         public string[] SearchColumns;
 
-
         int tableindex, selectedtableindex;
         bool tableselected = false;
         string DBName = "";

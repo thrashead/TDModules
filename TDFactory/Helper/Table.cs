@@ -24,6 +24,7 @@ namespace TDFactory.Helper
                 FILEColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstFileColumns))).ToList();
                 IMAGEColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstImageColumns))).ToList();
                 SEARCHColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstSearchColumns))).ToList();
+                EDITORColumns = Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(ListBoxItems(lstDeletedColumns)) && !a.ColumnName.In(ListBoxItems(lstFileColumns)) && !a.ColumnName.In(ListBoxItems(lstImageColumns))).ToList();
                 FkcList = ForeignKeyCheck(con, tableName).Where(a => a.PrimaryTableName == tableName).ToList();
                 FkcForeignList = ForeignKeyCheck(con).Where(a => a.ForeignTableName == tableName).ToList();
                 IdentityColumns = Helper.ReturnIdentityColumn(conInfo, tableName);
@@ -44,6 +45,7 @@ namespace TDFactory.Helper
         public List<ColumnInfo> FILEColumns { get; set; }
         public List<ColumnInfo> IMAGEColumns { get; set; }
         public List<ColumnInfo> SEARCHColumns { get; set; }
+        public List<ColumnInfo> EDITORColumns { get; set; }
         public List<ForeignKeyChecker> FkcList { get; set; }
         public List<ForeignKeyChecker> FkcForeignList { get; set; }
         public List<string> IdentityColumns { get; set; }

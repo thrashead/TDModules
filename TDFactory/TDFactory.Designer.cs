@@ -113,6 +113,7 @@
             this.chkMVCHepsi = new System.Windows.Forms.CheckBox();
             this.tabpageVeritabaniOlustur = new System.Windows.Forms.TabPage();
             this.grpTablo = new System.Windows.Forms.GroupBox();
+            this.btnVTIDEkle = new System.Windows.Forms.Button();
             this.btnVTTabloSil = new System.Windows.Forms.Button();
             this.chkVTTabloDuzenle = new System.Windows.Forms.CheckBox();
             this.cmbVTTabloAdi = new System.Windows.Forms.ComboBox();
@@ -1303,6 +1304,7 @@
             // 
             // grpTablo
             // 
+            this.grpTablo.Controls.Add(this.btnVTIDEkle);
             this.grpTablo.Controls.Add(this.btnVTTabloSil);
             this.grpTablo.Controls.Add(this.chkVTTabloDuzenle);
             this.grpTablo.Controls.Add(this.cmbVTTabloAdi);
@@ -1316,6 +1318,17 @@
             this.grpTablo.TabIndex = 7;
             this.grpTablo.TabStop = false;
             this.grpTablo.Text = "Tablo İşlemleri";
+            // 
+            // btnVTIDEkle
+            // 
+            this.btnVTIDEkle.Enabled = false;
+            this.btnVTIDEkle.Location = new System.Drawing.Point(344, 19);
+            this.btnVTIDEkle.Name = "btnVTIDEkle";
+            this.btnVTIDEkle.Size = new System.Drawing.Size(75, 23);
+            this.btnVTIDEkle.TabIndex = 15;
+            this.btnVTIDEkle.Text = "ID Ekle";
+            this.btnVTIDEkle.UseVisualStyleBackColor = true;
+            this.btnVTIDEkle.Click += new System.EventHandler(this.btnVTIDEkle_Click);
             // 
             // btnVTTabloSil
             // 
@@ -2657,5 +2670,6 @@
         private System.Windows.Forms.Button btnSearchColumnsClear;
         private System.Windows.Forms.TextBox txtRepository;
         private System.Windows.Forms.Label lblRepository;
+        private System.Windows.Forms.Button btnVTIDEkle;
     }
 }

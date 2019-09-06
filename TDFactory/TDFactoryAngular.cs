@@ -2726,17 +2726,18 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        yaz.WriteLine("import { Component } from \"@angular/core\";");
+                        string afterViewChecked = table.EDITORColumns.Count > 0 ? ", AfterViewChecked" : "";
+
+                        yaz.WriteLine("import { Component" + afterViewChecked + " } from \"@angular/core\";");
                         yaz.WriteLine("import { Subscription } from \"rxjs\";");
                         yaz.WriteLine("import { ModelService } from \"../../services/model\";");
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
 
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                        foreach (ColumnInfo column in table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1).ToList())
+                        if (table.EDITORColumns.Count > 0)
                         {
                             yaz.WriteLine("import ClassicEditor from '../../../../../Content/admin/js/ckeditor/ckeditor.js';");
-                            break;
                         }
 
                         yaz.WriteLine("");
@@ -2744,7 +2745,10 @@ namespace TDFactory
                         yaz.WriteLine("\ttemplateUrl: './insert.html'");
                         yaz.WriteLine("})");
                         yaz.WriteLine("");
-                        yaz.WriteLine("export class Admin" + Table + "InsertComponent {");
+
+                        afterViewChecked = table.EDITORColumns.Count > 0 ? " implements AfterViewChecked" : "";
+
+                        yaz.WriteLine("export class Admin" + Table + "InsertComponent" + afterViewChecked + " {");
                         yaz.WriteLine("\terrorMsg: string;");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tinsertForm: FormGroup;");
@@ -2791,9 +2795,9 @@ namespace TDFactory
 
                         int i = 0;
 
-                        List<ColumnInfo> tempTableColumns = table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(FileColumns, InType.ToUrlLower) && !a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
+                        List<ColumnInfo> tempTableColumns = table.EDITORColumns;
 
-                        foreach (ColumnInfo column in tempTableColumns)
+                        foreach (ColumnInfo column in table.EDITORColumns)
                         {
                             if (i == 0)
                             {
@@ -2863,6 +2867,19 @@ namespace TDFactory
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
 
+                        if (table.EDITORColumns.Count > 0)
+                        {
+                            yaz.WriteLine("\tngAfterViewChecked() {");
+
+                            foreach (ColumnInfo item in table.EDITORColumns)
+                            {
+                                yaz.WriteLine("\t\t$(\"#" + item.ColumnName + "\").next(\"div.ck\").find(\".ck-content\").attr(\"data-id\", \"" + item.ColumnName + "\");");
+                            }
+
+                            yaz.WriteLine("\t}");
+                            yaz.WriteLine("");
+                        }
+
                         if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
                             foreach (ColumnInfo item in table.FILEColumns)
@@ -2930,7 +2947,7 @@ namespace TDFactory
                             {
                                 if (column.Type.Name == "String" && column.CharLength == -1 && !column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
-                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = $(\".ck-content\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
+                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = $(\".ck-content[data-id='" + column.ColumnName + "']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
                                 }
                                 else if (!column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
@@ -2982,17 +2999,18 @@ namespace TDFactory
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
-                            yaz.WriteLine("import { Component } from \"@angular/core\";");
+                            string afterViewChecked = table.EDITORColumns.Count > 0 ? ", AfterViewChecked" : "";
+
+                            yaz.WriteLine("import { Component" + afterViewChecked + " } from \"@angular/core\";");
                             yaz.WriteLine("import { Subscription } from \"rxjs\";");
                             yaz.WriteLine("import { ModelService } from \"../../services/model\";");
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                            foreach (ColumnInfo column in table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
+                            if (table.EDITORColumns.Count > 0)
                             {
                                 yaz.WriteLine("import * as $ from 'jquery';");
                                 yaz.WriteLine("import ClassicEditor from \"../../../../../Content/admin/js/ckeditor/ckeditor.js\";");
-                                break;
                             }
 
                             if (table.FkcList.Count > 0)
@@ -3005,7 +3023,10 @@ namespace TDFactory
                             yaz.WriteLine("\ttemplateUrl: './update.html'");
                             yaz.WriteLine("})");
                             yaz.WriteLine("");
-                            yaz.WriteLine("export class Admin" + Table + "UpdateComponent {");
+
+                            afterViewChecked = table.EDITORColumns.Count > 0 ? " implements AfterViewChecked" : "";
+
+                            yaz.WriteLine("export class Admin" + Table + "UpdateComponent" + afterViewChecked + " {");
                             yaz.WriteLine("\terrorMsg: string;");
                             yaz.WriteLine("\tid: string;");
                             yaz.WriteLine("");
@@ -3048,9 +3069,10 @@ namespace TDFactory
                             yaz.WriteLine("");
 
                             int i = 0;
-                            List<ColumnInfo> tempTableColumns = table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(FileColumns, InType.ToUrlLower) && !a.ColumnName.In(ImageColumns, InType.ToUrlLower)).ToList();
 
-                            foreach (ColumnInfo column in tempTableColumns)
+                            List<ColumnInfo> tempTableColumns = table.EDITORColumns;
+
+                            foreach (ColumnInfo column in table.EDITORColumns)
                             {
                                 if (i == 0)
                                 {
@@ -3063,17 +3085,19 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t.then(editor => {");
                                 yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
                                 yaz.WriteLine("\t\t\t\t});");
-                                yaz.WriteLine("");
 
-                                if (i == 0)
+                                if (tempTableColumns.Count <= i)
                                 {
-                                    yaz.WriteLine("\t\t}, 1000);");
+                                    yaz.WriteLine("");
                                 }
 
                                 if (tempTableColumns.Count == i + 1)
                                 {
+                                    yaz.WriteLine("\t\t}, 1000);");
                                     yaz.WriteLine("");
                                 }
+
+                                i++;
                             }
 
                             yaz.WriteLine("\t\tthis.updateForm = this.formBuilder.group({");
@@ -3114,6 +3138,20 @@ namespace TDFactory
                             yaz.WriteLine("\t\t});");
                             yaz.WriteLine("\t}");
                             yaz.WriteLine("");
+
+                            if (table.EDITORColumns.Count > 0)
+                            {
+                                yaz.WriteLine("\tngAfterViewChecked() {");
+
+                                foreach (ColumnInfo item in table.EDITORColumns)
+                                {
+                                    yaz.WriteLine("\t\t$(\"#" + item.ColumnName + "\").next(\"div.ck\").find(\".ck-content\").attr(\"data-id\", \"" + item.ColumnName + "\");");
+                                }
+
+                                yaz.WriteLine("\t}");
+                                yaz.WriteLine("");
+                            }
+
                             yaz.WriteLine("\tFillData() {");
                             yaz.WriteLine("\t\tif (this.callTable == true) {");
                             yaz.WriteLine("\t\t\tthis.route.params.subscribe((params: Params) => {");
@@ -3220,7 +3258,7 @@ namespace TDFactory
                             {
                                 if (column.Type.Name == "String" && column.CharLength == -1 && !column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
-                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = $(\".ck-content\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
+                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = $(\".ck-content[data-id='" + column.ColumnName + "']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
                                 }
                                 else if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {

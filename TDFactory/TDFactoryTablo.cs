@@ -117,6 +117,50 @@ namespace TDFactory
             ClearTableControls();
         }
 
+        private void btnVTIDEkle_Click(object sender, EventArgs e)
+        {
+            foreach (object item in lstVTKolonlar.Items)
+            {
+                if (item.ToString().Split('_')[0].Replace("[", "").Replace("]", "") == "ID")
+                {
+                    MessageBox.Show("Bu isimde kolon zaten oluşturulmuş.");
+                    return;
+                }
+            }
+
+            btnVTKolonSil.Enabled = true;
+            btnVTKolonTemizle.Enabled = true;
+
+            if (lstVTKolonlar.Items.Count > 1)
+            {
+                btnVTRelationOlustur.Enabled = true;
+                btnVTKolonYukari.Enabled = true;
+                btnVTKolonAsagi.Enabled = true;
+            }
+            else
+            {
+                btnVTRelationOlustur.Enabled = false;
+                btnVTKolonYukari.Enabled = false;
+                btnVTKolonAsagi.Enabled = false;
+            }
+
+            ColumnInfo tempColumn = new ColumnInfo();
+
+            tempColumn.TableName = txtVTTabloAdi.Text;
+            tempColumn.ColumnName = "ID";
+            tempColumn.DataType = "int";
+            tempColumn.IsPrimaryKey = true;
+            tempColumn.IsIdentity = true;
+            tempColumn.IsNullable = false;
+            tempColumn.SeedValue = "1";
+            tempColumn.IncrementValue = "1";
+
+            string kolon = "[ID]_int_PRIMARY KEY_IDENTITY(1,1)_NOT NULL";
+
+            lstVTKolonlar.Items.Add(kolon);
+            tempColumnInfos.Add(tempColumn);
+        }
+
         private void btnVTKolonEkle_Click(object sender, EventArgs e)
         {
             if (!String.IsNullOrEmpty(txtVTKolonAdi.Text) && cmbVTVeriTipi.SelectedIndex >= 0)
@@ -195,7 +239,7 @@ namespace TDFactory
                 else
                 {
                     kolon += "_NOT NULL";
-                    tempColumn.IsNullable = true;
+                    tempColumn.IsNullable = false;
                 }
 
                 if (!String.IsNullOrEmpty(txtVTVarsayilanDeger.Text))
@@ -388,6 +432,7 @@ namespace TDFactory
             if (txtVTTabloAdi.Text.Length > 0)
             {
                 grpKolonlar.Enabled = true;
+                btnVTIDEkle.Enabled = true;
 
                 if (lstVTKolonlar.Items.Count > 0)
                 {
@@ -408,6 +453,7 @@ namespace TDFactory
             else
             {
                 grpKolonlar.Enabled = false;
+                btnVTIDEkle.Enabled = false;
 
                 if (lstVTKolonlar.Items.Count > 0)
                 {
@@ -608,6 +654,7 @@ namespace TDFactory
                     if (cmbVTTabloAdi.Items.Count > 0)
                     {
                         cmbVTTabloAdi.SelectedIndex = 0;
+                        btnVTIDEkle.Enabled = true;
 
                         if (chkWindowsAuthentication.Checked == true)
                         {
@@ -692,6 +739,10 @@ namespace TDFactory
                             btnVTKolonAsagi.Enabled = false;
                         }
                     }
+                    else
+                    {
+                        btnVTIDEkle.Enabled = false;
+                    }
                 }
 
                 if (cmbVTTabloAdi.Items.Count > 0)
@@ -721,6 +772,7 @@ namespace TDFactory
                 txtVTTabloAdi.Visible = true;
                 cmbVTTabloAdi.Items.Clear();
                 lstVTKolonlar.Items.Clear();
+                btnVTIDEkle.Enabled = false;
 
                 if (lstVTKolonlar.Items.Count > 0)
                 {
