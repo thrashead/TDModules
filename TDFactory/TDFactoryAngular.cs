@@ -1078,7 +1078,7 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("import { Component, AfterViewInit } from '@angular/core';");
                     yaz.WriteLine("import { Router, RouterEvent, ActivationEnd } from '@angular/router';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
@@ -1086,13 +1086,13 @@ namespace TDFactory
                     yaz.WriteLine("\ttemplateUrl: './leftmenu.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
-                    yaz.WriteLine("export class AdminLeftMenuComponent {");
+                    yaz.WriteLine("export class AdminLeftMenuComponent implements AfterViewInit {");
                     yaz.WriteLine("\terrorMsg: string;");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tconstructor(private router: Router) {");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\tngAfterContentInit() {");
+                    yaz.WriteLine("\tngAfterViewInit() {");
                     yaz.WriteLine("\t\tthis.LeftMenuClick();");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tthis.router.events.subscribe((event: RouterEvent) => {");
