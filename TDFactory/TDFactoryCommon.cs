@@ -1080,6 +1080,14 @@ namespace TDFactory
 
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#endregion");
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t#region User Defined");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t#endregion");
+
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("}");
                         yaz.Close();
