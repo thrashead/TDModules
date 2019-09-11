@@ -2839,7 +2839,21 @@ namespace TDFactory
                                 {
                                     if (column.IsNullable)
                                     {
-                                        yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
+                                        if (column.Type.Name == "String")
+                                        {
+                                            if (column.CharLength == -1)
+                                            {
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
+                                            }
+                                            else
+                                            {
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.maxLength(" + column.CharLength + ")]),");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
+                                        }
                                     }
                                     else
                                     {
@@ -2855,7 +2869,7 @@ namespace TDFactory
                                             }
                                             else
                                             {
-                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(255)]),");
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(" + column.CharLength + ")]),");
                                             }
                                         }
                                     }
@@ -3112,7 +3126,21 @@ namespace TDFactory
                                 {
                                     if (column.IsNullable)
                                     {
-                                        yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
+                                        if (column.Type.Name == "String")
+                                        {
+                                            if (column.CharLength == -1)
+                                            {
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
+                                            }
+                                            else
+                                            {
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.maxLength(" + column.CharLength + ")]),");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
+                                        }
                                     }
                                     else
                                     {
@@ -3128,7 +3156,7 @@ namespace TDFactory
                                             }
                                             else
                                             {
-                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(255)]),");
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(" + column.CharLength + ")]),");
                                             }
                                         }
                                     }
