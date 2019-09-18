@@ -161,6 +161,11 @@ namespace TDFactory
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\services");
             }
 
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\lib"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\lib");
+            }
+
             if (_tableName == null)
             {
                 if (chkMVCHepsi.Checked)
@@ -725,6 +730,37 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("export class IndexComponent {");
                     yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\lib\\methods.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Injectable({ providedIn: 'root' })");
+                    yaz.WriteLine("export class Lib {");
+                    yaz.WriteLine("\tstatic NewFileName(filename: string, guidCount: number = 5) {");
+                    yaz.WriteLine("\t\tlet x: string = \"\";");
+                    yaz.WriteLine("\t\tlet ext: string = filename.split('.').pop();");
+                    yaz.WriteLine("\t\tlet name: string = filename.replace(\".\" + ext, \"\");");
+                    yaz.WriteLine("\t\tlet guid: string;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tfor (var i = 0; i < guidCount; i++) {");
+                    yaz.WriteLine("\t\t\tx += \"x\";");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tguid = x.replace(/[x]/g, function (c) {");
+                    yaz.WriteLine("\t\t\tvar r = Math.random() * 16 | 0,");
+                    yaz.WriteLine("\t\t\t\tv = c == 'x' ? r : (r & 0x3 | 0x8);");
+                    yaz.WriteLine("\t\t\treturn v.toString(16);");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\treturn name + \"-\" + guid + \".\" + ext;");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
@@ -1617,6 +1653,7 @@ namespace TDFactory
                     yaz.WriteLine("import { SharedService } from './admin/services/shared';");
                     yaz.WriteLine("import { ModelService } from './admin/services/model';");
                     yaz.WriteLine("");
+                    yaz.WriteLine("import { Lib } from './lib/methods';");
 
                     yaz.WriteLine("@NgModule({");
                     yaz.WriteLine("\tdeclarations: [");
@@ -1656,7 +1693,8 @@ namespace TDFactory
 
                     yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/" + projectName + "/' },");
                     yaz.WriteLine("\t\tSharedService,");
-                    yaz.WriteLine("\t\tModelService");
+                    yaz.WriteLine("\t\tModelService,");
+                    yaz.WriteLine("\t\tLib");
                     yaz.WriteLine("\t],");
                     yaz.WriteLine("\tbootstrap: [AppComponent]");
                     yaz.WriteLine("})");
@@ -2084,22 +2122,22 @@ namespace TDFactory
 
                                         if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                         {
-                                            yaz.WriteLine("\t\t\t\t<a href=\"/" + projectName + "/Uploads/{{ model?." + column.ColumnName + " }}\" target=\"_blank\"><img [src]=\"['/" + projectName + "/Uploads/thumb_' + model?." + column.ColumnName + "]\" style=\"height:40px; max-width:80px;\" /></a><br /><br />");
-                                            yaz.WriteLine("\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"hidden\" value=\"{{ model?." + column.ColumnName + " }}\" />");
-                                            yaz.WriteLine("\t\t\t\t<input id=\"" + column.ColumnName.ToUrl(true) + "Temp\" type=\"file\" name=\"" + column.ColumnName.ToUrl(true) + "Temp\" (change)=\"on" + column.ColumnName + "FileSelect($event)\" accept=\"image/*\" />");
+                                            yaz.WriteLine("\t\t\t\t\t<a href=\"/" + projectName + "/Uploads/{{ model?." + column.ColumnName + " }}\" target=\"_blank\"><img [src]=\"['/" + projectName + "/Uploads/thumb_' + model?." + column.ColumnName + "]\" style=\"height:40px; max-width:80px;\" /></a><br /><br />");
+                                            yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"hidden\" value=\"{{ model?." + column.ColumnName + " }}\" />");
+                                            yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName.ToUrl(true) + "Temp\" type=\"file\" name=\"" + column.ColumnName.ToUrl(true) + "Temp\" (change)=\"on" + column.ColumnName + "FileSelect($event)\" accept=\"image/*\" />");
                                         }
                                         else if (column.ColumnName.In(FileColumns, InType.ToUrlLower))
                                         {
-                                            yaz.WriteLine("\t\t\t\t<a class=\"btn btn-mini btn-info\" href=\"/" + projectName + "/Uploads/{{ model?." + column.ColumnName + " }}\" target=\"_blank\">{{ model?." + column.ColumnName + " }}</a><br /><br />");
-                                            yaz.WriteLine("\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"hidden\" value=\"{{ model?." + column.ColumnName + " }}\" />");
-                                            yaz.WriteLine("\t\t\t\t<input id=\"" + column.ColumnName.ToUrl(true) + "Temp\" type=\"file\" name=\"" + column.ColumnName.ToUrl(true) + "Temp\" (change)=\"on" + column.ColumnName + "FileSelect($event)\" />");
+                                            yaz.WriteLine("\t\t\t\t\t<a class=\"btn btn-mini btn-info\" href=\"/" + projectName + "/Uploads/{{ model?." + column.ColumnName + " }}\" target=\"_blank\">{{ model?." + column.ColumnName + " }}</a><br /><br />");
+                                            yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"hidden\" value=\"{{ model?." + column.ColumnName + " }}\" />");
+                                            yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName.ToUrl(true) + "Temp\" type=\"file\" name=\"" + column.ColumnName.ToUrl(true) + "Temp\" (change)=\"on" + column.ColumnName + "FileSelect($event)\" />");
                                         }
                                         else
                                         {
                                             if (column.Type.Name == "Boolean")
                                             {
-                                                yaz.WriteLine("\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"checkbox\" checked=\"checked\" *ngIf=\"model?." + column.ColumnName + "\" />");
-                                                yaz.WriteLine("\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"checkbox\" *ngIf=\"!model?." + column.ColumnName + "\" />");
+                                                yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"checkbox\" checked=\"checked\" *ngIf=\"model?." + column.ColumnName + "\" />");
+                                                yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"checkbox\" *ngIf=\"!model?." + column.ColumnName + "\" />");
                                             }
                                             else if (column.Type.Name == "Int16" ||
                                                      column.Type.Name == "Int32" ||
@@ -2732,8 +2770,12 @@ namespace TDFactory
                         yaz.WriteLine("import { Subscription } from \"rxjs\";");
                         yaz.WriteLine("import { ModelService } from \"../../services/model\";");
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
-
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
+
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
+                        {
+                            yaz.WriteLine("import { Lib } from '../../../lib/methods';");
+                        }
 
                         if (table.EDITORColumns.Count > 0)
                         {
@@ -2769,6 +2811,16 @@ namespace TDFactory
                             foreach (ColumnInfo item in table.IMAGEColumns)
                             {
                                 yaz.WriteLine("\timage" + item.ColumnName + ": any;");
+                            }
+
+                            foreach (ColumnInfo item in table.FILEColumns)
+                            {
+                                yaz.WriteLine("\tname" + item.ColumnName + ": string;");
+                            }
+
+                            foreach (ColumnInfo item in table.IMAGEColumns)
+                            {
+                                yaz.WriteLine("\tname" + item.ColumnName + ": string;");
                             }
 
                             yaz.WriteLine("");
@@ -2900,7 +2952,8 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                 yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = event.target.files[0].name;");
+                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.NewFileName(event.target.files[0].name);");
+                                yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                 yaz.WriteLine("\t\t\tthis.file" + item.ColumnName + " = event.target.files[0];");
                                 yaz.WriteLine("\t\t}");
@@ -2912,7 +2965,8 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                 yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = event.target.files[0].name;");
+                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.NewFileName(event.target.files[0].name);");
+                                yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                 yaz.WriteLine("\t\t\tthis.image" + item.ColumnName + " = event.target.files[0];");
                                 yaz.WriteLine("\t\t}");
@@ -2933,18 +2987,21 @@ namespace TDFactory
                         if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
                             yaz.WriteLine("\t\tthis.uploadData = new FormData();");
+                            yaz.WriteLine("");
 
                             foreach (ColumnInfo item in table.FILEColumns)
                             {
-                                yaz.WriteLine("\t\tthis.uploadData.append(\"file\", this.file" + item.ColumnName + ");");
+                                yaz.WriteLine("\t\tif (this.data." + item.ColumnName + "HasFile)");
+                                yaz.WriteLine("\t\t\tthis.uploadData.append(\"file\", this.file" + item.ColumnName + ", this.name" + item.ColumnName + ");");
+                                yaz.WriteLine("");
                             }
 
                             foreach (ColumnInfo item in table.IMAGEColumns)
                             {
-                                yaz.WriteLine("\t\tthis.uploadData.append(\"file\", this.image" + item.ColumnName + ");");
+                                yaz.WriteLine("\t\tif (this.data." + item.ColumnName + "HasFile)");
+                                yaz.WriteLine("\t\t\tthis.uploadData.append(\"file\", this.image" + item.ColumnName + ", this.name" + item.ColumnName + ");");
+                                yaz.WriteLine("");
                             }
-
-                            yaz.WriteLine("");
 
                             yaz.WriteLine("\t\tthis.subscription = this.service.post(\"" + Table + "\", \"InsertUpload\", this.uploadData).subscribe((answerUpload: any) => {");
                             yaz.WriteLine("\t\t\tif (answerUpload.Mesaj == null)");
@@ -3021,6 +3078,11 @@ namespace TDFactory
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
+                            {
+                                yaz.WriteLine("import { Lib } from '../../../lib/methods';");
+                            }
+
                             if (table.EDITORColumns.Count > 0)
                             {
                                 yaz.WriteLine("import * as $ from 'jquery';");
@@ -3064,6 +3126,16 @@ namespace TDFactory
                                 foreach (ColumnInfo item in table.IMAGEColumns)
                                 {
                                     yaz.WriteLine("\timage" + item.ColumnName + ": any;");
+                                }
+
+                                foreach (ColumnInfo item in table.FILEColumns)
+                                {
+                                    yaz.WriteLine("\tname" + item.ColumnName + ": string;");
+                                }
+
+                                foreach (ColumnInfo item in table.IMAGEColumns)
+                                {
+                                    yaz.WriteLine("\tname" + item.ColumnName + ": string;");
                                 }
 
                                 yaz.WriteLine("");
@@ -3227,7 +3299,8 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                     yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                    yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = event.target.files[0].name;");
+                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.NewFileName(event.target.files[0].name);");
+                                    yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                     yaz.WriteLine("\t\t\tthis.file" + item.ColumnName + " = event.target.files[0];");
                                     yaz.WriteLine("\t\t}");
@@ -3239,7 +3312,8 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                     yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                    yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = event.target.files[0].name;");
+                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.NewFileName(event.target.files[0].name);");
+                                    yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                     yaz.WriteLine("\t\t\tthis.image" + item.ColumnName + " = event.target.files[0];");
                                     yaz.WriteLine("\t\t}");
@@ -3263,12 +3337,16 @@ namespace TDFactory
 
                                 foreach (ColumnInfo item in table.FILEColumns)
                                 {
-                                    yaz.WriteLine("\t\tthis.uploadData.append(\"file\", this.file" + item.ColumnName + ");");
+                                    yaz.WriteLine("\t\tif (this.data." + item.ColumnName + "HasFile)");
+                                    yaz.WriteLine("\t\t\tthis.uploadData.append(\"file\", this.file" + item.ColumnName + ", this.name" + item.ColumnName + ");");
+                                    yaz.WriteLine("");
                                 }
 
                                 foreach (ColumnInfo item in table.IMAGEColumns)
                                 {
-                                    yaz.WriteLine("\t\tthis.uploadData.append(\"file\", this.image" + item.ColumnName + ");");
+                                    yaz.WriteLine("\t\tif (this.data." + item.ColumnName + "HasFile)");
+                                    yaz.WriteLine("\t\t\tthis.uploadData.append(\"file\", this.image" + item.ColumnName + ", this.name" + item.ColumnName + ");");
+                                    yaz.WriteLine("");
                                 }
 
                                 yaz.WriteLine("");
