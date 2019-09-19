@@ -131,6 +131,11 @@ namespace TDFactory
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls");
             }
 
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\lib"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\lib");
+            }
+
             if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\views"))
             {
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\views");
@@ -159,11 +164,6 @@ namespace TDFactory
             if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\services"))
             {
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\services");
-            }
-
-            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\lib"))
-            {
-                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\lib");
             }
 
             if (_tableName == null)
@@ -730,37 +730,6 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("export class IndexComponent {");
                     yaz.WriteLine("\tngOnInit() {");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\lib\\methods.ts", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("@Injectable({ providedIn: 'root' })");
-                    yaz.WriteLine("export class Lib {");
-                    yaz.WriteLine("\tstatic NewFileName(filename: string, guidCount: number = 5) {");
-                    yaz.WriteLine("\t\tlet x: string = \"\";");
-                    yaz.WriteLine("\t\tlet ext: string = filename.split('.').pop();");
-                    yaz.WriteLine("\t\tlet name: string = filename.replace(\".\" + ext, \"\");");
-                    yaz.WriteLine("\t\tlet guid: string;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tfor (var i = 0; i < guidCount; i++) {");
-                    yaz.WriteLine("\t\t\tx += \"x\";");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tguid = x.replace(/[x]/g, function (c) {");
-                    yaz.WriteLine("\t\t\tvar r = Math.random() * 16 | 0,");
-                    yaz.WriteLine("\t\t\t\tv = c == 'x' ? r : (r & 0x3 | 0x8);");
-                    yaz.WriteLine("\t\t\treturn v.toString(16);");
-                    yaz.WriteLine("\t\t});");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\treturn name + \"-\" + guid + \".\" + ext;");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
@@ -1538,6 +1507,53 @@ namespace TDFactory
                 }
             }
 
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\lib\\methods.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
+                    yaz.WriteLine("import ClassicEditor from \"../../../../Content/admin/js/ckeditor/ckeditor.js\";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Injectable({ providedIn: 'root' })");
+                    yaz.WriteLine("export class Lib {");
+                    yaz.WriteLine("\tstatic UploadFileName(filename: string, guidCount: number = 5) {");
+                    yaz.WriteLine("\t\tlet x: string = \"\";");
+                    yaz.WriteLine("\t\tlet ext: string = filename.split('.').pop();");
+                    yaz.WriteLine("\t\tlet name: string = filename.replace(\".\" + ext, \"\");");
+                    yaz.WriteLine("\t\tlet guid: string;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tfor (var i = 0; i < guidCount; i++) {");
+                    yaz.WriteLine("\t\t\tx += \"x\";");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tguid = x.replace(/[x]/g, function (c) {");
+                    yaz.WriteLine("\t\t\tvar r = Math.random() * 16 | 0,");
+                    yaz.WriteLine("\t\t\t\tv = c == 'x' ? r : (r & 0x3 | 0x8);");
+                    yaz.WriteLine("\t\t\treturn v.toString(16);");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\treturn name + \"-\" + guid + \".\" + ext;");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic CKValue(id: string) {");
+                    yaz.WriteLine("\t\treturn $(\".ck-content[data-id='\" + id + \"']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic ConvertToCKEditor(id: string, time: number = 1000) {");
+                    yaz.WriteLine("\t\tsetTimeout(function () {");
+                    yaz.WriteLine("\t\t\tClassicEditor");
+                    yaz.WriteLine("\t\t\t\t.create(document.querySelector(\"#\" + id), {");
+                    yaz.WriteLine("\t\t\t\t})");
+                    yaz.WriteLine("\t\t\t\t.then(editor => {");
+                    yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
+                    yaz.WriteLine("\t\t\t\t});");
+                    yaz.WriteLine("\t\t}, time);");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
             CreateAngularAppModule();
             CreateAngularRoutingModule();
         }
@@ -1653,7 +1669,7 @@ namespace TDFactory
                     yaz.WriteLine("import { SharedService } from './admin/services/shared';");
                     yaz.WriteLine("import { ModelService } from './admin/services/model';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("import { Lib } from './lib/methods';");
+                    yaz.WriteLine("import { Lib } from './admin/lib/methods';");
 
                     yaz.WriteLine("@NgModule({");
                     yaz.WriteLine("\tdeclarations: [");
@@ -2772,14 +2788,9 @@ namespace TDFactory
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                         {
-                            yaz.WriteLine("import { Lib } from '../../../lib/methods';");
-                        }
-
-                        if (table.EDITORColumns.Count > 0)
-                        {
-                            yaz.WriteLine("import ClassicEditor from '../../../../../Content/admin/js/ckeditor/ckeditor.js';");
+                            yaz.WriteLine("import { Lib } from '../../lib/methods';");
                         }
 
                         yaz.WriteLine("");
@@ -2851,28 +2862,10 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in table.EDITORColumns)
                         {
-                            if (i == 0)
-                            {
-                                yaz.WriteLine("\t\tsetTimeout(function () {");
-                            }
-
-                            yaz.WriteLine("\t\t\tClassicEditor");
-                            yaz.WriteLine("\t\t\t\t.create(document.querySelector('#" + column.ColumnName + "'), {");
-                            yaz.WriteLine("\t\t\t\t})");
-                            yaz.WriteLine("\t\t\t\t.then(editor => {");
-                            yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
-                            yaz.WriteLine("\t\t\t\t});");
-
-                            if (tempTableColumns.Count <= i)
-                            {
-                                yaz.WriteLine("");
-                            }
+                            yaz.WriteLine("\t\tLib.ConvertToCKEditor(\"" + column.ColumnName + "\");");
 
                             if (tempTableColumns.Count == i + 1)
-                            {
-                                yaz.WriteLine("\t\t}, 1000);");
                                 yaz.WriteLine("");
-                            }
 
                             i++;
                         }
@@ -2952,7 +2945,7 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                 yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.NewFileName(event.target.files[0].name);");
+                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.UploadFileName(event.target.files[0].name);");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                 yaz.WriteLine("\t\t\tthis.file" + item.ColumnName + " = event.target.files[0];");
@@ -2965,7 +2958,7 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                 yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.NewFileName(event.target.files[0].name);");
+                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.UploadFileName(event.target.files[0].name);");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                 yaz.WriteLine("\t\t\tthis.image" + item.ColumnName + " = event.target.files[0];");
@@ -3018,7 +3011,7 @@ namespace TDFactory
                             {
                                 if (column.Type.Name == "String" && column.CharLength == -1 && !column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
-                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = $(\".ck-content[data-id='" + column.ColumnName + "']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
+                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = Lib.CKValue(\"" + column.ColumnName + "\");");
                                 }
                                 else if (!column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
@@ -3078,15 +3071,9 @@ namespace TDFactory
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
+                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                             {
-                                yaz.WriteLine("import { Lib } from '../../../lib/methods';");
-                            }
-
-                            if (table.EDITORColumns.Count > 0)
-                            {
-                                yaz.WriteLine("import * as $ from 'jquery';");
-                                yaz.WriteLine("import ClassicEditor from \"../../../../../Content/admin/js/ckeditor/ckeditor.js\";");
+                                yaz.WriteLine("import { Lib } from '../../lib/methods';");
                             }
 
                             if (table.FkcList.Count > 0)
@@ -3160,28 +3147,10 @@ namespace TDFactory
 
                             foreach (ColumnInfo column in table.EDITORColumns)
                             {
-                                if (i == 0)
-                                {
-                                    yaz.WriteLine("\t\tsetTimeout(function () {");
-                                }
-
-                                yaz.WriteLine("\t\t\tClassicEditor");
-                                yaz.WriteLine("\t\t\t\t.create(document.querySelector('#" + column.ColumnName + "'), {");
-                                yaz.WriteLine("\t\t\t\t})");
-                                yaz.WriteLine("\t\t\t\t.then(editor => {");
-                                yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
-                                yaz.WriteLine("\t\t\t\t});");
-
-                                if (tempTableColumns.Count <= i)
-                                {
-                                    yaz.WriteLine("");
-                                }
+                                yaz.WriteLine("\t\tLib.ConvertToCKEditor(\"Description\");");
 
                                 if (tempTableColumns.Count == i + 1)
-                                {
-                                    yaz.WriteLine("\t\t}, 1000);");
                                     yaz.WriteLine("");
-                                }
 
                                 i++;
                             }
@@ -3299,7 +3268,7 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                     yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.NewFileName(event.target.files[0].name);");
+                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.UploadFileName(event.target.files[0].name);");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                     yaz.WriteLine("\t\t\tthis.file" + item.ColumnName + " = event.target.files[0];");
@@ -3312,7 +3281,7 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                     yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.NewFileName(event.target.files[0].name);");
+                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.UploadFileName(event.target.files[0].name);");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                     yaz.WriteLine("\t\t\tthis.image" + item.ColumnName + " = event.target.files[0];");
@@ -3364,7 +3333,7 @@ namespace TDFactory
                             {
                                 if (column.Type.Name == "String" && column.CharLength == -1 && !column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
-                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = $(\".ck-content[data-id='" + column.ColumnName + "']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
+                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = Lib.CKValue(\"" + column.ColumnName + "\");");
                                 }
                                 else if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
