@@ -5,7 +5,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using TDFactory.Helper;
-using Common;
 using System.Threading;
 
 namespace TDFactory

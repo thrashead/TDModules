@@ -1368,7 +1368,7 @@
             // btnVTTabloOlustur
             // 
             this.btnVTTabloOlustur.Enabled = false;
-            this.btnVTTabloOlustur.Location = new System.Drawing.Point(99, 339);
+            this.btnVTTabloOlustur.Location = new System.Drawing.Point(105, 339);
             this.btnVTTabloOlustur.Name = "btnVTTabloOlustur";
             this.btnVTTabloOlustur.Size = new System.Drawing.Size(172, 23);
             this.btnVTTabloOlustur.TabIndex = 11;
