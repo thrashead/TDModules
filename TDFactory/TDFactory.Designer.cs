@@ -491,7 +491,7 @@
             // 
             // btnImageColumnsSub
             // 
-            this.btnImageColumnsSub.Location = new System.Drawing.Point(627, 139);
+            this.btnImageColumnsSub.Location = new System.Drawing.Point(627, 144);
             this.btnImageColumnsSub.Name = "btnImageColumnsSub";
             this.btnImageColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnImageColumnsSub.TabIndex = 91;
@@ -511,7 +511,7 @@
             // 
             // btnFileColumnsSub
             // 
-            this.btnFileColumnsSub.Location = new System.Drawing.Point(627, 291);
+            this.btnFileColumnsSub.Location = new System.Drawing.Point(627, 296);
             this.btnFileColumnsSub.Name = "btnFileColumnsSub";
             this.btnFileColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnFileColumnsSub.TabIndex = 91;
@@ -521,7 +521,7 @@
             // 
             // btnCodeColumnsSub
             // 
-            this.btnCodeColumnsSub.Location = new System.Drawing.Point(751, 292);
+            this.btnCodeColumnsSub.Location = new System.Drawing.Point(751, 297);
             this.btnCodeColumnsSub.Name = "btnCodeColumnsSub";
             this.btnCodeColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnCodeColumnsSub.TabIndex = 91;
@@ -611,7 +611,7 @@
             // 
             // btnUrlColumnsSub
             // 
-            this.btnUrlColumnsSub.Location = new System.Drawing.Point(751, 137);
+            this.btnUrlColumnsSub.Location = new System.Drawing.Point(751, 142);
             this.btnUrlColumnsSub.Name = "btnUrlColumnsSub";
             this.btnUrlColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsSub.TabIndex = 91;
