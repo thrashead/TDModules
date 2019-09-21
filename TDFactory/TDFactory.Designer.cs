@@ -1158,7 +1158,7 @@
             // 
             this.txtRepository.Location = new System.Drawing.Point(10, 137);
             this.txtRepository.Name = "txtRepository";
-            this.txtRepository.Size = new System.Drawing.Size(136, 20);
+            this.txtRepository.Size = new System.Drawing.Size(120, 20);
             this.txtRepository.TabIndex = 72;
             this.txtRepository.Text = "Repository";
             // 
@@ -1345,7 +1345,7 @@
             // 
             this.chkVTTabloDuzenle.AutoSize = true;
             this.chkVTTabloDuzenle.Enabled = false;
-            this.chkVTTabloDuzenle.Location = new System.Drawing.Point(283, 24);
+            this.chkVTTabloDuzenle.Location = new System.Drawing.Point(283, 26);
             this.chkVTTabloDuzenle.Name = "chkVTTabloDuzenle";
             this.chkVTTabloDuzenle.Size = new System.Drawing.Size(95, 17);
             this.chkVTTabloDuzenle.TabIndex = 13;
@@ -1774,7 +1774,7 @@
             // btnVeritabaniOlustur
             // 
             this.btnVeritabaniOlustur.Enabled = false;
-            this.btnVeritabaniOlustur.Location = new System.Drawing.Point(78, 297);
+            this.btnVeritabaniOlustur.Location = new System.Drawing.Point(78, 320);
             this.btnVeritabaniOlustur.Name = "btnVeritabaniOlustur";
             this.btnVeritabaniOlustur.Size = new System.Drawing.Size(159, 23);
             this.btnVeritabaniOlustur.TabIndex = 14;
@@ -1785,7 +1785,7 @@
             // lblVeritabaniAdi
             // 
             this.lblVeritabaniAdi.AutoSize = true;
-            this.lblVeritabaniAdi.Location = new System.Drawing.Point(73, 58);
+            this.lblVeritabaniAdi.Location = new System.Drawing.Point(73, 51);
             this.lblVeritabaniAdi.Name = "lblVeritabaniAdi";
             this.lblVeritabaniAdi.Size = new System.Drawing.Size(81, 13);
             this.lblVeritabaniAdi.TabIndex = 0;
@@ -1794,7 +1794,7 @@
             // chkLogLimitsizBoyut
             // 
             this.chkLogLimitsizBoyut.AutoSize = true;
-            this.chkLogLimitsizBoyut.Location = new System.Drawing.Point(158, 208);
+            this.chkLogLimitsizBoyut.Location = new System.Drawing.Point(158, 257);
             this.chkLogLimitsizBoyut.Name = "chkLogLimitsizBoyut";
             this.chkLogLimitsizBoyut.Size = new System.Drawing.Size(59, 17);
             this.chkLogLimitsizBoyut.TabIndex = 12;
@@ -1804,7 +1804,7 @@
             // 
             // txtVeritabaniIsmi
             // 
-            this.txtVeritabaniIsmi.Location = new System.Drawing.Point(158, 55);
+            this.txtVeritabaniIsmi.Location = new System.Drawing.Point(158, 48);
             this.txtVeritabaniIsmi.Name = "txtVeritabaniIsmi";
             this.txtVeritabaniIsmi.Size = new System.Drawing.Size(124, 20);
             this.txtVeritabaniIsmi.TabIndex = 5;
@@ -1813,7 +1813,7 @@
             // chkLimitsizBoyut
             // 
             this.chkLimitsizBoyut.AutoSize = true;
-            this.chkLimitsizBoyut.Location = new System.Drawing.Point(158, 134);
+            this.chkLimitsizBoyut.Location = new System.Drawing.Point(158, 137);
             this.chkLimitsizBoyut.Name = "chkLimitsizBoyut";
             this.chkLimitsizBoyut.Size = new System.Drawing.Size(59, 17);
             this.chkLimitsizBoyut.TabIndex = 8;
@@ -1824,7 +1824,7 @@
             // lblDosyaBoyutu
             // 
             this.lblDosyaBoyutu.AutoSize = true;
-            this.lblDosyaBoyutu.Location = new System.Drawing.Point(73, 83);
+            this.lblDosyaBoyutu.Location = new System.Drawing.Point(73, 86);
             this.lblDosyaBoyutu.Name = "lblDosyaBoyutu";
             this.lblDosyaBoyutu.Size = new System.Drawing.Size(79, 13);
             this.lblDosyaBoyutu.TabIndex = 0;
@@ -1855,7 +1855,7 @@
             // lblMaxDosyaBoyutu
             // 
             this.lblMaxDosyaBoyutu.AutoSize = true;
-            this.lblMaxDosyaBoyutu.Location = new System.Drawing.Point(22, 109);
+            this.lblMaxDosyaBoyutu.Location = new System.Drawing.Point(22, 112);
             this.lblMaxDosyaBoyutu.Name = "lblMaxDosyaBoyutu";
             this.lblMaxDosyaBoyutu.Size = new System.Drawing.Size(132, 13);
             this.lblMaxDosyaBoyutu.TabIndex = 0;
@@ -1868,7 +1868,7 @@
             0,
             0,
             0});
-            this.numMaxDosyaBoyutu.Location = new System.Drawing.Point(158, 108);
+            this.numMaxDosyaBoyutu.Location = new System.Drawing.Point(158, 111);
             this.numMaxDosyaBoyutu.Minimum = new decimal(new int[] {
             5,
             0,
@@ -1886,7 +1886,7 @@
             // lblLogBoyutu
             // 
             this.lblLogBoyutu.AutoSize = true;
-            this.lblLogBoyutu.Location = new System.Drawing.Point(83, 184);
+            this.lblLogBoyutu.Location = new System.Drawing.Point(83, 207);
             this.lblLogBoyutu.Name = "lblLogBoyutu";
             this.lblLogBoyutu.Size = new System.Drawing.Size(67, 13);
             this.lblLogBoyutu.TabIndex = 0;
@@ -1899,7 +1899,7 @@
             0,
             0,
             0});
-            this.numLogBoyutu.Location = new System.Drawing.Point(158, 182);
+            this.numLogBoyutu.Location = new System.Drawing.Point(158, 205);
             this.numLogBoyutu.Minimum = new decimal(new int[] {
             5,
             0,
@@ -1917,7 +1917,7 @@
             // lblGenislemeYuzdesi
             // 
             this.lblGenislemeYuzdesi.AutoSize = true;
-            this.lblGenislemeYuzdesi.Location = new System.Drawing.Point(19, 158);
+            this.lblGenislemeYuzdesi.Location = new System.Drawing.Point(19, 161);
             this.lblGenislemeYuzdesi.Name = "lblGenislemeYuzdesi";
             this.lblGenislemeYuzdesi.Size = new System.Drawing.Size(135, 13);
             this.lblGenislemeYuzdesi.TabIndex = 0;
@@ -1930,7 +1930,7 @@
             0,
             0,
             0});
-            this.numLogGenislemeYuzdesi.Location = new System.Drawing.Point(158, 257);
+            this.numLogGenislemeYuzdesi.Location = new System.Drawing.Point(158, 280);
             this.numLogGenislemeYuzdesi.Minimum = new decimal(new int[] {
             10,
             0,
@@ -1948,7 +1948,7 @@
             // lblMaxLogBoyutu
             // 
             this.lblMaxLogBoyutu.AutoSize = true;
-            this.lblMaxLogBoyutu.Location = new System.Drawing.Point(30, 233);
+            this.lblMaxLogBoyutu.Location = new System.Drawing.Point(32, 233);
             this.lblMaxLogBoyutu.Name = "lblMaxLogBoyutu";
             this.lblMaxLogBoyutu.Size = new System.Drawing.Size(120, 13);
             this.lblMaxLogBoyutu.TabIndex = 0;
@@ -1961,7 +1961,7 @@
             0,
             0,
             0});
-            this.numDosyaBoyutu.Location = new System.Drawing.Point(158, 81);
+            this.numDosyaBoyutu.Location = new System.Drawing.Point(158, 84);
             this.numDosyaBoyutu.Minimum = new decimal(new int[] {
             5,
             0,
@@ -1983,7 +1983,7 @@
             0,
             0,
             0});
-            this.numDosyaGenislemeYuzdesi.Location = new System.Drawing.Point(158, 157);
+            this.numDosyaGenislemeYuzdesi.Location = new System.Drawing.Point(158, 160);
             this.numDosyaGenislemeYuzdesi.Minimum = new decimal(new int[] {
             10,
             0,
@@ -2001,7 +2001,7 @@
             // lblLogGenislemeYuzdesi
             // 
             this.lblLogGenislemeYuzdesi.AutoSize = true;
-            this.lblLogGenislemeYuzdesi.Location = new System.Drawing.Point(27, 259);
+            this.lblLogGenislemeYuzdesi.Location = new System.Drawing.Point(27, 282);
             this.lblLogGenislemeYuzdesi.Name = "lblLogGenislemeYuzdesi";
             this.lblLogGenislemeYuzdesi.Size = new System.Drawing.Size(123, 13);
             this.lblLogGenislemeYuzdesi.TabIndex = 0;
@@ -2458,7 +2458,7 @@
             this.MaximizeBox = false;
             this.Name = "TDFactory";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TDFactory by Sina SALIK (Thrashead)";
+            this.Text = "TDFactory";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.TDFactoryForm_FormClosed);
             this.Load += new System.EventHandler(this.TDFactoryForm_Load);
             this.tbconTablar.ResumeLayout(false);
