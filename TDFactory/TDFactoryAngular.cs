@@ -1515,7 +1515,7 @@ namespace TDFactory
                     yaz.WriteLine("import ClassicEditor from \"../../../../Content/admin/js/ckeditor/ckeditor.js\";");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Injectable({ providedIn: 'root' })");
-                    yaz.WriteLine("export class Lib {");
+                    yaz.WriteLine("export class AdminLib {");
                     yaz.WriteLine("\tstatic UploadFileName(filename: string, guidCount: number = 5) {");
                     yaz.WriteLine("\t\tlet x: string = \"\";");
                     yaz.WriteLine("\t\tlet ext: string = filename.split('.').pop();");
@@ -1669,7 +1669,7 @@ namespace TDFactory
                     yaz.WriteLine("import { SharedService } from './admin/services/shared';");
                     yaz.WriteLine("import { ModelService } from './admin/services/model';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("import { Lib } from './admin/lib/methods';");
+                    yaz.WriteLine("import { AdminLib } from './admin/lib/methods';");
 
                     yaz.WriteLine("@NgModule({");
                     yaz.WriteLine("\tdeclarations: [");
@@ -1710,7 +1710,7 @@ namespace TDFactory
                     yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/" + projectName + "/' },");
                     yaz.WriteLine("\t\tSharedService,");
                     yaz.WriteLine("\t\tModelService,");
-                    yaz.WriteLine("\t\tLib");
+                    yaz.WriteLine("\t\tAdminLib");
                     yaz.WriteLine("\t],");
                     yaz.WriteLine("\tbootstrap: [AppComponent]");
                     yaz.WriteLine("})");
@@ -2790,7 +2790,7 @@ namespace TDFactory
 
                         if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                         {
-                            yaz.WriteLine("import { Lib } from '../../lib/methods';");
+                            yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
                         }
 
                         yaz.WriteLine("");
@@ -2862,7 +2862,7 @@ namespace TDFactory
 
                         foreach (ColumnInfo column in table.EDITORColumns)
                         {
-                            yaz.WriteLine("\t\tLib.ConvertToCKEditor(\"" + column.ColumnName + "\");");
+                            yaz.WriteLine("\t\tAdminLib.ConvertToCKEditor(\"" + column.ColumnName + "\");");
 
                             if (tempTableColumns.Count == i + 1)
                                 yaz.WriteLine("");
@@ -2945,7 +2945,7 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                 yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.UploadFileName(event.target.files[0].name);");
+                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = AdminLib.UploadFileName(event.target.files[0].name);");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                 yaz.WriteLine("\t\t\tthis.file" + item.ColumnName + " = event.target.files[0];");
@@ -2958,7 +2958,7 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                 yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.UploadFileName(event.target.files[0].name);");
+                                yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = AdminLib.UploadFileName(event.target.files[0].name);");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                 yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                 yaz.WriteLine("\t\t\tthis.image" + item.ColumnName + " = event.target.files[0];");
@@ -3011,7 +3011,7 @@ namespace TDFactory
                             {
                                 if (column.Type.Name == "String" && column.CharLength == -1 && !column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
-                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = Lib.CKValue(\"" + column.ColumnName + "\");");
+                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = AdminLib.CKValue(\"" + column.ColumnName + "\");");
                                 }
                                 else if (!column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
@@ -3147,7 +3147,7 @@ namespace TDFactory
 
                             foreach (ColumnInfo column in table.EDITORColumns)
                             {
-                                yaz.WriteLine("\t\tLib.ConvertToCKEditor(\"Description\");");
+                                yaz.WriteLine("\t\tAdminLib.ConvertToCKEditor(\"Description\");");
 
                                 if (tempTableColumns.Count == i + 1)
                                     yaz.WriteLine("");
@@ -3268,7 +3268,7 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                     yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.UploadFileName(event.target.files[0].name);");
+                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = AdminLib.UploadFileName(event.target.files[0].name);");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                     yaz.WriteLine("\t\t\tthis.file" + item.ColumnName + " = event.target.files[0];");
@@ -3281,7 +3281,7 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\ton" + item.ColumnName + "FileSelect(event) {");
                                     yaz.WriteLine("\t\tif (event.target.files.length > 0) {");
-                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = Lib.UploadFileName(event.target.files[0].name);");
+                                    yaz.WriteLine("\t\t\tthis.name" + item.ColumnName + " = AdminLib.UploadFileName(event.target.files[0].name);");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + " = this.name" + item.ColumnName + ";");
                                     yaz.WriteLine("\t\t\tthis.data." + item.ColumnName + "HasFile = true;");
                                     yaz.WriteLine("\t\t\tthis.image" + item.ColumnName + " = event.target.files[0];");
@@ -3333,7 +3333,7 @@ namespace TDFactory
                             {
                                 if (column.Type.Name == "String" && column.CharLength == -1 && !column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
-                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = Lib.CKValue(\"" + column.ColumnName + "\");");
+                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = AdminLib.CKValue(\"" + column.ColumnName + "\");");
                                 }
                                 else if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
