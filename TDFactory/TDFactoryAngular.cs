@@ -3073,7 +3073,7 @@ namespace TDFactory
 
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                             {
-                                yaz.WriteLine("import { Lib } from '../../lib/methods';");
+                                yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
                             }
 
                             if (table.FkcList.Count > 0)
