@@ -3303,6 +3303,7 @@ namespace TDFactory
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\tthis.uploadData = new FormData();");
+                                yaz.WriteLine("");
 
                                 foreach (ColumnInfo item in table.FILEColumns)
                                 {
@@ -3317,8 +3318,6 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\tthis.uploadData.append(\"file\", this.image" + item.ColumnName + ", this.name" + item.ColumnName + ");");
                                     yaz.WriteLine("");
                                 }
-
-                                yaz.WriteLine("");
 
                                 yaz.WriteLine("\t\tthis.subscription = this.service.post(\"" + Table + "\", \"UpdateUpload\", this.uploadData).subscribe((answerUpload: any) => {");
                                 yaz.WriteLine("\t\t\tif (answerUpload.Mesaj == null)");
