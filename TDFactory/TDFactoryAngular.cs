@@ -2904,7 +2904,7 @@ namespace TDFactory
                                     {
                                         if (column.Type.Name.In(new string[] { "Int16", "Int32", "Int64" }))
                                         {
-                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(0)]),");
+                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(1)]),");
                                         }
                                         else if (column.Type.Name == "String")
                                         {
@@ -3187,7 +3187,7 @@ namespace TDFactory
                                     {
                                         if (column.Type.Name.In(new string[] { "Int16", "Int32", "Int64" }))
                                         {
-                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(0)]),");
+                                            yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(1)]),");
                                         }
                                         else if (column.Type.Name == "String")
                                         {
