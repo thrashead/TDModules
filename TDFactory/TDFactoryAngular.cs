@@ -3428,11 +3428,11 @@ namespace TDFactory
                 {
                     yaz.WriteLine("@using TDLibrary");
                     yaz.WriteLine("");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/runtime-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/polyfills-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/styles-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/vendor-es2015.js\"></script>");
-                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/main-es2015.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/runtime.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/polyfills.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/styles.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/vendor.js\"></script>");
+                    yaz.WriteLine("<script type=\"text/javascript\" src=\"@AppMgr.ScriptPath/libs/main.js\"></script>");
 
                     yaz.Close();
                 }
@@ -3563,8 +3563,8 @@ namespace TDFactory
                     yaz.WriteLine("- Content/js klasörü içine libs adında klasör açacaksın. Content/js yerine kendi scriptlerini sakladığın klasör içine açacaksın.");
                     yaz.WriteLine("- angular.json içinde \"options\": { \"outputPath\": \"Content/js/libs\", şeklinde libs yolunu belirteceksin.");
                     yaz.WriteLine("");
-                    yaz.WriteLine("- Proje ana dizininde cmd çalıştırıp \"ng build\" komutunu çalıştıracaksın. Bu komutu projede yaptığın her değişiklik sonrası çalıştıracaksın. Yoksa değişiklikler");
-                    yaz.WriteLine("çalışmaz. cmd arkada çalışır durumda kalsın ikide bir açmak zorunda kalma.");
+                    yaz.WriteLine("- Proje ana dizininde cmd çalıştırıp \"ng build --watch\" komutunu çalıştıracaksın.Bu komutu projede yaptığın her değişiklik sonrası çalıştıracaksın.");
+                    yaz.WriteLine("Yoksa değişiklikler çalışmaz. cmd arkada çalışır durumda kalsın ikide bir açmak zorunda kalma.");
                     yaz.WriteLine("- Projeye yeni component eklediğinde bunu routing ve app.module.ts içinde declarations kısmında belirtmelisin.");
                     yaz.WriteLine("");
                     yaz.WriteLine("- \"ng build --prod\" diyerek publish olacak şekilde libs klasörü içini hazırlarsın. (daha küçük boyutta oluyor)");
