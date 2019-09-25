@@ -566,7 +566,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
                                     yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
 
-                                    if (j < fkcList.Count)
+                                    if (j < fkcListForeign.Count)
                                         yaz.WriteLine("");
 
                                     j++;
@@ -636,7 +636,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
                                     yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
 
-                                    if (j < fkcList.Count)
+                                    if (j < fkcListForeign.Count)
                                         yaz.WriteLine("");
 
                                     j++;
