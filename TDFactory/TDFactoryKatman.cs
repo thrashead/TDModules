@@ -696,18 +696,20 @@ namespace TDFactory
 
         private void chkAngular_CheckedChanged(object sender, EventArgs e)
         {
+            string lastTwo = txtProjectName.Text.Substring(txtProjectName.Text.Length - 2, 2).ToUrl();
+
             if (((CheckBox)sender).Checked)
             {
-                if (!txtProjectName.Text.ToUrl(true).Contains("angular"))
+                if (lastTwo != "NG")
                 {
-                    txtProjectName.Text = txtProjectName.Text + "Angular";
+                    txtProjectName.Text = txtProjectName.Text + "NG";
                 }
             }
             else
             {
-                if (txtProjectName.Text.ToUrl(true).Contains("angular"))
+                if (lastTwo == "NG")
                 {
-                    txtProjectName.Text = txtProjectName.Text.Replace("Angular", "").Replace("angular", "").Replace("ANGULAR", "");
+                    txtProjectName.Text = txtProjectName.Text.Remove(txtProjectName.Text.Length - 2, 2);
                 }
             }
         }
