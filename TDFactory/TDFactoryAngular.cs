@@ -505,6 +505,15 @@ namespace TDFactory
 
         void CreateAngularFiles()
         {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\ngbuild.bat", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.ASCII))
+                {
+                    yaz.WriteLine("ng build --watch");
+                    yaz.Close();
+                }
+            }
+
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\app.html", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
