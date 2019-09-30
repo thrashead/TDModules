@@ -1,4 +1,5 @@
 ﻿using Common;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
@@ -1558,6 +1559,22 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t\t});");
                     yaz.WriteLine("\t\t}, time);");
                     yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic ParseFloat(value: string) : any {");
+                    yaz.WriteLine("\t\tvar returnValue;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (value == null || value == undefined) {");
+                    yaz.WriteLine("\t\t\treturnValue = null;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse if (value.toString().indexOf(',') > 0) {");
+                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value.toString().replace(\",\", \".\"));");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse {");
+                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\treturn returnValue;");
+                    yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
                 }
@@ -2797,6 +2814,11 @@ namespace TDFactory
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
+                        if (table.Columns.Where(a => a.DataType.ToLower().Contains("decimal")).Count() > 0)
+                        {
+                            yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
+                        }
+
                         if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                         {
                             yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
@@ -3024,7 +3046,14 @@ namespace TDFactory
                                 }
                                 else if (!column.ColumnName.In(FileColumns, InType.ToUrlLower) && !column.ColumnName.In(ImageColumns, InType.ToUrlLower))
                                 {
-                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = this.insertForm.get(\"" + column.ColumnName + "\").value;");
+                                    if (column.Type.Name.In(new string[] { "Decimal" }))
+                                    {
+                                        yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = AdminLib.ParseFloat(this.insertForm.get(\"" + column.ColumnName + "\").value);");
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = this.insertForm.get(\"" + column.ColumnName + "\").value;");
+                                    }
                                 }
                             }
 
@@ -3079,6 +3108,11 @@ namespace TDFactory
                             yaz.WriteLine("import { ModelService } from \"../../services/model\";");
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
+
+                            if(table.Columns.Where(a=> a.DataType.ToLower().Contains("decimal")).Count() > 0)
+                            {
+                                yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
+                            }
 
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                             {
@@ -3356,7 +3390,14 @@ namespace TDFactory
                                 }
                                 else
                                 {
-                                    yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = this.updateForm.get(\"" + column.ColumnName + "\").value;");
+                                    if (column.Type.Name.In(new string[] { "Decimal" }))
+                                    {
+                                        yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = AdminLib.ParseFloat(this.updateForm.get(\"" + column.ColumnName + "\").value);");
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = this.updateForm.get(\"" + column.ColumnName + "\").value;");
+                                    }
                                 }
 
                                 i++;

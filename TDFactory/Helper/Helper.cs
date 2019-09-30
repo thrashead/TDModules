@@ -170,7 +170,7 @@ namespace TDFactory.Helper
                         {
                             TableName = rd[0].ToString(),
                             ColumnName = rd[1].ToString(),
-                            DataType = rd[2].ToString(),
+                            DataType = rd[2].ToString() == "decimal" ? "decimal(18, 2)" : rd[2].ToString(),
                             IsNullable = rd[3].ToString() == "YES" ? true : false,
                             MaxLength = rd[4].ToString(),
                             DefaultValue = rd[5].ToString() == "NULL" || rd[5].ToString() == "(NULL)" ? null : rd[5].ToString().Replace("(", "").Replace(")", ""),
