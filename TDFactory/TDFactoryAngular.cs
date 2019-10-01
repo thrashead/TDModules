@@ -1375,7 +1375,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\t<div class=\"quick-actions_homepage\">");
                     yaz.WriteLine("\t\t\t<ul class=\"quick-actions\">");
 
-                    string[] colors = new string[] { "bg_lb", "bg_lg", "bg_ly", "bg_lo", "bg_ls", "bg_lr", "bg_lv" };
+                    string[] colors = new string[] { "bg_lg", "bg_lb", "bg_ly", "bg_lo", "bg_ls", "bg_lr", "bg_lv" };
                     int i = 0;
 
                     foreach (AdminMenu item in adminMenu)
