@@ -1819,8 +1819,7 @@ namespace TDFactory
         {
             string schema = DefaultSchema(new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo)));
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures.sql",
-                FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\_StoredProcedures.sql", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
@@ -2633,6 +2632,828 @@ namespace TDFactory
                     }
 
                     yaz.Close();
+                }
+            }
+
+            CreateSplitStoredProcedure();
+        }
+
+        void CreateSplitStoredProcedure()
+        {
+            string schema = DefaultSchema(new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo)));
+
+            foreach (string Table in selectedTables)
+            {
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\" + Table + ".sql", FileMode.Create))
+                {
+                    using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                    {
+                        yaz.WriteLine("USE [" + DBName + "]");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+
+                        List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+                        string idColumn = identityColumns.FirstOrDefault();
+
+                        SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                        List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
+                        fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
+
+                        List<ForeignKeyChecker> fkcListForeign = ForeignKeyCheck(con);
+                        fkcListForeign = fkcListForeign.Where(a => a.ForeignTableName == Table).ToList();
+
+                        string[] diziML = new string[] { "nvarchar", "varchar", "binary", "char", "nchar", "varbinary" };
+
+                        int i = 0;
+
+                        List<ColumnInfo> columnNames = TableColumns(Table);
+                        List<ColumnInfo> guidColumns = TableColumns(Table, ColumnType.GuidColumns);
+                        List<ColumnInfo> urlColumns = TableColumns(Table, ColumnType.UrlColumns);
+                        List<ColumnInfo> codeColumns = TableColumns(Table, ColumnType.CodeColumns);
+                        List<ColumnInfo> searchColumns = TableColumns(Table, ColumnType.SearchColumns);
+                        string deleted = columnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
+
+                        string idType = null;
+
+                        string searchText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
+
+                        if (searchText.Contains(".ToString()"))
+                            searchText = "";
+
+                        try
+                        {
+                            idType = columnNames.Where(a => a.ColumnName == idColumn).FirstOrDefault().DataType;
+                        }
+                        catch
+                        {
+                        }
+
+                        //Select//
+                        yaz.WriteLine("/* Select */");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Select]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Select]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Select]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\t@" + idColumn + " " + idType);
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+
+                        string sqlText = "\tSELECT ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                sqlText += "[" + column.ColumnName + "],";
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        yaz.WriteLine(sqlText);
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)" + deleted);
+                        }
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        //Select//
+
+                        //SelectTop//
+                        yaz.WriteLine("/* SelectTop */");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectTop]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectTop]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectTop]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\t@" + idColumn + " " + idType + ",");
+                        }
+                        yaz.WriteLine("\t@Top int");
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+
+                        sqlText = "\tSELECT Top (@Top) ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                sqlText += "[" + column.ColumnName + "],";
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        yaz.WriteLine(sqlText);
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)" + deleted);
+                        }
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        //SelectTop//
+
+                        foreach (ColumnInfo item in urlColumns)
+                        {
+                            //SelectByUrl//
+                            yaz.WriteLine("/* SelectBy" + item.ColumnName + " */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tSELECT Top (1) ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText += "[" + column.ColumnName + "],";
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+                            yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //SelectByUrl//
+                        }
+
+                        foreach (ColumnInfo item in guidColumns)
+                        {
+                            //SelectByGuid//
+                            yaz.WriteLine("/* SelectBy" + item.ColumnName + " */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tSELECT Top (1) ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText += "[" + column.ColumnName + "],";
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+                            yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //SelectByGuid//
+                        }
+
+                        foreach (ColumnInfo item in codeColumns)
+                        {
+                            //SelectByCode//
+                            yaz.WriteLine("/* SelectBy" + item.ColumnName + " */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText += "[" + column.ColumnName + "],";
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+                            yaz.WriteLine("\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted);
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //SelectByCode//
+                        }
+
+                        foreach (ColumnInfo item in searchColumns)
+                        {
+                            //SelectBySearch//
+                            yaz.WriteLine("/* SelectBy" + item.ColumnName + " */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
+
+                            if (item.Type.Name == "String")
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText += "[" + column.ColumnName + "],";
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                            string whereClause;
+
+                            if (item.Type.Name == "String")
+                            {
+                                whereClause = "\tWHERE ([" + item.ColumnName + "] LIKE '%' + @" + item.ColumnName + " + '%' OR @" + item.ColumnName + " IS NULL)" + deleted;
+                            }
+                            else
+                            {
+                                whereClause = "\tWHERE ([" + item.ColumnName + "] = @" + item.ColumnName + " OR @" + item.ColumnName + " IS NULL)" + deleted;
+                            }
+
+                            yaz.WriteLine(whereClause);
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //SelectBySearch//
+                        }
+
+                        //LinkedSelect//
+                        if (fkcListForeign.Count > 0)
+                        {
+                            yaz.WriteLine("/* LinkedSelect */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "LinkedSelect]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "LinkedSelect]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "LinkedSelect]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + idColumn + " " + idType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText += "[" + column.ColumnName + "],";
+                            }
+
+                            yaz.WriteLine(sqlText);
+
+                            i = 0;
+                            int fkcCount = fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList().Count;
+                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                sqlText = "";
+
+                                string PrimaryTableName = fkc.PrimaryTableName;
+                                string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList()).Replace(".ToString()", "");
+
+                                sqlText += "\t\t(SELECT " + aliases[i % 10] + "." + columnText + " FROM " + PrimaryTableName + " " + aliases[i % 10] + " WHERE " + aliases[i % 10] + "." + fkc.PrimaryColumnName + " = " + fkc.ForeignColumnName + ") as " + PrimaryTableName + "Adi,";
+
+                                if (fkcCount == i + 1)
+                                {
+                                    sqlText = sqlText.Remove(sqlText.Length - 1);
+                                    sqlText = sqlText.Replace(",", ", ");
+                                }
+
+                                yaz.WriteLine(sqlText);
+
+                                i++;
+                            }
+
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)" + deleted);
+                            }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                        }
+                        //LinkedSelect//
+
+                        //ByLinkedIDSelect//
+                        if (fkcList.Count > 0)
+                        {
+                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            {
+                                foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                {
+                                    string PrimaryTableName = fkc.PrimaryTableName;
+                                    string ForeignTableName = fkc2.ForeignTableName;
+                                    string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
+
+                                    List<ColumnInfo> fColumnNames = Helper.Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
+                                    string fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
+
+                                    yaz.WriteLine("/* ByLinkedIDSelect */");
+                                    yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]') IS NOT NULL");
+                                    yaz.WriteLine("BEGIN");
+                                    yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]");
+                                    yaz.WriteLine("END");
+                                    yaz.WriteLine("GO");
+                                    yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect]");
+
+                                    string fidType = null;
+                                    try
+                                    {
+                                        fidType = fColumnNames.Where(a => a.ColumnName == fkc2.ForeignColumnName).FirstOrDefault().DataType;
+                                    }
+                                    catch
+                                    {
+                                    }
+
+                                    if (fidType != null)
+                                    {
+                                        yaz.WriteLine("\t@" + fkc2.ForeignColumnName + " " + fidType);
+                                    }
+
+                                    yaz.WriteLine("AS");
+                                    yaz.WriteLine("\tSET NOCOUNT ON");
+                                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\tBEGIN TRAN");
+                                    yaz.WriteLine("");
+
+                                    sqlText = "\tSELECT ";
+
+                                    foreach (ColumnInfo column in fColumnNames)
+                                    {
+                                        if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                            sqlText += "[" + column.ColumnName + "],";
+                                    }
+
+                                    yaz.WriteLine(sqlText);
+
+                                    sqlText = "";
+
+                                    sqlText += "\t(SELECT A." + columnText + " FROM " + Table + " A WHERE A." + fkc.PrimaryColumnName + " = " + fkc2.ForeignColumnName + ") as " + Table + "Adi";
+
+                                    yaz.WriteLine(sqlText);
+
+                                    yaz.WriteLine("\tFROM " + schema + ".[" + ForeignTableName + "]");
+
+                                    yaz.WriteLine("\tWHERE ([" + fkc2.ForeignColumnName + "] = @" + fkc2.ForeignColumnName + " OR @" + fkc2.ForeignColumnName + " IS NULL)" + fDeleted);
+
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\tCOMMIT");
+                                    yaz.WriteLine("GO");
+                                    yaz.WriteLine("");
+                                }
+                            }
+                        }
+                        //ByLinkedIDSelect//
+
+                        //SelectAll//
+                        yaz.WriteLine("/* SelectAll */");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "SelectAll]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "SelectAll]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectAll]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\t@" + idColumn + " " + idType);
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+
+                        sqlText = "\tSELECT ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            sqlText += "[" + column.ColumnName + "],";
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        yaz.WriteLine(sqlText);
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)");
+                        }
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        //SelectAll//
+
+                        //Insert//
+                        yaz.WriteLine("/* Insert */");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Insert]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Insert]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Insert]");
+
+                        i = 1;
+                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
+                        {
+                            if (!column.IsIdentity)
+                            {
+                                string extra = "";
+
+                                if (column.DataType.In(diziML))
+                                    extra += column.MaxLength != "" ? "(" + column.MaxLength + ")" : "";
+
+                                extra += column.IsNullable ? " = NULL" : "";
+
+                                if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count)
+                                    yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
+                                else
+                                    yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
+                            }
+
+                            i++;
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("");
+
+                        sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (!column.IsIdentity)
+                            {
+                                sqlText = sqlText + "[" + column.ColumnName + "],";
+                            }
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText + ")";
+
+                        yaz.WriteLine(sqlText);
+
+                        sqlText = "\tSELECT ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    sqlText = sqlText + "@" + column.ColumnName + ",";
+                                }
+                            }
+                            else
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    sqlText = sqlText + "0,";
+                                }
+                            }
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        yaz.WriteLine(sqlText);
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
+                        yaz.WriteLine("END;");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        //Insert//
+
+                        //Update//
+                        yaz.WriteLine("/* Update */");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Update]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Update]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
+
+                        i = 1;
+                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
+                        {
+                            string extra = "";
+
+                            if (column.DataType.In(diziML))
+                                extra += column.MaxLength != "" ? "(" + column.MaxLength + ")" : "";
+
+                            extra += column.IsNullable ? " = NULL" : "";
+
+                            if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList().Count)
+                                yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
+                            else
+                                yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
+
+                            i++;
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+
+                        yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "]");
+
+                        sqlText = "\tSET ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    sqlText = sqlText + "[" + column.ColumnName + "] = @" + column.ColumnName + ",";
+                                }
+                            }
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+
+                        yaz.WriteLine(sqlText);
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
+                        }
+
+                        yaz.WriteLine("");
+
+                        sqlText = "\tSELECT ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                sqlText = sqlText + "[" + column.ColumnName + "],";
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        yaz.WriteLine(sqlText);
+
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
+                        }
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        //Update//
+
+                        //Copy//
+                        yaz.WriteLine("/* Copy */");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Copy]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Copy]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Copy]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\t@" + idColumn + " " + idType);
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("");
+
+                        sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (!column.IsIdentity)
+                            {
+                                sqlText = sqlText + "[" + column.ColumnName + "],";
+                            }
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText = sqlText + ")";
+
+                        yaz.WriteLine(sqlText);
+
+                        sqlText = "\tSELECT ";
+
+                        foreach (ColumnInfo column in columnNames)
+                        {
+                            if (!column.IsIdentity)
+                            {
+                                if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                {
+                                    sqlText = sqlText + "'Kopya_' + A.[" + column.ColumnName + "],";
+                                }
+                                else if (column.ColumnName == searchText)
+                                {
+                                    sqlText = sqlText + "A.[" + column.ColumnName + "] + ' (Kopya)',";
+                                }
+                                else if (column.ColumnName.In(UrlColumns, InType.ToUrlLower))
+                                {
+                                    sqlText = sqlText + "A.[" + column.ColumnName + "] + '-(Kopya)',";
+                                }
+                                else
+                                    sqlText = sqlText + "A.[" + column.ColumnName + "],";
+                            }
+                        }
+
+                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                        sqlText += " FROM " + schema + ".[" + Table + "] A WHERE A.[" + idColumn + "] = @" + idColumn;
+                        sqlText = sqlText.Replace(",", ", ");
+
+                        yaz.WriteLine(sqlText);
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
+                        yaz.WriteLine("END;");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        //Copy//
+
+                        //Delete//
+                        yaz.WriteLine("/* Delete */");
+                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Delete]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Delete]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Delete]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\t@" + idColumn + " " + idType);
+                        }
+
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+
+                        yaz.WriteLine("\tDELETE");
+                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                        if (idType != null)
+                        {
+                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
+                        }
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        //Delete//
+
+                        //Remove//
+                        if (deleted != "")
+                        {
+                            yaz.WriteLine("/* Remove */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Remove]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Remove]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Remove]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + idColumn + " " + idType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "] SET [Deleted] = 1");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
+                            }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                        }
+                        //Remove//
+                        yaz.Close();
+                    }
                 }
             }
         }

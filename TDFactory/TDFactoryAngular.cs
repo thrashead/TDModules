@@ -324,6 +324,11 @@ namespace TDFactory
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Service");
                     }
 
+                    if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\StoredProcedures"))
+                    {
+                        Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\StoredProcedures");
+                    }
+
                     if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Uploads"))
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Uploads");
@@ -483,6 +488,14 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Content\\admin\\js\\ckeditor\\translations");
+                        }
+                    }
+
+                    if (chkMVCStoredProc.Checked)
+                    {
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\StoredProcedures"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\StoredProcedures");
                         }
                     }
 
