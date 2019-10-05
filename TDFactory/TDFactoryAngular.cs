@@ -137,6 +137,11 @@ namespace TDFactory
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\lib");
             }
 
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\lib"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\lib");
+            }
+
             if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\views"))
             {
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\views");
@@ -753,6 +758,40 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("export class IndexComponent {");
                     yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\lib\\lib.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
+                    yaz.WriteLine("import { Router } from \"@angular/router\";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Injectable({ providedIn: 'root' })");
+                    yaz.WriteLine("export class Lib {");
+                    yaz.WriteLine("\tstatic RefreshRoute(router: Router, changeUrl: string = \"/\", skipChangeLocation: boolean = true) {");
+                    yaz.WriteLine("\t\tlet currentUrl = router.url;");
+                    yaz.WriteLine("\t\trouter.navigate([changeUrl], { skipLocationChange: skipChangeLocation }).then(() => { router.navigate([currentUrl]) });");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic ParseFloat(value: string) : any {");
+                    yaz.WriteLine("\t\tvar returnValue;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (value == null || value == undefined) {");
+                    yaz.WriteLine("\t\t\treturnValue = null;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse if (value.toString().indexOf(',') > 0) {");
+                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value.toString().replace(\",\", \".\"));");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse {");
+                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\treturn returnValue;");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
@@ -1530,15 +1569,37 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\lib\\methods.ts", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\lib\\lib.ts", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Injectable } from \"@angular/core\";");
+                    yaz.WriteLine("import { Router } from \"@angular/router\";");
                     yaz.WriteLine("import ClassicEditor from \"../../../../Content/admin/js/ckeditor/ckeditor.js\";");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Injectable({ providedIn: 'root' })");
                     yaz.WriteLine("export class AdminLib {");
+                    yaz.WriteLine("\tstatic RefreshRoute(router: Router, changeUrl: string = \"/\", skipChangeLocation: boolean = true) {");
+                    yaz.WriteLine("\t\tlet currentUrl = router.url;");
+                    yaz.WriteLine("\t\trouter.navigate([changeUrl], { skipLocationChange: skipChangeLocation }).then(() => { router.navigate([currentUrl]) });");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic ParseFloat(value: string) : any {");
+                    yaz.WriteLine("\t\tvar returnValue;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (value == null || value == undefined) {");
+                    yaz.WriteLine("\t\t\treturnValue = null;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse if (value.toString().indexOf(',') > 0) {");
+                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value.toString().replace(\",\", \".\"));");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse {");
+                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value);");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\treturn returnValue;");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
                     yaz.WriteLine("\tstatic UploadFileName(filename: string, guidCount: number = 5) {");
                     yaz.WriteLine("\t\tlet x: string = \"\";");
                     yaz.WriteLine("\t\tlet ext: string = filename.split('.').pop();");
@@ -1571,22 +1632,6 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
                     yaz.WriteLine("\t\t\t\t});");
                     yaz.WriteLine("\t\t}, time);");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tstatic ParseFloat(value: string) : any {");
-                    yaz.WriteLine("\t\tvar returnValue;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tif (value == null || value == undefined) {");
-                    yaz.WriteLine("\t\t\treturnValue = null;");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t\telse if (value.toString().indexOf(',') > 0) {");
-                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value.toString().replace(\",\", \".\"));");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t\telse {");
-                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\treturn returnValue;");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
@@ -1708,7 +1753,8 @@ namespace TDFactory
                     yaz.WriteLine("import { SharedService } from './admin/services/shared';");
                     yaz.WriteLine("import { ModelService } from './admin/services/model';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("import { AdminLib } from './admin/lib/methods';");
+                    yaz.WriteLine("import { Lib } from './lib/lib';");
+                    yaz.WriteLine("import { AdminLib } from './admin/lib/lib';");
 
                     yaz.WriteLine("@NgModule({");
                     yaz.WriteLine("\tdeclarations: [");
@@ -1749,6 +1795,7 @@ namespace TDFactory
                     yaz.WriteLine("\tproviders: [{ provide: APP_BASE_HREF, useValue: '/" + projectName + "/' },");
                     yaz.WriteLine("\t\tSharedService,");
                     yaz.WriteLine("\t\tModelService,");
+                    yaz.WriteLine("\t\tLib,");
                     yaz.WriteLine("\t\tAdminLib");
                     yaz.WriteLine("\t],");
                     yaz.WriteLine("\tbootstrap: [AppComponent]");
@@ -2755,7 +2802,6 @@ namespace TDFactory
                     {
                         yaz.WriteLine("import { Component, OnDestroy, OnInit } from \"@angular/core\";");
                         yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                        yaz.WriteLine("import { Router } from \"@angular/router\";");
                         yaz.WriteLine("import { ModelService } from \"../../services/model\";");
                         yaz.WriteLine("declare var DataTable;");
                         yaz.WriteLine("");
@@ -2771,7 +2817,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\tprivate subscription: Subscription = new Subscription();");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\tconstructor(private service: ModelService, private router: Router) {");
+                        yaz.WriteLine("\tconstructor(private service: ModelService) {");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tngOnInit() {");
@@ -2827,14 +2873,9 @@ namespace TDFactory
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                        if (table.Columns.Where(a => a.DataType.ToLower().Contains("decimal")).Count() > 0)
+                        if (table.Columns.Where(a => a.DataType.ToLower().Contains("decimal")).Count() > 0 || table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                         {
-                            yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
-                        }
-
-                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
-                        {
-                            yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
+                            yaz.WriteLine("import { AdminLib } from '../../lib/lib';");
                         }
 
                         yaz.WriteLine("");
@@ -3122,14 +3163,9 @@ namespace TDFactory
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
 
-                            if(table.Columns.Where(a=> a.DataType.ToLower().Contains("decimal")).Count() > 0)
+                            if(table.Columns.Where(a=> a.DataType.ToLower().Contains("decimal")).Count() > 0 || table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                             {
-                                yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
-                            }
-
-                            if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
-                            {
-                                yaz.WriteLine("import { AdminLib } from '../../lib/methods';");
+                                yaz.WriteLine("import { AdminLib } from '../../lib/lib';");
                             }
 
                             if (table.FkcList.Count > 0)
