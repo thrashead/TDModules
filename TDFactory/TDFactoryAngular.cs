@@ -2441,7 +2441,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic JsonResult Index(int? id)");
                         yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\treturn Json(model.List(id), JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t\treturn Json(model.List(id, null, false), JsonRequestBehavior.AllowGet);");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 

@@ -1509,7 +1509,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic ViewResult Index(int? id)");
                         yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\treturn View(model.List(id));");
+                        yaz.WriteLine("\t\t\treturn View(model.List(id, null, false));");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
