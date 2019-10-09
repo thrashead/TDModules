@@ -1620,6 +1620,9 @@ namespace TDFactory
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tstatic CKValue(id: string) {");
+                    yaz.WriteLine("\tif ($(\".ck-content[data-id='\" + id + \"']\").html() == null)");
+                    yaz.WriteLine("\t\treturn \"\";");
+                    yaz.WriteLine("\telse");
                     yaz.WriteLine("\t\treturn $(\".ck-content[data-id='\" + id + \"']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
