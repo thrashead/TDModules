@@ -2187,22 +2187,7 @@ namespace TDFactory
 
         void CreateMVCReadMe()
         {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\readme.txt", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("-------------");
-                    yaz.WriteLine("-- Hatalar --");
-                    yaz.WriteLine("-------------");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("Hata 1 : The type or namespace name 'Http' does not exist in the namespace 'System.Web'");
-                    yaz.WriteLine("Çözüm 1 : Package Manager Console üzerinden \"Install-Package Microsoft.AspNet.WebApi.Core\" kodunu çalıştır.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("Hata 2 : EntityFramework Kurulumu");
-                    yaz.WriteLine("Çözüm 2 : Package Manager Console üzerinden \"Install-Package EntityFramework\" kodunu çalıştır.");
-                    yaz.Close();
-                }
-            }
+            CopyFromResource(StringToByteArray(Properties.Resources.Normal_readme_txt, FileFormat.Unicode), PathAddress + "\\" + projectFolder + "\\readme.txt");
         }
 
         #endregion

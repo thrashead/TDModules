@@ -4564,9 +4564,23 @@ namespace TDFactory
             File.WriteAllBytes(destFile, resourceFile);
         }
 
-        byte[] StringToByteArray(string file)
+        byte[] StringToByteArray(string file, FileFormat fileFormat = FileFormat.UTF8)
         {
-            return Encoding.UTF8.GetBytes(file);
+            if (fileFormat == FileFormat.UTF8)
+                return Encoding.UTF8.GetBytes(file);
+            else if(fileFormat == FileFormat.Unicode)
+                return Encoding.Unicode.GetBytes(file);
+            else if (fileFormat == FileFormat.ASCII)
+                return Encoding.ASCII.GetBytes(file);
+            else
+                return Encoding.UTF8.GetBytes(file);
+        }
+
+        public enum FileFormat
+        {
+            UTF8,
+            Unicode,
+            ASCII
         }
 
         byte[] BitmapToByteArray(Bitmap file)

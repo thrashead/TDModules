@@ -3636,57 +3636,7 @@ namespace TDFactory
 
         void CreateAngularReadMe()
         {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\readme.txt", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
-                {
-                    yaz.WriteLine("---------------------");
-                    yaz.WriteLine("-- Angular Kurulum --");
-                    yaz.WriteLine("---------------------");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("- Önce projenin ana dizininde cmd'yi çalıştırıp \"ng new ngClient --routing\" diyip node_modules'ü indireceksin.");
-                    yaz.WriteLine("Yukarıdaki komut yerine \"ng new ngClient --routing --skip-install\" dersen node_modules klasörü hariç dosyaları indirir. (Hızlı)");
-                    yaz.WriteLine("- Bunu yapınca seçeneklerden CSS'i seçeceksin ve uzunca kurulumu bekleyeceksin.");
-                    yaz.WriteLine("- İlgili dosyalar ngClient klasörüne kopyalandıktan sonra aşağıdaki dosyaları Kes/Yapıştır ile ana dizine atacaksın;");
-                    yaz.WriteLine("\tnode_modules (klasör)");
-                    yaz.WriteLine("\tsrc (klasör) [İçinde bulunan app klasörünü sil.]");
-                    yaz.WriteLine("\tangular.json");
-                    yaz.WriteLine("\tpackage.json");
-                    yaz.WriteLine("\ttsconfig.app.json");
-                    yaz.WriteLine("\ttsconfig.json");
-                    yaz.WriteLine("\ttslint.json");
-                    yaz.WriteLine("- Visual Studio içinde \"Show All files\" diyip \"node_modules\" klasörü hariç bu dosyalar projeye dahil edeceksin.");
-                    yaz.WriteLine("- Programın ürettiği src klasöründe bulunan app klasörünü projedeki src klasörü içine yapıştır.");
-                    yaz.WriteLine("- \"npm install --save rxjs-compat\" diyerek rxjs tipini yükleyeceksin.");
-                    yaz.WriteLine("- \"npm install jquery --save\" diyerek jquery yükleyeceksin.");
-                    yaz.WriteLine("- \"npm install --save @types/jquery\" diyerek jquery tipini yükleyeceksin.");
-                    yaz.WriteLine("- \"npm install --save @types/jest\" diyerek jest tipini yükleyeceksin.");
-                    yaz.WriteLine("- tsconfig.json dosyası içine \"types\": [ \"jquery\", \"jest\" ] tanımlamasını gireceksin.");
-                    yaz.WriteLine("- Content/js klasörü içine libs adında klasör açacaksın. Content/js yerine kendi scriptlerini sakladığın klasör içine açacaksın.");
-                    yaz.WriteLine("- angular.json içinde \"options\": { \"outputPath\": \"Content/js/libs\", şeklinde libs yolunu belirteceksin.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("- Proje ana dizininde cmd çalıştırıp \"ng build --watch\" komutunu çalıştıracaksın.Bu komutu projede yaptığın her değişiklik sonrası çalıştıracaksın.");
-                    yaz.WriteLine("Yoksa değişiklikler çalışmaz. cmd arkada çalışır durumda kalsın ikide bir açmak zorunda kalma.");
-                    yaz.WriteLine("- Projeye yeni component eklediğinde bunu routing ve app.module.ts içinde declarations kısmında belirtmelisin.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("- \"ng build --prod\" diyerek publish olacak şekilde libs klasörü içini hazırlarsın. (daha küçük boyutta oluyor)");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("Not: package.json içinde değişiklik yapıp Restore Package deme asla. Nasıl yüklendiyse o çalışsın.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("-------------");
-                    yaz.WriteLine("-- Hatalar --");
-                    yaz.WriteLine("-------------");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("Hata 1 : The type or namespace name 'Http' does not exist in the namespace 'System.Web'");
-                    yaz.WriteLine("Çözüm 1 : Package Manager Console üzerinden \"Install-Package Microsoft.AspNet.WebApi.Core\" kodunu çalıştır.");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("Hata 2 : EntityFramework Kurulumu");
-                    yaz.WriteLine("Çözüm 2 : Package Manager Console üzerinden \"Install-Package EntityFramework\" kodunu çalıştır.");
-
-                    yaz.Close();
-                }
-            }
+            CopyFromResource(StringToByteArray(Properties.Resources.Angular_readme_txt, FileFormat.Unicode), PathAddress + "\\" + projectFolder + "\\readme.txt");
         }
 
         #endregion
