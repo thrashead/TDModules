@@ -163,6 +163,7 @@ namespace TDFactory
                     ImageColumns = lstImageColumns.Items.ToStringList();
                     CodeColumns = lstCodeColumns.Items.ToStringList();
                     SearchColumns = lstSearchColumns.Items.ToStringList();
+                    MailColumns = lstMailColumns.Items.ToStringList();
 
                     if (chkAngular.Checked)
                     {
@@ -819,6 +820,20 @@ namespace TDFactory
             }
         }
 
+        private void btnMailColumnsAdd_Click(object sender, EventArgs e)
+        {
+            string column = txtMailColumns.Text.Trim().Replace(" ", "").ToUrl(true);
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstMailColumns.Items.Contains(column))
+                {
+                    lstMailColumns.Items.Add(column);
+                    txtMailColumns.Text = "";
+                }
+            }
+        }
+
         private void btnUrlColumnsSub_Click(object sender, EventArgs e)
         {
             lstUrlColumns.Items.Remove(lstUrlColumns.SelectedItem);
@@ -852,6 +867,11 @@ namespace TDFactory
         private void btnSearchColumnsSub_Click(object sender, EventArgs e)
         {
             lstSearchColumns.Items.Remove(lstSearchColumns.SelectedItem);
+        }
+
+        private void btnMailColumnsSub_Click(object sender, EventArgs e)
+        {
+            lstMailColumns.Items.Remove(lstMailColumns.SelectedItem);
         }
 
         private void btnImageColumnsClear_Click(object sender, EventArgs e)
@@ -889,6 +909,11 @@ namespace TDFactory
             lstSearchColumns.Items.Clear();
         }
 
+        private void btnMailColumnsClear_Click(object sender, EventArgs e)
+        {
+            lstMailColumns.Items.Clear();
+        }
+
         void ClearLabel()
         {
             lblKolonAdi.Text = "";
@@ -906,7 +931,6 @@ namespace TDFactory
             lstKolonlar.Items.Clear();
             lstSeciliKolonlar.Items.Clear();
         }
-
 
         //Android
         private void btnAndroidBaslat_Click(object sender, EventArgs e)

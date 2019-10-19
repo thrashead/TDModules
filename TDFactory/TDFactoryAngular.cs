@@ -2964,7 +2964,11 @@ namespace TDFactory
                         {
                             if (!column.IsIdentity)
                             {
-                                if (column.Type.Name == "Boolean")
+                                if(column.ColumnName.In(MailColumns, InType.ToUrlLower))
+                                {
+                                    yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, Validators.compose([Validators.required, Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')])),");
+                                }
+                                else if (column.Type.Name == "Boolean")
                                 {
                                     yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
                                 }
@@ -3254,7 +3258,11 @@ namespace TDFactory
 
                             foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
                             {
-                                if (column.Type.Name == "Boolean")
+                                if (column.ColumnName.In(MailColumns, InType.ToUrlLower))
+                                {
+                                    yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, Validators.compose([Validators.required, Validators.pattern('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$')])),");
+                                }
+                                else if (column.Type.Name == "Boolean")
                                 {
                                     yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null),");
                                 }

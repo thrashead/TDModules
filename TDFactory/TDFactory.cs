@@ -41,6 +41,7 @@ namespace TDFactory
         public string[] FileColumns;
         public string[] ImageColumns;
         public string[] SearchColumns;
+        public string[] MailColumns;
 
         int tableindex, selectedtableindex;
         bool tableselected = false;
@@ -323,6 +324,8 @@ namespace TDFactory
                     return columnNames.Where(a => a.ColumnName.In(ImageColumns, ExMethods.InType.ToUrlLower)).ToList();
                 case ColumnType.SearchColumns:
                     return columnNames.Where(a => a.ColumnName.In(SearchColumns, ExMethods.InType.ToUrlLower)).ToList();
+                case ColumnType.MailColumns:
+                    return columnNames.Where(a => a.ColumnName.In(MailColumns, ExMethods.InType.ToUrlLower)).ToList();
                 default:
                     return columnNames;
             }
@@ -336,7 +339,8 @@ namespace TDFactory
             DeletedColumns,
             FileColumns,
             ImageColumns,
-            SearchColumns
+            SearchColumns,
+            MailColumns
         }
     }
 }

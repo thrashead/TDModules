@@ -74,10 +74,16 @@
             this.lstSearchColumns = new System.Windows.Forms.ListBox();
             this.txtSearchColumns = new System.Windows.Forms.TextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
+            this.lblMailColumns = new System.Windows.Forms.Label();
+            this.btnMailColumnsClear = new System.Windows.Forms.Button();
             this.lblDeletedColumns = new System.Windows.Forms.Label();
+            this.lstMailColumns = new System.Windows.Forms.ListBox();
             this.btnDeletedColumnsClear = new System.Windows.Forms.Button();
+            this.btnMailColumnsSub = new System.Windows.Forms.Button();
             this.lstDeletedColumns = new System.Windows.Forms.ListBox();
+            this.txtMailColumns = new System.Windows.Forms.TextBox();
             this.btnDeletedColumnsSub = new System.Windows.Forms.Button();
+            this.btnMailColumnsAdd = new System.Windows.Forms.Button();
             this.txtDeletedColumns = new System.Windows.Forms.TextBox();
             this.btnDeletedColumnsAdd = new System.Windows.Forms.Button();
             this.chkRepositoryInternal = new System.Windows.Forms.CheckBox();
@@ -368,7 +374,11 @@
             "logo",
             "logourl",
             "thumb",
-            "thumburl"});
+            "thumburl",
+            "thumbnail",
+            "resim",
+            "fotograf",
+            "imaj"});
             this.lstImageColumns.Location = new System.Drawing.Point(9, 57);
             this.lstImageColumns.Name = "lstImageColumns";
             this.lstImageColumns.Size = new System.Drawing.Size(120, 173);
@@ -403,7 +413,7 @@
             // 
             // btnImageColumnsSub
             // 
-            this.btnImageColumnsSub.Location = new System.Drawing.Point(135, 178);
+            this.btnImageColumnsSub.Location = new System.Drawing.Point(134, 178);
             this.btnImageColumnsSub.Name = "btnImageColumnsSub";
             this.btnImageColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnImageColumnsSub.TabIndex = 91;
@@ -414,7 +424,7 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.button1.Location = new System.Drawing.Point(135, 207);
+            this.button1.Location = new System.Drawing.Point(134, 207);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(25, 23);
             this.button1.TabIndex = 91;
@@ -427,7 +437,8 @@
             this.lstFileColumns.FormattingEnabled = true;
             this.lstFileColumns.Items.AddRange(new object[] {
             "file",
-            "fileurl"});
+            "fileurl",
+            "dosya"});
             this.lstFileColumns.Location = new System.Drawing.Point(197, 57);
             this.lstFileColumns.Name = "lstFileColumns";
             this.lstFileColumns.Size = new System.Drawing.Size(120, 173);
@@ -519,7 +530,8 @@
             this.lstUrlColumns.Items.AddRange(new object[] {
             "url",
             "routeurl",
-            "rewriteurl"});
+            "rewriteurl",
+            "link"});
             this.lstUrlColumns.Location = new System.Drawing.Point(9, 57);
             this.lstUrlColumns.Name = "lstUrlColumns";
             this.lstUrlColumns.Size = new System.Drawing.Size(120, 173);
@@ -544,7 +556,7 @@
             // 
             // btnUrlColumnsSub
             // 
-            this.btnUrlColumnsSub.Location = new System.Drawing.Point(135, 178);
+            this.btnUrlColumnsSub.Location = new System.Drawing.Point(134, 178);
             this.btnUrlColumnsSub.Name = "btnUrlColumnsSub";
             this.btnUrlColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsSub.TabIndex = 91;
@@ -566,7 +578,7 @@
             // btnUrlColumnsClear
             // 
             this.btnUrlColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnUrlColumnsClear.Location = new System.Drawing.Point(135, 207);
+            this.btnUrlColumnsClear.Location = new System.Drawing.Point(134, 207);
             this.btnUrlColumnsClear.Name = "btnUrlColumnsClear";
             this.btnUrlColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsClear.TabIndex = 91;
@@ -703,7 +715,7 @@
             // 
             // btnGuidColumnsSub
             // 
-            this.btnGuidColumnsSub.Location = new System.Drawing.Point(135, 178);
+            this.btnGuidColumnsSub.Location = new System.Drawing.Point(134, 178);
             this.btnGuidColumnsSub.Name = "btnGuidColumnsSub";
             this.btnGuidColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnGuidColumnsSub.TabIndex = 91;
@@ -724,7 +736,7 @@
             // btnGuidColumnsClear
             // 
             this.btnGuidColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnGuidColumnsClear.Location = new System.Drawing.Point(135, 207);
+            this.btnGuidColumnsClear.Location = new System.Drawing.Point(134, 207);
             this.btnGuidColumnsClear.Name = "btnGuidColumnsClear";
             this.btnGuidColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnGuidColumnsClear.TabIndex = 91;
@@ -749,18 +761,45 @@
             // 
             // tabPage4
             // 
+            this.tabPage4.Controls.Add(this.lblMailColumns);
+            this.tabPage4.Controls.Add(this.btnMailColumnsClear);
             this.tabPage4.Controls.Add(this.lblDeletedColumns);
+            this.tabPage4.Controls.Add(this.lstMailColumns);
             this.tabPage4.Controls.Add(this.btnDeletedColumnsClear);
+            this.tabPage4.Controls.Add(this.btnMailColumnsSub);
             this.tabPage4.Controls.Add(this.lstDeletedColumns);
+            this.tabPage4.Controls.Add(this.txtMailColumns);
             this.tabPage4.Controls.Add(this.btnDeletedColumnsSub);
+            this.tabPage4.Controls.Add(this.btnMailColumnsAdd);
             this.tabPage4.Controls.Add(this.txtDeletedColumns);
             this.tabPage4.Controls.Add(this.btnDeletedColumnsAdd);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
             this.tabPage4.Size = new System.Drawing.Size(358, 240);
             this.tabPage4.TabIndex = 3;
-            this.tabPage4.Text = "Sil";
+            this.tabPage4.Text = "Sil / Mail";
             this.tabPage4.UseVisualStyleBackColor = true;
+            // 
+            // lblMailColumns
+            // 
+            this.lblMailColumns.AutoSize = true;
+            this.lblMailColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblMailColumns.Location = new System.Drawing.Point(194, 15);
+            this.lblMailColumns.Name = "lblMailColumns";
+            this.lblMailColumns.Size = new System.Drawing.Size(74, 13);
+            this.lblMailColumns.TabIndex = 92;
+            this.lblMailColumns.Text = "Sil Kolonları";
+            // 
+            // btnMailColumnsClear
+            // 
+            this.btnMailColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnMailColumnsClear.Location = new System.Drawing.Point(322, 207);
+            this.btnMailColumnsClear.Name = "btnMailColumnsClear";
+            this.btnMailColumnsClear.Size = new System.Drawing.Size(25, 23);
+            this.btnMailColumnsClear.TabIndex = 91;
+            this.btnMailColumnsClear.Text = "Ø";
+            this.btnMailColumnsClear.UseVisualStyleBackColor = true;
+            this.btnMailColumnsClear.Click += new System.EventHandler(this.btnMailColumnsClear_Click);
             // 
             // lblDeletedColumns
             // 
@@ -772,16 +811,39 @@
             this.lblDeletedColumns.TabIndex = 92;
             this.lblDeletedColumns.Text = "Sil Kolonları";
             // 
+            // lstMailColumns
+            // 
+            this.lstMailColumns.FormattingEnabled = true;
+            this.lstMailColumns.Items.AddRange(new object[] {
+            "mail",
+            "email",
+            "posta",
+            "eposta"});
+            this.lstMailColumns.Location = new System.Drawing.Point(197, 57);
+            this.lstMailColumns.Name = "lstMailColumns";
+            this.lstMailColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstMailColumns.TabIndex = 89;
+            // 
             // btnDeletedColumnsClear
             // 
             this.btnDeletedColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnDeletedColumnsClear.Location = new System.Drawing.Point(135, 207);
+            this.btnDeletedColumnsClear.Location = new System.Drawing.Point(134, 207);
             this.btnDeletedColumnsClear.Name = "btnDeletedColumnsClear";
             this.btnDeletedColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsClear.TabIndex = 91;
             this.btnDeletedColumnsClear.Text = "Ø";
             this.btnDeletedColumnsClear.UseVisualStyleBackColor = true;
             this.btnDeletedColumnsClear.Click += new System.EventHandler(this.btnDeletedColumnsClear_Click);
+            // 
+            // btnMailColumnsSub
+            // 
+            this.btnMailColumnsSub.Location = new System.Drawing.Point(322, 178);
+            this.btnMailColumnsSub.Name = "btnMailColumnsSub";
+            this.btnMailColumnsSub.Size = new System.Drawing.Size(25, 23);
+            this.btnMailColumnsSub.TabIndex = 91;
+            this.btnMailColumnsSub.Text = "-";
+            this.btnMailColumnsSub.UseVisualStyleBackColor = true;
+            this.btnMailColumnsSub.Click += new System.EventHandler(this.btnMailColumnsSub_Click);
             // 
             // lstDeletedColumns
             // 
@@ -793,15 +855,32 @@
             this.lstDeletedColumns.Size = new System.Drawing.Size(120, 173);
             this.lstDeletedColumns.TabIndex = 89;
             // 
+            // txtMailColumns
+            // 
+            this.txtMailColumns.Location = new System.Drawing.Point(197, 31);
+            this.txtMailColumns.Name = "txtMailColumns";
+            this.txtMailColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtMailColumns.TabIndex = 90;
+            // 
             // btnDeletedColumnsSub
             // 
-            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(135, 178);
+            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(134, 178);
             this.btnDeletedColumnsSub.Name = "btnDeletedColumnsSub";
             this.btnDeletedColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsSub.TabIndex = 91;
             this.btnDeletedColumnsSub.Text = "-";
             this.btnDeletedColumnsSub.UseVisualStyleBackColor = true;
             this.btnDeletedColumnsSub.Click += new System.EventHandler(this.btnDeletedColumnsSub_Click);
+            // 
+            // btnMailColumnsAdd
+            // 
+            this.btnMailColumnsAdd.Location = new System.Drawing.Point(323, 29);
+            this.btnMailColumnsAdd.Name = "btnMailColumnsAdd";
+            this.btnMailColumnsAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnMailColumnsAdd.TabIndex = 91;
+            this.btnMailColumnsAdd.Text = "+";
+            this.btnMailColumnsAdd.UseVisualStyleBackColor = true;
+            this.btnMailColumnsAdd.Click += new System.EventHandler(this.btnMailColumnsAdd_Click);
             // 
             // txtDeletedColumns
             // 
@@ -2760,5 +2839,11 @@
         private System.Windows.Forms.TabPage tabPage3;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.Label lblKolonlar;
+        private System.Windows.Forms.Label lblMailColumns;
+        private System.Windows.Forms.Button btnMailColumnsClear;
+        public System.Windows.Forms.ListBox lstMailColumns;
+        private System.Windows.Forms.Button btnMailColumnsSub;
+        private System.Windows.Forms.TextBox txtMailColumns;
+        private System.Windows.Forms.Button btnMailColumnsAdd;
     }
 }
