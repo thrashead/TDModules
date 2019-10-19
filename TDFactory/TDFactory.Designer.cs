@@ -786,9 +786,9 @@
             this.lblMailColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
             this.lblMailColumns.Location = new System.Drawing.Point(194, 15);
             this.lblMailColumns.Name = "lblMailColumns";
-            this.lblMailColumns.Size = new System.Drawing.Size(74, 13);
+            this.lblMailColumns.Size = new System.Drawing.Size(83, 13);
             this.lblMailColumns.TabIndex = 92;
-            this.lblMailColumns.Text = "Sil Kolonları";
+            this.lblMailColumns.Text = "Mail Kolonları";
             // 
             // btnMailColumnsClear
             // 
