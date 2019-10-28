@@ -117,6 +117,11 @@ namespace TDFactory
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views");
             }
 
+            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general"))
+            {
+                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general");
+            }
+
             if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home"))
             {
                 Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home");
@@ -515,9 +520,9 @@ namespace TDFactory
             }
             else
             {
-                if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName.ToUrl(true)))
+                if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + _tableName.ToUrl(true)))
                 {
-                    Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + _tableName.ToUrl(true));
+                    Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + _tableName.ToUrl(true));
                 }
             }
         }
@@ -821,8 +826,8 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component } from '@angular/core';");
-                    yaz.WriteLine("import { SharedService } from '../../services/shared';");
                     yaz.WriteLine("import { Router } from '@angular/router';");
+                    yaz.WriteLine("import { SharedService } from '../../services/shared';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\tselector: 'admin-layout',");
@@ -1230,8 +1235,8 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component, ViewEncapsulation, NgZone } from '@angular/core';");
-                    yaz.WriteLine("import { ModelService } from '../../../services/model';");
                     yaz.WriteLine("import { Router } from '@angular/router';");
+                    yaz.WriteLine("import { ModelService } from '../../../services/model';");
                     yaz.WriteLine("import '../../../../../../Content/admin/js/jquery.dataTables.min.js';");
                     yaz.WriteLine("import '../../../../../../Content/admin/js/bootstrap.min.js';");
                     yaz.WriteLine("import '../../../../../../Content/admin/js/matrix.js';");
@@ -1500,8 +1505,8 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component, ViewEncapsulation } from \"@angular/core\";");
-                    yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
                     yaz.WriteLine("import { Router } from '@angular/router';");
+                    yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
                     yaz.WriteLine("import { SharedService } from '../../services/shared.js';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
@@ -1732,24 +1737,26 @@ namespace TDFactory
                     yaz.WriteLine("import { LayoutComponent } from './views/shared/layout';");
                     yaz.WriteLine("import { HeaderComponent } from './views/shared/controls/header';");
                     yaz.WriteLine("import { FooterComponent } from './views/shared/controls/footer';");
-                    yaz.WriteLine("import { IndexComponent } from './views/home/index';");
                     yaz.WriteLine("import { ScriptsComponent } from './views/shared/controls/scripts';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
+                    yaz.WriteLine("import { IndexComponent } from './views/home/index';");
+                    yaz.WriteLine("");
                     yaz.WriteLine("import { AdminLayoutComponent } from './admin/views/shared/layoutAdmin';");
-                    yaz.WriteLine("import { AdminIndexComponent } from './admin/views/home/index';");
                     yaz.WriteLine("import { AdminHeaderComponent } from './admin/views/shared/controls/header';");
                     yaz.WriteLine("import { AdminLeftMenuComponent } from './admin/views/shared/controls/leftmenu';");
                     yaz.WriteLine("import { AdminScriptsComponent } from './admin/views/shared/controls/scripts';");
                     yaz.WriteLine("import { AdminCopyDeleteComponent } from './admin/views/shared/controls/copydelete';");
                     yaz.WriteLine("import { AdminFooterComponent } from './admin/views/shared/controls/footer';");
                     yaz.WriteLine("");
+                    yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
+                    yaz.WriteLine("import { AdminIndexComponent } from './admin/views/home/index';");
+                    yaz.WriteLine("");
 
                     foreach (string Table in selectedTables)
                     {
-                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToUrl(true) + "';");
-                        yaz.WriteLine("import { Admin" + Table + "InsertComponent } from './admin/views/" + Table.ToUrl(true) + "/insert';");
-                        yaz.WriteLine("import { Admin" + Table + "UpdateComponent } from './admin/views/" + Table.ToUrl(true) + "/update';");
+                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/general/" + Table.ToUrl(true) + "';");
+                        yaz.WriteLine("import { Admin" + Table + "InsertComponent } from './admin/views/general/" + Table.ToUrl(true) + "/insert';");
+                        yaz.WriteLine("import { Admin" + Table + "UpdateComponent } from './admin/views/general/" + Table.ToUrl(true) + "/update';");
                         yaz.WriteLine("");
                     }
 
@@ -1766,17 +1773,19 @@ namespace TDFactory
                     yaz.WriteLine("\t\tLayoutComponent,");
                     yaz.WriteLine("\t\tHeaderComponent,");
                     yaz.WriteLine("\t\tFooterComponent,");
-                    yaz.WriteLine("\t\tIndexComponent,");
                     yaz.WriteLine("\t\tScriptsComponent,");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\tAdminLoginComponent,");
+                    yaz.WriteLine("\t\tIndexComponent,");
+                    yaz.WriteLine("");
                     yaz.WriteLine("\t\tAdminLayoutComponent,");
-                    yaz.WriteLine("\t\tAdminIndexComponent,");
                     yaz.WriteLine("\t\tAdminHeaderComponent,");
                     yaz.WriteLine("\t\tAdminLeftMenuComponent,");
                     yaz.WriteLine("\t\tAdminScriptsComponent,");
                     yaz.WriteLine("\t\tAdminCopyDeleteComponent,");
                     yaz.WriteLine("\t\tAdminFooterComponent,");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tAdminLoginComponent,");
+                    yaz.WriteLine("\t\tAdminIndexComponent,");
 
                     foreach (string Table in selectedTables)
                     {
@@ -1823,21 +1832,19 @@ namespace TDFactory
                     yaz.WriteLine("import { IndexComponent } from './views/home/index';");
                     yaz.WriteLine("");
                     yaz.WriteLine("import { AdminLayoutComponent } from './admin/views/shared/layoutAdmin';");
-                    yaz.WriteLine("import { AdminIndexComponent } from './admin/views/home/index';");
                     yaz.WriteLine("import { AdminLoginComponent } from './admin/views/home/login';");
+                    yaz.WriteLine("import { AdminIndexComponent } from './admin/views/home/index';");
                     yaz.WriteLine("");
 
                     foreach (string Table in selectedTables)
                     {
-                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + Table.ToUrl(true) + "';");
-                        yaz.WriteLine("import { Admin" + Table + "InsertComponent } from './admin/views/" + Table.ToUrl(true) + "/insert';");
-                        yaz.WriteLine("import { Admin" + Table + "UpdateComponent } from './admin/views/" + Table.ToUrl(true) + "/update';");
+                        yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/general/" + Table.ToUrl(true) + "';");
+                        yaz.WriteLine("import { Admin" + Table + "InsertComponent } from './admin/views/general/" + Table.ToUrl(true) + "/insert';");
+                        yaz.WriteLine("import { Admin" + Table + "UpdateComponent } from './admin/views/general/" + Table.ToUrl(true) + "/update';");
                         yaz.WriteLine("");
                     }
 
                     yaz.WriteLine("const routes: Routes = [");
-                    yaz.WriteLine("\t{ path: 'Admin/Login', component: AdminLoginComponent, runGuardsAndResolvers: 'always' },");
-                    yaz.WriteLine("");
                     yaz.WriteLine("\t{");
                     yaz.WriteLine("\t\tpath: '',");
                     yaz.WriteLine("\t\tcomponent: LayoutComponent,");
@@ -1846,6 +1853,8 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t{ path: '', component: IndexComponent, pathMatch: 'full' },");
                     yaz.WriteLine("\t\t], runGuardsAndResolvers: 'always'");
                     yaz.WriteLine("\t},");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t{ path: 'Admin/Login', component: AdminLoginComponent, runGuardsAndResolvers: 'always' },");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t{");
                     yaz.WriteLine("\t\tpath: '',");
@@ -1970,7 +1979,7 @@ namespace TDFactory
                 }
 
                 //Index
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\index.html", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\index.html", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
@@ -2091,7 +2100,7 @@ namespace TDFactory
                 }
 
                 //Ekle
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\insert.html", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\insert.html", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
@@ -2184,7 +2193,7 @@ namespace TDFactory
                 //Duzenle
                 if (table.IdentityColumns.Count > 0)
                 {
-                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\update.html", FileMode.Create))
+                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\update.html", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
@@ -2799,13 +2808,13 @@ namespace TDFactory
                 CreateAngularDirectories(Table);
 
                 //Index
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\index.ts", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\index.ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         yaz.WriteLine("import { Component, OnDestroy, OnInit } from \"@angular/core\";");
                         yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                        yaz.WriteLine("import { ModelService } from \"../../services/model\";");
+                        yaz.WriteLine("import { ModelService } from \"../../../services/model\";");
                         yaz.WriteLine("declare var DataTable;");
                         yaz.WriteLine("");
                         yaz.WriteLine("@Component({");
@@ -2864,21 +2873,21 @@ namespace TDFactory
                 }
 
                 //Ekle
-                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\insert.ts", FileMode.Create))
+                using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\insert.ts", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
                         string afterViewChecked = table.EDITORColumns.Count > 0 ? ", AfterViewChecked" : "";
 
                         yaz.WriteLine("import { Component" + afterViewChecked + " } from \"@angular/core\";");
-                        yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                        yaz.WriteLine("import { ModelService } from \"../../services/model\";");
                         yaz.WriteLine("import { Router } from \"@angular/router\";");
                         yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
+                        yaz.WriteLine("import { Subscription } from \"rxjs\";");
+                        yaz.WriteLine("import { ModelService } from \"../../../services/model\";");
 
                         if (table.Columns.Where(a => a.DataType.ToLower().Contains("decimal")).Count() > 0 || table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                         {
-                            yaz.WriteLine("import { AdminLib } from '../../lib/lib';");
+                            yaz.WriteLine("import { AdminLib } from '../../../lib/lib';");
                         }
 
                         yaz.WriteLine("");
@@ -3158,21 +3167,21 @@ namespace TDFactory
                 //Duzenle
                 if (table.IdentityColumns.Count > 0)
                 {
-                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + Table.ToUrl(true) + "\\update.ts", FileMode.Create))
+                    using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\update.ts", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
                             string afterViewChecked = table.EDITORColumns.Count > 0 ? ", AfterViewChecked" : "";
 
                             yaz.WriteLine("import { Component" + afterViewChecked + " } from \"@angular/core\";");
-                            yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                            yaz.WriteLine("import { ModelService } from \"../../services/model\";");
                             yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
                             yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
+                            yaz.WriteLine("import { Subscription } from \"rxjs\";");
+                            yaz.WriteLine("import { ModelService } from \"../../../services/model\";");
 
                             if(table.Columns.Where(a=> a.DataType.ToLower().Contains("decimal")).Count() > 0 || table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                             {
-                                yaz.WriteLine("import { AdminLib } from '../../lib/lib';");
+                                yaz.WriteLine("import { AdminLib } from '../../../lib/lib';");
                             }
 
                             if (table.FkcList.Count > 0)
