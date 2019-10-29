@@ -834,6 +834,20 @@ namespace TDFactory
             }
         }
 
+        private void btnLangAdd_Click(object sender, EventArgs e)
+        {
+            string column = txtLang.Text.Trim();
+
+            if (!String.IsNullOrEmpty(column))
+            {
+                if (!lstLang.Items.Contains(column))
+                {
+                    lstLang.Items.Add(column);
+                    txtLang.Text = "";
+                }
+            }
+        }
+
         private void btnUrlColumnsSub_Click(object sender, EventArgs e)
         {
             lstUrlColumns.Items.Remove(lstUrlColumns.SelectedItem);
@@ -874,6 +888,11 @@ namespace TDFactory
             lstMailColumns.Items.Remove(lstMailColumns.SelectedItem);
         }
 
+        private void btnLangSub_Click(object sender, EventArgs e)
+        {
+            lstLang.Items.Remove(lstLang.SelectedItem);
+        }
+
         private void btnImageColumnsClear_Click(object sender, EventArgs e)
         {
             lstImageColumns.Items.Clear();
@@ -912,6 +931,29 @@ namespace TDFactory
         private void btnMailColumnsClear_Click(object sender, EventArgs e)
         {
             lstMailColumns.Items.Clear();
+        }
+
+        private void btnLangClear_Click(object sender, EventArgs e)
+        {
+            lstLang.Items.Clear();
+        }
+
+        private void btnLangFile_Click(object sender, EventArgs e)
+        {
+            if (fileDialogLang.ShowDialog() == DialogResult.OK)
+            {
+                lstLang.Items.Clear();
+                string dosya = fileDialogLang.FileName;
+                TextReader reader = File.OpenText(dosya);
+                string str;
+                while ((str = reader.ReadLine()) != null)
+                {
+                    if (!String.IsNullOrEmpty(str))
+                        lstLang.Items.Add(str);
+                }
+                reader.Close();
+                reader.Dispose();
+            }
         }
 
         void ClearLabel()

@@ -1120,19 +1120,19 @@ namespace TDFactory
                         if (item.SubMenu.Count <= 0)
                         {
                             yaz.WriteLine("\t\t<li data-url=\"" + item.Title + "\">");
-                            yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + item.Title + "\"><i class=\"icon icon-home\"></i> <span>" + item.Title + "</span></a>");
+                            yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + item.Title + "\"><i class=\"icon icon-home\"></i> <span>" + item.Title.ToTurkish(lstLang) + "</span></a>");
                             yaz.WriteLine("\t\t</li>");
                         }
                         else
                         {
                             yaz.WriteLine("\t\t<li class=\"submenu\">");
-                            yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + item.Title + "</span></a>");
+                            yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + item.Title.ToTurkish(lstLang) + "</span></a>");
                             yaz.WriteLine("\t\t\t<ul>");
-                            yaz.WriteLine("\t\t\t\t<li data-url=\"" + item.Title + "\"><a routerLink=\"/Admin/" + item.Title + "\">" + item.Title + "</a></li>");
+                            yaz.WriteLine("\t\t\t\t<li data-url=\"" + item.Title + "\"><a routerLink=\"/Admin/" + item.Title + "\">" + item.Title.ToTurkish(lstLang) + "</a></li>");
 
                             foreach (AdminMenu subItem in item.SubMenu)
                             {
-                                yaz.WriteLine("\t\t\t\t<li data-url=\"" + subItem.Title + "\"><a routerLink=\"/Admin/" + subItem.Title + "\">" + subItem.Title + "</a></li>");
+                                yaz.WriteLine("\t\t\t\t<li data-url=\"" + subItem.Title + "\"><a routerLink=\"/Admin/" + subItem.Title + "\">" + subItem.Title.ToTurkish(lstLang) + "</a></li>");
                             }
 
                             yaz.WriteLine("\t\t\t</ul>");
@@ -1437,7 +1437,7 @@ namespace TDFactory
 
                     foreach (AdminMenu item in adminMenu)
                     {
-                        yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a routerLink=\"/Admin/" + item.Title + "\"> <i class=\"icon-home\"></i> " + item.Title + "</a> </li>");
+                        yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a routerLink=\"/Admin/" + item.Title + "\"> <i class=\"icon-home\"></i> " + item.Title.ToTurkish(lstLang) + "</a> </li>");
                         i++;
                     }
 
@@ -1968,6 +1968,8 @@ namespace TDFactory
                 Table table = new Table(Table, connectionInfo);
                 SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
 
+                string tableLang = Table.ToTurkish(lstLang);
+
                 CreateAngularDirectories(Table);
 
                 if (i <= 0)
@@ -1985,7 +1987,7 @@ namespace TDFactory
                     {
                         yaz.WriteLine("<div id=\"content\">");
                         yaz.WriteLine("\t<div id=\"content-header\">");
-                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a href=\"javascript:;\" class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + "</a></div>");
+                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a href=\"javascript:;\" class=\"tip-bottom\"><i class=\"icon-home\"></i> " + tableLang + " Tablosu</a></div>");
                         yaz.WriteLine("\t</div>");
                         yaz.WriteLine("\t<div class=\"container-fluid\">");
                         yaz.WriteLine("\t\t<div class=\"row-fluid\">");
@@ -1993,7 +1995,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
                         yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
                         yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
-                        yaz.WriteLine("\t\t\t\t\t\t<h5>" + Table + "</h5>");
+                        yaz.WriteLine("\t\t\t\t\t\t<h5>" + tableLang + " Tablosu</h5>");
                         yaz.WriteLine("\t\t\t\t\t</div>");
                         yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
                         yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
@@ -2010,7 +2012,7 @@ namespace TDFactory
 
                             if (frchkForeignLst2.Count > 0)
                             {
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst2.FirstOrDefault().PrimaryTableName + "</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst2.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang) + "</th>");
                             }
                             else
                             {
@@ -2089,7 +2091,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t</div>");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t<div class=\"pagelinks\">");
-                        yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "/Insert\" class=\"btn btn-primary btn-add\">" + Table + " Ekle</a>");
+                        yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "/Insert\" class=\"btn btn-primary btn-add\">" + tableLang + " Ekle</a>");
                         yaz.WriteLine("\t\t</div>");
                         yaz.WriteLine("\t</div>");
                         yaz.WriteLine("</div>");
@@ -2106,7 +2108,7 @@ namespace TDFactory
                     {
                         yaz.WriteLine("<div id=\"content\">");
                         yaz.WriteLine("\t<div id=\"content-header\">");
-                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + " Ekle</a></div>");
+                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + tableLang + " Ekle</a></div>");
                         yaz.WriteLine("\t</div>");
                         yaz.WriteLine("\t<div class=\"container-fluid\">");
                         yaz.WriteLine("\t\t<form [formGroup]=\"insertForm\" (ngSubmit)=\"onSubmit()\">");
@@ -2122,7 +2124,7 @@ namespace TDFactory
 
                                 if (frchkLst.Count > 0)
                                 {
-                                    yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName);
+                                    yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang));
                                     yaz.WriteLine("\t\t\t\t</div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
@@ -2199,7 +2201,7 @@ namespace TDFactory
                         {
                             yaz.WriteLine("<div id=\"content\">");
                             yaz.WriteLine("\t<div id=\"content-header\">");
-                            yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + Table + " Düzenle</a></div>");
+                            yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + tableLang + " Düzenle</a></div>");
                             yaz.WriteLine("\t</div>");
                             yaz.WriteLine("\t<div class=\"container-fluid\">");
                             yaz.WriteLine("\t\t<form [formGroup]=\"updateForm\" (ngSubmit)=\"onSubmit()\">");
@@ -2221,7 +2223,7 @@ namespace TDFactory
 
                                     if (frchkLst.Count > 0)
                                     {
-                                        yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName);
+                                        yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang));
                                         yaz.WriteLine("\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
@@ -2303,7 +2305,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
                                     yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
                                     yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
-                                    yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + tableFrgn.TableName + "</h5>");
+                                    yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + tableFrgn.TableName.ToTurkish(lstLang) + " Tablosu</h5>");
                                     yaz.WriteLine("\t\t\t\t\t</div>");
                                     yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
                                     yaz.WriteLine("\t\t\t\t\t\t<table class=\"table table-bordered data-table\">");
@@ -2389,7 +2391,7 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t</div>");
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"pagelinks\">");
-                                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + tableFrgn.TableName + "/Insert\" class=\"btn btn-primary btn-add\">" + tableFrgn.TableName + " Ekle</a>");
+                                    yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + tableFrgn.TableName + "/Insert\" class=\"btn btn-primary btn-add\">" + tableFrgn.TableName.ToTurkish(lstLang) + " Ekle</a>");
                                     yaz.WriteLine("\t\t</div>");
                                 }
                             }

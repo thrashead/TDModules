@@ -53,10 +53,13 @@ namespace TDFactory
         string repositoryName = "Repository";
         string[] aliases = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
 
+        public static bool langChecked;
+
         private void TDFactoryForm_Load(object sender, EventArgs e)
         {
             cmbVTVeriTipi.SelectedIndex = 0;
             lstAndIzin.SetSelected(0, true);
+            langChecked = chkLang.Checked;
 
             t = new Thread(new ThreadStart(ListControl));
             t.Start();
@@ -329,6 +332,11 @@ namespace TDFactory
                 default:
                     return columnNames;
             }
+        }
+
+        private void chkLang_CheckedChanged(object sender, EventArgs e)
+        {
+            langChecked = ((CheckBox)sender).Checked;
         }
 
         public enum ColumnType

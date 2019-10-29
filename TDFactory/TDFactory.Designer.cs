@@ -33,6 +33,7 @@
             this.tabpageKatmanlariOlustur = new System.Windows.Forms.TabPage();
             this.grpIslem = new System.Windows.Forms.GroupBox();
             this.pnlKaydet = new System.Windows.Forms.Panel();
+            this.chkLang = new System.Windows.Forms.CheckBox();
             this.tbconKolonlar = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.lblImageColumns = new System.Windows.Forms.Label();
@@ -94,8 +95,15 @@
             this.rdAndSqlite = new System.Windows.Forms.RadioButton();
             this.lblProjectName = new System.Windows.Forms.Label();
             this.chkAndData = new System.Windows.Forms.CheckBox();
+            this.lstLang = new System.Windows.Forms.ListBox();
+            this.txtLang = new System.Windows.Forms.TextBox();
+            this.btnLangAdd = new System.Windows.Forms.Button();
+            this.btnLangSub = new System.Windows.Forms.Button();
+            this.btnLangFile = new System.Windows.Forms.Button();
+            this.btnLangClear = new System.Windows.Forms.Button();
             this.lstAndIzin = new System.Windows.Forms.ListBox();
             this.lblAndIzinler = new System.Windows.Forms.Label();
+            this.lblLangTitle = new System.Windows.Forms.Label();
             this.lblKolonlar = new System.Windows.Forms.Label();
             this.lblAndroidKatmanlar = new System.Windows.Forms.Label();
             this.chkAndManifest = new System.Windows.Forms.CheckBox();
@@ -217,6 +225,7 @@
             this.folderDialogKatmanOlustur = new System.Windows.Forms.FolderBrowserDialog();
             this.grpBaglanti = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.fileDialogLang = new System.Windows.Forms.OpenFileDialog();
             this.tbconTablar.SuspendLayout();
             this.tabpageKatmanlariOlustur.SuspendLayout();
             this.grpIslem.SuspendLayout();
@@ -277,6 +286,7 @@
             // 
             // pnlKaydet
             // 
+            this.pnlKaydet.Controls.Add(this.chkLang);
             this.pnlKaydet.Controls.Add(this.tbconKolonlar);
             this.pnlKaydet.Controls.Add(this.chkRepositoryInternal);
             this.pnlKaydet.Controls.Add(this.chkAngular);
@@ -284,8 +294,15 @@
             this.pnlKaydet.Controls.Add(this.pnlAndroidService);
             this.pnlKaydet.Controls.Add(this.lblProjectName);
             this.pnlKaydet.Controls.Add(this.chkAndData);
+            this.pnlKaydet.Controls.Add(this.lstLang);
+            this.pnlKaydet.Controls.Add(this.txtLang);
+            this.pnlKaydet.Controls.Add(this.btnLangAdd);
+            this.pnlKaydet.Controls.Add(this.btnLangSub);
+            this.pnlKaydet.Controls.Add(this.btnLangFile);
+            this.pnlKaydet.Controls.Add(this.btnLangClear);
             this.pnlKaydet.Controls.Add(this.lstAndIzin);
             this.pnlKaydet.Controls.Add(this.lblAndIzinler);
+            this.pnlKaydet.Controls.Add(this.lblLangTitle);
             this.pnlKaydet.Controls.Add(this.lblKolonlar);
             this.pnlKaydet.Controls.Add(this.lblAndroidKatmanlar);
             this.pnlKaydet.Controls.Add(this.chkAndManifest);
@@ -319,6 +336,18 @@
             this.pnlKaydet.Size = new System.Drawing.Size(905, 351);
             this.pnlKaydet.TabIndex = 68;
             // 
+            // chkLang
+            // 
+            this.chkLang.AutoSize = true;
+            this.chkLang.Checked = true;
+            this.chkLang.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLang.Location = new System.Drawing.Point(885, 54);
+            this.chkLang.Name = "chkLang";
+            this.chkLang.Size = new System.Drawing.Size(15, 14);
+            this.chkLang.TabIndex = 92;
+            this.chkLang.UseVisualStyleBackColor = true;
+            this.chkLang.CheckedChanged += new System.EventHandler(this.chkLang_CheckedChanged);
+            // 
             // tbconKolonlar
             // 
             this.tbconKolonlar.Controls.Add(this.tabPage1);
@@ -328,7 +357,7 @@
             this.tbconKolonlar.Location = new System.Drawing.Point(534, 77);
             this.tbconKolonlar.Name = "tbconKolonlar";
             this.tbconKolonlar.SelectedIndex = 0;
-            this.tbconKolonlar.Size = new System.Drawing.Size(366, 266);
+            this.tbconKolonlar.Size = new System.Drawing.Size(222, 266);
             this.tbconKolonlar.TabIndex = 66;
             // 
             // tabPage1
@@ -348,7 +377,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(358, 240);
+            this.tabPage1.Size = new System.Drawing.Size(214, 240);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Resim / Dosya";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -381,19 +410,19 @@
             "imaj"});
             this.lstImageColumns.Location = new System.Drawing.Point(9, 57);
             this.lstImageColumns.Name = "lstImageColumns";
-            this.lstImageColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstImageColumns.Size = new System.Drawing.Size(65, 173);
             this.lstImageColumns.TabIndex = 89;
             // 
             // txtImageColumns
             // 
             this.txtImageColumns.Location = new System.Drawing.Point(9, 31);
             this.txtImageColumns.Name = "txtImageColumns";
-            this.txtImageColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtImageColumns.Size = new System.Drawing.Size(65, 20);
             this.txtImageColumns.TabIndex = 90;
             // 
             // btnImageColumnsAdd
             // 
-            this.btnImageColumnsAdd.Location = new System.Drawing.Point(135, 29);
+            this.btnImageColumnsAdd.Location = new System.Drawing.Point(80, 29);
             this.btnImageColumnsAdd.Name = "btnImageColumnsAdd";
             this.btnImageColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnImageColumnsAdd.TabIndex = 91;
@@ -405,7 +434,7 @@
             // 
             this.lblFileColumns.AutoSize = true;
             this.lblFileColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblFileColumns.Location = new System.Drawing.Point(194, 15);
+            this.lblFileColumns.Location = new System.Drawing.Point(108, 15);
             this.lblFileColumns.Name = "lblFileColumns";
             this.lblFileColumns.Size = new System.Drawing.Size(95, 13);
             this.lblFileColumns.TabIndex = 92;
@@ -413,7 +442,7 @@
             // 
             // btnImageColumnsSub
             // 
-            this.btnImageColumnsSub.Location = new System.Drawing.Point(134, 178);
+            this.btnImageColumnsSub.Location = new System.Drawing.Point(80, 177);
             this.btnImageColumnsSub.Name = "btnImageColumnsSub";
             this.btnImageColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnImageColumnsSub.TabIndex = 91;
@@ -424,7 +453,7 @@
             // button1
             // 
             this.button1.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.button1.Location = new System.Drawing.Point(134, 207);
+            this.button1.Location = new System.Drawing.Point(80, 206);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(25, 23);
             this.button1.TabIndex = 91;
@@ -439,21 +468,21 @@
             "file",
             "fileurl",
             "dosya"});
-            this.lstFileColumns.Location = new System.Drawing.Point(197, 57);
+            this.lstFileColumns.Location = new System.Drawing.Point(111, 57);
             this.lstFileColumns.Name = "lstFileColumns";
-            this.lstFileColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstFileColumns.Size = new System.Drawing.Size(65, 173);
             this.lstFileColumns.TabIndex = 89;
             // 
             // txtFileColumns
             // 
-            this.txtFileColumns.Location = new System.Drawing.Point(197, 31);
+            this.txtFileColumns.Location = new System.Drawing.Point(111, 31);
             this.txtFileColumns.Name = "txtFileColumns";
-            this.txtFileColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtFileColumns.Size = new System.Drawing.Size(65, 20);
             this.txtFileColumns.TabIndex = 90;
             // 
             // btnFileColumnsAdd
             // 
-            this.btnFileColumnsAdd.Location = new System.Drawing.Point(323, 29);
+            this.btnFileColumnsAdd.Location = new System.Drawing.Point(182, 29);
             this.btnFileColumnsAdd.Name = "btnFileColumnsAdd";
             this.btnFileColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnFileColumnsAdd.TabIndex = 91;
@@ -463,7 +492,7 @@
             // 
             // btnFileColumnsSub
             // 
-            this.btnFileColumnsSub.Location = new System.Drawing.Point(322, 178);
+            this.btnFileColumnsSub.Location = new System.Drawing.Point(182, 178);
             this.btnFileColumnsSub.Name = "btnFileColumnsSub";
             this.btnFileColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnFileColumnsSub.TabIndex = 91;
@@ -474,7 +503,7 @@
             // btnFileColumnsClear
             // 
             this.btnFileColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnFileColumnsClear.Location = new System.Drawing.Point(322, 207);
+            this.btnFileColumnsClear.Location = new System.Drawing.Point(182, 207);
             this.btnFileColumnsClear.Name = "btnFileColumnsClear";
             this.btnFileColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnFileColumnsClear.TabIndex = 91;
@@ -499,7 +528,7 @@
             this.tabPage2.Location = new System.Drawing.Point(4, 22);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(358, 240);
+            this.tabPage2.Size = new System.Drawing.Size(214, 240);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Url / Kod";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -508,7 +537,7 @@
             // 
             this.lblCodeColumns.AutoSize = true;
             this.lblCodeColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblCodeColumns.Location = new System.Drawing.Point(194, 15);
+            this.lblCodeColumns.Location = new System.Drawing.Point(108, 15);
             this.lblCodeColumns.Name = "lblCodeColumns";
             this.lblCodeColumns.Size = new System.Drawing.Size(82, 13);
             this.lblCodeColumns.TabIndex = 92;
@@ -534,19 +563,19 @@
             "link"});
             this.lstUrlColumns.Location = new System.Drawing.Point(9, 57);
             this.lstUrlColumns.Name = "lstUrlColumns";
-            this.lstUrlColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstUrlColumns.Size = new System.Drawing.Size(65, 173);
             this.lstUrlColumns.TabIndex = 89;
             // 
             // txtUrlColumns
             // 
             this.txtUrlColumns.Location = new System.Drawing.Point(9, 31);
             this.txtUrlColumns.Name = "txtUrlColumns";
-            this.txtUrlColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtUrlColumns.Size = new System.Drawing.Size(65, 20);
             this.txtUrlColumns.TabIndex = 90;
             // 
             // btnUrlColumnsAdd
             // 
-            this.btnUrlColumnsAdd.Location = new System.Drawing.Point(135, 29);
+            this.btnUrlColumnsAdd.Location = new System.Drawing.Point(80, 29);
             this.btnUrlColumnsAdd.Name = "btnUrlColumnsAdd";
             this.btnUrlColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsAdd.TabIndex = 91;
@@ -556,7 +585,7 @@
             // 
             // btnUrlColumnsSub
             // 
-            this.btnUrlColumnsSub.Location = new System.Drawing.Point(134, 178);
+            this.btnUrlColumnsSub.Location = new System.Drawing.Point(80, 178);
             this.btnUrlColumnsSub.Name = "btnUrlColumnsSub";
             this.btnUrlColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsSub.TabIndex = 91;
@@ -567,7 +596,7 @@
             // btnCodeColumnsClear
             // 
             this.btnCodeColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnCodeColumnsClear.Location = new System.Drawing.Point(322, 207);
+            this.btnCodeColumnsClear.Location = new System.Drawing.Point(181, 207);
             this.btnCodeColumnsClear.Name = "btnCodeColumnsClear";
             this.btnCodeColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnCodeColumnsClear.TabIndex = 91;
@@ -578,7 +607,7 @@
             // btnUrlColumnsClear
             // 
             this.btnUrlColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnUrlColumnsClear.Location = new System.Drawing.Point(134, 207);
+            this.btnUrlColumnsClear.Location = new System.Drawing.Point(80, 207);
             this.btnUrlColumnsClear.Name = "btnUrlColumnsClear";
             this.btnUrlColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnUrlColumnsClear.TabIndex = 91;
@@ -588,7 +617,7 @@
             // 
             // btnCodeColumnsSub
             // 
-            this.btnCodeColumnsSub.Location = new System.Drawing.Point(322, 178);
+            this.btnCodeColumnsSub.Location = new System.Drawing.Point(181, 178);
             this.btnCodeColumnsSub.Name = "btnCodeColumnsSub";
             this.btnCodeColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnCodeColumnsSub.TabIndex = 91;
@@ -602,14 +631,14 @@
             this.lstCodeColumns.Items.AddRange(new object[] {
             "code",
             "shortcode"});
-            this.lstCodeColumns.Location = new System.Drawing.Point(197, 57);
+            this.lstCodeColumns.Location = new System.Drawing.Point(111, 57);
             this.lstCodeColumns.Name = "lstCodeColumns";
-            this.lstCodeColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstCodeColumns.Size = new System.Drawing.Size(65, 173);
             this.lstCodeColumns.TabIndex = 89;
             // 
             // btnCodeColumnsAdd
             // 
-            this.btnCodeColumnsAdd.Location = new System.Drawing.Point(323, 29);
+            this.btnCodeColumnsAdd.Location = new System.Drawing.Point(182, 29);
             this.btnCodeColumnsAdd.Name = "btnCodeColumnsAdd";
             this.btnCodeColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnCodeColumnsAdd.TabIndex = 91;
@@ -619,9 +648,9 @@
             // 
             // txtCodeColumns
             // 
-            this.txtCodeColumns.Location = new System.Drawing.Point(197, 31);
+            this.txtCodeColumns.Location = new System.Drawing.Point(111, 31);
             this.txtCodeColumns.Name = "txtCodeColumns";
-            this.txtCodeColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtCodeColumns.Size = new System.Drawing.Size(65, 20);
             this.txtCodeColumns.TabIndex = 90;
             // 
             // tabPage3
@@ -640,7 +669,7 @@
             this.tabPage3.Controls.Add(this.txtSearchColumns);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Size = new System.Drawing.Size(358, 240);
+            this.tabPage3.Size = new System.Drawing.Size(214, 240);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Guid / Arama";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -649,7 +678,7 @@
             // 
             this.lblSearchColumns.AutoSize = true;
             this.lblSearchColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblSearchColumns.Location = new System.Drawing.Point(194, 15);
+            this.lblSearchColumns.Location = new System.Drawing.Point(108, 15);
             this.lblSearchColumns.Name = "lblSearchColumns";
             this.lblSearchColumns.Size = new System.Drawing.Size(95, 13);
             this.lblSearchColumns.TabIndex = 92;
@@ -668,7 +697,7 @@
             // btnSearchColumnsClear
             // 
             this.btnSearchColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnSearchColumnsClear.Location = new System.Drawing.Point(322, 207);
+            this.btnSearchColumnsClear.Location = new System.Drawing.Point(182, 207);
             this.btnSearchColumnsClear.Name = "btnSearchColumnsClear";
             this.btnSearchColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnSearchColumnsClear.TabIndex = 91;
@@ -683,19 +712,19 @@
             "guid"});
             this.lstGuidColumns.Location = new System.Drawing.Point(9, 57);
             this.lstGuidColumns.Name = "lstGuidColumns";
-            this.lstGuidColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstGuidColumns.Size = new System.Drawing.Size(65, 173);
             this.lstGuidColumns.TabIndex = 89;
             // 
             // txtGuidColumns
             // 
             this.txtGuidColumns.Location = new System.Drawing.Point(9, 31);
             this.txtGuidColumns.Name = "txtGuidColumns";
-            this.txtGuidColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtGuidColumns.Size = new System.Drawing.Size(65, 20);
             this.txtGuidColumns.TabIndex = 90;
             // 
             // btnSearchColumnsSub
             // 
-            this.btnSearchColumnsSub.Location = new System.Drawing.Point(322, 178);
+            this.btnSearchColumnsSub.Location = new System.Drawing.Point(182, 178);
             this.btnSearchColumnsSub.Name = "btnSearchColumnsSub";
             this.btnSearchColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnSearchColumnsSub.TabIndex = 91;
@@ -705,7 +734,7 @@
             // 
             // btnGuidColumnsAdd
             // 
-            this.btnGuidColumnsAdd.Location = new System.Drawing.Point(135, 29);
+            this.btnGuidColumnsAdd.Location = new System.Drawing.Point(80, 29);
             this.btnGuidColumnsAdd.Name = "btnGuidColumnsAdd";
             this.btnGuidColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnGuidColumnsAdd.TabIndex = 91;
@@ -715,7 +744,7 @@
             // 
             // btnGuidColumnsSub
             // 
-            this.btnGuidColumnsSub.Location = new System.Drawing.Point(134, 178);
+            this.btnGuidColumnsSub.Location = new System.Drawing.Point(80, 178);
             this.btnGuidColumnsSub.Name = "btnGuidColumnsSub";
             this.btnGuidColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnGuidColumnsSub.TabIndex = 91;
@@ -725,7 +754,7 @@
             // 
             // btnSearchColumnsAdd
             // 
-            this.btnSearchColumnsAdd.Location = new System.Drawing.Point(323, 29);
+            this.btnSearchColumnsAdd.Location = new System.Drawing.Point(182, 29);
             this.btnSearchColumnsAdd.Name = "btnSearchColumnsAdd";
             this.btnSearchColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnSearchColumnsAdd.TabIndex = 91;
@@ -736,7 +765,7 @@
             // btnGuidColumnsClear
             // 
             this.btnGuidColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnGuidColumnsClear.Location = new System.Drawing.Point(134, 207);
+            this.btnGuidColumnsClear.Location = new System.Drawing.Point(80, 207);
             this.btnGuidColumnsClear.Name = "btnGuidColumnsClear";
             this.btnGuidColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnGuidColumnsClear.TabIndex = 91;
@@ -747,16 +776,16 @@
             // lstSearchColumns
             // 
             this.lstSearchColumns.FormattingEnabled = true;
-            this.lstSearchColumns.Location = new System.Drawing.Point(197, 57);
+            this.lstSearchColumns.Location = new System.Drawing.Point(111, 57);
             this.lstSearchColumns.Name = "lstSearchColumns";
-            this.lstSearchColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstSearchColumns.Size = new System.Drawing.Size(65, 173);
             this.lstSearchColumns.TabIndex = 89;
             // 
             // txtSearchColumns
             // 
-            this.txtSearchColumns.Location = new System.Drawing.Point(197, 31);
+            this.txtSearchColumns.Location = new System.Drawing.Point(111, 31);
             this.txtSearchColumns.Name = "txtSearchColumns";
-            this.txtSearchColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtSearchColumns.Size = new System.Drawing.Size(65, 20);
             this.txtSearchColumns.TabIndex = 90;
             // 
             // tabPage4
@@ -775,7 +804,7 @@
             this.tabPage4.Controls.Add(this.btnDeletedColumnsAdd);
             this.tabPage4.Location = new System.Drawing.Point(4, 22);
             this.tabPage4.Name = "tabPage4";
-            this.tabPage4.Size = new System.Drawing.Size(358, 240);
+            this.tabPage4.Size = new System.Drawing.Size(214, 240);
             this.tabPage4.TabIndex = 3;
             this.tabPage4.Text = "Sil / Mail";
             this.tabPage4.UseVisualStyleBackColor = true;
@@ -784,7 +813,7 @@
             // 
             this.lblMailColumns.AutoSize = true;
             this.lblMailColumns.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.lblMailColumns.Location = new System.Drawing.Point(194, 15);
+            this.lblMailColumns.Location = new System.Drawing.Point(108, 15);
             this.lblMailColumns.Name = "lblMailColumns";
             this.lblMailColumns.Size = new System.Drawing.Size(83, 13);
             this.lblMailColumns.TabIndex = 92;
@@ -793,7 +822,7 @@
             // btnMailColumnsClear
             // 
             this.btnMailColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnMailColumnsClear.Location = new System.Drawing.Point(322, 207);
+            this.btnMailColumnsClear.Location = new System.Drawing.Point(182, 207);
             this.btnMailColumnsClear.Name = "btnMailColumnsClear";
             this.btnMailColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnMailColumnsClear.TabIndex = 91;
@@ -819,15 +848,15 @@
             "email",
             "posta",
             "eposta"});
-            this.lstMailColumns.Location = new System.Drawing.Point(197, 57);
+            this.lstMailColumns.Location = new System.Drawing.Point(111, 57);
             this.lstMailColumns.Name = "lstMailColumns";
-            this.lstMailColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstMailColumns.Size = new System.Drawing.Size(65, 173);
             this.lstMailColumns.TabIndex = 89;
             // 
             // btnDeletedColumnsClear
             // 
             this.btnDeletedColumnsClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnDeletedColumnsClear.Location = new System.Drawing.Point(134, 207);
+            this.btnDeletedColumnsClear.Location = new System.Drawing.Point(79, 207);
             this.btnDeletedColumnsClear.Name = "btnDeletedColumnsClear";
             this.btnDeletedColumnsClear.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsClear.TabIndex = 91;
@@ -837,7 +866,7 @@
             // 
             // btnMailColumnsSub
             // 
-            this.btnMailColumnsSub.Location = new System.Drawing.Point(322, 178);
+            this.btnMailColumnsSub.Location = new System.Drawing.Point(182, 178);
             this.btnMailColumnsSub.Name = "btnMailColumnsSub";
             this.btnMailColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnMailColumnsSub.TabIndex = 91;
@@ -852,19 +881,19 @@
             "deleted"});
             this.lstDeletedColumns.Location = new System.Drawing.Point(9, 57);
             this.lstDeletedColumns.Name = "lstDeletedColumns";
-            this.lstDeletedColumns.Size = new System.Drawing.Size(120, 173);
+            this.lstDeletedColumns.Size = new System.Drawing.Size(65, 173);
             this.lstDeletedColumns.TabIndex = 89;
             // 
             // txtMailColumns
             // 
-            this.txtMailColumns.Location = new System.Drawing.Point(197, 31);
+            this.txtMailColumns.Location = new System.Drawing.Point(111, 31);
             this.txtMailColumns.Name = "txtMailColumns";
-            this.txtMailColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtMailColumns.Size = new System.Drawing.Size(65, 20);
             this.txtMailColumns.TabIndex = 90;
             // 
             // btnDeletedColumnsSub
             // 
-            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(134, 178);
+            this.btnDeletedColumnsSub.Location = new System.Drawing.Point(79, 178);
             this.btnDeletedColumnsSub.Name = "btnDeletedColumnsSub";
             this.btnDeletedColumnsSub.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsSub.TabIndex = 91;
@@ -874,7 +903,7 @@
             // 
             // btnMailColumnsAdd
             // 
-            this.btnMailColumnsAdd.Location = new System.Drawing.Point(323, 29);
+            this.btnMailColumnsAdd.Location = new System.Drawing.Point(182, 29);
             this.btnMailColumnsAdd.Name = "btnMailColumnsAdd";
             this.btnMailColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnMailColumnsAdd.TabIndex = 91;
@@ -886,12 +915,12 @@
             // 
             this.txtDeletedColumns.Location = new System.Drawing.Point(9, 31);
             this.txtDeletedColumns.Name = "txtDeletedColumns";
-            this.txtDeletedColumns.Size = new System.Drawing.Size(120, 20);
+            this.txtDeletedColumns.Size = new System.Drawing.Size(65, 20);
             this.txtDeletedColumns.TabIndex = 90;
             // 
             // btnDeletedColumnsAdd
             // 
-            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(135, 29);
+            this.btnDeletedColumnsAdd.Location = new System.Drawing.Point(80, 29);
             this.btnDeletedColumnsAdd.Name = "btnDeletedColumnsAdd";
             this.btnDeletedColumnsAdd.Size = new System.Drawing.Size(25, 23);
             this.btnDeletedColumnsAdd.TabIndex = 91;
@@ -985,6 +1014,95 @@
             this.chkAndData.Text = "Veritabanı";
             this.chkAndData.UseVisualStyleBackColor = true;
             this.chkAndData.CheckedChanged += new System.EventHandler(this.chkAndDiger_CheckedChanged);
+            // 
+            // lstLang
+            // 
+            this.lstLang.FormattingEnabled = true;
+            this.lstLang.Items.AddRange(new object[] {
+            "Category-Kategori",
+            "CategoryT-Kategori (Dil)",
+            "Content-İçerik",
+            "ContentT-İçerik (Dil)",
+            "Files-Dosya",
+            "FormAttributes-Form Özellik",
+            "FormGroups-Form Grubu",
+            "FormItems-Form Elemanı",
+            "FormTypes-Form Tipi",
+            "FormValues-Form Değeri",
+            "Gallery-Galeri",
+            "GalleryT-Galeri (Dil)",
+            "LangContent-Dil İçerik",
+            "LangContentT-Dil İçerik (Dil)",
+            "Links-Bağlantı",
+            "LinkTypes-Bağlantı Tipi",
+            "LogProcess-Log İşlemi",
+            "Logs-Log",
+            "LogTypes-Log Tipi",
+            "MetaT-Meta (Dil)",
+            "Pictures-Resim",
+            "Product-Ürün",
+            "ProductT-Ürün (Dil)",
+            "Translation-Dil",
+            "Types-Tip",
+            "UserGroupProcess-Kullanıcı Grubu İşlemi",
+            "UserGroupRights-Kullanıcı Grubu Hakkı",
+            "UserGroups-Kullanıcı Grubu",
+            "UserGroupTables-Kullanıcı Grubu Tablosu",
+            "Users-Kullanıcı",
+            "Visitors-Ziyaretçi"});
+            this.lstLang.Location = new System.Drawing.Point(762, 105);
+            this.lstLang.Name = "lstLang";
+            this.lstLang.Size = new System.Drawing.Size(138, 212);
+            this.lstLang.TabIndex = 89;
+            // 
+            // txtLang
+            // 
+            this.txtLang.Location = new System.Drawing.Point(762, 79);
+            this.txtLang.Name = "txtLang";
+            this.txtLang.Size = new System.Drawing.Size(107, 20);
+            this.txtLang.TabIndex = 90;
+            // 
+            // btnLangAdd
+            // 
+            this.btnLangAdd.Location = new System.Drawing.Point(875, 77);
+            this.btnLangAdd.Name = "btnLangAdd";
+            this.btnLangAdd.Size = new System.Drawing.Size(25, 23);
+            this.btnLangAdd.TabIndex = 91;
+            this.btnLangAdd.Text = "+";
+            this.btnLangAdd.UseVisualStyleBackColor = true;
+            this.btnLangAdd.Click += new System.EventHandler(this.btnLangAdd_Click);
+            // 
+            // btnLangSub
+            // 
+            this.btnLangSub.Location = new System.Drawing.Point(875, 321);
+            this.btnLangSub.Name = "btnLangSub";
+            this.btnLangSub.Size = new System.Drawing.Size(25, 23);
+            this.btnLangSub.TabIndex = 91;
+            this.btnLangSub.Text = "-";
+            this.btnLangSub.UseVisualStyleBackColor = true;
+            this.btnLangSub.Click += new System.EventHandler(this.btnLangSub_Click);
+            // 
+            // btnLangFile
+            // 
+            this.btnLangFile.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnLangFile.Location = new System.Drawing.Point(762, 321);
+            this.btnLangFile.Name = "btnLangFile";
+            this.btnLangFile.Size = new System.Drawing.Size(65, 23);
+            this.btnLangFile.TabIndex = 91;
+            this.btnLangFile.Text = "Dosyadan";
+            this.btnLangFile.UseVisualStyleBackColor = true;
+            this.btnLangFile.Click += new System.EventHandler(this.btnLangFile_Click);
+            // 
+            // btnLangClear
+            // 
+            this.btnLangClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.btnLangClear.Location = new System.Drawing.Point(844, 321);
+            this.btnLangClear.Name = "btnLangClear";
+            this.btnLangClear.Size = new System.Drawing.Size(25, 23);
+            this.btnLangClear.TabIndex = 91;
+            this.btnLangClear.Text = "Ø";
+            this.btnLangClear.UseVisualStyleBackColor = true;
+            this.btnLangClear.Click += new System.EventHandler(this.btnLangClear_Click);
             // 
             // lstAndIzin
             // 
@@ -1151,6 +1269,15 @@
             this.lblAndIzinler.Size = new System.Drawing.Size(43, 18);
             this.lblAndIzinler.TabIndex = 80;
             this.lblAndIzinler.Text = "İzinler :";
+            // 
+            // lblLangTitle
+            // 
+            this.lblLangTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
+            this.lblLangTitle.Location = new System.Drawing.Point(763, 54);
+            this.lblLangTitle.Name = "lblLangTitle";
+            this.lblLangTitle.Size = new System.Drawing.Size(97, 18);
+            this.lblLangTitle.TabIndex = 69;
+            this.lblLangTitle.Text = "Dil Çevirimleri";
             // 
             // lblKolonlar
             // 
@@ -2598,6 +2725,10 @@
             this.panel1.TabIndex = 61;
             this.panel1.Visible = false;
             // 
+            // fileDialogLang
+            // 
+            this.fileDialogLang.Filter = "Metin Dosyası|*.txt";
+            // 
             // TDFactory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -2845,5 +2976,14 @@
         private System.Windows.Forms.Button btnMailColumnsSub;
         private System.Windows.Forms.TextBox txtMailColumns;
         private System.Windows.Forms.Button btnMailColumnsAdd;
+        public System.Windows.Forms.ListBox lstLang;
+        private System.Windows.Forms.TextBox txtLang;
+        private System.Windows.Forms.Button btnLangAdd;
+        private System.Windows.Forms.Button btnLangSub;
+        private System.Windows.Forms.Button btnLangClear;
+        private System.Windows.Forms.Label lblLangTitle;
+        private System.Windows.Forms.CheckBox chkLang;
+        private System.Windows.Forms.Button btnLangFile;
+        private System.Windows.Forms.OpenFileDialog fileDialogLang;
     }
 }

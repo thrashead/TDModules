@@ -247,5 +247,22 @@ namespace TDFactory.Helper
 
             return text;
         }
+
+        public static string ToTurkish(this string english, ListBox langList)
+        {
+            string returnValue = english;
+
+            if (TDFactory.langChecked)
+            {
+                List<Language> list = Language.List(langList).Where(a => a.EN == english).ToList();
+
+                if (list.Count > 0)
+                {
+                    returnValue = string.IsNullOrEmpty(list.FirstOrDefault().TR) ? english : list.FirstOrDefault().TR;
+                }
+            }
+
+            return returnValue;
+        }
     }
 }
