@@ -2295,18 +2295,7 @@ namespace TDFactory
                                 {
                                     Table tableFrgn = new Table(fkc.ForeignTableName, connectionInfo);
 
-                                    //string ForeignTableName = fkc.ForeignTableName;
-
-                                    //List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
-                                    //string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
-
                                     List<ColumnInfo> foreignColumns = tableFrgn.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList();
-
-                                    //List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
-                                    //fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
-
-                                    //List<ColumnInfo> fColumnNames = Helper.Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
-                                    //bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                                     yaz.WriteLine("");
                                     yaz.WriteLine("\t\t<div class=\"row-fluid\">");
@@ -2353,17 +2342,23 @@ namespace TDFactory
                                         List<ForeignKeyChecker> frchkForeignLst = tableFrgn.FkcForeignList.Where(a => a.ForeignColumnName == item.ColumnName).ToList();
 
                                         string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
-
-                                        if (frchkForeignLst.Count <= 0)
+                                        if (item.Type.Name != "Boolean")
                                         {
-                                            if (item.ColumnName.In(ImageColumns, InType.ToUrlLower))
-                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a href=\"/" + projectName + "/Uploads/{{ item?." + item.ColumnName + " }}\" target=\"_blank\"><img src=\"/" + projectName + "/Uploads/thumb_{{ item?." + item.ColumnName + " }}\" style=\"height:40px; max-width:80px;\" /></a></td>");
-                                            else if (item.ColumnName.In(FileColumns, InType.ToUrlLower))
-                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"/" + projectName + "/Uploads/{{ item?." + item.ColumnName + " }}\" target=\"_blank\">{{ item?." + item.ColumnName + " }}</a></td>");
-                                            else
-                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + item.ColumnName + " }}</td>");
+                                            if (frchkForeignLst.Count <= 0)
+                                            {
+                                                if (item.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a href=\"/" + projectName + "/Uploads/{{ item?." + item.ColumnName + " }}\" target=\"_blank\"><img src=\"/" + projectName + "/Uploads/thumb_{{ item?." + item.ColumnName + " }}\" style=\"height:40px; max-width:80px;\" /></a></td>");
+                                                else if (item.ColumnName.In(FileColumns, InType.ToUrlLower))
+                                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"/" + projectName + "/Uploads/{{ item?." + item.ColumnName + " }}\" target=\"_blank\">{{ item?." + item.ColumnName + " }}</a></td>");
+                                                else
+                                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + item.ColumnName + " }}</td>");
 
-                                            i++;
+                                                i++;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + " style=\"text-align:center;\"><img *ngIf=\"item?." + item.ColumnName + "\" class=\"active\" /><img *ngIf=\"!item?." + item.ColumnName + "\" class=\"passive\" /></td>");
                                         }
                                     }
 
