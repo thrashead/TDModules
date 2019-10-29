@@ -1051,11 +1051,11 @@ namespace TDFactory
                     {
                         if (selectedTables.Count == i + 1)
                         {
-                            yaz.WriteLine("\t\t\t\t'" + Table + "'");
+                            yaz.WriteLine("\t\t\t\t'" + Table.ToTurkish(lstLang) + "'");
                         }
                         else
                         {
-                            yaz.WriteLine("\t\t\t\t'" + Table + "',");
+                            yaz.WriteLine("\t\t\t\t'" + Table.ToTurkish(lstLang) + "',");
                         }
 
                         i++;
@@ -1073,7 +1073,7 @@ namespace TDFactory
 
                     foreach (string Table in selectedTables)
                     {
-                        yaz.WriteLine("\t\t\tcase \"" + Table + "\":");
+                        yaz.WriteLine("\t\t\tcase \"" + Table.ToTurkish(lstLang) + "\":");
                         yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
                         yaz.WriteLine("\t\t\t\tbreak;");
                     }

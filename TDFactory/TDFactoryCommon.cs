@@ -4315,7 +4315,7 @@ namespace TDFactory
                         yaz.WriteLine("\tswitch (txtValue) {");
                         foreach (string Table in selectedTables)
                         {
-                            yaz.WriteLine("\t\tcase \"" + Table + "\":");
+                            yaz.WriteLine("\t\tcase \"" + Table.ToTurkish(lstLang) + "\":");
                             yaz.WriteLine("\t\t\twindow.location.href = AdminPath + \"/" + Table + "\";");
                             yaz.WriteLine("\t\t\tbreak;");
                         }
@@ -4334,9 +4334,20 @@ namespace TDFactory
                         yaz.WriteLine("\t{");
                         yaz.WriteLine("\t\t$('#search input[type=text]').typeahead({");
                         yaz.WriteLine("\t\t\tsource: [");
+                        
+                        int i = 0;
                         foreach (string Table in selectedTables)
                         {
-                            yaz.WriteLine("\t\t\t\t'" + Table + "',");
+                            if (selectedTables.Count == i + 1)
+                            {
+                                yaz.WriteLine("\t\t\t\t'" + Table.ToTurkish(lstLang) + "'");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t\t\t\t'" + Table.ToTurkish(lstLang) + "',");
+                            }
+
+                            i++;
                         }
                         yaz.WriteLine("\t\t\t],");
                         yaz.WriteLine("\t\t\titems: 4");
