@@ -99,6 +99,7 @@
             this.txtLang = new System.Windows.Forms.TextBox();
             this.btnLangAdd = new System.Windows.Forms.Button();
             this.btnLangSub = new System.Windows.Forms.Button();
+            this.btnLangSaveFile = new System.Windows.Forms.Button();
             this.btnLangFile = new System.Windows.Forms.Button();
             this.btnLangClear = new System.Windows.Forms.Button();
             this.lstAndIzin = new System.Windows.Forms.ListBox();
@@ -226,6 +227,7 @@
             this.grpBaglanti = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.fileDialogLang = new System.Windows.Forms.OpenFileDialog();
+            this.saveFileDialogLang = new System.Windows.Forms.SaveFileDialog();
             this.tbconTablar.SuspendLayout();
             this.tabpageKatmanlariOlustur.SuspendLayout();
             this.grpIslem.SuspendLayout();
@@ -298,6 +300,7 @@
             this.pnlKaydet.Controls.Add(this.txtLang);
             this.pnlKaydet.Controls.Add(this.btnLangAdd);
             this.pnlKaydet.Controls.Add(this.btnLangSub);
+            this.pnlKaydet.Controls.Add(this.btnLangSaveFile);
             this.pnlKaydet.Controls.Add(this.btnLangFile);
             this.pnlKaydet.Controls.Add(this.btnLangClear);
             this.pnlKaydet.Controls.Add(this.lstAndIzin);
@@ -1158,7 +1161,7 @@
             "Visitors-Ziyaretçi"});
             this.lstLang.Location = new System.Drawing.Point(762, 105);
             this.lstLang.Name = "lstLang";
-            this.lstLang.Size = new System.Drawing.Size(138, 212);
+            this.lstLang.Size = new System.Drawing.Size(138, 160);
             this.lstLang.TabIndex = 89;
             // 
             // txtLang
@@ -1180,7 +1183,7 @@
             // 
             // btnLangSub
             // 
-            this.btnLangSub.Location = new System.Drawing.Point(875, 321);
+            this.btnLangSub.Location = new System.Drawing.Point(875, 269);
             this.btnLangSub.Name = "btnLangSub";
             this.btnLangSub.Size = new System.Drawing.Size(25, 23);
             this.btnLangSub.TabIndex = 91;
@@ -1188,21 +1191,32 @@
             this.btnLangSub.UseVisualStyleBackColor = true;
             this.btnLangSub.Click += new System.EventHandler(this.btnLangSub_Click);
             // 
+            // btnLangSaveFile
+            // 
+            this.btnLangSaveFile.Font = new System.Drawing.Font("Arial", 8.25F);
+            this.btnLangSaveFile.Location = new System.Drawing.Point(762, 321);
+            this.btnLangSaveFile.Name = "btnLangSaveFile";
+            this.btnLangSaveFile.Size = new System.Drawing.Size(138, 23);
+            this.btnLangSaveFile.TabIndex = 91;
+            this.btnLangSaveFile.Text = "Dosyaya Çıkar";
+            this.btnLangSaveFile.UseVisualStyleBackColor = true;
+            this.btnLangSaveFile.Click += new System.EventHandler(this.btnLangSaveFile_Click);
+            // 
             // btnLangFile
             // 
-            this.btnLangFile.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnLangFile.Location = new System.Drawing.Point(762, 321);
+            this.btnLangFile.Font = new System.Drawing.Font("Arial", 8.25F);
+            this.btnLangFile.Location = new System.Drawing.Point(762, 295);
             this.btnLangFile.Name = "btnLangFile";
-            this.btnLangFile.Size = new System.Drawing.Size(65, 23);
+            this.btnLangFile.Size = new System.Drawing.Size(138, 23);
             this.btnLangFile.TabIndex = 91;
-            this.btnLangFile.Text = "Dosyadan";
+            this.btnLangFile.Text = "Dosyadan Ekle";
             this.btnLangFile.UseVisualStyleBackColor = true;
             this.btnLangFile.Click += new System.EventHandler(this.btnLangFile_Click);
             // 
             // btnLangClear
             // 
             this.btnLangClear.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.btnLangClear.Location = new System.Drawing.Point(844, 321);
+            this.btnLangClear.Location = new System.Drawing.Point(762, 269);
             this.btnLangClear.Name = "btnLangClear";
             this.btnLangClear.Size = new System.Drawing.Size(25, 23);
             this.btnLangClear.TabIndex = 91;
@@ -2835,6 +2849,10 @@
             // 
             this.fileDialogLang.Filter = "Metin Dosyası|*.txt";
             // 
+            // saveFileDialogLang
+            // 
+            this.saveFileDialogLang.Filter = "Metin Dosyası|*.txt";
+            // 
             // TDFactory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3091,5 +3109,7 @@
         private System.Windows.Forms.CheckBox chkLang;
         private System.Windows.Forms.Button btnLangFile;
         private System.Windows.Forms.OpenFileDialog fileDialogLang;
+        private System.Windows.Forms.Button btnLangSaveFile;
+        private System.Windows.Forms.SaveFileDialog saveFileDialogLang;
     }
 }

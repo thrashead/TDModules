@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using TDFactory.Helper;
 
@@ -953,6 +954,22 @@ namespace TDFactory
                 }
                 reader.Close();
                 reader.Dispose();
+            }
+        }
+
+        private void btnLangSaveFile_Click(object sender, EventArgs e)
+        {
+            if (saveFileDialogLang.ShowDialog() == DialogResult.OK)
+            {
+                using (StreamWriter yaz = new StreamWriter(saveFileDialogLang.FileName, false, Encoding.UTF8))
+                {
+                    foreach (var item in lstLang.Items)
+                    {
+                        yaz.WriteLine(item.ToString());
+                    }
+
+                    yaz.Close();
+                }
             }
         }
 
