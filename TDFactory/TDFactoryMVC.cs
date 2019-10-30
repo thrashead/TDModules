@@ -1012,11 +1012,16 @@ namespace TDFactory
 
                             if (frchkForeignLst2.Count > 0)
                             {
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">Bağlı " + frchkForeignLst2.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang) + "</th>");
+                                string colName = column.ColumnName.ToTurkish(lstLang);
+
+                                if (colName == column.ColumnName)
+                                    colName = "Bağlı " + frchkForeignLst2.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang);
+
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + colName + "</th>");
                             }
                             else
                             {
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + column.ColumnName + "</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + column.ColumnName.ToTurkish(lstLang) + "</th>");
                             }
 
                             i++;
@@ -1141,8 +1146,13 @@ namespace TDFactory
 
                                 if (frchkLst.Count > 0)
                                 {
+                                    string colName = column.ColumnName.ToTurkish(lstLang);
+
+                                    if (colName == column.ColumnName)
+                                        colName = "Bağlı " + frchkLst.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang);
+
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
-                                    yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang));
+                                    yaz.WriteLine("\t\t\t\t\t" + colName);
                                     yaz.WriteLine("\t\t\t\t</div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
@@ -1151,7 +1161,7 @@ namespace TDFactory
                                 else
                                 {
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
-                                    yaz.WriteLine("\t\t\t\t\t@Html.LabelFor(model => model." + column.ColumnName + ")");
+                                    yaz.WriteLine("\t\t\t\t\t" + column.ColumnName.ToTurkish(lstLang));
                                     yaz.WriteLine("\t\t\t\t</div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
@@ -1260,8 +1270,13 @@ namespace TDFactory
 
                                     if (frchkLst.Count > 0)
                                     {
+                                        string colName = column.ColumnName.ToTurkish(lstLang);
+
+                                        if (colName == column.ColumnName)
+                                            colName = "Bağlı " + frchkLst.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang);
+
                                         yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
-                                        yaz.WriteLine("\t\t\t\t\tBağlı " + frchkLst.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang));
+                                        yaz.WriteLine("\t\t\t\t\t" + colName);
                                         yaz.WriteLine("\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
@@ -1270,7 +1285,7 @@ namespace TDFactory
                                     else
                                     {
                                         yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
-                                        yaz.WriteLine("\t\t\t\t\t@Html.LabelFor(model => model." + column.ColumnName + ")");
+                                        yaz.WriteLine("\t\t\t\t\t" + column.ColumnName.ToTurkish(lstLang));
                                         yaz.WriteLine("\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
@@ -1375,7 +1390,7 @@ namespace TDFactory
 
                                             if (frchkForeignLst.Count <= 0)
                                             {
-                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + item.ColumnName + "</th>");
+                                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + item.ColumnName.ToTurkish(lstLang) + "</th>");
                                                 i++;
                                             }
                                         }
