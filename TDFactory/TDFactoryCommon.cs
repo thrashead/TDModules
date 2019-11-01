@@ -1968,7 +1968,16 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
-                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+
+                            if (item.Type.Name == "String")
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
+                            }
+
                             yaz.WriteLine("AS");
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
@@ -2007,7 +2016,16 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
-                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+
+                            if (item.Type.Name == "String")
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
+                            }
+
                             yaz.WriteLine("AS");
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
@@ -2046,8 +2064,16 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
-                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
-                            yaz.WriteLine("AS");
+
+                            if (item.Type.Name == "String")
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
+                            }
+
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
                             yaz.WriteLine("");
@@ -2791,7 +2817,16 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
-                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+
+                            if (item.Type.Name == "String")
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
+                            }
+
                             yaz.WriteLine("AS");
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
@@ -2830,7 +2865,16 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
-                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+
+                            if (item.Type.Name == "String")
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
+                            }
+
                             yaz.WriteLine("AS");
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
@@ -2869,7 +2913,16 @@ namespace TDFactory
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectBy" + item.ColumnName + "]");
-                            yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+
+                            if (item.Type.Name == "String")
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType + "(" + item.MaxLength + ")");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
+                            }
+
                             yaz.WriteLine("AS");
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
