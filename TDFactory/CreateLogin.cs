@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using TDFactory.Helper;
 
 namespace TDFactory
 {
@@ -18,7 +17,7 @@ namespace TDFactory
         {
             try
             {
-                cmbUserVeritabani.DataSource = Helper.Helper.DatabaseNames(ConnectionInfo);
+                cmbUserVeritabani.DataSource = Helper.DatabaseNames(ConnectionInfo);
 
                 if (cmbUserVeritabani.Items.Count <= 0)
                 {
@@ -62,7 +61,7 @@ namespace TDFactory
             int i = 0;
             int say = 0;
 
-            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(ConnectionInfo));
+            cmd.Connection = new SqlConnection(Helper.CreateConnectionText(ConnectionInfo));
 
             try
             {

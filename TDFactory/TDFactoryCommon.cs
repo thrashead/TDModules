@@ -7,8 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using TDFactory.Helper;
-using InType = TDFactory.Helper.ExMethods.InType;
+using InType = TDFactory.ExMethods.InType;
 
 namespace TDFactory
 {
@@ -20,13 +19,13 @@ namespace TDFactory
         {
             foreach (string Table in selectedTables)
             {
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+                List<string> identityColumns = Helper.ReturnIdentityColumn(connectionInfo, Table);
 
                 string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
 
                 identityColumns = identityColumns.IdentityCheck(lstSeciliKolonlar);
 
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
                 List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
                 fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
 
@@ -71,6 +70,11 @@ namespace TDFactory
                         if ((chkRepositoryInternal.Checked && !chkAngular.Checked) || !chkRepositoryInternal.Checked)
                         {
                             yaz.WriteLine("using System.ComponentModel.DataAnnotations;");
+                        }
+
+                        if (hasUserRights || Table == "Users")
+                        {
+                            yaz.WriteLine("using System.Web;");
                         }
 
                         if (fkcListForeign.Count > 0 || allowHtml)
@@ -126,6 +130,24 @@ namespace TDFactory
                                 {
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     yaz.WriteLine("\t\t\t" + PrimaryTableName + "List = new List<SelectListItem>();");
+                                }
+                            }
+
+                            if (hasLinks)
+                            {
+                                yaz.WriteLine("");
+
+                                if (Table == "Links")
+                                {
+                                    yaz.WriteLine("\t\t\tLinkedItemList = new List<SelectListItem>();");
+                                }
+
+                                if (Table == "LinkTypes")
+                                {
+                                    yaz.WriteLine("MainTypeList = new List<SelectListItem>();");
+                                    yaz.WriteLine("LinkedTypeList = new List<SelectListItem>();");
+                                    yaz.WriteLine("MainList = new List<SelectListItem>();");
+                                    yaz.WriteLine("LinkList = new List<Links>();");
                                 }
                             }
 
@@ -306,6 +328,56 @@ namespace TDFactory
                             }
                         }
 
+                        if (hasLinks)
+                        {
+                            yaz.WriteLine("");
+
+                            if (Table == "Links")
+                            {
+                                yaz.WriteLine("\t\tpublic List<SelectListItem> LinkedItemList { get; set; }");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic int LinkedTypeID { get; set; }");
+                                yaz.WriteLine("\t\tpublic string Title { get; set; }");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic string LinkedTypesAdi { get; set; }");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic string MainCategoryAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedCategoryAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainContentAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedContentAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainProductAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedProductAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainGalleryAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedGalleryAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainPicturesAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedPicturesAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainFilesAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedFilesAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainMetaAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedMetaAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainFormGroupsAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedFormGroupsAdi { get; set; }");
+                            }
+
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine("\t\tpublic List<SelectListItem> MainTypeList { get; set; }");
+                                yaz.WriteLine("\t\tpublic List<SelectListItem> LinkedTypeList { get; set; }");
+                                yaz.WriteLine("\t\tpublic List<SelectListItem> MainList { get; set; }");
+                                yaz.WriteLine("\t\tpublic List<Links> LinkList { get; set; }");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic string MainTypeAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string LinkedTypeAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainCategoryAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainContentAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainProductAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainGalleryAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainPicturesAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainFilesAdi { get; set; }");
+                                yaz.WriteLine("\t\tpublic string MainMetaAdi { get; set; }");
+                            }
+                        }
+
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#endregion");
                         yaz.WriteLine("");
@@ -315,88 +387,111 @@ namespace TDFactory
                         string searchText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList());
                         string linked = fkcListForeign.Count > 0 ? "Linked" : "";
 
-                        // List
-                        yaz.WriteLine("\t\tpublic List<" + Table + "> List(int? id = null, int? top = null, bool relation = true)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tList<" + Table + "> table;");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> tableTemp;");
-                        yaz.WriteLine("\t\t\tList<usp_" + Table + "SelectTop_Result> tableTopTemp;");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (top == null)");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\ttableTemp = entity.usp_" + Table + linked + "Select(id).ToList();");
-                        yaz.WriteLine("\t\t\t\ttable = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + linked + "Select_Result>();");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("\t\t\telse");
-                        yaz.WriteLine("\t\t\t{");
-                        yaz.WriteLine("\t\t\t\ttableTopTemp = entity.usp_" + Table + "SelectTop(id, top).ToList();");
-                        yaz.WriteLine("\t\t\t\ttable = tableTopTemp.ChangeModelList<" + Table + ", usp_" + Table + "SelectTop_Result>();");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("");
-
-                        if (fkcListForeign.Count > 0 || fkcList.Count > 0)
-                        {
-                            yaz.WriteLine("\t\t\tif (relation)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tforeach(" + Table + " item in table)");
-                            yaz.WriteLine("\t\t\t\t{");
-                        }
-
                         int j = 1;
-                        if (fkcListForeign.Count > 0)
+
+                        // List
+                        if (hasLinks && (Table == "Links" || Table == "LinkTypes"))
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            if (Table == "Links")
                             {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
-
-                                yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
-
-                                if (j < fkcListForeign.Count)
-                                    yaz.WriteLine("");
-
-                                j++;
+                                yaz.WriteLine("\t\tpublic List<Links> List(int? id = null, int? top = null, bool relation = true)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\treturn entity.usp_LinksDetailSelect().ToList().ChangeModelList<Links, usp_LinksDetailSelect_Result>();");
+                                yaz.WriteLine("\t\t}");
                             }
 
-                            if (fkcList.Count > 0)
+                            if (Table == "LinkTypes")
                             {
-                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic List<LinkTypes> List(int? id = null, int? top = null, bool relation = true)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\treturn entity.usp_LinkTypesDetailSelect().ToList().ChangeModelList<LinkTypes, usp_LinkTypesDetailSelect_Result>();");
+                                yaz.WriteLine("\t\t}");
                             }
                         }
-
-
-                        if (fkcList.Count > 0)
+                        else
                         {
-                            foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                            yaz.WriteLine("\t\tpublic List<" + Table + "> List(int? id = null, int? top = null, bool relation = true)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tList<" + Table + "> table;");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> tableTemp;");
+                            yaz.WriteLine("\t\t\tList<usp_" + Table + "SelectTop_Result> tableTopTemp;");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (top == null)");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttableTemp = entity.usp_" + Table + linked + "Select(id).ToList();");
+                            yaz.WriteLine("\t\t\t\ttable = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + linked + "Select_Result>();");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\telse");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\ttableTopTemp = entity.usp_" + Table + "SelectTop(id, top).ToList();");
+                            yaz.WriteLine("\t\t\t\ttable = tableTopTemp.ChangeModelList<" + Table + ", usp_" + Table + "SelectTop_Result>();");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("");
+
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
                             {
-                                j = 1;
-                                foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                yaz.WriteLine("\t\t\tif (relation)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tforeach(" + Table + " item in table)");
+                                yaz.WriteLine("\t\t\t\t{");
+                            }
+
+                            if (fkcListForeign.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
                                     string PrimaryTableName = fkc.PrimaryTableName;
-                                    string ForeignTableName = fkc2.ForeignTableName;
+                                    string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(item." + fkc.PrimaryColumnName + ").ToList();"); ;
-                                    yaz.WriteLine("\t\t\t\t\titem." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
 
-                                    if (j < fkcList.Count)
+                                    if (j < fkcListForeign.Count)
                                         yaz.WriteLine("");
 
                                     j++;
                                 }
+
+                                if (fkcList.Count > 0)
+                                {
+                                    yaz.WriteLine("");
+                                }
                             }
+
+
+                            if (fkcList.Count > 0)
+                            {
+                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                {
+                                    j = 1;
+                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                    {
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string ForeignTableName = fkc2.ForeignTableName;
+
+                                        yaz.WriteLine("\t\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(item." + fkc.PrimaryColumnName + ").ToList();"); ;
+                                        yaz.WriteLine("\t\t\t\t\titem." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+
+                                        if (j < fkcList.Count)
+                                            yaz.WriteLine("");
+
+                                        j++;
+                                    }
+                                }
+                            }
+
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                            }
+
+                            yaz.WriteLine("\t\t\treturn table;");
+                            yaz.WriteLine("\t\t}");
                         }
 
-                        if (fkcListForeign.Count > 0 || fkcList.Count > 0)
-                        {
-                            yaz.WriteLine("\t\t\t\t}");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("");
-                        }
-
-                        yaz.WriteLine("\t\t\treturn table;");
-                        yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
                         // ListAll
@@ -476,7 +571,10 @@ namespace TDFactory
                         // Select
                         yaz.WriteLine("\t\tpublic I" + Table + " Select(int? id, bool relation = true)");
                         yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tusp_" + Table + "SelectTop_Result tableTemp = entity.usp_" + Table + "SelectTop(id, 1).FirstOrDefault();");
+
+                        string linksDetailTop = hasLinks && Table == "Links" ? "Detail" : "";
+
+                        yaz.WriteLine("\t\t\tusp_" + Table + linksDetailTop + "SelectTop_Result tableTemp = entity.usp_" + Table + linksDetailTop + "SelectTop(id, 1).FirstOrDefault();");
                         yaz.WriteLine("\t\t\t" + Table + " table = tableTemp.ChangeModel<" + Table + ">();");
                         yaz.WriteLine("");
 
@@ -844,7 +942,9 @@ namespace TDFactory
                             }
                         }
 
-                        yaz.WriteLine("\t\tpublic I" + Table + " Insert(I" + Table + " table = null" + linkID + ")");
+                        string hasLinkID = hasLinks && Table == "Links" ? ", int? linkID = null" : "";
+
+                        yaz.WriteLine("\t\tpublic I" + Table + " Insert(I" + Table + " table = null" + linkID + hasLinkID + ")");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\tif (table == null)");
                         yaz.WriteLine("\t\t\t\ttable = new " + Table + "();");
@@ -866,6 +966,38 @@ namespace TDFactory
                             }
                         }
 
+                        if (hasLinks)
+                        {
+                            if (Table == "Links")
+                            {
+                                yaz.WriteLine("\t\t\tint? linkedTypeID = null;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (linkID == null && linkTypeID == null)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tlinkedTypeID = tableLinkTypes.FirstOrDefault().LinkedTypeID;");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (tableLinkTypes.Count > 0)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\ttable.LinkedItemList = ReturnList(linkedTypeID, linkID, linkTypeID);");
+                                yaz.WriteLine("\t\t\t\ttable.LinkTypesList = tableLinkTypes.ToSelectList<usp_LinkTypesSelect_Result, SelectListItem>(\"ID\", \"Title\", linkTypeID);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\telse");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Bağlantı oluşturabilmek için önce Bağlı Tip ekleyiniz.\";");
+                                yaz.WriteLine("\t\t\t}");
+                            }
+
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine("\t\t\ttable.MainTypeList.AddRange(ReturnList(0));");
+                                yaz.WriteLine("\t\t\ttable.LinkedTypeList.AddRange(ReturnList(0, 2));");
+                                yaz.WriteLine("\t\t\ttable.MainList.AddRange(ReturnList(1));");
+                            }
+
+                            yaz.WriteLine("");
+                        }
+
                         yaz.WriteLine("\t\t\treturn table;");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
@@ -873,6 +1005,12 @@ namespace TDFactory
                         // Insert
                         yaz.WriteLine("\t\tpublic bool Insert(I" + Table + " table)");
                         yaz.WriteLine("\t\t{");
+
+                        if (hasUserRights && Table == "Users")
+                        {
+                            yaz.WriteLine("\t\t\ttable.Password = table.Password.ToMD5();");
+                            yaz.WriteLine("");
+                        }
 
                         if (urlColumns.Count > 0)
                         {
@@ -985,6 +1123,26 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t}");
                             }
 
+                            if (hasLinks)
+                            {
+                                yaz.WriteLine("");
+
+                                if (Table == "Links")
+                                {
+                                    yaz.WriteLine("\t\t\tusp_LinkTypesSelectTop_Result tableLinkTypesTop = entity.usp_LinkTypesSelectTop(table.LinkTypeID, 1).FirstOrDefault();");
+                                    yaz.WriteLine("\t\t\ttable.LinkedItemList = ReturnList(table.LinkedTypeID, table.LinkID);");
+                                    yaz.WriteLine("\t\t\ttable.LinkedTypesAdi = tableLinkTypesTop.Title;");
+                                }
+
+                                if (Table == "LinkTypes")
+                                {
+                                    yaz.WriteLine("\t\t\ttable.MainTypeList.AddRange(ReturnList(0, table.MainTypeID));");
+                                    yaz.WriteLine("\t\t\ttable.LinkedTypeList.AddRange(ReturnList(0, table.LinkedTypeID));");
+                                    yaz.WriteLine("\t\t\ttable.MainList.AddRange(ReturnList(table.MainTypeID, table.MainID));");
+                                    yaz.WriteLine("\t\t\ttable.LinkList = entity.usp_LinksDetailByLinkTypeIDSelect(table.ID).ToList().ChangeModelList<Links, usp_LinksDetailByLinkTypeIDSelect_Result>();");
+                                }
+                            }
+
                             yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\treturn table;");
@@ -993,8 +1151,20 @@ namespace TDFactory
 
 
                             //Update
-                            yaz.WriteLine("\t\tpublic bool Update(I" + Table + " table)");
+                            string curUserID = hasUserRights && Table == "Users" ? ", int? curUserID = null" : "";
+
+                            yaz.WriteLine("\t\tpublic bool Update(I" + Table + " table" + curUserID + ")");
                             yaz.WriteLine("\t\t{");
+
+                            if (hasUserRights && Table == "Users")
+                            {
+                                yaz.WriteLine("\t\t\tstring password = table.Password == null ? entity.usp_UsersOldPasswordSelect(table.ID).FirstOrDefault() : table.Password.ToMD5();");
+                                yaz.WriteLine("\t\t\ttable.Password = password;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (curUserID == table.ID)");
+                                yaz.WriteLine("\t\t\t\ttable.Active = true;");
+                                yaz.WriteLine("");
+                            }
 
                             string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
 
@@ -1021,7 +1191,22 @@ namespace TDFactory
                             yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\tif(result != null)");
+
+                            if (hasUserRights && Table == "Users")
+                            {
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tif (curUserID == table.ID)");
+                                yaz.WriteLine("\t\t\t\t\tHttpContext.Current.Session[\"CurrentUser\"] = entity.usp_UsersSelectTop(table.ID, 1).FirstOrDefault().ChangeModel<Users>();");
+                                yaz.WriteLine("");
+                            }
+
                             yaz.WriteLine("\t\t\t\treturn true;");
+
+                            if (hasUserRights && Table == "Users")
+                            {
+                                yaz.WriteLine("\t\t\t}");
+                            }
+
                             yaz.WriteLine("\t\t\telse");
                             yaz.WriteLine("\t\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
@@ -1075,6 +1260,206 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\treturn false;");
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("\t\t}");
+                            }
+
+                            if (Table == "Users" && hasUserRights)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic IUsers ChangeGroup(" + columntype.ReturnCSharpType() + " id, IUsers table = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tif (table == null)");
+                                yaz.WriteLine("\t\t\t\ttable = Select(id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tList<usp_UserGroupsSelect_Result> tableUsersGroup = entity.usp_UserGroupsSelect(null).ToList();");
+                                yaz.WriteLine("\t\t\ttable.UserGroupsList = tableUsersGroup.ToSelectList<usp_UserGroupsSelect_Result, SelectListItem>(\"ID\", \"Name\", table.GroupID);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn table;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic bool ChangeGroup(IUsers table)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tvar result = entity.usp_UsersGroupUpdate(table.ID, table.GroupID);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (result != null)");
+                                yaz.WriteLine("\t\t\t\treturn true;");
+                                yaz.WriteLine("\t\t\telse");
+                                yaz.WriteLine("\t\t\t\treturn false;");
+                                yaz.WriteLine("\t\t}");
+                            }
+
+                            if (hasLinks)
+                            {
+                                yaz.WriteLine("");
+
+                                if (Table == "Links")
+                                {
+                                    yaz.WriteLine("\t\tpublic static List<SelectListItem> ReturnList(int? linkedTypeID = 1, int? linkID = null, int? linkTypeID = null)");
+                                    yaz.WriteLine("\t\t{");
+                                    yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities _entity = new " + cmbVeritabani.Text + "Entities();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tList<SelectListItem> linkItems = new List<SelectListItem>();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tint? _linkedTypeID = linkTypeID == null ? linkedTypeID : linkTypeID;");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tif (linkTypeID == null)");
+                                    yaz.WriteLine("\t\t\t\t_linkedTypeID = linkedTypeID;");
+                                    yaz.WriteLine("\t\t\telse");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tusp_LinkTypesSelectTop_Result table = _entity.usp_LinkTypesSelectTop(linkTypeID, 1).FirstOrDefault();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t_linkedTypeID = table.LinkedTypeID;");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tswitch (_linkedTypeID)");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tcase 1:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_CategorySelect_Result> tableCatItems = _entity.usp_CategorySelect(null).ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableCatItems)");
+                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                    yaz.WriteLine("\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\tcase 2:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_ContentSelect_Result> tableContItems = _entity.usp_ContentSelect(null).ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableContItems)");
+                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                    yaz.WriteLine("\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\tcase 3:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_ProductSelect_Result> tableProdItems = _entity.usp_ProductSelect(null).ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableProdItems)");
+                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                    yaz.WriteLine("\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\tcase 4:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_GallerySelect_Result> tableGalItems = _entity.usp_GallerySelect(null).ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableGalItems)");
+                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                    yaz.WriteLine("\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\tcase 5:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_PicturesSelect_Result> tablePicItems = _entity.usp_PicturesSelect(null).ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tablePicItems)");
+                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                    yaz.WriteLine("\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\tcase 6:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_FilesSelect_Result> tableFileItems = _entity.usp_FilesSelect(null).ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableFileItems)");
+                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                    yaz.WriteLine("\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\tcase 7:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_MetaSelect_Result> tableMetaItems = _entity.usp_MetaSelect(null).ToList();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableMetaItems)");
+                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                    yaz.WriteLine("\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\treturn linkItems;");
+                                    yaz.WriteLine("\t\t}");
+                                }
+
+                                if (Table == "LinkTypes")
+                                {
+                                    yaz.WriteLine("\t\tpublic static List<SelectListItem> FillList(dynamic list, LinkType linkType = LinkType.Table, int selectedID = 0)");
+                                    yaz.WriteLine("\t\t{");
+                                    yaz.WriteLine("\t\t\tList<SelectListItem> returnList = new List<SelectListItem>();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tforeach (dynamic item in list)");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tswitch (linkType)");
+                                    yaz.WriteLine("\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\tcase LinkType.Type:");
+                                    yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
+                                    yaz.WriteLine("\t\t\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tText = item.TypeName,");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
+                                    yaz.WriteLine("\t\t\t\t\t\t});");
+                                    yaz.WriteLine("\t\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\t\tcase LinkType.Table:");
+                                    yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
+                                    yaz.WriteLine("\t\t\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tText = item.Title,");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
+                                    yaz.WriteLine("\t\t\t\t\t\t});");
+                                    yaz.WriteLine("\t\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\t\tdefault:");
+                                    yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
+                                    yaz.WriteLine("\t\t\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tText = item.Title,");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
+                                    yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
+                                    yaz.WriteLine("\t\t\t\t\t\t});");
+                                    yaz.WriteLine("\t\t\t\t\t\tbreak;");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\treturn returnList;");
+                                    yaz.WriteLine("\t\t}");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\tpublic enum LinkType");
+                                    yaz.WriteLine("\t\t{");
+                                    yaz.WriteLine("\t\t\tType,");
+                                    yaz.WriteLine("\t\t\tTable");
+                                    yaz.WriteLine("\t\t}");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\tpublic static List<SelectListItem> ReturnList(int? typeID, int selectedID = 0)");
+                                    yaz.WriteLine("\t\t{");
+                                    yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities _entity = new " + cmbVeritabani.Text + "Entities();");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tswitch (typeID)");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tcase 1:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_CategorySelect_Result> categories = _entity.usp_CategorySelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\treturn FillList(categories, LinkType.Table, selectedID);");
+                                    yaz.WriteLine("\t\t\t\tcase 2:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_ContentSelect_Result> contents = _entity.usp_ContentSelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\treturn FillList(contents, LinkType.Table, selectedID);");
+                                    yaz.WriteLine("\t\t\t\tcase 3:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_ProductSelect_Result> products = _entity.usp_ProductSelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\treturn FillList(products, LinkType.Table, selectedID);");
+                                    yaz.WriteLine("\t\t\t\tcase 4:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_GallerySelect_Result> galleries = _entity.usp_GallerySelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\treturn FillList(galleries, LinkType.Table, selectedID);");
+                                    yaz.WriteLine("\t\t\t\tcase 5:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_PicturesSelect_Result> pictures = _entity.usp_PicturesSelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\treturn FillList(pictures, LinkType.Table, selectedID);");
+                                    yaz.WriteLine("\t\t\t\tcase 6:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_FilesSelect_Result> files = _entity.usp_FilesSelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\treturn FillList(files, LinkType.Table, selectedID);");
+                                    yaz.WriteLine("\t\t\t\tcase 7:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_MetaSelect_Result> meta = _entity.usp_MetaSelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\treturn FillList(meta, LinkType.Table, selectedID);");
+                                    yaz.WriteLine("\t\t\t\tdefault:");
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_TypesLinkableSelect_Result> types = _entity.usp_TypesLinkableSelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\t\t\treturn FillList(types, LinkType.Type, selectedID);");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t}");
+                                }
                             }
                         }
 
@@ -1264,6 +1649,56 @@ namespace TDFactory
                             }
                         }
 
+                        if (hasLinks)
+                        {
+                            yaz.WriteLine("");
+
+                            if (Table == "Links")
+                            {
+                                yaz.WriteLine("\t\tList<SelectListItem> LinkedItemList { get; set; }");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tint LinkedTypeID { get; set; }");
+                                yaz.WriteLine("\t\tstring Title { get; set; }");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tstring LinkedTypesAdi { get; set; }");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tstring MainCategoryAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedCategoryAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainContentAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedContentAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainProductAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedProductAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainGalleryAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedGalleryAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainPicturesAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedPicturesAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainFilesAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedFilesAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainMetaAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedMetaAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainFormGroupsAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedFormGroupsAdi { get; set; }");
+                            }
+
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine("\t\tList<SelectListItem> MainTypeList { get; set; }");
+                                yaz.WriteLine("\t\tList<SelectListItem> LinkedTypeList { get; set; }");
+                                yaz.WriteLine("\t\tList<SelectListItem> MainList { get; set; }");
+                                yaz.WriteLine("\t\tList<Links> LinkList { get; set; }");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tstring MainTypeAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring LinkedTypeAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainCategoryAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainContentAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainProductAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainGalleryAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainPicturesAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainFilesAdi { get; set; }");
+                                yaz.WriteLine("\t\tstring MainMetaAdi { get; set; }");
+                            }
+                        }
+
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#endregion");
                         yaz.WriteLine("");
@@ -1323,7 +1758,9 @@ namespace TDFactory
                             }
                         }
 
-                        yaz.WriteLine("\t\tI" + Table + " Insert(I" + Table + " table" + linkID + ");");
+                        string hasLinkID = hasLinks && Table == "Links" ? ", int? linkID" : "";
+
+                        yaz.WriteLine("\t\tI" + Table + " Insert(I" + Table + " table" + linkID + hasLinkID + ");");
 
                         yaz.WriteLine("\t\tbool Insert(I" + Table + " table);");
 
@@ -1333,7 +1770,10 @@ namespace TDFactory
 
                             //Update
                             yaz.WriteLine("\t\tI" + Table + " Update(int? id, I" + Table + " table);");
-                            yaz.WriteLine("\t\tbool Update(I" + Table + " table);");
+
+                            string curUserID = hasUserRights && Table == "Users" ? ", int? curUserID" : "";
+
+                            yaz.WriteLine("\t\tbool Update(I" + Table + " table" + curUserID + ");");
 
                             //Copy
                             yaz.WriteLine("\t\tbool Copy(" + columntype.ReturnCSharpType() + " id);");
@@ -1345,6 +1785,12 @@ namespace TDFactory
                             {
                                 //Remove
                                 yaz.WriteLine("\t\tbool Remove(" + columntype.ReturnCSharpType() + "? id);");
+                            }
+
+                            if (Table == "Users" && hasUserRights)
+                            {
+                                yaz.WriteLine("\t\tIUsers ChangeGroup(" + columntype.ReturnCSharpType() + " id, IUsers table);");
+                                yaz.WriteLine("\t\tbool ChangeGroup(IUsers table);");
                             }
                         }
 
@@ -1428,7 +1874,7 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-                List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+                List<string> identityColumns = Helper.ReturnIdentityColumn(connectionInfo, Table);
 
                 string id = identityColumns.Count > 0 ? identityColumns.FirstOrDefault() : "id";
 
@@ -1817,7 +2263,7 @@ namespace TDFactory
 
         void CreateStoredProcedure()
         {
-            string schema = DefaultSchema(new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo)));
+            string schema = DefaultSchema(new SqlConnection(Helper.CreateConnectionText(connectionInfo)));
 
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\_StoredProcedures.sql", FileMode.Create))
             {
@@ -1829,10 +2275,10 @@ namespace TDFactory
 
                     foreach (string Table in selectedTables)
                     {
-                        List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+                        List<string> identityColumns = Helper.ReturnIdentityColumn(connectionInfo, Table);
                         string idColumn = identityColumns.FirstOrDefault();
 
-                        SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                        SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
                         List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
                         fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
 
@@ -2074,6 +2520,7 @@ namespace TDFactory
                                 yaz.WriteLine("\t@" + item.ColumnName + " " + item.DataType);
                             }
 
+                            yaz.WriteLine("AS");
                             yaz.WriteLine("\tSET NOCOUNT ON");
                             yaz.WriteLine("\tSET XACT_ABORT ON");
                             yaz.WriteLine("");
@@ -2241,7 +2688,7 @@ namespace TDFactory
                                     string ForeignTableName = fkc2.ForeignTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
 
-                                    List<ColumnInfo> fColumnNames = Helper.Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
+                                    List<ColumnInfo> fColumnNames = Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
                                     string fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
 
                                     yaz.WriteLine("/* ByLinkedIDSelect */");
@@ -2662,11 +3109,20 @@ namespace TDFactory
             }
 
             CreateSplitStoredProcedure();
+
+            if (hasUserRights || hasLogs)
+            {
+                CreateUserRightsStoredProcedure();
+                CreateUsersData();
+            }
+
+            if (hasLinks)
+                CreateLinkStoredProcedure();
         }
 
         void CreateSplitStoredProcedure()
         {
-            string schema = DefaultSchema(new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo)));
+            string schema = DefaultSchema(new SqlConnection(Helper.CreateConnectionText(connectionInfo)));
 
             foreach (string Table in selectedTables)
             {
@@ -2678,10 +3134,10 @@ namespace TDFactory
                         yaz.WriteLine("GO");
                         yaz.WriteLine("");
 
-                        List<string> identityColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, Table);
+                        List<string> identityColumns = Helper.ReturnIdentityColumn(connectionInfo, Table);
                         string idColumn = identityColumns.FirstOrDefault();
 
-                        SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                        SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
                         List<ForeignKeyChecker> fkcList = ForeignKeyCheck(con, Table);
                         fkcList = fkcList.Where(a => a.PrimaryTableName == Table).ToList();
 
@@ -3091,7 +3547,7 @@ namespace TDFactory
                                     string ForeignTableName = fkc2.ForeignTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
 
-                                    List<ColumnInfo> fColumnNames = Helper.Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
+                                    List<ColumnInfo> fColumnNames = Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
                                     string fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? " and [Deleted] = 0" : "";
 
                                     yaz.WriteLine("/* ByLinkedIDSelect */");
@@ -3507,6 +3963,933 @@ namespace TDFactory
                         //Remove//
                         yaz.Close();
                     }
+                }
+            }
+        }
+
+        void CreateUserRightsStoredProcedure()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\_UserRights.sql", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("USE [" + DBName + "]");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_TypesShowSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_TypesShowSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_TypesShowSelect]");
+                    yaz.WriteLine("\t@ID int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT [ID], [TypeName], [Url], [TableName], [Linkable], [Show]");
+                    yaz.WriteLine("\tFROM   [dbo].[Types]");
+                    yaz.WriteLine("\tWHERE  ([ID] = @ID OR @ID IS NULL)");
+                    yaz.WriteLine("\tAND [Show] = 1");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_TypesShowSelectTop]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_TypesShowSelectTop]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_TypesShowSelectTop]");
+                    yaz.WriteLine("\t@ID int,");
+                    yaz.WriteLine("\t@Top int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT Top (@Top) [ID], [TypeName], [Url], [TableName], [Linkable], [Show]");
+                    yaz.WriteLine("\tFROM   [dbo].[Types]");
+                    yaz.WriteLine("\tWHERE  ([ID] = @ID OR @ID IS NULL) and [Show] = 1");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_UserGroupRightsByUserIDAndTypeName]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_UserGroupRightsByUserIDAndTypeName]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_UserGroupRightsByUserIDAndTypeName]");
+                    yaz.WriteLine("\t@UserID int = null,");
+                    yaz.WriteLine("\t@TypeName nvarchar(255) = null,");
+                    yaz.WriteLine("\t@Process nvarchar(5) = null");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSelect U.[ID] as 'UserID', T.[TypeName], UGP.[ShortName], UGR.[Allow]");
+                    yaz.WriteLine("\tFrom [dbo].[Users] U");
+                    yaz.WriteLine("\tJOIN [dbo].[UserGroups] UG");
+                    yaz.WriteLine("\tON U.[GroupID] = UG.[ID]");
+                    yaz.WriteLine("\tJOIN [dbo].[UserGroupTables] UGT");
+                    yaz.WriteLine("\tON UGT.[UserGroupID] = UG.[ID]");
+                    yaz.WriteLine("\tJOIN [dbo].[UserGroupRights] UGR");
+                    yaz.WriteLine("\tON UGR.[UserGroupTableID] = UGT.[ID]");
+                    yaz.WriteLine("\tJOIN [dbo].[UserGroupProcess] UGP");
+                    yaz.WriteLine("\tON UGP.[ID] = UGR.[UserGroupProcessID]");
+                    yaz.WriteLine("\tJOIN [dbo].[Types] T");
+                    yaz.WriteLine("\tON T.[ID] = UGT.[TypeID]");
+                    yaz.WriteLine("\twhere (T.TypeName = @TypeName or @TypeName is null)");
+                    yaz.WriteLine("\tand (U.ID = @UserID or @UserID is null)");
+                    yaz.WriteLine("\tand (UGP.ShortName = @Process or @Process is null)");
+                    yaz.WriteLine("\tand UGR.Allow = 1");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_UserGroupRightsByUserIDAndUrl]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_UserGroupRightsByUserIDAndUrl]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_UserGroupRightsByUserIDAndUrl]");
+                    yaz.WriteLine("\t@UserID int = null,");
+                    yaz.WriteLine("\t@Url nvarchar(255) = null,");
+                    yaz.WriteLine("\t@Process nvarchar(5) = null");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSelect U.[ID] as 'UserID', T.[Url], UGP.[ShortName], UGR.[Allow]");
+                    yaz.WriteLine("\tFrom [dbo].[Users] U");
+                    yaz.WriteLine("\tJOIN [dbo].[UserGroups] UG");
+                    yaz.WriteLine("\tON U.[GroupID] = UG.[ID]");
+                    yaz.WriteLine("\tJOIN [dbo].[UserGroupTables] UGT");
+                    yaz.WriteLine("\tON UGT.[UserGroupID] = UG.[ID]");
+                    yaz.WriteLine("\tJOIN [dbo].[UserGroupRights] UGR");
+                    yaz.WriteLine("\tON UGR.[UserGroupTableID] = UGT.[ID]");
+                    yaz.WriteLine("\tJOIN [dbo].[UserGroupProcess] UGP");
+                    yaz.WriteLine("\tON UGP.[ID] = UGR.[UserGroupProcessID]");
+                    yaz.WriteLine("\tJOIN [dbo].[Types] T");
+                    yaz.WriteLine("\tON T.[ID] = UGT.[TypeID]");
+                    yaz.WriteLine("\twhere (T.Url = @Url or @Url is null)");
+                    yaz.WriteLine("\tand (U.ID = @UserID or @UserID is null)");
+                    yaz.WriteLine("\tand (UGP.ShortName = @Process or @Process is null)");
+                    yaz.WriteLine("\tand UGR.Allow = 1");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_UsersLoginTimeUpdate]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_UsersLoginTimeUpdate]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_UsersLoginTimeUpdate]");
+                    yaz.WriteLine("\t@ID int,");
+                    yaz.WriteLine("\t@LoginTime nvarchar(50) = NULL");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tUPDATE [dbo].[Users]");
+                    yaz.WriteLine("\tSET [LoginTime] = @LoginTime");
+                    yaz.WriteLine("\tWHERE  [ID] = @ID");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT [ID], [Username], [Password], [Active], [LoginTime]");
+                    yaz.WriteLine("\tFROM   [dbo].[Users]");
+                    yaz.WriteLine("\tWHERE  [ID] = @ID");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_UsersSelectLogin]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_UsersSelectLogin]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_UsersSelectLogin]");
+                    yaz.WriteLine("\t@Username nvarchar(25),");
+                    yaz.WriteLine("\t@Password nvarchar(50)");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT Top 1 U.[ID], U.[GroupID], U.[Username], U.[Password], U.[Active], U.[LoginTime]");
+                    yaz.WriteLine("\tFROM   [dbo].[Users] U join [dbo].[UserGroups] UG");
+                    yaz.WriteLine("\tON U.[GroupID] = UG.[ID]");
+                    yaz.WriteLine("\tWHERE  U.[Username] = @Username");
+                    yaz.WriteLine("\tand U.[Password] = @Password");
+                    yaz.WriteLine("\tand U.[Active] = 1");
+                    yaz.WriteLine("\tand U.[Deleted] = 0");
+                    yaz.WriteLine("\tand UG.ShortName != 'b'");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LogsByProcessShortNameInsert]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LogsByProcessShortNameInsert]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_LogsByProcessShortNameInsert]");
+                    yaz.WriteLine("\t@ProcessShortName nvarchar(5),");
+                    yaz.WriteLine("\t@UserID int,");
+                    yaz.WriteLine("\t@ProcessTime nvarchar(50),");
+                    yaz.WriteLine("\t@Description nvarchar(255)");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("\t");
+                    yaz.WriteLine("\tDECLARE @ProcID int = (SELECT TOP 1 [ID] FROM [dbo].[LogProcess] WHERE [ShortName] = @ProcessShortName)");
+                    yaz.WriteLine("\t");
+                    yaz.WriteLine("\tINSERT INTO [dbo].[Logs] ([UserID], [LogProcessID], [ProcessTime], [Description])");
+                    yaz.WriteLine("\tSELECT @UserID, @ProcID, @ProcessTime, @Description");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT [ID], [UserID], [LogProcessID], [ProcessTime], [Description]");
+                    yaz.WriteLine("\tFROM [dbo].[Logs]");
+                    yaz.WriteLine("\tWHERE [ID] = SCOPE_IDENTITY()");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_UsersGroupUpdate]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_UsersGroupUpdate]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_UsersGroupUpdate]");
+                    yaz.WriteLine("\t@ID int,");
+                    yaz.WriteLine("\t@GroupID int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tUPDATE [dbo].[Users]");
+                    yaz.WriteLine("\tSET [GroupID] = @GroupID");
+                    yaz.WriteLine("\tWHERE [ID] = @ID");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT [ID], [GroupID], [Username], [Password], [Active], [LoginTime]");
+                    yaz.WriteLine("\tFROM [dbo].[Users]");
+                    yaz.WriteLine("\tWHERE [ID] = @ID");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_UsersOldPasswordSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_UsersOldPasswordSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_UsersOldPasswordSelect]");
+                    yaz.WriteLine("\t@ID int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT [Password]");
+                    yaz.WriteLine("\tFROM   [dbo].[Users]");
+                    yaz.WriteLine("\tWHERE  ([ID] = @ID OR @ID IS NULL)");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateLinkStoredProcedure()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\_Links.sql", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("USE [" + DBName + "]");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LinkTypesDetailSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LinkTypesDetailSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROCEDURE [dbo].[usp_LinkTypesDetailSelect]");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("BEGIN TRAN");
+                    yaz.WriteLine("select LT.ID, LT.Title, LT.Url, LT.MainTypeID, T.TypeName as 'MainTypeAdi', TT.TypeName as 'LinkedTypeAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 1 then (Select Title from Category where ID = LT.MainID) end as 'MainCategoryAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 2 then (Select Title from Content where ID = LT.MainID) end as 'MainContentAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 3 then (Select Title from Product where ID = LT.MainID) end as 'MainProductAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 4 then (Select Title from Gallery where ID = LT.MainID) end as 'MainGalleryAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 5 then (Select Title from Pictures where ID = LT.MainID) end as 'MainPicturesAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 6 then (Select Title from Files where ID = LT.MainID) end as 'MainFilesAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 7 then (Select Title from Meta where ID = LT.MainID) end as 'MainMetaAdi'");
+                    yaz.WriteLine("from LinkTypes LT join [Types] T");
+                    yaz.WriteLine("on T.ID = LT.MainTypeID");
+                    yaz.WriteLine("join [Types] TT");
+                    yaz.WriteLine("on TT.ID = LT.LinkedTypeID");
+                    yaz.WriteLine("COMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LinksDetailByLinkTypeIDSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LinksDetailByLinkTypeIDSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROCEDURE [dbo].[usp_LinksDetailByLinkTypeIDSelect]");
+                    yaz.WriteLine("\t@LinkTypeID int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("BEGIN TRAN");
+                    yaz.WriteLine("select L.ID,");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 1 then (Select Title from Category where ID = L.LinkID) end as 'LinkedCategoryAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 2 then (Select Title from Content where ID = L.LinkID) end as 'LinkedContentAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 3 then (Select Title from Product where ID = L.LinkID) end as 'LinkedProductAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 4 then (Select Title from Gallery where ID = L.LinkID) end as 'LinkedGalleryAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 5 then (Select Title from Pictures where ID = L.LinkID) end as 'LinkedPicturesAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 6 then (Select Title from Files where ID = L.LinkID) end as 'LinkedFilesAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 7 then (Select Title from Meta where ID = L.LinkID) end as 'LinkedMetaAdi'");
+                    yaz.WriteLine("from  Links L join LinkTypes LT");
+                    yaz.WriteLine("on LT.ID = L.LinkTypeID");
+                    yaz.WriteLine("where L.LinkTypeID = @LinkTypeID");
+                    yaz.WriteLine("COMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LinksDetailSelectTop]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LinksDetailSelectTop]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_LinksDetailSelectTop]");
+                    yaz.WriteLine("\t@ID int,");
+                    yaz.WriteLine("\t@Top int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT Top (@Top) L.[ID], L.[LinkID], L.[LinkTypeID], LT.[LinkedTypeID]");
+                    yaz.WriteLine("\tFROM   [dbo].[Links] L join [LinkTypes] LT");
+                    yaz.WriteLine("\ton L.LinkTypeID = LT.ID");
+                    yaz.WriteLine("\tWHERE  (L.[ID] = @ID OR @ID IS NULL)");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LinksDetailSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LinksDetailSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROCEDURE [dbo].[usp_LinksDetailSelect]");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("BEGIN TRAN");
+                    yaz.WriteLine("select L.ID, LT.Title, LT.LinkedTypeID,");
+                    yaz.WriteLine("case when LT.MainTypeID = 1 then (Select Title from Category where ID = LT.MainID) end as 'MainCategoryAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 1 then (Select Title from Category where ID = L.LinkID) end as 'LinkedCategoryAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 2 then (Select Title from Content where ID = LT.MainID) end as 'MainContentAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 2 then (Select Title from Content where ID = L.LinkID) end as 'LinkedContentAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 3 then (Select Title from Product where ID = LT.MainID) end as 'MainProductAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 3 then (Select Title from Product where ID = L.LinkID) end as 'LinkedProductAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 4 then (Select Title from Gallery where ID = LT.MainID) end as 'MainGalleryAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 4 then (Select Title from Gallery where ID = L.LinkID) end as 'LinkedGalleryAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 5 then (Select Title from Pictures where ID = LT.MainID) end as 'MainPicturesAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 5 then (Select Title from Pictures where ID = L.LinkID) end as 'LinkedPicturesAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 6 then (Select Title from Files where ID = LT.MainID) end as 'MainFilesAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 6 then (Select Title from Files where ID = L.LinkID) end as 'LinkedFilesAdi',");
+                    yaz.WriteLine("case when LT.MainTypeID = 7 then (Select Title from Meta where ID = LT.MainID) end as 'MainMetaAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 7 then (Select Title from Meta where ID = L.LinkID) end as 'LinkedMetaAdi'");
+                    yaz.WriteLine("from  Links L join LinkTypes LT");
+                    yaz.WriteLine("on LT.ID = L.LinkTypeID");
+                    yaz.WriteLine("join [Types] T");
+                    yaz.WriteLine("on T.ID = LT.MainTypeID");
+                    yaz.WriteLine("join [Types] TT");
+                    yaz.WriteLine("on TT.ID = LT.LinkedTypeID");
+                    yaz.WriteLine("COMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LinksDetailByLinkTypeIDSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LinksDetailByLinkTypeIDSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROCEDURE [dbo].[usp_LinksDetailByLinkTypeIDSelect]");
+                    yaz.WriteLine("\t@LinkTypeID int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("BEGIN TRAN");
+                    yaz.WriteLine("select L.ID,");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 1 then (Select Title from Category where ID = L.LinkID) end as 'LinkedCategoryAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 2 then (Select Title from Content where ID = L.LinkID) end as 'LinkedContentAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 3 then (Select Title from Product where ID = L.LinkID) end as 'LinkedProductAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 4 then (Select Title from Gallery where ID = L.LinkID) end as 'LinkedGalleryAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 5 then (Select Title from Pictures where ID = L.LinkID) end as 'LinkedPicturesAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 6 then (Select Title from Files where ID = L.LinkID) end as 'LinkedFilesAdi',");
+                    yaz.WriteLine("case when LT.LinkedTypeID = 7 then (Select Title from Meta where ID = L.LinkID) end as 'LinkedMetaAdi'");
+                    yaz.WriteLine("from  Links L join LinkTypes LT");
+                    yaz.WriteLine("on LT.ID = L.LinkTypeID");
+                    yaz.WriteLine("where L.LinkTypeID = @LinkTypeID");
+                    yaz.WriteLine("COMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_TypesLinkableSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_TypesLinkableSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_TypesLinkableSelect]");
+                    yaz.WriteLine("\t@ID int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT [ID], [TypeName], [Url], [TableName], [Linkable]");
+                    yaz.WriteLine("\tFROM   [dbo].[Types]");
+                    yaz.WriteLine("\tWHERE  ([ID] = @ID OR @ID IS NULL) and [Linkable] = 1 and [Show] = 1");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateUsersData()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\_UsersData.sql", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[Types] ON");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (1, N'Kategoriler', N'Category', N'Category', 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (2, N'İçerikler', N'Content', N'Content', 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (3, N'Ürünler', N'Product', N'Product', 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (4, N'Galeri', N'Gallery', N'Gallery', 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (5, N'Resimler', N'Pictures', N'Pictures', 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (6, N'Dosyalar', N'Files', N'Files', 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (7, N'Meta', N'Meta', N'Meta', 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (9, N'Bağlı Tipler', N'LinkTypes', N'LinkTypes', 0, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (10, N'Dil', N'Translation', N'Translation', 0, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (11, N'Kullanıcılar', N'Users', N'Users', 0, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (12, N'Loglar', N'Logs', N'Logs', 0, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (13, N'Tipler', N'Types', N'Types', 0, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Types] ([ID], [TypeName], [Url], [TableName], [Linkable], [Show]) VALUES (16, N'Website', N'Website', N'Website', 0, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[Types] OFF");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[UserGroups] ON");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroups] ([ID], [Name], [ShortName], [Description]) VALUES (1, N'Admin', N'a', N'Bütün yetkilere sahip kullanıcı.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroups] ([ID], [Name], [ShortName], [Description]) VALUES (2, N'User', N'u', N'Normal kullanıcı. Verilen yetkileri kullanabilir.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroups] ([ID], [Name], [ShortName], [Description]) VALUES (3, N'Newcomer', N'n', N'Yeni kullanıcı. İzinler için yetki bekler.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroups] ([ID], [Name], [ShortName], [Description]) VALUES (4, N'Blocked', N'b', N'Bütün yetkileri alınmış kullanıcı.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[UserGroups] OFF");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[UserGroupTables] ON");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (1, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (2, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (3, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (4, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (5, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (6, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (7, 7, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (9, 1, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (10, 2, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (11, 3, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (12, 4, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (13, 5, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (14, 6, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (15, 7, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (17, 1, 3)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (18, 2, 3)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (19, 3, 3)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (20, 4, 3)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (21, 5, 3)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (22, 6, 3)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (23, 7, 3)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (33, 9, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (34, 10, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (35, 11, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (36, 9, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (37, 10, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (42, 10, 3)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (43, 12, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (44, 12, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (45, 13, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (47, 16, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupTables] ([ID], [TypeID], [UserGroupID]) VALUES (48, 16, 2)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[UserGroupTables] OFF");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[UserGroupProcess] ON");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupProcess] ([ID], [Name], [ShortName], [Description]) VALUES (1, N'Listele', N's', N'Tablo görüntüleme işlemi.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupProcess] ([ID], [Name], [ShortName], [Description]) VALUES (2, N'Ekle', N'i', N'Tabloya veri ekleme işlemi.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupProcess] ([ID], [Name], [ShortName], [Description]) VALUES (3, N'Düzenle', N'u', N'Tablodaki veryiyi güncelleme işlemi.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupProcess] ([ID], [Name], [ShortName], [Description]) VALUES (4, N'Sil', N'd', N'Tablodaki veriyi silme işlemi. Tamamen Silmez. Silindi kolonunu true yapar.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupProcess] ([ID], [Name], [ShortName], [Description]) VALUES (5, N'Kaldır', N'r', N'Tablodaki veriyi gerçekten siler. Veri bir daha geri getirilemez.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupProcess] ([ID], [Name], [ShortName], [Description]) VALUES (6, N'Kopyala', N'c', N'Tablodaki veriyi kopyalama işlemi.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupProcess] ([ID], [Name], [ShortName], [Description]) VALUES (7, N'Grup Değiştir', N'cg', N'Kullanıcılar tablosuna özel grup değiştirme işlemi.')");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[UserGroupProcess] OFF");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[UserGroupRights] ON");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (1, 1, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (2, 1, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (3, 1, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (4, 1, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (5, 1, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (6, 1, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (8, 2, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (9, 2, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (10, 2, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (11, 2, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (12, 2, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (13, 2, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (15, 3, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (16, 3, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (17, 3, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (18, 3, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (19, 3, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (20, 3, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (22, 4, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (23, 4, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (24, 4, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (25, 4, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (26, 4, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (27, 4, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (29, 5, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (30, 5, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (31, 5, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (32, 5, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (33, 5, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (34, 5, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (36, 6, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (37, 6, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (38, 6, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (39, 6, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (40, 6, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (41, 6, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (43, 7, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (44, 7, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (45, 7, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (46, 7, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (47, 7, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (48, 7, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (57, 9, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (58, 9, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (59, 9, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (60, 9, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (61, 9, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (62, 9, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (64, 10, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (65, 10, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (66, 10, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (67, 10, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (68, 10, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (69, 10, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (71, 11, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (72, 11, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (73, 11, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (74, 11, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (75, 11, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (76, 11, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (78, 12, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (79, 12, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (80, 12, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (81, 12, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (82, 12, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (83, 12, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (85, 13, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (86, 13, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (87, 13, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (88, 13, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (89, 13, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (90, 13, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (92, 14, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (93, 14, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (94, 14, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (95, 14, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (96, 14, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (97, 14, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (99, 15, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (100, 15, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (101, 15, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (102, 15, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (103, 15, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (104, 15, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (113, 17, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (114, 17, 2, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (115, 17, 3, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (116, 17, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (117, 17, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (118, 17, 6, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (120, 18, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (121, 18, 2, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (122, 18, 3, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (123, 18, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (124, 18, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (125, 18, 6, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (127, 19, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (128, 19, 2, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (129, 19, 3, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (130, 19, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (131, 19, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (132, 19, 6, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (134, 20, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (135, 20, 2, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (136, 20, 3, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (137, 20, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (138, 20, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (139, 20, 6, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (141, 21, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (142, 21, 2, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (143, 21, 3, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (144, 21, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (145, 21, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (146, 21, 6, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (148, 22, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (149, 22, 2, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (150, 22, 3, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (151, 22, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (152, 22, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (153, 22, 6, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (155, 23, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (156, 23, 2, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (157, 23, 3, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (158, 23, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (159, 23, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (160, 23, 6, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (224, 33, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (225, 33, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (226, 33, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (227, 33, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (228, 33, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (229, 33, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (230, 34, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (231, 34, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (232, 34, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (233, 34, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (234, 34, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (235, 34, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (236, 35, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (237, 35, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (238, 35, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (239, 35, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (240, 35, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (241, 35, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (242, 36, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (243, 36, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (244, 36, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (245, 36, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (246, 36, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (247, 36, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (248, 37, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (249, 37, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (250, 37, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (251, 37, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (252, 37, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (253, 37, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (254, 42, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (255, 42, 2, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (256, 42, 3, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (257, 42, 4, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (258, 42, 5, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (259, 42, 6, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (260, 35, 7, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (261, 43, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (262, 43, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (263, 43, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (264, 43, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (265, 43, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (266, 43, 6, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (267, 44, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (268, 45, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (269, 45, 2, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (270, 45, 3, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (271, 45, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (272, 45, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (276, 47, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (277, 47, 4, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (278, 47, 5, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[UserGroupRights] ([ID], [UserGroupTableID], [UserGroupProcessID], [Allow]) VALUES (279, 48, 1, 1)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[UserGroupRights] OFF");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[Users] ON");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (1, 1, N'admin', N'21232f297a57a5a743894a0e4a801fc3', 1, NULL, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (1, 2, N'user', N'ee11cbb19052e40b07aac0ca060c23ee', 1, NULL, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (1, 3, N'newcomer', N'5aa6311ba467857c6115cc755fde29f2', 1, NULL, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (1, 4, N'blocked', N'61326117ed4a9ddf3f754e71e119e5b3', 1, NULL, 0)");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("SET IDENTITY_INSERT [dbo].[Users] OFF");
+                    yaz.WriteLine("GO");
+
+                    yaz.Close();
                 }
             }
         }
@@ -4387,7 +5770,7 @@ namespace TDFactory
                         yaz.WriteLine("\t{");
                         yaz.WriteLine("\t\t$('#search input[type=text]').typeahead({");
                         yaz.WriteLine("\t\t\tsource: [");
-                        
+
                         int i = 0;
                         foreach (string Table in selectedTables)
                         {
@@ -4632,7 +6015,7 @@ namespace TDFactory
         {
             if (fileFormat == FileFormat.UTF8)
                 return Encoding.UTF8.GetBytes(file);
-            else if(fileFormat == FileFormat.Unicode)
+            else if (fileFormat == FileFormat.Unicode)
                 return Encoding.Unicode.GetBytes(file);
             else if (fileFormat == FileFormat.ASCII)
                 return Encoding.ASCII.GetBytes(file);

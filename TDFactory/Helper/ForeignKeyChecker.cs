@@ -1,4 +1,4 @@
-﻿namespace TDFactory.Helper
+﻿namespace TDFactory
 {
     public class ForeignKeyChecker
     {

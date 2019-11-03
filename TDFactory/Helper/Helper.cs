@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 
-namespace TDFactory.Helper
+namespace TDFactory
 {
     public class ConnectionInfo
     {
@@ -234,6 +234,105 @@ namespace TDFactory.Helper
             }
 
             return identityColumns;
+        }
+
+        public static bool HasUserRights(List<string> tableNames)
+        {
+            bool control = true;
+
+            if (!tableNames.Contains("Types"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("UserGroupProcess"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("UserGroupRights"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("UserGroups"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("UserGroupTables"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("Users"))
+            {
+                control = false;
+                goto end;
+            }
+
+            end:;
+
+            return control;
+        }
+
+        public static bool HasLogs(List<string> tableNames)
+        {
+            bool control = true;
+
+            if (!tableNames.Contains("LogTypes"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("LogProcess"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("Logs"))
+            {
+                control = false;
+                goto end;
+            }
+
+            end:;
+
+            return control;
+        }
+
+        public static bool HasLinks(List<string> tableNames)
+        {
+            bool control = true;
+
+            if (!tableNames.Contains("LinkTypes"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("Links"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("Types"))
+            {
+                control = false;
+                goto end;
+            }
+
+            end:;
+
+            return control;
         }
     }
 }

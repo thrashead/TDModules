@@ -4,7 +4,6 @@ using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using System.Data.SqlClient;
-using TDFactory.Helper;
 using System.Threading;
 
 namespace TDFactory
@@ -54,6 +53,10 @@ namespace TDFactory
         string[] aliases = new string[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
 
         public static bool langChecked;
+
+        bool hasUserRights = false;
+        bool hasLogs = false;
+        bool hasLinks = false;
 
         private void TDFactoryForm_Load(object sender, EventArgs e)
         {
@@ -246,11 +249,11 @@ namespace TDFactory
             {
                 if (chkWindowsAuthentication.Checked == true)
                 {
-                    columnInfo = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
+                    columnInfo = Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
                 }
                 else
                 {
-                    columnInfo = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
+                    columnInfo = Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString().Split(' ')[1].Replace("[", "").Replace("]", ""));
                 }
 
                 tableColumnInfos.Add(columnInfo.Where(a => a.ColumnName == item.ToString().Split(' ')[0]).FirstOrDefault());

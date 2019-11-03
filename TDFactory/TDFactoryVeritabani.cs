@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using TDFactory.Helper;
 
 namespace TDFactory
 {
@@ -84,7 +83,7 @@ namespace TDFactory
                              @"SIZE = " + numLogBoyutu.Value.ToString() + "MB, MAXSIZE = " + logBoyutu + ", FILEGROWTH = " + numLogGenislemeYuzdesi.Value.ToString() + "%)";
 
             cmd.CommandText = cmdText;
-            cmd.Connection = new SqlConnection(Helper.Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, Server = txtSunucu.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }));
+            cmd.Connection = new SqlConnection(Helper.CreateConnectionText(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, Server = txtSunucu.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }));
 
             try
             {

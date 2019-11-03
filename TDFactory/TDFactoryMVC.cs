@@ -5,8 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using TDFactory.Helper;
-using InType = TDFactory.Helper.ExMethods.InType;
+using InType = TDFactory.ExMethods.InType;
 
 namespace TDFactory
 {
@@ -954,7 +953,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string tableLang = Table.ToTurkish(lstLang);
 
@@ -1356,7 +1355,7 @@ namespace TDFactory
                                         string PrimaryTableName = fkc.PrimaryTableName;
                                         string ForeignTableName = fkc2.ForeignTableName;
 
-                                        List<string> identityForeignColumns = Helper.Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
+                                        List<string> identityForeignColumns = Helper.ReturnIdentityColumn(connectionInfo, ForeignTableName);
                                         string idFrgn = identityForeignColumns.Count > 0 ? identityForeignColumns.FirstOrDefault() : "id";
 
                                         List<ColumnInfo> foreignColumns = tableColumnInfos.Where(a => a.TableName == ForeignTableName && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList();
@@ -1364,7 +1363,7 @@ namespace TDFactory
                                         List<ForeignKeyChecker> fkcListForeign2 = ForeignKeyCheck(con);
                                         fkcListForeign2 = fkcListForeign2.Where(a => a.ForeignTableName == ForeignTableName).ToList();
 
-                                        List<ColumnInfo> fColumnNames = Helper.Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
+                                        List<ColumnInfo> fColumnNames = Helper.GetColumnsInfo(connectionInfo, ForeignTableName).ToList();
                                         bool fDeleted = fColumnNames.Where(a => a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count > 0 ? true : false;
 
                                         yaz.WriteLine("");
@@ -1495,7 +1494,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 CreateMVCDirectories(Table);
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using TDFactory.Helper;
 
 namespace TDFactory
 {
@@ -46,11 +45,11 @@ namespace TDFactory
                 textBox3.Text = TableName + "_";
                 label1.Text = foreignColumn.DataType;
 
-                List<string> temptablenames = Helper.Helper.TableNames(ConnectionInfo);
+                List<string> temptablenames = Helper.TableNames(ConnectionInfo);
 
                 foreach (string item in temptablenames.Where(a => a != TableName).ToList())
                 {
-                    List<ColumnInfo> tempcolinfolist = Helper.Helper.GetColumnsInfo(ConnectionInfo, item.ToString()).Where(a => a.DataType == foreignColumn.DataType && a.IsPrimaryKey).ToList();
+                    List<ColumnInfo> tempcolinfolist = Helper.GetColumnsInfo(ConnectionInfo, item.ToString()).Where(a => a.DataType == foreignColumn.DataType && a.IsPrimaryKey).ToList();
 
                     if (tempcolinfolist.Count > 0)
                     {
@@ -76,7 +75,7 @@ namespace TDFactory
         {
             if (comboBox1.SelectedIndex >= 0)
             {
-                primaryColumns = Helper.Helper.GetColumnsInfo(ConnectionInfo, comboBox1.Text).Where(a => a.DataType == foreignColumn.DataType && a.IsPrimaryKey).ToList();
+                primaryColumns = Helper.GetColumnsInfo(ConnectionInfo, comboBox1.Text).Where(a => a.DataType == foreignColumn.DataType && a.IsPrimaryKey).ToList();
 
                 textBox3.Text = TableName + "_" + comboBox1.Text;
 

@@ -6,7 +6,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using TDFactory.Helper;
 
 namespace TDFactory
 {
@@ -588,7 +587,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string _table = Table.ToUrl(true);
 
@@ -1652,7 +1651,7 @@ namespace TDFactory
             {
                 Table table = new Table(Table, connectionInfo);
                 Table tableFrgn = new Table(null, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string _table = Table.ToUrl(true);
 
@@ -3301,7 +3300,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string _table = Table.ToUrl(true);
 
@@ -3824,7 +3823,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string _table = Table.ToUrl(true);
 

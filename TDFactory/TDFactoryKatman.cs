@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using TDFactory.Helper;
 
 namespace TDFactory
 {
@@ -22,7 +20,7 @@ namespace TDFactory
 
             try
             {
-                cmbVeritabani.DataSource = Helper.Helper.DatabaseNames(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text, Server = txtSunucu.Text });
+                cmbVeritabani.DataSource = Helper.DatabaseNames(new ConnectionInfo() { IsWindowsAuthentication = chkWindowsAuthentication.Checked, DatabaseName = cmbVeritabani.Text, Username = txtKullaniciAdi.Text, Password = txtSifre.Text, Server = txtSunucu.Text });
             }
             catch
             {
@@ -82,11 +80,11 @@ namespace TDFactory
 
                     if (chkWindowsAuthentication.Checked == true)
                     {
-                        tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text });
+                        tableNames = Helper.TableNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text });
                     }
                     else
                     {
-                        tableNames = Helper.Helper.TableNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text });
+                        tableNames = Helper.TableNames(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text });
                     }
 
                     DBName = cmbVeritabani.Text;
@@ -166,6 +164,10 @@ namespace TDFactory
                     SearchColumns = lstSearchColumns.Items.ToStringList();
                     MailColumns = lstMailColumns.Items.ToStringList();
 
+                    hasUserRights = Helper.HasUserRights(selectedTables);
+                    hasLogs = Helper.HasLogs(selectedTables);
+                    hasLinks = Helper.HasLinks(selectedTables);
+
                     if (chkAngular.Checked)
                     {
                         CreateAngular();
@@ -219,11 +221,11 @@ namespace TDFactory
 
                 if (chkWindowsAuthentication.Checked == true)
                 {
-                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString());
+                    columnInfos = Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, item.ToString());
                 }
                 else
                 {
-                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString());
+                    columnInfos = Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, item.ToString());
                 }
 
                 lstKolonlar.Items.Clear();
@@ -300,11 +302,11 @@ namespace TDFactory
             {
                 if (chkWindowsAuthentication.Checked == true)
                 {
-                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, lstSeciliTablolar.Text);
+                    columnInfos = Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text }, lstSeciliTablolar.Text);
                 }
                 else
                 {
-                    columnInfos = Helper.Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, lstSeciliTablolar.Text);
+                    columnInfos = Helper.GetColumnsInfo(new ConnectionInfo() { Server = txtSunucu.Text, DatabaseName = cmbVeritabani.Text, IsWindowsAuthentication = false, Username = txtKullaniciAdi.Text, Password = txtSifre.Text }, lstSeciliTablolar.Text);
                 }
 
                 foreach (ColumnInfo item in columnInfos)

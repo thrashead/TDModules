@@ -1,13 +1,11 @@
 ﻿using Common;
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using TDFactory.Helper;
-using InType = TDFactory.Helper.ExMethods.InType;
+using InType = TDFactory.ExMethods.InType;
 
 namespace TDFactory
 {
@@ -33,6 +31,11 @@ namespace TDFactory
                 CreateStylelScript();
                 CreateDllFiles();
 
+                if (hasUserRights || hasLogs)
+                {
+                    CreateAngularLib();
+                }
+
                 CreateStoredProcedure();
             }
             else
@@ -52,6 +55,11 @@ namespace TDFactory
                     CreateAngularControllerLayer();
                     CreateAngularServiceLayer();
                     CreateAngularTypeScriptLayer();
+
+                    if (hasUserRights || hasLogs)
+                    {
+                        CreateAngularLib();
+                    }
                 }
 
                 if (chkMVCWebConfig.Checked == true)
@@ -348,6 +356,14 @@ namespace TDFactory
                     {
                         Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Uploads\\Deleted");
                     }
+
+                    if (hasUserRights || hasLogs)
+                    {
+                        if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Lib"))
+                        {
+                            Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Lib");
+                        }
+                    }
                 }
                 else
                 {
@@ -430,6 +446,14 @@ namespace TDFactory
                         if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers"))
                         {
                             Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers");
+                        }
+
+                        if (hasUserRights || hasLogs)
+                        {
+                            if (!Directory.Exists(PathAddress + "\\" + projectFolder + "\\Lib"))
+                            {
+                                Directory.CreateDirectory(PathAddress + "\\" + projectFolder + "\\Lib");
+                            }
                         }
                     }
 
@@ -551,7 +575,7 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    yaz.WriteLine("import { Component } from \"@angular/core\";");
+                    yaz.WriteLine("import { Component } from '@angular/core';");
                     yaz.WriteLine("import '../../Content/js/jquery/jquery.min.js';");
                     yaz.WriteLine("");
                     yaz.WriteLine("declare global {");
@@ -671,7 +695,8 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
-                    yaz.WriteLine("import { Router, ActivationEnd, RouterEvent } from '@angular/router';");
+                    yaz.WriteLine("import { Router, RouterEvent, ActivationEnd } from '@angular/router';");
+                    yaz.WriteLine("import { Lib } from '../../../lib/lib';");
                     yaz.WriteLine("");
                     yaz.WriteLine("import '../../../../../Content/js/pathscript.js';");
                     yaz.WriteLine("import '../../../../../Content/js/main.js';");
@@ -702,40 +727,7 @@ namespace TDFactory
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tLoadScripts() {");
-                    yaz.WriteLine("\t\tthis.MenuActive();");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t//MenuActive");
-                    yaz.WriteLine("\tMenuActive() {");
-                    yaz.WriteLine("\t\t$(\"#hdnUrl\").val(location.href);");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tvar MainPath = \"http://localhost/" + projectName + "\";");
-                    yaz.WriteLine("\t\tvar Url = location.href;");
-                    yaz.WriteLine("\t\tvar Urling = Object();");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tif (Url != undefined) {");
-                    yaz.WriteLine("\t\t\tvar tempurl = Url.replace(MainPath + \"/\", \"\");");
-                    yaz.WriteLine("\t\t\tvar extParams = tempurl.split('?')[1];");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\ttempurl = tempurl.replace(\"?\" + extParams, \"\");");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tUrling.path = tempurl;");
-                    yaz.WriteLine("\t\t\tUrling.controller = tempurl.split('/')[0];");
-                    yaz.WriteLine("\t\t\tUrling.action = tempurl.split('/')[1];");
-                    yaz.WriteLine("\t\t\tUrling.parameter = tempurl.split('/')[2];");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tif (extParams != undefined)");
-                    yaz.WriteLine("\t\t\t\tUrling.parameters = extParams.split('&');");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t$(\"ul.menu li a\").removeClass(\"active\");");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tif (Urling.controller != \"\") {");
-                    yaz.WriteLine("\t\t\t$(\"ul.menu li a[data-url='\" + Urling.controller + \"']\").addClass(\"active\");");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t\telse {");
-                    yaz.WriteLine("\t\t\t$(\"ul.menu li a[data-url='Index']\").addClass(\"active\");");
-                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\tLib.LinkActivation();");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
@@ -773,8 +765,8 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
-                    yaz.WriteLine("import { Router } from \"@angular/router\";");
+                    yaz.WriteLine("import { Injectable } from '@angular/core';");
+                    yaz.WriteLine("import { Router } from '@angular/router';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Injectable({ providedIn: 'root' })");
                     yaz.WriteLine("export class Lib {");
@@ -798,6 +790,39 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\treturn returnValue;");
                     yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t//LinkActivation");
+                    yaz.WriteLine("\tstatic LinkActivation() {");
+                    yaz.WriteLine("\t\t$(\"#hdnUrl\").val(location.href);");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tvar MainPath = \"http://localhost/" + projectName + "\";");
+                    yaz.WriteLine("\t\tvar Url = location.href;");
+                    yaz.WriteLine("\t\tvar Urling = Object();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (Url != undefined) {");
+                    yaz.WriteLine("\t\t\tvar tempurl = Url.replace(MainPath + \"/\", \"\");");
+                    yaz.WriteLine("\t\t\tvar extParams = tempurl.split('?')[1];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\ttempurl = tempurl.replace(\"?\" + extParams, \"\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tUrling.path = tempurl;");
+                    yaz.WriteLine("\t\t\tUrling.controller = tempurl.split('/')[0];");
+                    yaz.WriteLine("\t\t\tUrling.action = tempurl.split('/')[1];");
+                    yaz.WriteLine("\t\t\tUrling.parameter = tempurl.split('/')[2];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (extParams != undefined)");
+                    yaz.WriteLine("\t\t\t\tUrling.parameters = extParams.split('&');");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t$(\"ul.menu li a\").removeClass(\"active\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tif (Urling.controller != \"\") {");
+                    yaz.WriteLine("\t\t\t$(\"ul.menu li a[data-url='\" + Urling.controller + \"']\").addClass(\"active\");");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse {");
+                    yaz.WriteLine("\t\t\t$(\"ul.menu li a[data-url='Index']\").addClass(\"active\");");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
                 }
@@ -808,189 +833,6 @@ namespace TDFactory
 
         void CreateAngularAdminFiles()
         {
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\layoutAdmin.html", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("<admin-header></admin-header>");
-                    yaz.WriteLine("<admin-leftmenu></admin-leftmenu>");
-                    yaz.WriteLine("<router-outlet></router-outlet>");
-                    yaz.WriteLine("<admin-footer></admin-footer>");
-                    yaz.WriteLine("<admin-scripts></admin-scripts>");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\layoutAdmin.ts", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("import { Component } from '@angular/core';");
-                    yaz.WriteLine("import { Router } from '@angular/router';");
-                    yaz.WriteLine("import { SharedService } from '../../services/shared';");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("@Component({");
-                    yaz.WriteLine("\tselector: 'admin-layout',");
-                    yaz.WriteLine("\ttemplateUrl: './layoutAdmin.html'");
-                    yaz.WriteLine("})");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("export class AdminLayoutComponent {");
-                    yaz.WriteLine("\terrorMsg: string;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tconstructor(private service: SharedService, private router: Router) {");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tngOnInit() {");
-                    yaz.WriteLine("\t\tthis.service.getLoginControl().subscribe((answer) => {");
-                    yaz.WriteLine("\t\t\tif (answer == false) {");
-                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/Login']);");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\copydelete.html", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("<div id=\"cpyData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
-                    yaz.WriteLine("\t<div class=\"modal-header\">");
-                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
-                    yaz.WriteLine("\t\t<h3>Kopyala</h3>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("\t<div class=\"modal-body\">");
-                    yaz.WriteLine("\t\t<p>İlgili veriyi kopyalamak istediğinize emin misiniz?</p>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("\t<div class=\"modal-footer\">");
-                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary cpy-yes\" href=\"javascript:;\">Evet</a>");
-                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn cpy-no\" href=\"javascript:;\">Hayır</a>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("</div>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<div id=\"dltData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
-                    yaz.WriteLine("\t<div class=\"modal-header\">");
-                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
-                    yaz.WriteLine("\t\t<h3>Sil</h3>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("\t<div class=\"modal-body\">");
-                    yaz.WriteLine("\t\t<p>İlgili veriyi silmek istediğinize emin misiniz?</p>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("\t<div class=\"modal-footer\">");
-                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary dlt-yes\" href=\"javascript:;\">Evet</a>");
-                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn dlt-no\" href=\"javascript:;\">Hayır</a>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("</div>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<div id=\"rmvData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
-                    yaz.WriteLine("\t<div class=\"modal-header\">");
-                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
-                    yaz.WriteLine("\t\t<h3>Kaldır</h3>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("\t<div class=\"modal-body\">");
-                    yaz.WriteLine("\t\t<p>İlgili veriyi kaldırmak istediğinize emin misiniz?</p>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("\t<div class=\"modal-footer\">");
-                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary rmv-yes\" href=\"javascript:;\">Evet</a>");
-                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn rmv-no\" href=\"javascript:;\">Hayır</a>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("</div>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<div id=\"clrData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
-                    yaz.WriteLine("\t<div class=\"modal-header\">");
-                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
-                    yaz.WriteLine("\t\t<h3>Temizle</h3>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("\t<div class=\"modal-body\">");
-                    yaz.WriteLine("\t\t<p>İlgili verileri temizlemek istediğinize emin misiniz?</p>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("\t<div class=\"modal-footer\">");
-                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary clr-yes\" href=\"javascript:;\">Evet</a>");
-                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn clr-no\" href=\"javascript:;\">Hayır</a>");
-                    yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("</div>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("<ul id=\"tdAlertMessage\" class=\"tdAlert\">");
-                    yaz.WriteLine("\t<li class=\"tdAlertDelete\">");
-                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri silindi.</div>");
-                    yaz.WriteLine("\t</li>");
-                    yaz.WriteLine("\t<li class=\"tdAlertDeleteNot\">");
-                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri silinemedi.</div>");
-                    yaz.WriteLine("\t</li>");
-                    yaz.WriteLine("\t<li class=\"tdAlertRemove\">");
-                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kaldırıldı.</div>");
-                    yaz.WriteLine("\t</li>");
-                    yaz.WriteLine("\t<li class=\"tdAlertRemoveNot\">");
-                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kaldırılamadı.</div>");
-                    yaz.WriteLine("\t</li>");
-                    yaz.WriteLine("\t<li class=\"tdAlertCopy\">");
-                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kopyalandı.</div>");
-                    yaz.WriteLine("\t</li>");
-                    yaz.WriteLine("\t<li class=\"tdAlertCopyNot\">");
-                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kopyalanamadı.</div>");
-                    yaz.WriteLine("\t</li>");
-                    yaz.WriteLine("\t<li class=\"tdAlertClear\">");
-                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veriler temizlendi.</div>");
-                    yaz.WriteLine("\t</li>");
-                    yaz.WriteLine("\t<li class=\"tdAlertClearNot\">");
-                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veriler temizlenemedi.</div>");
-                    yaz.WriteLine("\t</li>");
-                    yaz.WriteLine("</ul>");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\copydelete.ts", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("import { Component } from '@angular/core';");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("@Component({");
-                    yaz.WriteLine("\tselector: 'admin-copydelete',");
-                    yaz.WriteLine("\ttemplateUrl: './copydelete.html'");
-                    yaz.WriteLine("})");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("export class AdminCopyDeleteComponent {");
-                    yaz.WriteLine("\tngOnInit() {");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\footer.html", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("<div class=\"row-fluid\">");
-                    yaz.WriteLine("\t<div id=\"footer\" class=\"span12\"> Developed by <a target=\"_blank\" href=\"http://www.sinasalik.net\">Sina SALIK</a> </div>");
-                    yaz.WriteLine("</div>");
-                    yaz.Close();
-                }
-            }
-
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\footer.ts", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("import { Component } from '@angular/core';");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("@Component({");
-                    yaz.WriteLine("\tselector: 'admin-footer',");
-                    yaz.WriteLine("\ttemplateUrl: './footer.html'");
-                    yaz.WriteLine("})");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("export class AdminFooterComponent {");
-                    yaz.WriteLine("\tngOnInit() {");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-                    yaz.Close();
-                }
-            }
-
             using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\header.html", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
@@ -1001,7 +843,11 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("<div id=\"user-nav\" class=\"navbar navbar-inverse\">");
                     yaz.WriteLine("\t<ul class=\"nav\">");
-                    yaz.WriteLine("\t\t<li><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"/Admin/Index\"><i class=\"icon icon-user\"></i> <span class=\"text\"> Hoşgeldiniz ({{ username }})</span></a></li>");
+
+                    string username = hasUserRights ? "user?.Username" : "username";
+                    string userlink = hasUserRights ? "/Admin/Users/Update/{{ user?.ID }}" : "/Admin/Index";
+
+                    yaz.WriteLine("\t\t<li><a title=\"Bilgilerinizi düzenlemek için tıklayın.\" routerLink=\"" + userlink + "\"><i class=\"icon icon-user\"></i> <span class=\"text\"> Hoşgeldiniz ({{ " + username + " }})</span></a></li>");
                     yaz.WriteLine("\t\t<li><a class=\"logout\" (click)=\"onLogout()\"><i class=\"icon icon-share-alt\"></i> <span class=\"text\"> Çıkış</span></a></li>");
                     yaz.WriteLine("\t\t<li><a target=\"_blank\" href=\"{{ website }}\" ><i class=\"icon icon-home\"></i> <span class=\"text\"> Web Sitesine Git</span></a></li>");
                     yaz.WriteLine("\t</ul>");
@@ -1031,7 +877,12 @@ namespace TDFactory
                     yaz.WriteLine("export class AdminHeaderComponent {");
                     yaz.WriteLine("\terrorMsg: string;");
                     yaz.WriteLine("\twebsite: string = \"http://localhost/" + projectName + "/\";");
-                    yaz.WriteLine("\tusername: string;");
+
+                    if (hasUserRights)
+                        yaz.WriteLine("\tuser: any;");
+                    else
+                        yaz.WriteLine("\tusername: string;");
+
                     yaz.WriteLine("");
                     yaz.WriteLine("\tconstructor(private service: SharedService, private router: Router) {");
                     yaz.WriteLine("\t}");
@@ -1039,7 +890,12 @@ namespace TDFactory
                     yaz.WriteLine("\tngOnInit() {");
                     yaz.WriteLine("\t\tthis.service.getCurrentUser().subscribe((answer: any) => {");
                     yaz.WriteLine("\t\t\tif (answer != null) {");
-                    yaz.WriteLine("\t\t\t\tthis.username = answer;");
+
+                    if (hasUserRights)
+                        yaz.WriteLine("\t\t\t\tthis.user = answer;");
+                    else
+                        yaz.WriteLine("\t\t\t\tthis.username = answer;");
+
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                     yaz.WriteLine("");
@@ -1117,15 +973,17 @@ namespace TDFactory
 
                     foreach (AdminMenu item in adminMenu)
                     {
+                        string userRightControl = hasUserRights ? " *ngIf =\"hasRight" + item.Title.ToUserRightType() + " && showType" + item.Title.ToUserRightType() + "\"" : "";
+
                         if (item.SubMenu.Count <= 0)
                         {
-                            yaz.WriteLine("\t\t<li data-url=\"" + item.Title + "\">");
+                            yaz.WriteLine("\t\t<li data-url=\"" + item.Title + "\"" + userRightControl + ">");
                             yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + item.Title + "\"><i class=\"icon icon-home\"></i> <span>" + item.Title.ToTurkish(lstLang) + "</span></a>");
                             yaz.WriteLine("\t\t</li>");
                         }
                         else
                         {
-                            yaz.WriteLine("\t\t<li class=\"submenu\">");
+                            yaz.WriteLine("\t\t<li class=\"submenu\"" + userRightControl + ">");
                             yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + item.Title.ToTurkish(lstLang) + "</span></a>");
                             yaz.WriteLine("\t\t\t<ul>");
                             yaz.WriteLine("\t\t\t\t<li data-url=\"" + item.Title + "\"><a routerLink=\"/Admin/" + item.Title + "\">" + item.Title.ToTurkish(lstLang) + "</a></li>");
@@ -1152,6 +1010,11 @@ namespace TDFactory
                 {
                     yaz.WriteLine("import { Component, AfterViewInit } from '@angular/core';");
                     yaz.WriteLine("import { Router, RouterEvent, ActivationEnd } from '@angular/router';");
+
+                    if (hasUserRights)
+                        yaz.WriteLine("import { SharedService } from '../../../services/shared';");
+
+                    yaz.WriteLine("import { AdminLib } from '../../../lib/lib';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\tselector: 'admin-leftmenu',");
@@ -1161,59 +1024,375 @@ namespace TDFactory
                     yaz.WriteLine("export class AdminLeftMenuComponent implements AfterViewInit {");
                     yaz.WriteLine("\terrorMsg: string;");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\tconstructor(private router: Router) {");
+
+                    string sharedService = hasUserRights ? "private sharedService: SharedService, " : "";
+
+                    yaz.WriteLine("\tconstructor(" + sharedService + "private router: Router) {");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tngAfterViewInit() {");
-                    yaz.WriteLine("\t\tthis.LeftMenuClick();");
-                    yaz.WriteLine("");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("\t\tthis.HasRightShowTypeControl();");
+                        yaz.WriteLine("");
+                    }
+
                     yaz.WriteLine("\t\tthis.router.events.subscribe((event: RouterEvent) => {");
                     yaz.WriteLine("\t\t\tif (event instanceof ActivationEnd) {");
-                    yaz.WriteLine("\t\t\t\tthis.LeftMenuClick();");
+                    yaz.WriteLine("\t\t\t\tAdminLib.LinkActivation();");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t});");
                     yaz.WriteLine("\t}");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\thasRightCategory: boolean = false;");
+                        yaz.WriteLine("\thasRightContent: boolean = false;");
+                        yaz.WriteLine("\thasRightProduct: boolean = false;");
+                        yaz.WriteLine("\thasRightGallery: boolean = false;");
+                        yaz.WriteLine("\thasRightPictures: boolean = false;");
+                        yaz.WriteLine("\thasRightFiles: boolean = false;");
+                        yaz.WriteLine("\thasRightMeta: boolean = false;");
+                        yaz.WriteLine("\thasRightLinkTypes: boolean = false;");
+                        yaz.WriteLine("\thasRightTranslation: boolean = false;");
+                        yaz.WriteLine("\thasRightLogs: boolean = false;");
+                        yaz.WriteLine("\thasRightWebsite: boolean = false;");
+                        yaz.WriteLine("\thasRightUsers: boolean = false;");
+                        yaz.WriteLine("\thasRightTypes: boolean = false;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tshowTypeCategory: boolean = false;");
+                        yaz.WriteLine("\tshowTypeContent: boolean = false;");
+                        yaz.WriteLine("\tshowTypeProduct: boolean = false;");
+                        yaz.WriteLine("\tshowTypeGallery: boolean = false;");
+                        yaz.WriteLine("\tshowTypePictures: boolean = false;");
+                        yaz.WriteLine("\tshowTypeFiles: boolean = false;");
+                        yaz.WriteLine("\tshowTypeMeta: boolean = false;");
+                        yaz.WriteLine("\tshowTypeLinkTypes: boolean = false;");
+                        yaz.WriteLine("\tshowTypeTranslation: boolean = false;");
+                        yaz.WriteLine("\tshowTypeLogs: boolean = false;");
+                        yaz.WriteLine("\tshowTypeWebsite: boolean = false;");
+                        yaz.WriteLine("\tshowTypeUsers: boolean = false;");
+                        yaz.WriteLine("\tshowTypeTypes: boolean = false;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tHasRightShowTypeControl() {");
+                        yaz.WriteLine("\t\tthis.sharedService.getCurrentUserRights().subscribe((userRights: any) => {");
+                        yaz.WriteLine("\t\t\tuserRights.forEach((item, i) => {");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightCategory = AdminLib.UserRight(userRights, \"Category\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightContent = AdminLib.UserRight(userRights, \"Content\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightProduct = AdminLib.UserRight(userRights, \"Product\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightGallery = AdminLib.UserRight(userRights, \"Gallery\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightPictures = AdminLib.UserRight(userRights, \"Pictures\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightFiles = AdminLib.UserRight(userRights, \"Files\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightMeta = AdminLib.UserRight(userRights, \"Meta\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightLinkTypes = AdminLib.UserRight(userRights, \"LinkTypes\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightTranslation = AdminLib.UserRight(userRights, \"Translation\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightLogs = AdminLib.UserRight(userRights, \"Logs\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightUsers = AdminLib.UserRight(userRights, \"Users\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightWebsite = AdminLib.UserRight(userRights, \"Website\");");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tthis.sharedService.getShowTypes().subscribe((showTypes: any) => {");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeCategory = AdminLib.ShowType(showTypes, \"Category\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeContent = AdminLib.ShowType(showTypes, \"Content\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeProduct = AdminLib.ShowType(showTypes, \"Product\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeGallery = AdminLib.ShowType(showTypes, \"Gallery\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypePictures = AdminLib.ShowType(showTypes, \"Pictures\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeFiles = AdminLib.ShowType(showTypes, \"Files\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeMeta = AdminLib.ShowType(showTypes, \"Meta\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeLinkTypes = AdminLib.ShowType(showTypes, \"LinkTypes\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeTranslation = AdminLib.ShowType(showTypes, \"Translation\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeLogs = AdminLib.ShowType(showTypes, \"Logs\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeUsers = AdminLib.ShowType(showTypes, \"Users\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeTypes = AdminLib.ShowType(showTypes, \"Types\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeWebsite = AdminLib.ShowType(showTypes, \"Website\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tAdminLib.LinkActivation();");
+                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t}");
+                    }
+
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home\\index.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<div id=\"content\">");
+                    yaz.WriteLine("\t<div id=\"content-header\">");
+                    yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a href=\"javascript:;\" class=\"tip-bottom\"><i class=\"icon-home\"></i> Ana Sayfa</a></div>");
+                    yaz.WriteLine("\t</div>");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\tLeftMenuClick() {");
-                    yaz.WriteLine("\t\t$(\"#hdnUrl\").val(location.href);");
+                    yaz.WriteLine("\t<div class=\"container-fluid\">");
+                    yaz.WriteLine("\t\t<div class=\"quick-actions_homepage\">");
+                    yaz.WriteLine("\t\t\t<ul class=\"quick-actions\">");
+
+                    string[] colors = new string[] { "bg_lg", "bg_lb", "bg_ly", "bg_lo", "bg_ls", "bg_lr", "bg_lv" };
+                    int i = 0;
+
+                    foreach (AdminMenu item in adminMenu)
+                    {
+                        string userRightControl = hasUserRights ? " *ngIf =\"hasRight" + item.Title.ToUserRightType() + " && showType" + item.Title.ToUserRightType() + "\"" : "";
+
+                        yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"" + userRightControl + "> <a routerLink=\"/Admin/" + item.Title + "\"> <i class=\"icon-home\"></i> " + item.Title.ToTurkish(lstLang) + "</a> </li>");
+                        i++;
+                    }
+
+                    yaz.WriteLine("\t\t\t</ul>");
+                    yaz.WriteLine("\t\t</div>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home\\index.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("import { SharedService } from '../../services/shared';");
+                        yaz.WriteLine("import { AdminLib } from '../../lib/lib';");
+                    }
+
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\tvar AdminPath = \"http://localhost/" + projectName + "/Admin\";");
-                    yaz.WriteLine("\t\tvar Url = location.href;");
-                    yaz.WriteLine("\t\tvar Urling = Object();");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\ttemplateUrl: './index.html'");
+                    yaz.WriteLine("})");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\tif (Url != undefined) {");
-                    yaz.WriteLine("\t\t\tvar tempurl = Url.replace(AdminPath + \"/\", \"\");");
-                    yaz.WriteLine("\t\t\tvar extParams = tempurl.split('?')[1];");
+                    yaz.WriteLine("export class AdminIndexComponent {");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("\terrorMsg: string;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tconstructor(private sharedService: SharedService) {");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                    }
+
+                    yaz.WriteLine("\tngOnInit() {");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("\t\tthis.HasRightShowTypeControl();");
+                    }
+
+                    yaz.WriteLine("\t}");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\thasRightCategory: boolean = false;");
+                        yaz.WriteLine("\thasRightContent: boolean = false;");
+                        yaz.WriteLine("\thasRightProduct: boolean = false;");
+                        yaz.WriteLine("\thasRightGallery: boolean = false;");
+                        yaz.WriteLine("\thasRightPictures: boolean = false;");
+                        yaz.WriteLine("\thasRightFiles: boolean = false;");
+                        yaz.WriteLine("\thasRightMeta: boolean = false;");
+                        yaz.WriteLine("\thasRightLinkTypes: boolean = false;");
+                        yaz.WriteLine("\thasRightTranslation: boolean = false;");
+                        yaz.WriteLine("\thasRightLogs: boolean = false;");
+                        yaz.WriteLine("\thasRightWebsite: boolean = false;");
+                        yaz.WriteLine("\thasRightUsers: boolean = false;");
+                        yaz.WriteLine("\thasRightTypes: boolean = false;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tshowTypeCategory: boolean = false;");
+                        yaz.WriteLine("\tshowTypeContent: boolean = false;");
+                        yaz.WriteLine("\tshowTypeProduct: boolean = false;");
+                        yaz.WriteLine("\tshowTypeGallery: boolean = false;");
+                        yaz.WriteLine("\tshowTypePictures: boolean = false;");
+                        yaz.WriteLine("\tshowTypeFiles: boolean = false;");
+                        yaz.WriteLine("\tshowTypeMeta: boolean = false;");
+                        yaz.WriteLine("\tshowTypeLinkTypes: boolean = false;");
+                        yaz.WriteLine("\tshowTypeTranslation: boolean = false;");
+                        yaz.WriteLine("\tshowTypeLogs: boolean = false;");
+                        yaz.WriteLine("\tshowTypeWebsite: boolean = false;");
+                        yaz.WriteLine("\tshowTypeUsers: boolean = false;");
+                        yaz.WriteLine("\tshowTypeTypes: boolean = false;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tHasRightShowTypeControl() {");
+                        yaz.WriteLine("\t\tthis.sharedService.getCurrentUserRights().subscribe((userRights: any) => {");
+                        yaz.WriteLine("\t\t\tuserRights.forEach((item, i) => {");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightCategory = AdminLib.UserRight(userRights, \"Category\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightContent = AdminLib.UserRight(userRights, \"Content\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightProduct = AdminLib.UserRight(userRights, \"Product\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightGallery = AdminLib.UserRight(userRights, \"Gallery\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightPictures = AdminLib.UserRight(userRights, \"Pictures\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightFiles = AdminLib.UserRight(userRights, \"Files\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightMeta = AdminLib.UserRight(userRights, \"Meta\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightLinkTypes = AdminLib.UserRight(userRights, \"LinkTypes\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightTranslation = AdminLib.UserRight(userRights, \"Translation\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightLogs = AdminLib.UserRight(userRights, \"Logs\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightUsers = AdminLib.UserRight(userRights, \"Users\");");
+                        yaz.WriteLine("\t\t\t\tthis.hasRightWebsite = AdminLib.UserRight(userRights, \"Website\");");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tthis.sharedService.getShowTypes().subscribe((showTypes: any) => {");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeCategory = AdminLib.ShowType(showTypes, \"Category\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeContent = AdminLib.ShowType(showTypes, \"Content\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeProduct = AdminLib.ShowType(showTypes, \"Product\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeGallery = AdminLib.ShowType(showTypes, \"Gallery\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypePictures = AdminLib.ShowType(showTypes, \"Pictures\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeFiles = AdminLib.ShowType(showTypes, \"Files\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeMeta = AdminLib.ShowType(showTypes, \"Meta\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeLinkTypes = AdminLib.ShowType(showTypes, \"LinkTypes\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeTranslation = AdminLib.ShowType(showTypes, \"Translation\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeLogs = AdminLib.ShowType(showTypes, \"Logs\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeUsers = AdminLib.ShowType(showTypes, \"Users\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeTypes = AdminLib.ShowType(showTypes, \"Types\");");
+                        yaz.WriteLine("\t\t\t\tthis.showTypeWebsite = AdminLib.ShowType(showTypes, \"Website\");");
+                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t}");
+                    }
+
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\lib\\lib.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Injectable } from '@angular/core';");
+                    yaz.WriteLine("import { Router } from '@angular/router';");
+                    yaz.WriteLine("import ClassicEditor from '../../../../Content/admin/js/ckeditor/ckeditor.js';");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\ttempurl = tempurl.replace(\"?\" + extParams, \"\");");
+                    yaz.WriteLine("@Injectable({ providedIn: 'root' })");
+                    yaz.WriteLine("export class AdminLib {");
+                    yaz.WriteLine("\tstatic RefreshRoute(router: Router, changeUrl: string = \"/\", skipChangeLocation: boolean = true) {");
+                    yaz.WriteLine("\t\tlet currentUrl = router.url;");
+                    yaz.WriteLine("\t\trouter.navigate([changeUrl], { skipLocationChange: skipChangeLocation }).then(() => { router.navigate([currentUrl]) });");
+                    yaz.WriteLine("\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tUrling.path = tempurl;");
-                    yaz.WriteLine("\t\t\tUrling.controller = tempurl.split('/')[0];");
-                    yaz.WriteLine("\t\t\tUrling.action = tempurl.split('/')[1];");
-                    yaz.WriteLine("\t\t\tUrling.parameter = tempurl.split('/')[2];");
+                    yaz.WriteLine("\tstatic ParseFloat(value: string) : any {");
+                    yaz.WriteLine("\t\tvar returnValue;");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tif (extParams != undefined)");
-                    yaz.WriteLine("\t\t\t\tUrling.parameters = extParams.split('&');");
+                    yaz.WriteLine("\t\tif (value == null || value == undefined) {");
+                    yaz.WriteLine("\t\t\treturnValue = null;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse if (value.toString().indexOf(',') > 0) {");
+                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value.toString().replace(\",\", \".\"));");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\telse {");
+                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value);");
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\tif (Urling.controller != undefined) {");
-                    yaz.WriteLine("\t\t\tvar activeLi = $(\"#sidebar li[data-url='\" + Urling.controller + \"']\");");
-                    yaz.WriteLine("\t\t\tvar passiveSubmenuLi = $(\"#sidebar li.submenu\");");
-                    yaz.WriteLine("\t\t\tvar submenuLi = activeLi.parent(\"ul\").parent(\"li\");");
+                    yaz.WriteLine("\t\treturn returnValue;");
+                    yaz.WriteLine("\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\t$(\"#sidebar li\").removeClass(\"active\");");
-                    yaz.WriteLine("\t\t\t$(\"#sidebar li\").removeClass(\"open\");");
+                    yaz.WriteLine("\tstatic UploadFileName(filename: string, guidCount: number = 5) {");
+                    yaz.WriteLine("\t\tlet x: string = \"\";");
+                    yaz.WriteLine("\t\tlet ext: string = filename.split('.').pop();");
+                    yaz.WriteLine("\t\tlet name: string = filename.replace(\".\" + ext, \"\");");
+                    yaz.WriteLine("\t\tlet guid: string;");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tactiveLi.addClass(\"active\");");
+                    yaz.WriteLine("\t\tfor (var i = 0; i < guidCount; i++) {");
+                    yaz.WriteLine("\t\t\tx += \"x\";");
+                    yaz.WriteLine("\t\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tif (submenuLi.hasClass(\"submenu\")) {");
-                    yaz.WriteLine("\t\t\t\tif ($(\"body\").width() > 970 || $(\"body\").width() <= 480) {");
-                    yaz.WriteLine("\t\t\t\t\tsubmenuLi.addClass(\"open\");");
+                    yaz.WriteLine("\t\tguid = x.replace(/[x]/g, function (c) {");
+                    yaz.WriteLine("\t\t\tvar r = Math.random() * 16 | 0,");
+                    yaz.WriteLine("\t\t\t\tv = c == 'x' ? r : (r & 0x3 | 0x8);");
+                    yaz.WriteLine("\t\t\treturn v.toString(16);");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\treturn name + \"-\" + guid + \".\" + ext;");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic CKValue(id: string) {");
+                    yaz.WriteLine("\tif ($(\".ck-content[data-id='\" + id + \"']\").html() == null)");
+                    yaz.WriteLine("\t\treturn \"\";");
+                    yaz.WriteLine("\telse");
+                    yaz.WriteLine("\t\treturn $(\".ck-content[data-id='\" + id + \"']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic ConvertToCKEditor(id: string, time: number = 1000) {");
+                    yaz.WriteLine("\t\tsetTimeout(function () {");
+                    yaz.WriteLine("\t\t\tClassicEditor");
+                    yaz.WriteLine("\t\t\t\t.create(document.querySelector(\"#\" + id), {");
+                    yaz.WriteLine("\t\t\t\t})");
+                    yaz.WriteLine("\t\t\t\t.then(editor => {");
+                    yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
+                    yaz.WriteLine("\t\t\t\t});");
+                    yaz.WriteLine("\t\t}, time);");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic UserRight(userRights: any, model: string, shortname: string = \"s\"): boolean {");
+                    yaz.WriteLine("\t\tlet returnItem: boolean = false;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tuserRights.forEach((item, i) => {");
+                    yaz.WriteLine("\t\t\tif (item.Url == model) {");
+                    yaz.WriteLine("\t\t\t\tif (item.ShortName == shortname) {");
+                    yaz.WriteLine("\t\t\t\t\treturnItem = true;");
                     yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t\tsubmenuLi.addClass(\"active\");");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\treturn returnItem;");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic ShowType(showTypes: any, model: string): boolean {");
+                    yaz.WriteLine("\t\tlet returnItem: boolean = false;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tshowTypes.forEach((item, i) => {");
+                    yaz.WriteLine("\t\t\tif (item.Url == model) {");
+                    yaz.WriteLine("\t\t\t\treturnItem = true;");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t});");
+                    yaz.WriteLine("\t\treturn returnItem;");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tstatic LinkActivation() {");
+                    yaz.WriteLine("\t\tsetTimeout(function () {");
+                    yaz.WriteLine("\t\t\t$(\"#hdnUrl\").val(location.href);");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tvar AdminPath = \"http://localhost/" + projectName + "/Admin\";");
+                    yaz.WriteLine("\t\t\tvar Url = location.href;");
+                    yaz.WriteLine("\t\t\tvar Urling = Object();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (Url != undefined) {");
+                    yaz.WriteLine("\t\t\t\tvar tempurl = Url.replace(AdminPath + \"/\", \"\");");
+                    yaz.WriteLine("\t\t\t\tvar extParams = tempurl.split('?')[1];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\ttempurl = tempurl.replace(\"?\" + extParams, \"\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tUrling.path = tempurl;");
+                    yaz.WriteLine("\t\t\t\tUrling.controller = tempurl.split('/')[0];");
+                    yaz.WriteLine("\t\t\t\tUrling.action = tempurl.split('/')[1];");
+                    yaz.WriteLine("\t\t\t\tUrling.parameter = tempurl.split('/')[2];");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tif (extParams != undefined)");
+                    yaz.WriteLine("\t\t\t\t\tUrling.parameters = extParams.split('&');");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\tsetTimeout(function () {");
+                    yaz.WriteLine("\t\t\tif (Urling.controller != undefined) {");
+                    yaz.WriteLine("\t\t\t\tvar activeLi = $(\"#sidebar li[data-url='\" + Urling.controller + \"']\");");
+                    yaz.WriteLine("\t\t\t\tvar passiveSubmenuLi = $(\"#sidebar li.submenu\");");
+                    yaz.WriteLine("\t\t\t\tvar submenuLi = activeLi.parent(\"ul\").parent(\"li\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\t$(\"#sidebar li\").removeClass(\"active\");");
+                    yaz.WriteLine("\t\t\t\t$(\"#sidebar li\").removeClass(\"open\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tactiveLi.addClass(\"active\");");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tif (submenuLi.hasClass(\"submenu\")) {");
+                    yaz.WriteLine("\t\t\t\t\tif ($(\"body\").width() > 970 || $(\"body\").width() <= 480) {");
+                    yaz.WriteLine("\t\t\t\t\t\tsubmenuLi.addClass(\"open\");");
+                    yaz.WriteLine("\t\t\t\t\t}");
+                    yaz.WriteLine("\t\t\t\t\tsubmenuLi.addClass(\"active\");");
+                    yaz.WriteLine("\t\t\t\t}");
+                    yaz.WriteLine("");
                     yaz.WriteLine("\t\t\t\tpassiveSubmenuLi.each(function () {");
                     yaz.WriteLine("\t\t\t\t\tif (!$(this).hasClass(\"open\")) {");
                     yaz.WriteLine("\t\t\t\t\t\t$(this).children(\"ul\").slideUp();");
@@ -1222,8 +1401,8 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t\t\t\t$(this).children(\"ul\").slideDown();");
                     yaz.WriteLine("\t\t\t\t\t}");
                     yaz.WriteLine("\t\t\t\t});");
-                    yaz.WriteLine("\t\t\t}, 1);");
-                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}, 100);");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
@@ -1419,48 +1598,183 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home\\index.html", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\copydelete.html", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    yaz.WriteLine("<div id=\"content\">");
-                    yaz.WriteLine("\t<div id=\"content-header\">");
-                    yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a href=\"javascript:;\" class=\"tip-bottom\"><i class=\"icon-home\"></i> Ana Sayfa</a></div>");
+                    yaz.WriteLine("<div id=\"cpyData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
+                    yaz.WriteLine("\t<div class=\"modal-header\">");
+                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
+                    yaz.WriteLine("\t\t<h3>Kopyala</h3>");
                     yaz.WriteLine("\t</div>");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t<div class=\"container-fluid\">");
-                    yaz.WriteLine("\t\t<div class=\"quick-actions_homepage\">");
-                    yaz.WriteLine("\t\t\t<ul class=\"quick-actions\">");
-
-                    string[] colors = new string[] { "bg_lg", "bg_lb", "bg_ly", "bg_lo", "bg_ls", "bg_lr", "bg_lv" };
-                    int i = 0;
-
-                    foreach (AdminMenu item in adminMenu)
-                    {
-                        yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a routerLink=\"/Admin/" + item.Title + "\"> <i class=\"icon-home\"></i> " + item.Title.ToTurkish(lstLang) + "</a> </li>");
-                        i++;
-                    }
-
-                    yaz.WriteLine("\t\t\t</ul>");
-                    yaz.WriteLine("\t\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-body\">");
+                    yaz.WriteLine("\t\t<p>İlgili veriyi kopyalamak istediğinize emin misiniz?</p>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-footer\">");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary cpy-yes\" href=\"javascript:;\">Evet</a>");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn cpy-no\" href=\"javascript:;\">Hayır</a>");
                     yaz.WriteLine("\t</div>");
                     yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<div id=\"dltData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
+                    yaz.WriteLine("\t<div class=\"modal-header\">");
+                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
+                    yaz.WriteLine("\t\t<h3>Sil</h3>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-body\">");
+                    yaz.WriteLine("\t\t<p>İlgili veriyi silmek istediğinize emin misiniz?</p>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-footer\">");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary dlt-yes\" href=\"javascript:;\">Evet</a>");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn dlt-no\" href=\"javascript:;\">Hayır</a>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<div id=\"rmvData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
+                    yaz.WriteLine("\t<div class=\"modal-header\">");
+                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
+                    yaz.WriteLine("\t\t<h3>Kaldır</h3>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-body\">");
+                    yaz.WriteLine("\t\t<p>İlgili veriyi kaldırmak istediğinize emin misiniz?</p>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-footer\">");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary rmv-yes\" href=\"javascript:;\">Evet</a>");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn rmv-no\" href=\"javascript:;\">Hayır</a>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<div id=\"clrData\" class=\"modal hide\" aria-hidden=\"true\" style=\"display: none;\">");
+                    yaz.WriteLine("\t<div class=\"modal-header\">");
+                    yaz.WriteLine("\t\t<button data-dismiss=\"modal\" class=\"close\" type=\"button\">×</button>");
+                    yaz.WriteLine("\t\t<h3>Temizle</h3>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-body\">");
+                    yaz.WriteLine("\t\t<p>İlgili verileri temizlemek istediğinize emin misiniz?</p>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("\t<div class=\"modal-footer\">");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn btn-primary clr-yes\" href=\"javascript:;\">Evet</a>");
+                    yaz.WriteLine("\t\t<a data-dismiss=\"modal\" class=\"btn clr-no\" href=\"javascript:;\">Hayır</a>");
+                    yaz.WriteLine("\t</div>");
+                    yaz.WriteLine("</div>");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("<ul id=\"tdAlertMessage\" class=\"tdAlert\">");
+                    yaz.WriteLine("\t<li class=\"tdAlertDelete\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri silindi.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertDeleteNot\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri silinemedi.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertRemove\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kaldırıldı.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertRemoveNot\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kaldırılamadı.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertCopy\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kopyalandı.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertCopyNot\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veri kopyalanamadı.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertClear\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veriler temizlendi.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("\t<li class=\"tdAlertClearNot\">");
+                    yaz.WriteLine("\t\t<div class=\"tdAlertMessage\">İlgili veriler temizlenemedi.</div>");
+                    yaz.WriteLine("\t</li>");
+                    yaz.WriteLine("</ul>");
                     yaz.Close();
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\home\\index.ts", FileMode.Create))
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\copydelete.ts", FileMode.Create))
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component } from '@angular/core';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
-                    yaz.WriteLine("\ttemplateUrl: './index.html'");
+                    yaz.WriteLine("\tselector: 'admin-copydelete',");
+                    yaz.WriteLine("\ttemplateUrl: './copydelete.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
-                    yaz.WriteLine("export class AdminIndexComponent {");
+                    yaz.WriteLine("export class AdminCopyDeleteComponent {");
                     yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\footer.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<div class=\"row-fluid\">");
+                    yaz.WriteLine("\t<div id=\"footer\" class=\"span12\"> Developed by <a target=\"_blank\" href=\"http://www.sinasalik.net\">Sina SALIK</a> </div>");
+                    yaz.WriteLine("</div>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\controls\\footer.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: 'admin-footer',");
+                    yaz.WriteLine("\ttemplateUrl: './footer.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminFooterComponent {");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("}");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\layoutAdmin.html", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("<admin-header></admin-header>");
+                    yaz.WriteLine("<admin-leftmenu></admin-leftmenu>");
+                    yaz.WriteLine("<router-outlet></router-outlet>");
+                    yaz.WriteLine("<admin-footer></admin-footer>");
+                    yaz.WriteLine("<admin-scripts></admin-scripts>");
+                    yaz.Close();
+                }
+            }
+
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\shared\\layoutAdmin.ts", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                {
+                    yaz.WriteLine("import { Component } from '@angular/core';");
+                    yaz.WriteLine("import { Router } from '@angular/router';");
+                    yaz.WriteLine("import { SharedService } from '../../services/shared';");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("@Component({");
+                    yaz.WriteLine("\tselector: 'admin-layout',");
+                    yaz.WriteLine("\ttemplateUrl: './layoutAdmin.html'");
+                    yaz.WriteLine("})");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("export class AdminLayoutComponent {");
+                    yaz.WriteLine("\terrorMsg: string;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tconstructor(private service: SharedService, private router: Router) {");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tngOnInit() {");
+                    yaz.WriteLine("\t\tthis.service.getLoginControl().subscribe((answer) => {");
+                    yaz.WriteLine("\t\t\tif (answer == false) {");
+                    yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/Login']);");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
                     yaz.Close();
@@ -1504,9 +1818,9 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    yaz.WriteLine("import { Component, ViewEncapsulation } from \"@angular/core\";");
+                    yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
                     yaz.WriteLine("import { Router } from '@angular/router';");
-                    yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
+                    yaz.WriteLine("import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';");
                     yaz.WriteLine("import { SharedService } from '../../services/shared.js';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
@@ -1574,78 +1888,6 @@ namespace TDFactory
                 }
             }
 
-            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\lib\\lib.ts", FileMode.Create))
-            {
-                using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
-                {
-                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
-                    yaz.WriteLine("import { Router } from \"@angular/router\";");
-                    yaz.WriteLine("import ClassicEditor from \"../../../../Content/admin/js/ckeditor/ckeditor.js\";");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("@Injectable({ providedIn: 'root' })");
-                    yaz.WriteLine("export class AdminLib {");
-                    yaz.WriteLine("\tstatic RefreshRoute(router: Router, changeUrl: string = \"/\", skipChangeLocation: boolean = true) {");
-                    yaz.WriteLine("\t\tlet currentUrl = router.url;");
-                    yaz.WriteLine("\t\trouter.navigate([changeUrl], { skipLocationChange: skipChangeLocation }).then(() => { router.navigate([currentUrl]) });");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tstatic ParseFloat(value: string) : any {");
-                    yaz.WriteLine("\t\tvar returnValue;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tif (value == null || value == undefined) {");
-                    yaz.WriteLine("\t\t\treturnValue = null;");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t\telse if (value.toString().indexOf(',') > 0) {");
-                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value.toString().replace(\",\", \".\"));");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t\telse {");
-                    yaz.WriteLine("\t\t\treturnValue = parseFloat(value);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\treturn returnValue;");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tstatic UploadFileName(filename: string, guidCount: number = 5) {");
-                    yaz.WriteLine("\t\tlet x: string = \"\";");
-                    yaz.WriteLine("\t\tlet ext: string = filename.split('.').pop();");
-                    yaz.WriteLine("\t\tlet name: string = filename.replace(\".\" + ext, \"\");");
-                    yaz.WriteLine("\t\tlet guid: string;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tfor (var i = 0; i < guidCount; i++) {");
-                    yaz.WriteLine("\t\t\tx += \"x\";");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tguid = x.replace(/[x]/g, function (c) {");
-                    yaz.WriteLine("\t\t\tvar r = Math.random() * 16 | 0,");
-                    yaz.WriteLine("\t\t\t\tv = c == 'x' ? r : (r & 0x3 | 0x8);");
-                    yaz.WriteLine("\t\t\treturn v.toString(16);");
-                    yaz.WriteLine("\t\t});");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\treturn name + \"-\" + guid + \".\" + ext;");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tstatic CKValue(id: string) {");
-                    yaz.WriteLine("\tif ($(\".ck-content[data-id='\" + id + \"']\").html() == null)");
-                    yaz.WriteLine("\t\treturn \"\";");
-                    yaz.WriteLine("\telse");
-                    yaz.WriteLine("\t\treturn $(\".ck-content[data-id='\" + id + \"']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tstatic ConvertToCKEditor(id: string, time: number = 1000) {");
-                    yaz.WriteLine("\t\tsetTimeout(function () {");
-                    yaz.WriteLine("\t\t\tClassicEditor");
-                    yaz.WriteLine("\t\t\t\t.create(document.querySelector(\"#\" + id), {");
-                    yaz.WriteLine("\t\t\t\t})");
-                    yaz.WriteLine("\t\t\t\t.then(editor => {");
-                    yaz.WriteLine("\t\t\t\t\tconsole.log(editor);");
-                    yaz.WriteLine("\t\t\t\t});");
-                    yaz.WriteLine("\t\t}, time);");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("}");
-                    yaz.Close();
-                }
-            }
-
             CreateAngularAppModule();
             CreateAngularRoutingModule();
         }
@@ -1656,8 +1898,8 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
-                    yaz.WriteLine("import { HttpClient } from '@angular/common/http';");
+                    yaz.WriteLine("import { Injectable } from '@angular/core';");
+                    yaz.WriteLine("import { HttpClient, HttpParams } from '@angular/common/http';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Injectable({ providedIn: 'root' })");
                     yaz.WriteLine("export class SharedService {");
@@ -1665,6 +1907,14 @@ namespace TDFactory
                     yaz.WriteLine("\tprivate linkLogout: string = \"Ajax/Shared/Logout\";");
                     yaz.WriteLine("\tprivate linkLoginControl: string = \"Ajax/Shared/LoginControl\";");
                     yaz.WriteLine("\tprivate linkCurrentUser: string = \"Ajax/Shared/CurrentUser\";");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("\tprivate linkCurrentUserRights: string = \"Ajax/Shared/CurrentUserRights\";");
+                        yaz.WriteLine("\tprivate linkHasRight: string = \"Ajax/Shared/HasRight\";");
+                        yaz.WriteLine("\tprivate linkShowTypes: string = \"Ajax/Shared/ShowTypes\";");
+                    }
+
                     yaz.WriteLine("");
                     yaz.WriteLine("\tconstructor(private http: HttpClient) {");
                     yaz.WriteLine("\t}");
@@ -1684,6 +1934,26 @@ namespace TDFactory
                     yaz.WriteLine("\tgetCurrentUser() {");
                     yaz.WriteLine("\t\treturn this.http.get(this.linkCurrentUser);");
                     yaz.WriteLine("\t}");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tgetCurrentUserRights(url: string = null, process: string = null) {");
+                        yaz.WriteLine("\t\tlet params = new HttpParams().set(\"url\", url).set(\"process\", process);");
+                        yaz.WriteLine("\t\treturn this.http.get(this.linkCurrentUserRights, { params: params });");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tgetHasRight(url: string = null, process: string = null) {");
+                        yaz.WriteLine("\t\tlet params = new HttpParams().set(\"url\", url).set(\"process\", process);");
+                        yaz.WriteLine("\t\treturn this.http.get(this.linkHasRight, { params: params });");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tgetShowTypes(url: string = null) {");
+                        yaz.WriteLine("\t\tlet params = new HttpParams().set(\"url\", url);");
+                        yaz.WriteLine("\t\treturn this.http.get(this.linkShowTypes, { params: params });");
+                        yaz.WriteLine("\t}");
+                    }
+
                     yaz.WriteLine("}");
                     yaz.Close();
                 }
@@ -1693,7 +1963,7 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    yaz.WriteLine("import { Injectable } from \"@angular/core\";");
+                    yaz.WriteLine("import { Injectable } from '@angular/core';");
                     yaz.WriteLine("import { HttpClient, HttpParams } from '@angular/common/http';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Injectable()");
@@ -1701,14 +1971,41 @@ namespace TDFactory
                     yaz.WriteLine("\tconstructor(private http: HttpClient) {");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\tget(controller: string, action: string, id: string = null) {");
-                    yaz.WriteLine("\t\tif (id == null)");
-                    yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action);");
-                    yaz.WriteLine("\t\telse {");
-                    yaz.WriteLine("\t\t\tlet params = new HttpParams().set(\"id\", id);");
-                    yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action, { params: params });");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("\t}");
+
+                    if (hasLinks)
+                    {
+                        yaz.WriteLine("\tget(controller: string, action: string, id: string = null, linkid: string = null, linkTypeID: string = null, typeID: string = null) {");
+                        yaz.WriteLine("\t\tif (id != null) {");
+                        yaz.WriteLine("\t\t\tlet params = new HttpParams().set(\"id\", id);");
+                        yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action, { params: params });");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t\telse if (linkid != null) {");
+                        yaz.WriteLine("\t\t\tlet params = new HttpParams().set(\"linkid\", linkid);");
+                        yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action, { params: params });");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t\telse if (linkTypeID != null) {");
+                        yaz.WriteLine("\t\t\tlet params = new HttpParams().set(\"linkTypeID\", linkTypeID);");
+                        yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action, { params: params });");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t\telse if (typeID != null) {");
+                        yaz.WriteLine("\t\t\tlet params = new HttpParams().set(\"typeID\", typeID);");
+                        yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action, { params: params });");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t\telse");
+                        yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action);");
+                        yaz.WriteLine("\t}");
+                    }
+                    else
+                    {
+                        yaz.WriteLine("\tget(controller: string, action: string, id: string = null) {");
+                        yaz.WriteLine("\t\tif (id == null)");
+                        yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action);");
+                        yaz.WriteLine("\t\telse {");
+                        yaz.WriteLine("\t\t\tlet params = new HttpParams().set(\"id\", id);");
+                        yaz.WriteLine("\t\t\treturn this.http.get(\"Ajax/\" + controller + \"/\" + action, { params: params });");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t}");
+                    }
                     yaz.WriteLine("");
                     yaz.WriteLine("\tpost(controller: string, action: string, model: any) {");
                     yaz.WriteLine("\t\treturn this.http.post(\"Ajax/\" + controller + \"/\" + action, model);");
@@ -1966,7 +2263,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string tableLang = Table.ToTurkish(lstLang);
 
@@ -2002,29 +2299,51 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\t\t\t\t<thead>");
                         yaz.WriteLine("\t\t\t\t\t\t\t\t<tr>");
 
-                        i = 0;
 
-                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
+                        if (hasLinks && (Table == "Links" || Table == "LinkTypes"))
                         {
-                            List<ForeignKeyChecker> frchkForeignLst2 = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
-
-                            string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
-
-                            if (frchkForeignLst2.Count > 0)
+                            if (Table == "Links")
                             {
-                                string colName = column.ColumnName.ToTurkish(lstLang);
-
-                                if (colName == column.ColumnName)
-                                    colName = "Bağlı " + frchkForeignLst2.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang);
-
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + colName + "</th>");
-                            }
-                            else
-                            {
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + column.ColumnName.ToTurkish(lstLang) + "</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>ID</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>Başlık</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>Bağlı Nesne</th>");
                             }
 
-                            i++;
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>ID</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>Başlık</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>Ana Tip</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>Ana Nesne</th>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th class=\"hideColumn2\">Bağlanacak Tip</th>");
+                            }
+                        }
+                        else
+                        {
+                            i = 0;
+
+                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table && !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
+                            {
+                                List<ForeignKeyChecker> frchkForeignLst2 = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+
+                                string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                                if (frchkForeignLst2.Count > 0)
+                                {
+                                    string colName = column.ColumnName.ToTurkish(lstLang);
+
+                                    if (colName == column.ColumnName)
+                                        colName = "Bağlı " + frchkForeignLst2.FirstOrDefault().PrimaryTableName.ToTurkish(lstLang);
+
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + colName + "</th>");
+                                }
+                                else
+                                {
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th" + hideColumn + ">" + column.ColumnName.ToTurkish(lstLang) + "</th>");
+                                }
+
+                                i++;
+                            }
                         }
 
                         if (table.IdentityColumns.Count > 0)
@@ -2034,40 +2353,64 @@ namespace TDFactory
 
                         yaz.WriteLine("\t\t\t\t\t\t\t\t</tr>");
                         yaz.WriteLine("\t\t\t\t\t\t\t</thead>");
+
                         yaz.WriteLine("\t\t\t\t\t\t\t<tbody>");
                         yaz.WriteLine("\t\t\t\t\t\t\t\t<tr *ngFor=\"let item of " + Table + "List\">");
 
-                        i = 0;
-
-                        foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
+                        if (hasLinks && (Table == "Links" || Table == "LinkTypes"))
                         {
-                            List<ForeignKeyChecker> frchkForeignLst2 = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
-
-                            string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
-
-                            if (column.Type.Name != "Boolean")
+                            if (Table == "Links")
                             {
-                                if (frchkForeignLst2.Count > 0)
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.ID }}</td>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.Title }}</td>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.LinkedAdi }}</td>");
+                            }
+
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.ID }}</td>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.Title }}</td>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.MainTypeAdi }}</td>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.MainAdi }}</td>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td class=\"hideColumn2\">{{ item?.LinkedTypeAdi }}</td>");
+                            }
+                        }
+                        else
+                        {
+                            i = 0;
+
+                            foreach (ColumnInfo column in table.Columns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(UrlColumns, InType.ToUrlLower)).Take(4).ToList())
+                            {
+                                List<ForeignKeyChecker> frchkForeignLst2 = table.FkcForeignList.Where(a => a.ForeignColumnName == column.ColumnName).ToList();
+
+                                string hideColumn = i == 3 ? " class=\"hideColumn\"" : "";
+
+                                if (column.Type.Name != "Boolean")
                                 {
-                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + frchkForeignLst2.FirstOrDefault().PrimaryTableName + "Adi }}</td>");
+                                    if (frchkForeignLst2.Count > 0)
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + frchkForeignLst2.FirstOrDefault().PrimaryTableName + "Adi }}</td>");
+                                    }
+                                    else
+                                    {
+                                        if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a href=\"/" + projectName + "/Uploads/{{ item?." + column.ColumnName + " }}\" target=\"_blank\"><img src=\"/" + projectName + "/Uploads/thumb_{{ item?." + column.ColumnName + " }}\" style=\"height:40px; max-width:80px;\" /></a></td>");
+                                        else if (column.ColumnName.In(FileColumns, InType.ToUrlLower))
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"/" + projectName + "/Uploads/{{ item?." + column.ColumnName + " }}\" target=\"_blank\">{{ item?." + column.ColumnName + " }}</a></td>");
+                                        else
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + column.ColumnName + " }}</td>");
+                                    }
                                 }
                                 else
                                 {
-                                    if (column.ColumnName.In(ImageColumns, InType.ToUrlLower))
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a href=\"/" + projectName + "/Uploads/{{ item?." + column.ColumnName + " }}\" target=\"_blank\"><img src=\"/" + projectName + "/Uploads/thumb_{{ item?." + column.ColumnName + " }}\" style=\"height:40px; max-width:80px;\" /></a></td>");
-                                    else if (column.ColumnName.In(FileColumns, InType.ToUrlLower))
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"/" + projectName + "/Uploads/{{ item?." + column.ColumnName + " }}\" target=\"_blank\">{{ item?." + column.ColumnName + " }}</a></td>");
-                                    else
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + column.ColumnName + " }}</td>");
+                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + " style=\"text-align:center;\"><img *ngIf=\"item?." + column.ColumnName + "\" class=\"active\" /><img *ngIf=\"!item?." + column.ColumnName + "\" class=\"passive\" /></td>");
                                 }
-                            }
-                            else
-                            {
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + " style=\"text-align:center;\"><img *ngIf=\"item?." + column.ColumnName + "\" class=\"active\" /><img *ngIf=\"!item?." + column.ColumnName + "\" class=\"passive\" /></td>");
-                            }
 
-                            i++;
+                                i++;
+                            }
                         }
+
+                        string insertShow = hasUserRights ? " *ngIf=\"insertShow\"" : "";
 
                         if (table.IdentityColumns.Count > 0)
                         {
@@ -2075,13 +2418,19 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + Table + "/Update/' + item?." + table.ID + "]\">Düzenle</a></li>");
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Kopyala</a></li>");
+
+                            string updateShow = hasUserRights ? " *ngIf=\"updateShow\"" : "";
+                            string copyShow = hasUserRights ? " *ngIf=\"copyShow\"" : "";
+                            string removeShow = hasUserRights ? " *ngIf=\"removeShow\"" : "";
+                            string deleteShow = hasUserRights ? " *ngIf=\"deleteShow\"" : "";
+
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li" + updateShow + "><a class=\"updLink\" [routerLink]=\"['/Admin/" + Table + "/Update/' + item?." + table.ID + "]\">Düzenle</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li" + copyShow + "><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Kopyala</a></li>");
 
                             if (table.Deleted)
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Kaldır</a></li>");
+                                yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li" + removeShow + "><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Kaldır</a></li>");
 
-                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Sil</a></li>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li" + deleteShow + "><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + Table + "\" [attr.data-id]=\"item?." + table.ID + "\">Sil</a></li>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                             yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -2095,9 +2444,16 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t</div>");
                         yaz.WriteLine("\t\t</div>");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t<div class=\"pagelinks\">");
+                        yaz.WriteLine("\t\t<div class=\"pagelinks\"" + insertShow + ">");
                         yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + Table + "/Insert\" class=\"btn btn-primary btn-add\">" + tableLang + " Ekle</a>");
                         yaz.WriteLine("\t\t</div>");
+
+                        if (hasUserRights)
+                        {
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t<input id=\"hdnType\" type=\"hidden\" value=\"" + Table.ToUserRightType() + "\" />");
+                        }
+
                         yaz.WriteLine("\t</div>");
                         yaz.WriteLine("</div>");
                         yaz.WriteLine("");
@@ -2138,7 +2494,34 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t\t</div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
-                                    yaz.WriteLine("\t\t\t\t\t<select id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\"><option *ngFor=\"let item of model?." + frchkLst.FirstOrDefault().PrimaryTableName + "List\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+
+                                    if (hasLinks && (Table == "Links" || Table == "LinkTypes"))
+                                    {
+                                        if (Table == "Links")
+                                        {
+                                            if (column.ColumnName == "LinkTypeID")
+                                            {
+                                                yaz.WriteLine("\t\t\t\t\t<select id=\"LinkTypeID\" (change)=\"onChange($event)\" [ngModel]=\"model?.LinkTypeID\" formControlName=\"LinkTypeID\"><option *ngFor=\"let item of model?.LinkTypesList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                            }
+                                        }
+
+                                        if (Table == "LinkTypes")
+                                        {
+                                            if (column.ColumnName == "MainTypeID")
+                                            {
+                                                yaz.WriteLine("\t\t\t\t\t<select id=\"MainTypeID\" class=\"mainType\" (change)=\"onChange($event)\" [ngModel]=\"model?.MainTypeID\" formControlName=\"MainTypeID\"><option *ngFor=\"let item of model?.MainTypeList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                            }
+
+                                            if (column.ColumnName == "LinkedTypeID")
+                                            {
+                                                yaz.WriteLine("\t\t\t\t\t<select id=\"LinkedTypeID\" class=\"linkedType\" [ngModel]=\"model?.LinkedTypeID\" formControlName=\"LinkedTypeID\"><option *ngFor=\"let item of model?.LinkedTypeList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t<select id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\"><option *ngFor=\"let item of model?." + frchkLst.FirstOrDefault().PrimaryTableName + "List\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                    }
                                 }
                                 else
                                 {
@@ -2165,7 +2548,28 @@ namespace TDFactory
                                                  column.Type.Name == "Int32" ||
                                                  column.Type.Name == "Int64")
                                         {
-                                            yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"number\" />");
+                                            if (hasLinks && (Table == "Links" || Table == "LinkTypes"))
+                                            {
+                                                if (Table == "Links")
+                                                {
+                                                    if (column.ColumnName == "LinkID")
+                                                    {
+                                                        yaz.WriteLine("\t\t\t\t\t<select id=\"LinkID\" class=\"selectLinkID\" [ngModel]=\"model?.LinkID\" formControlName=\"LinkID\"><option *ngFor=\"let item of model?.LinkedItemList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                                    }
+                                                }
+
+                                                if (Table == "LinkTypes")
+                                                {
+                                                    if (column.ColumnName == "MainID")
+                                                    {
+                                                        yaz.WriteLine("\t\t\t\t\t<select id=\"MainID\" class=\"selectMain\" [ngModel]=\"model?.MainID\" formControlName=\"MainID\"><option *ngFor=\"let item of model?.MainList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"number\" />");
+                                            }
                                         }
                                         else if (column.Type.Name == "String" && column.CharLength == -1)
                                         {
@@ -2202,9 +2606,9 @@ namespace TDFactory
                     }
                 }
 
-                //Duzenle
                 if (table.IdentityColumns.Count > 0)
                 {
+                    //Duzenle
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\update.html", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
@@ -2242,7 +2646,35 @@ namespace TDFactory
                                         yaz.WriteLine("\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
                                         yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
-                                        yaz.WriteLine("\t\t\t\t\t<select id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\"><option *ngFor=\"let item of model?." + frchkLst.FirstOrDefault().PrimaryTableName + "List\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+
+                                        if (hasLinks && (Table == "Links" || Table == "LinkTypes"))
+                                        {
+                                            if (Table == "Links")
+                                            {
+                                                if (column.ColumnName == "LinkTypeID")
+                                                {
+                                                    yaz.WriteLine("\t\t\t\t\t<input id=\"LinkTypeID\" [ngModel]=\"model?.LinkTypeID\" formControlName=\"LinkTypeID\" type=\"hidden\" />");
+                                                    yaz.WriteLine("\t\t\t\t\t<input id=\"LinkedTypesAdi\" type=\"text\" disabled=\"disabled\" value=\"{{ model?.LinkedTypesAdi }}\" />");
+                                                }
+                                            }
+
+                                            if (Table == "LinkTypes")
+                                            {
+                                                if (column.ColumnName == "MainTypeID")
+                                                {
+                                                    yaz.WriteLine("\t\t\t\t\t<select id=\"MainTypeID\" class=\"mainType\" (change)=\"onChange($event)\" [ngModel]=\"model?.MainTypeID\" formControlName=\"MainTypeID\"><option *ngFor=\"let item of model?.MainTypeList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                                }
+
+                                                if (column.ColumnName == "LinkedTypeID")
+                                                {
+                                                    yaz.WriteLine("\t\t\t\t\t<select id=\"LinkedTypeID\" class=\"linkedType\" [ngModel]=\"model?.LinkedTypeID\" formControlName=\"LinkedTypeID\"><option *ngFor=\"let item of model?.LinkedTypeList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\" >{{ item?.Text }}</option></select>");
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\t\t<select id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\"><option *ngFor=\"let item of model?." + frchkLst.FirstOrDefault().PrimaryTableName + "List\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                        }
                                     }
                                     else
                                     {
@@ -2274,7 +2706,28 @@ namespace TDFactory
                                                      column.Type.Name == "Int32" ||
                                                      column.Type.Name == "Int64")
                                             {
-                                                yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"number\" value=\"{{ model?." + column.ColumnName + " }}\" />");
+                                                if (hasLinks && (Table == "Links" || Table == "LinkTypes"))
+                                                {
+                                                    if (Table == "Links")
+                                                    {
+                                                        if (column.ColumnName == "LinkID")
+                                                        {
+                                                            yaz.WriteLine("\t\t\t\t\t<select id=\"LinkID\" [ngModel]=\"model?.LinkID\" formControlName=\"LinkID\"><option *ngFor=\"let item of model?.LinkedItemList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                                        }
+                                                    }
+
+                                                    if (Table == "LinkTypes")
+                                                    {
+                                                        if (column.ColumnName == "MainID")
+                                                        {
+                                                            yaz.WriteLine("\t\t\t\t\t<select id=\"MainID\" class=\"selectMain\" [ngModel]=\"model?.MainID\" formControlName=\"MainID\"><option *ngFor=\"let item of model?.MainList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"number\" value=\"{{ model?." + column.ColumnName + " }}\" />");
+                                                }
                                             }
                                             else if (column.Type.Name == "String" && column.CharLength == -1)
                                             {
@@ -2282,13 +2735,24 @@ namespace TDFactory
                                             }
                                             else
                                             {
-                                                yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"text\" value=\"{{ model?." + column.ColumnName + " }}\" />");
+                                                string type = hasUserRights && column.ColumnName == "Password" && Table == "Users" ? "password" : "text";
+                                                string value = hasUserRights && column.ColumnName == "Password" && Table == "Users" ? "" : " value=\"{{ model?." + column.ColumnName + " }}\"";
+                                                string model = hasUserRights && column.ColumnName == "Password" && Table == "Users" ? "" : " [ngModel]=\"model?." + column.ColumnName + "\"";
+
+                                                yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\"" + model + " formControlName=\"" + column.ColumnName + "\" type=\"" + type + "\"" + value + " />");
                                             }
                                         }
                                     }
 
                                     yaz.WriteLine("\t\t\t\t\t<br />");
                                     yaz.WriteLine("\t\t\t\t\t<!-- " + column.ColumnName + " -->");
+
+                                    if (hasUserRights && column.ColumnName == "Password" && Table == "Users")
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\t<span class=\"badge badge-info\">Şifre boş bırakılırsa eski şifre saklanacaktır.</span>");
+                                        yaz.WriteLine("\t\t\t\t\t<br />");
+                                        yaz.WriteLine("\t\t\t\t\t<br />");
+                                    }
 
                                     yaz.WriteLine("\t\t\t\t</div>");
                                     yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
@@ -2368,8 +2832,12 @@ namespace TDFactory
                                                 else if (item.ColumnName.In(FileColumns, InType.ToUrlLower))
                                                     yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + "><a class=\"btn btn-mini btn-info\" href=\"/" + projectName + "/Uploads/{{ item?." + item.ColumnName + " }}\" target=\"_blank\">{{ item?." + item.ColumnName + " }}</a></td>");
                                                 else
-                                                    yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + item.ColumnName + " }}</td>");
-
+                                                {
+                                                    if (hasLinks && Table == "LinkTypes" && item.ColumnName == "LinkID")
+                                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?.LinkedAdi }}</td>");
+                                                    else
+                                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td" + hideColumn + ">{{ item?." + item.ColumnName + " }}</td>");
+                                                }
                                                 i++;
                                             }
                                         }
@@ -2379,19 +2847,27 @@ namespace TDFactory
                                         }
                                     }
 
+                                    string insertShow = hasUserRights ? " *ngIf=\"insertShow\"" : "";
+
                                     if (tableFrgn.IdentityColumns.Count > 0)
                                     {
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<button data-toggle=\"dropdown\" class=\"btn btn-mini btn-primary dropdown-toggle\">İşlem <span class=\"caret\"></span></button>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t<ul class=\"dropdown-menu\">");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"updLink\" [routerLink]=\"['/Admin/" + tableFrgn.TableName + "/Update/' + item?." + tableFrgn.ID + "]\">Düzenle</a></li>");
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Kopyala</a></li>");
+
+                                        string updateShow = hasUserRights ? " *ngIf=\"updateShow\"" : "";
+                                        string copyShow = hasUserRights ? " *ngIf=\"copyShow\"" : "";
+                                        string removeShow = hasUserRights ? " *ngIf=\"removeShow\"" : "";
+                                        string deleteShow = hasUserRights ? " *ngIf=\"deleteShow\"" : "";
+
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li" + updateShow + "><a class=\"updLink\" [routerLink]=\"['/Admin/" + tableFrgn.TableName + "/Update/' + item?." + tableFrgn.ID + "]\">Düzenle</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li" + copyShow + "><a class=\"cpyLink\" href=\"#cpyData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Kopyala</a></li>");
 
                                         if (tableFrgn.Deleted)
-                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Kaldır</a></li>");
+                                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li" + removeShow + "><a class=\"rmvLink\" href=\"#rmvData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Kaldır</a></li>");
 
-                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Sil</a></li>");
+                                        yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t\t<li" + deleteShow + "><a class=\"dltLink\" href=\"#dltData\" data-toggle=\"modal\" data-controller=\"" + tableFrgn.TableName + "\" [attr.data-id]=\"item?." + tableFrgn.ID + "\">Sil</a></li>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t\t</ul>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t\t\t\t\t\t</td>");
@@ -2405,10 +2881,16 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t</div>");
                                     yaz.WriteLine("\t\t</div>");
                                     yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t<div class=\"pagelinks\">");
+                                    yaz.WriteLine("\t\t<div class=\"pagelinks\"" + insertShow + ">");
                                     yaz.WriteLine("\t\t\t<a routerLink=\"/Admin/" + tableFrgn.TableName + "/Insert\" class=\"btn btn-primary btn-add\">" + tableFrgn.TableName.ToTurkish(lstLang) + " Ekle</a>");
                                     yaz.WriteLine("\t\t</div>");
                                 }
+                            }
+
+                            if (hasUserRights)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t<input id=\"hdnType\" type=\"hidden\" value=\"" + Table.ToUserRightType() + "\" />");
                             }
 
                             yaz.WriteLine("\t</div>");
@@ -2423,6 +2905,49 @@ namespace TDFactory
                             yaz.Close();
                         }
                     }
+
+                    if (Table == "Users" && hasUserRights)
+                    {
+                        using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\changegroup.html", FileMode.Create))
+                        {
+                            using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                            {
+                                yaz.WriteLine("<div id=\"content\">");
+                                yaz.WriteLine("\t<div id=\"content-header\">");
+                                yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a href=\"javascript:;\" class=\"tip-bottom\"><i class=\"icon-group\"></i> Kullanıcı Grubu Değiştir</a></div>");
+                                yaz.WriteLine("\t</div>");
+                                yaz.WriteLine("\t<div class=\"container-fluid\">");
+                                yaz.WriteLine("\t\t<form [formGroup]=\"changeGroupForm\" (ngSubmit)=\"onSubmit()\">");
+                                yaz.WriteLine("\t\t\t<fieldset>");
+                                yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+                                yaz.WriteLine("\t\t\t\t\t<input id=\"ID\" [ngModel]=\"model?.ID\" formControlName=\"ID\" type=\"hidden\" value=\"{{ model?.ID }}\" />");
+                                yaz.WriteLine("\t\t\t\t</div>");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t<div class=\"editor-label\">");
+                                yaz.WriteLine("\t\t\t\t\tBağlı Grup");
+                                yaz.WriteLine("\t\t\t\t</div>");
+                                yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                yaz.WriteLine("\t\t\t\t<div class=\"editor-field\">");
+                                yaz.WriteLine("\t\t\t\t\t<select id=\"GroupID\" [ngModel]=\"model?.GroupID\" formControlName=\"GroupID\"><option *ngFor=\"let item of model?.UserGroupsList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                yaz.WriteLine("\t\t\t\t\t<br />");
+                                yaz.WriteLine("\t\t\t\t\t<!--GroupID-->");
+                                yaz.WriteLine("\t\t\t\t</div>");
+                                yaz.WriteLine("\t\t\t\t<div class=\"clear\"></div>");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t<p>");
+                                yaz.WriteLine("\t\t\t\t\t<div class=\"alert alert-error\">");
+                                yaz.WriteLine("\t\t\t\t\t\t<strong>Hata! </strong> <span class=\"alertMessage\">{{ model?.Mesaj }}</span>");
+                                yaz.WriteLine("\t\t\t\t\t</div>");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\t<input type=\"submit\" value=\"Kaydet\" class=\"btn btn-success btn-save\" [disabled]=\"!grupDegistirForm.valid\" />");
+                                yaz.WriteLine("\t\t\t\t\t<a routerLink=\"/Admin/Users\" class=\"btn btn-danger btn-cancel\">İptal</a>");
+                                yaz.WriteLine("\t\t\t</fieldset>");
+                                yaz.WriteLine("\t\t</form>");
+                                yaz.WriteLine("\t</div>");
+                                yaz.WriteLine("</div>");
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -2435,7 +2960,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Areas\\Ajax\\Controllers\\" + Table + "Controller.cs", FileMode.Create))
                 {
@@ -2446,10 +2971,18 @@ namespace TDFactory
                         if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
                             yaz.WriteLine("using System.Collections.Generic;");
+                        }
+
+                        if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || (hasLinks && Table == "Links"))
+                        {
                             yaz.WriteLine("using TDLibrary;");
                         }
 
                         yaz.WriteLine("using " + repositoryName + "." + Table + "Model;");
+
+                        if (hasUserRights)
+                            yaz.WriteLine("using " + repositoryName + ".UsersModel;");
+
                         yaz.WriteLine("");
 
                         yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
@@ -2458,6 +2991,7 @@ namespace TDFactory
                         yaz.WriteLine("\t{");
 
                         yaz.WriteLine("\t\treadonly " + Table + " model = new " + Table + "();");
+                        yaz.WriteLine("\t\treadonly Users curUser = AppTools.User;");
 
                         yaz.WriteLine("");
 
@@ -2465,6 +2999,14 @@ namespace TDFactory
                         yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic JsonResult Index(int? id)");
                         yaz.WriteLine("\t\t{");
+
+                        if (hasUserRights)
+                        {
+                            yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\"))");
+                            yaz.WriteLine("\t\t\t\treturn Json(null, JsonRequestBehavior.AllowGet);");
+                            yaz.WriteLine("");
+                        }
+
                         yaz.WriteLine("\t\t\treturn Json(model.List(id, null, false), JsonRequestBehavior.AllowGet);");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
@@ -2475,6 +3017,14 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Insert()");
                             yaz.WriteLine("\t\t{");
+
+                            if (hasUserRights)
+                            {
+                                yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"i\"))");
+                                yaz.WriteLine("\t\t\t\treturn Json(null, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("");
+                            }
+
                             yaz.WriteLine("\t\t\treturn Json(model.Insert(), JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
@@ -2484,10 +3034,25 @@ namespace TDFactory
                         yaz.WriteLine("\t\t[HttpPost]");
                         yaz.WriteLine("\t\tpublic JsonResult Insert([System.Web.Http.FromBody] " + Table + " table)");
                         yaz.WriteLine("\t\t{");
+
+                        if (hasUserRights)
+                        {
+                            yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"i\"))");
+                            yaz.WriteLine("\t\t\t\treturn Json(null);");
+                            yaz.WriteLine("");
+                        }
+
                         yaz.WriteLine("\t\t\tbool result = model.Insert(table);");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\tif (result)");
                         yaz.WriteLine("\t\t\t{");
+
+                        if (hasLogs)
+                        {
+                            yaz.WriteLine("\t\t\t\tcurUser.Log(table, \"i\", \"" + Table.ToTurkish(lstLang) + "\");");
+                            yaz.WriteLine("");
+                        }
+
                         yaz.WriteLine("\t\t\t\treturn Json(table);");
                         yaz.WriteLine("\t\t\t}");
                         yaz.WriteLine("\t\t\telse");
@@ -2521,6 +3086,13 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpPost]");
                             yaz.WriteLine("\t\tpublic JsonResult InsertUpload([System.Web.Http.FromBody] " + Table + " table)");
                             yaz.WriteLine("\t\t{");
+
+                            if (hasUserRights)
+                            {
+                                yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"i\"))");
+                                yaz.WriteLine("\t\t\t\treturn Json(null);");
+                                yaz.WriteLine("");
+                            }
 
                             if (table.FILEColumns.Count > 0)
                             {
@@ -2567,13 +3139,29 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Update(" + columntype.ReturnCSharpType() + "? id)");
                             yaz.WriteLine("\t\t{");
+
+                            if (hasUserRights)
+                            {
+                                yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"u\"))");
+                                yaz.WriteLine("\t\t\t\treturn Json(null, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("");
+                            }
+
                             yaz.WriteLine("\t\t\treturn Json(model.Update(id), JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
+                            //Duzenle
                             yaz.WriteLine("\t\t[HttpPost]");
                             yaz.WriteLine("\t\tpublic JsonResult Update([System.Web.Http.FromBody] " + Table + " table)");
                             yaz.WriteLine("\t\t{");
+
+                            if (hasUserRights)
+                            {
+                                yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"u\"))");
+                                yaz.WriteLine("\t\t\t\treturn Json(null);");
+                                yaz.WriteLine("");
+                            }
 
                             foreach (ColumnInfo item in table.FILEColumns)
                             {
@@ -2612,17 +3200,44 @@ namespace TDFactory
                                 yaz.WriteLine("");
                             }
 
-                            yaz.WriteLine("\t\t\tbool result = model.Update(table);");
+                            if (hasUserRights && Table == "Users")
+                            {
+                                yaz.WriteLine("\t\t\tif (curUser?.ID == table.ID)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("");
+                            }
+
+                            string tttab = hasUserRights && Table == "Users" ? "\t" : "";
+                            string curUserID = hasUserRights && Table == "Users" ? ", curUser.ID" : "";
+
+                            yaz.WriteLine(tttab + "\t\t\tbool result = model.Update(table" + curUserID + ");");
                             yaz.WriteLine("");
 
-                            yaz.WriteLine("\t\t\tif (result)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn Json(table);");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\telse");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine(tttab + "\t\t\tif (result)");
+                            yaz.WriteLine(tttab + "\t\t\t{");
+
+                            if (hasLogs)
+                            {
+                                yaz.WriteLine(tttab + "\t\t\t\tcurUser.Log(table, \"u\", \"" + Table.ToTurkish(lstLang) + "\");");
+                                yaz.WriteLine(tttab + "");
+                            }
+
+                            yaz.WriteLine(tttab + "\t\t\t\treturn Json(table);");
+                            yaz.WriteLine(tttab + "\t\t\t}");
+                            yaz.WriteLine(tttab + "\t\t\telse");
+                            yaz.WriteLine(tttab + "\t\t\t{");
+                            yaz.WriteLine(tttab + "\t\t\t\ttable.Mesaj = \"Kayıt düzenlenemedi.\";");
+                            yaz.WriteLine(tttab + "\t\t\t}");
+
+                            if (hasUserRights && Table == "Users")
+                            {
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\telse");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Sadece kendi kullanıcı bilgilerinizi düzenleyebilirsiniz.\";");
+                                yaz.WriteLine("\t\t\t}");
+                            }
+
                             yaz.WriteLine("");
 
                             yaz.WriteLine("\t\t\ttable = (" + Table + ")model.Update(table." + table.ID + ", table);");
@@ -2638,6 +3253,13 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t[HttpPost]");
                                 yaz.WriteLine("\t\tpublic JsonResult UpdateUpload([System.Web.Http.FromBody] " + Table + " table)");
                                 yaz.WriteLine("\t\t{");
+
+                                if (hasUserRights)
+                                {
+                                    yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"u\"))");
+                                    yaz.WriteLine("\t\t\t\treturn Json(null);");
+                                    yaz.WriteLine("");
+                                }
 
                                 if (table.FILEColumns.Count > 0)
                                 {
@@ -2676,10 +3298,20 @@ namespace TDFactory
                                 yaz.WriteLine("");
                             }
 
+                            string idUserControl = hasUserRights && Table == "Users" ? " || curUser?.ID == id" : "";
+
                             //Kopyala
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Copy(" + columntype.ReturnCSharpType() + " id)");
                             yaz.WriteLine("\t\t{");
+
+                            if (hasUserRights)
+                            {
+                                yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"c\")" + idUserControl + ")");
+                                yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("");
+                            }
+
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\t\ttry");
@@ -2710,6 +3342,13 @@ namespace TDFactory
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tif (result)");
                             yaz.WriteLine("\t\t\t{");
+
+                            if (hasLogs)
+                            {
+                                yaz.WriteLine("\t\t\t\tcurUser.Log(id, \"c\", \"" + Table.ToTurkish(lstLang) + "\");");
+                                yaz.WriteLine("");
+                            }
+
                             yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
@@ -2721,6 +3360,14 @@ namespace TDFactory
                             yaz.WriteLine("\t\t[HttpGet]");
                             yaz.WriteLine("\t\tpublic JsonResult Delete(" + columntype.ReturnCSharpType() + "? id)");
                             yaz.WriteLine("\t\t{");
+
+                            if (hasUserRights)
+                            {
+                                yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"d\")" + idUserControl + ")");
+                                yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("");
+                            }
+
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
                                 yaz.WriteLine("\t\t\ttry");
@@ -2750,6 +3397,13 @@ namespace TDFactory
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tif (result)");
                             yaz.WriteLine("\t\t\t{");
+
+                            if (hasLogs)
+                            {
+                                yaz.WriteLine("\t\t\t\tcurUser.Log(id, \"d\", \"" + Table.ToTurkish(lstLang) + "\");");
+                                yaz.WriteLine("");
+                            }
+
                             yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
@@ -2763,6 +3417,14 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t[HttpGet]");
                                 yaz.WriteLine("\t\tpublic JsonResult Remove(" + columntype.ReturnCSharpType() + "? id)");
                                 yaz.WriteLine("\t\t{");
+
+                                if (hasUserRights)
+                                {
+                                    yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"" + Table.ToUserRightType() + "\", \"r\")" + idUserControl + ")");
+                                    yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                                    yaz.WriteLine("");
+                                }
+
                                 if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                                 {
                                     yaz.WriteLine("\t\t\ttry");
@@ -2793,10 +3455,82 @@ namespace TDFactory
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\tif (result)");
                                 yaz.WriteLine("\t\t\t{");
+
+                                if (hasLogs)
+                                {
+                                    yaz.WriteLine("\t\t\t\tcurUser.Log(id, \"r\", \"" + Table.ToTurkish(lstLang) + "\");");
+                                    yaz.WriteLine("");
+                                }
+
                                 yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t}");
+                            }
+
+                            if (Table == "Users" && hasUserRights)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t[HttpGet]");
+                                yaz.WriteLine("\t\tpublic JsonResult ChangeGroup(int id)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"Users\", \"cg\"))");
+                                yaz.WriteLine("\t\t\t\treturn Json(null, JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn Json(model.ChangeGroup(id), JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t[HttpPost]");
+                                yaz.WriteLine("\t\tpublic JsonResult ChangeGroup([System.Web.Http.FromBody] Users table)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tif (!curUser.HasRight(\"Users\", \"cg\"))");
+                                yaz.WriteLine("\t\t\t\treturn Json(null);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tbool result = model.ChangeGroup(table);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\tif (result)");
+                                yaz.WriteLine("\t\t\t\t{");
+                                yaz.WriteLine("\t\t\t\t\tcurUser.Log(table, \"cg\", \"" + Table.ToUserRightType() + "\");");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\treturn Json(table);");
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t\ttable.Mesaj = \"Grup değiştirilemedi.\";");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\tcatch");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Grup değiştirilemedi.\";");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\ttable = (Users)model.ChangeGroup(table.ID, table);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn Json(table);");
+                                yaz.WriteLine("\t\t}");
+                            }
+                        }
+
+                        if (hasLinks)
+                        {
+                            if (Table == "Links")
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t[HttpGet]");
+                                yaz.WriteLine("\t\tpublic JsonResult FillObject(string linkTypeID)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\treturn Json(Links.ReturnList(null, null, linkTypeID.ToInteger()), JsonRequestBehavior.AllowGet);");
+                                yaz.WriteLine("\t\t}");
+                            }
+
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t[HttpGet]");
+                                yaz.WriteLine("\t\tpublic JsonResult FillTypes(int? typeID)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\treturn Json(LinkTypes.ReturnList(typeID), JsonRequestBehavior.AllowGet);");
                                 yaz.WriteLine("\t\t}");
                             }
                         }
@@ -2815,7 +3549,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
-                SqlConnection con = new SqlConnection(Helper.Helper.CreateConnectionText(connectionInfo));
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 CreateAngularDirectories(Table);
 
@@ -2824,9 +3558,16 @@ namespace TDFactory
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                     {
-                        yaz.WriteLine("import { Component, OnDestroy, OnInit } from \"@angular/core\";");
-                        yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                        yaz.WriteLine("import { ModelService } from \"../../../services/model\";");
+                        yaz.WriteLine("import { Component, OnInit, OnDestroy } from '@angular/core';");
+                        yaz.WriteLine("import { Subscription } from 'rxjs';");
+                        yaz.WriteLine("import { ModelService } from '../../../services/model';");
+
+                        if (hasUserRights)
+                        {
+                            yaz.WriteLine("import { SharedService } from '../../../services/shared';");
+                            yaz.WriteLine("import { AdminLib } from '../../../lib/lib';");
+                        }
+
                         yaz.WriteLine("declare var DataTable;");
                         yaz.WriteLine("");
                         yaz.WriteLine("@Component({");
@@ -2835,45 +3576,148 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("export class Admin" + Table + "IndexComponent implements OnInit, OnDestroy {");
                         yaz.WriteLine("\terrorMsg: string;");
-                        yaz.WriteLine("\t" + Table + "List: any;");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tcallTable: boolean;");
                         yaz.WriteLine("");
+
+                        if (hasUserRights)
+                        {
+                            yaz.WriteLine("\tinsertShow: boolean = false;");
+
+                            if (table.IdentityColumns.Count > 0)
+                            {
+                                yaz.WriteLine("\tupdateShow: boolean = false;");
+                                yaz.WriteLine("\tdeleteShow: boolean = false;");
+                                yaz.WriteLine("\tcopyShow: boolean = false;");
+
+                                if (table.Deleted)
+                                    yaz.WriteLine("\tremoveShow: boolean = false;");
+
+                                if (Table == "Users")
+                                    yaz.WriteLine("\tchangeGroupShow: boolean = false;");
+                            }
+
+                            yaz.WriteLine("");
+                        }
+
                         yaz.WriteLine("\tprivate subscription: Subscription = new Subscription();");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\tconstructor(private service: ModelService) {");
+
+                        yaz.WriteLine("\t" + Table + "List: any;");
+                        yaz.WriteLine("");
+
+                        string constHasUserRight = hasUserRights ? ", private sharedService: SharedService" : "";
+
+                        yaz.WriteLine("\tconstructor(private service: ModelService" + constHasUserRight + ") {");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tngOnInit() {");
                         yaz.WriteLine("\t\tthis.callTable = true;");
-                        yaz.WriteLine("\t\tthis.FillData();");
+
+                        string hasRightHiddenModel = hasUserRights ? "$(\"#hdnType\").val()" : "";
+
+                        yaz.WriteLine("\t\tthis.FillData(" + hasRightHiddenModel + ");");
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\tFillData() {");
-                        yaz.WriteLine("\t\tif (this.callTable == true) {");
-                        yaz.WriteLine("\t\t\tthis.subscription = this.service.get(\"" + Table + "\", \"Index\").subscribe((answer: any) => {");
-                        yaz.WriteLine("\t\t\t\tthis." + Table + "List = answer;");
-                        yaz.WriteLine("\t\t\t\tthis.callTable = false;");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\tsetTimeout(() => {");
-                        yaz.WriteLine("\t\t\t\t\tDataTable();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\t\t\t$(document)");
-                        yaz.WriteLine("\t\t\t\t\t\t.off(\"click\", \".fg-button\")");
-                        yaz.WriteLine("\t\t\t\t\t\t.on(\"click\", \".fg-button\", () => {");
-                        yaz.WriteLine("\t\t\t\t\t\t\tsetTimeout(() => {");
-                        yaz.WriteLine("\t\t\t\t\t\t\t\tthis.FillData();");
-                        yaz.WriteLine("\t\t\t\t\t\t\t}, 1);");
-                        yaz.WriteLine("\t\t\t\t\t\t});");
-                        yaz.WriteLine("\t\t\t\t}, 1);");
-                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\tsetTimeout(() => {");
-                        yaz.WriteLine("\t\t\tif ($(\".dropdown-menu\").first().find(\"a\").length <= 0) {");
-                        yaz.WriteLine("\t\t\t\t$(\".btn-group\").remove();");
-                        yaz.WriteLine("\t\t\t}");
-                        yaz.WriteLine("\t\t}, 1);");
+
+                        string hasRightModel = hasUserRights ? "Model: any" : "";
+
+                        yaz.WriteLine("\tFillData(" + hasRightModel + ") {");
+
+                        string ttab = hasUserRights ? "\t" : "";
+
+                        if (hasUserRights)
+                        {
+                            yaz.WriteLine("\t\tthis.sharedService.getCurrentUserRights(Model).subscribe((userRights: any) => {");
+                            yaz.WriteLine("\t\t\tthis.insertShow = AdminLib.UserRight(userRights, Model, \"i\");");
+
+                            if (table.IdentityColumns.Count > 0)
+                            {
+                                yaz.WriteLine("\t\t\tthis.updateShow = AdminLib.UserRight(userRights, Model, \"u\");");
+                                yaz.WriteLine("\t\t\tthis.copyShow = AdminLib.UserRight(userRights, Model, \"c\");");
+                                yaz.WriteLine("\t\t\tthis.deleteShow = AdminLib.UserRight(userRights, Model, \"d\");");
+
+                                if (Table == "Users")
+                                    yaz.WriteLine("\t\t\tthis.changeGroupShow = AdminLib.UserRight(userRights, Model, \"cg\");");
+
+                                if (table.Deleted)
+                                    yaz.WriteLine("\t\t\tthis.removeShow = AdminLib.UserRight(userRights, Model, \"r\");");
+
+                            }
+                            yaz.WriteLine("");
+                        }
+
+                        yaz.WriteLine(ttab + "\t\tif (this.callTable == true) {");
+                        yaz.WriteLine(ttab + "\t\t\tthis.subscription = this.service.get(\"" + Table + "\", \"Index\").subscribe((resData: any) => {");
+
+
+                        if (hasLinks)
+                        {
+                            if (Table == "Links")
+                            {
+                                yaz.WriteLine(ttab + "\t\t\t\tif (resData != null) {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\tfor (var i = 0; i < resData.length; i++) {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\tswitch (resData[i].LinkedTypeID) {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 1: resData[i].LinkedAdi = resData[i].LinkedCategoryAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 2: resData[i].LinkedAdi = resData[i].LinkedContentAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 3: resData[i].LinkedAdi = resData[i].LinkedProductAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 4: resData[i].LinkedAdi = resData[i].LinkedGalleryAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 5: resData[i].LinkedAdi = resData[i].LinkedPicturesAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 6: resData[i].LinkedAdi = resData[i].LinkedFilesAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 7: resData[i].LinkedAdi = resData[i].LinkedMetaAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t}");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t}");
+                                yaz.WriteLine(ttab + "\t\t\t\t}");
+                            }
+
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine(ttab + "\t\t\t\tif (resData != null) {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\tfor (var i = 0; i < resData.length; i++) {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\tswitch (resData[i].MainTypeID) {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 1: resData[i].MainAdi = resData[i].MainCategoryAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 2: resData[i].MainAdi = resData[i].MainContentAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 3: resData[i].MainAdi = resData[i].MainProductAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 4: resData[i].MainAdi = resData[i].MainGalleryAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 5: resData[i].MainAdi = resData[i].MainPicturesAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 6: resData[i].MainAdi = resData[i].MainFilesAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\tcase 7: resData[i].MainAdi = resData[i].MainMetaAdi; break;");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t}");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t}");
+                                yaz.WriteLine(ttab + "\t\t\t\t}");
+                            }
+
+                            yaz.WriteLine("");
+                        }
+
+                        yaz.WriteLine(ttab + "\t\t\t\tthis." + Table + "List = resData;");
+                        yaz.WriteLine(ttab + "\t\t\t\tthis.callTable = false;");
+                        yaz.WriteLine(ttab + "");
+                        yaz.WriteLine(ttab + "\t\t\t\tsetTimeout(() => {");
+                        yaz.WriteLine(ttab + "\t\t\t\t\tDataTable();");
+                        yaz.WriteLine(ttab + "");
+                        yaz.WriteLine(ttab + "\t\t\t\t\t$(document)");
+                        yaz.WriteLine(ttab + "\t\t\t\t\t\t.off(\"click\", \".fg-button\")");
+                        yaz.WriteLine(ttab + "\t\t\t\t\t\t.on(\"click\", \".fg-button\", () => {");
+                        yaz.WriteLine(ttab + "\t\t\t\t\t\t\tsetTimeout(() => {");
+                        yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tthis.FillData(" + hasRightHiddenModel + ");");
+                        yaz.WriteLine(ttab + "\t\t\t\t\t\t\t}, 1);");
+                        yaz.WriteLine(ttab + "\t\t\t\t\t\t});");
+                        yaz.WriteLine(ttab + "\t\t\t\t}, 1);");
+                        yaz.WriteLine(ttab + "\t\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
+                        yaz.WriteLine(ttab + "\t\t}");
+                        yaz.WriteLine(ttab + "");
+                        yaz.WriteLine(ttab + "\t\tsetTimeout(() => {");
+                        yaz.WriteLine(ttab + "\t\t\tif ($(\".dropdown-menu\").first().find(\"a\").length <= 0) {");
+                        yaz.WriteLine(ttab + "\t\t\t\t$(\".btn-group\").remove();");
+                        yaz.WriteLine(ttab + "\t\t\t}");
+                        yaz.WriteLine(ttab + "\t\t}, 1);");
+
+                        if (hasUserRights)
+                        {
+                            yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        }
+
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tngOnDestroy(): void {");
@@ -2891,11 +3735,11 @@ namespace TDFactory
                     {
                         string afterViewChecked = table.EDITORColumns.Count > 0 ? ", AfterViewChecked" : "";
 
-                        yaz.WriteLine("import { Component" + afterViewChecked + " } from \"@angular/core\";");
-                        yaz.WriteLine("import { Router } from \"@angular/router\";");
-                        yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
-                        yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                        yaz.WriteLine("import { ModelService } from \"../../../services/model\";");
+                        yaz.WriteLine("import { Component" + afterViewChecked + " } from '@angular/core';");
+                        yaz.WriteLine("import { Router } from '@angular/router';");
+                        yaz.WriteLine("import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';");
+                        yaz.WriteLine("import { Subscription } from 'rxjs';");
+                        yaz.WriteLine("import { ModelService } from '../../../services/model';");
 
                         if (table.Columns.Where(a => a.DataType.ToLower().Contains("decimal")).Count() > 0 || table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                         {
@@ -2914,8 +3758,8 @@ namespace TDFactory
                         yaz.WriteLine("\terrorMsg: string;");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tinsertForm: FormGroup;");
-                        yaz.WriteLine("\tdata: any;");
                         yaz.WriteLine("");
+                        yaz.WriteLine("\tdata: any;");
                         yaz.WriteLine("\tmodel: any;");
                         yaz.WriteLine("");
 
@@ -3086,6 +3930,53 @@ namespace TDFactory
                         yaz.WriteLine("\t}");
                         yaz.WriteLine("");
 
+                        if (hasLinks)
+                        {
+                            if (Table == "Links")
+                            {
+                                yaz.WriteLine("\tonChange(event) {");
+                                yaz.WriteLine("\t\tvar target = event.target || event.srcElement || event.currentTarget;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tthis.service.get(\"Links\", \"FillObject\", null, null, target.value, null).subscribe((answer: any) => {");
+                                yaz.WriteLine("\t\t\tif (answer != null) {");
+                                yaz.WriteLine("\t\t\t\t$(\"select.selectLinkID\").html(\"\");");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\tfor (var i = 0; i < answer.length; i++) {");
+                                yaz.WriteLine("\t\t\t\t\t$(\"select.selectLinkID\").append(\"<option value='\" + answer[i].Value + \"'>\" + answer[i].Text + \"</option>\");");
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\telse {");
+                                yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(\"Bağlı Nesne getirilemedi yada ilgili Bağlı Tip'e ait nesne henüz tanımlanmamış.\");");
+                                yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                                yaz.WriteLine("\t}");
+                            }
+
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine("\tonChange(event) {");
+                                yaz.WriteLine("\t\tvar target = event.target || event.srcElement || event.currentTarget;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tthis.service.get(\"LinkTypes\", \"FillTypes\", null, null, null, target.value).subscribe((answer: any) => {");
+                                yaz.WriteLine("\t\t\tif (answer != null) {");
+                                yaz.WriteLine("\t\t\t\t$(\"select.selectMain\").html(\"\");");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\tfor (var i = 0; i < answer.length; i++) {");
+                                yaz.WriteLine("\t\t\t\t\t$(\"select.selectMain\").append(\"<option value='\" + answer[i].Value + \"'>\" + answer[i].Text + \"</option>\");");
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\telse {");
+                                yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(\"Ana Nesne getirilemedi yada ilgili Ana Tip'e ait nesne henüz tanımlanmamış.\");");
+                                yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                                yaz.WriteLine("\t}");
+                            }
+
+                            yaz.WriteLine("");
+                        }
+
                         yaz.WriteLine("\tonSubmit() {");
 
                         string tttab = table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 ? "\t\t" : "";
@@ -3147,17 +4038,15 @@ namespace TDFactory
                             }
                         }
 
-                        yaz.WriteLine(tttab + "\t\tthis.service.post(\"" + Table + "\", \"Insert\", this.data)");
-                        yaz.WriteLine(tttab + "\t\t\t.subscribe((answer: any) => {");
-                        yaz.WriteLine(tttab + "\t\t\t\tif (answer.Mesaj == null) {");
-                        yaz.WriteLine(tttab + "\t\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
-                        yaz.WriteLine(tttab + "\t\t\t\t}");
-                        yaz.WriteLine(tttab + "\t\t\t\telse {");
-                        yaz.WriteLine(tttab + "\t\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
-                        yaz.WriteLine(tttab + "\t\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
-                        yaz.WriteLine(tttab + "\t\t\t\t}");
-                        yaz.WriteLine(tttab + "\t\t\t},");
-                        yaz.WriteLine(tttab + "\t\t\t\tresError => this.errorMsg = resError);");
+                        yaz.WriteLine(tttab + "\t\tthis.service.post(\"" + Table + "\", \"Insert\", this.data).subscribe((answer: any) => {");
+                        yaz.WriteLine(tttab + "\t\t\tif (answer.Mesaj == null) {");
+                        yaz.WriteLine(tttab + "\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
+                        yaz.WriteLine(tttab + "\t\t\t}");
+                        yaz.WriteLine(tttab + "\t\t\telse {");
+                        yaz.WriteLine(tttab + "\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
+                        yaz.WriteLine(tttab + "\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                        yaz.WriteLine(tttab + "\t\t\t}");
+                        yaz.WriteLine(tttab + "\t\t}, resError => this.errorMsg = resError);");
 
                         if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                         {
@@ -3176,22 +4065,29 @@ namespace TDFactory
                     }
                 }
 
-                //Duzenle
                 if (table.IdentityColumns.Count > 0)
                 {
+                    //Duzenle
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\update.ts", FileMode.Create))
                     {
                         using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                         {
                             string afterViewChecked = table.EDITORColumns.Count > 0 ? ", AfterViewChecked" : "";
 
-                            yaz.WriteLine("import { Component" + afterViewChecked + " } from \"@angular/core\";");
-                            yaz.WriteLine("import { ActivatedRoute, Params, Router } from \"@angular/router\";");
-                            yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from \"@angular/forms\";");
-                            yaz.WriteLine("import { Subscription } from \"rxjs\";");
-                            yaz.WriteLine("import { ModelService } from \"../../../services/model\";");
+                            yaz.WriteLine("import { Component" + afterViewChecked + " } from '@angular/core';");
+                            yaz.WriteLine("import { Router, ActivatedRoute, Params } from '@angular/router';");
+                            yaz.WriteLine("import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';");
+                            yaz.WriteLine("import { Subscription } from 'rxjs';");
+                            yaz.WriteLine("import { ModelService } from '../../../services/model';");
 
-                            if (table.Columns.Where(a => a.DataType.ToLower().Contains("decimal")).Count() > 0 || table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
+                            bool updateHasRights = hasUserRights && table.FkcList.Count > 0 ? true : false;
+
+                            if (updateHasRights)
+                            {
+                                yaz.WriteLine("import { SharedService } from '../../../services/shared';");
+                            }
+
+                            if (updateHasRights || table.Columns.Where(a => a.DataType.ToLower().Contains("decimal")).Count() > 0 || table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0 || table.EDITORColumns.Count > 0)
                             {
                                 yaz.WriteLine("import { AdminLib } from '../../../lib/lib';");
                             }
@@ -3213,12 +4109,29 @@ namespace TDFactory
                             yaz.WriteLine("\terrorMsg: string;");
                             yaz.WriteLine("\tid: string;");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\tupdateForm: FormGroup;");
-                            yaz.WriteLine("\tdata: any;");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\tmodel: any;");
-                            yaz.WriteLine("");
                             yaz.WriteLine("\tcallTable: boolean;");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tupdateForm: FormGroup;");
+                            yaz.WriteLine("");
+
+                            if (updateHasRights)
+                            {
+                                yaz.WriteLine("\tinsertShow: boolean = false;");
+                                yaz.WriteLine("\tupdateShow: boolean = false;");
+                                yaz.WriteLine("\tdeleteShow: boolean = false;");
+                                yaz.WriteLine("\tcopyShow: boolean = false;");
+
+                                if (table.Deleted)
+                                    yaz.WriteLine("\tremoveShow: boolean = false;");
+
+                                if (Table == "Users")
+                                    yaz.WriteLine("\tchangeGroupShow: boolean = false;");
+
+                                yaz.WriteLine("");
+                            }
+
+                            yaz.WriteLine("\tdata: any;");
+                            yaz.WriteLine("\tmodel: any;");
                             yaz.WriteLine("");
 
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
@@ -3251,14 +4164,19 @@ namespace TDFactory
                             yaz.WriteLine("\tprivate subscription: Subscription = new Subscription();");
                             yaz.WriteLine("");
 
-                            yaz.WriteLine("\tconstructor(private service: ModelService, private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute) {");
+                            string constHasUserRight = updateHasRights ? ", private sharedService: SharedService" : "";
+
+                            yaz.WriteLine("\tconstructor(private service: ModelService" + constHasUserRight + ", private formBuilder: FormBuilder, private router: Router, private route: ActivatedRoute) {");
                             yaz.WriteLine("\t}");
                             yaz.WriteLine("");
                             yaz.WriteLine("\tngOnInit() {");
                             yaz.WriteLine("\t\tthis.data = new Object();");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\tthis.callTable = true;");
-                            yaz.WriteLine("\t\tthis.FillData();");
+
+                            string hasRightHiddenModel = updateHasRights ? "$(\"#hdnType\").val()" : "";
+
+                            yaz.WriteLine("\t\tthis.FillData(" + hasRightHiddenModel + ");");
                             yaz.WriteLine("");
 
                             int i = 0;
@@ -3321,7 +4239,8 @@ namespace TDFactory
                                             }
                                             else
                                             {
-                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.minLength(1), Validators.maxLength(" + column.CharLength + ")]),");
+                                                string validator = hasUserRights && Table == "Users" && column.ColumnName == "Password" ? "" : ", [Validators.required, Validators.minLength(1), Validators.maxLength(" + column.CharLength + ")]";
+                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null" + validator + "),");
                                             }
                                         }
                                     }
@@ -3344,47 +4263,6 @@ namespace TDFactory
                                 yaz.WriteLine("\t}");
                                 yaz.WriteLine("");
                             }
-
-                            yaz.WriteLine("\tFillData() {");
-                            yaz.WriteLine("\t\tif (this.callTable == true) {");
-                            yaz.WriteLine("\t\t\tthis.route.params.subscribe((params: Params) => {");
-                            yaz.WriteLine("\t\t\t\tthis.id = params['id'];");
-                            yaz.WriteLine("\t\t\t\tthis.subscription = this.service.get(\"" + Table + "\", \"Update\", this.id).subscribe((answer: any) => {");
-                            yaz.WriteLine("\t\t\t\t\tthis.model = answer;");
-                            yaz.WriteLine("\t\t\t\t\tthis.callTable = false;");
-
-                            if (table.FkcList.Count > 0)
-                            {
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\t\t\tsetTimeout(() => {");
-                                yaz.WriteLine("\t\t\t\t\t\tDataTable();");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\t\t\t\t$(document)");
-                                yaz.WriteLine("\t\t\t\t\t\t\t.off(\"click\", \".fg-button\")");
-                                yaz.WriteLine("\t\t\t\t\t\t\t.on(\"click\", \".fg-button\", () => {");
-                                yaz.WriteLine("\t\t\t\t\t\t\t\tsetTimeout(() => {");
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t\tthis.FillData();");
-                                yaz.WriteLine("\t\t\t\t\t\t\t\t}, 1);");
-                                yaz.WriteLine("\t\t\t\t\t\t\t});");
-                                yaz.WriteLine("\t\t\t\t\t}, 1);");
-                            }
-
-                            yaz.WriteLine("\t\t\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
-                            yaz.WriteLine("\t\t\t});");
-                            yaz.WriteLine("\t\t}");
-
-                            if (table.FkcList.Count > 0)
-                            {
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\tsetTimeout(() => {");
-                                yaz.WriteLine("\t\t\tif ($(\".dropdown-menu\").first().find(\"a\").length <= 0) {");
-                                yaz.WriteLine("\t\t\t\t$(\".btn-group\").remove();");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("\t\t}, 1);");
-                            }
-
-                            yaz.WriteLine("\t}");
-                            yaz.WriteLine("");
 
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
@@ -3419,6 +4297,31 @@ namespace TDFactory
                             yaz.WriteLine("\t\tthis.subscription.unsubscribe();");
                             yaz.WriteLine("\t}");
                             yaz.WriteLine("");
+
+                            if (hasLinks)
+                            {
+                                if (Table == "LinkTypes")
+                                {
+                                    yaz.WriteLine("\tonChange(event) {");
+                                    yaz.WriteLine("\t\tvar target = event.target || event.srcElement || event.currentTarget;");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\tthis.service.get(\"LinkTypes\", null, null, null, target.value).subscribe((answer: any) => {");
+                                    yaz.WriteLine("\t\t\tif (answer != null) {");
+                                    yaz.WriteLine("\t\t\t\t$(\"select.selectMain\").html(\"\");");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\tfor (var i = 0; i < answer.length; i++) {");
+                                    yaz.WriteLine("\t\t\t\t\t$(\"select.selectMain\").append(\"<option value='\" + answer[i].Value + \"'>\" + answer[i].Text + \"</option>\");");
+                                    yaz.WriteLine("\t\t\t\t}");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t\telse {");
+                                    yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(\"Ana Nesne getirilemedi yada ilgili Ana Tip'e ait nesne henüz tanımlanmamış.\");");
+                                    yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                                    yaz.WriteLine("\t}");
+                                    yaz.WriteLine("");
+                                }
+                            }
 
                             yaz.WriteLine("\tonSubmit() {");
 
@@ -3477,7 +4380,8 @@ namespace TDFactory
                                     }
                                     else
                                     {
-                                        yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = this.updateForm.get(\"" + column.ColumnName + "\").value;");
+                                        string value = hasUserRights && Table == "Users" && column.ColumnName == "Password" ? "$(\"#" + column.ColumnName + "\").val()" : "this.updateForm.get(\"" + column.ColumnName + "\").value";
+                                        yaz.WriteLine(tttab + "\t\tthis.data." + column.ColumnName + " = " + value + ";");
                                     }
                                 }
 
@@ -3489,17 +4393,15 @@ namespace TDFactory
                                 }
                             }
 
-                            yaz.WriteLine(tttab + "\t\tthis.service.post(\"" + Table + "\", \"Update\", this.data)");
-                            yaz.WriteLine(tttab + "\t\t\t.subscribe((answer: any) => {");
-                            yaz.WriteLine(tttab + "\t\t\t\tif (answer.Mesaj == null) {");
-                            yaz.WriteLine(tttab + "\t\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
-                            yaz.WriteLine(tttab + "\t\t\t\t}");
-                            yaz.WriteLine(tttab + "\t\t\t\telse {");
-                            yaz.WriteLine(tttab + "\t\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
-                            yaz.WriteLine(tttab + "\t\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
-                            yaz.WriteLine(tttab + "\t\t\t\t}");
-                            yaz.WriteLine(tttab + "\t\t\t},");
-                            yaz.WriteLine(tttab + "\t\t\t\tresError => this.errorMsg = resError);");
+                            yaz.WriteLine(tttab + "\t\tthis.service.post(\"" + Table + "\", \"Update\", this.data).subscribe((answer: any) => {");
+                            yaz.WriteLine(tttab + "\t\t\tif (answer.Mesaj == null) {");
+                            yaz.WriteLine(tttab + "\t\t\t\tthis.router.navigate(['/Admin/" + Table + "']);");
+                            yaz.WriteLine(tttab + "\t\t\t}");
+                            yaz.WriteLine(tttab + "\t\t\telse {");
+                            yaz.WriteLine(tttab + "\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
+                            yaz.WriteLine(tttab + "\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                            yaz.WriteLine(tttab + "\t\t\t}");
+                            yaz.WriteLine(tttab + "\t\t}, resError => this.errorMsg = resError);");
 
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
                             {
@@ -3513,8 +4415,163 @@ namespace TDFactory
                             }
 
                             yaz.WriteLine("\t}");
+                            yaz.WriteLine("");
+
+                            string hasRightModel = updateHasRights ? "Model: any" : "";
+
+                            yaz.WriteLine("\tFillData(" + hasRightModel + ") {");
+
+                            string ttab = updateHasRights ? "\t\t" : "";
+
+                            if (updateHasRights)
+                            {
+                                yaz.WriteLine("\t\tthis.sharedService.getCurrentUserRights(Model).subscribe((userRights: any) => {");
+                                yaz.WriteLine("\t\t\tthis.insertShow = AdminLib.UserRight(userRights, Model, \"i\");");
+                                yaz.WriteLine("\t\t\tthis.updateShow = AdminLib.UserRight(userRights, Model, \"u\");");
+                                yaz.WriteLine("\t\t\tthis.copyShow = AdminLib.UserRight(userRights, Model, \"c\");");
+                                yaz.WriteLine("\t\t\tthis.deleteShow = AdminLib.UserRight(userRights, Model, \"d\");");
+
+                                if (Table == "Users")
+                                    yaz.WriteLine("\t\t\tthis.changeGroupShow = AdminLib.UserRight(userRights, Model, \"cg\");");
+
+                                if (table.Deleted)
+                                    yaz.WriteLine("\t\t\tthis.removeShow = AdminLib.UserRight(userRights, Model, \"r\");");
+
+                                yaz.WriteLine("");
+                            }
+
+                            yaz.WriteLine(ttab + "\t\tif (this.callTable == true) {");
+                            yaz.WriteLine(ttab + "\t\t\tthis.route.params.subscribe((params: Params) => {");
+                            yaz.WriteLine(ttab + "\t\t\t\tthis.id = params['id'];");
+                            yaz.WriteLine(ttab + "\t\t\t\tthis.subscription = this.service.get(\"" + Table + "\", \"Update\", this.id).subscribe((resData: any) => {");
+
+                            if (hasLinks)
+                            {
+                                if (Table == "LinkTypes")
+                                {
+                                    yaz.WriteLine(ttab + "\t\t\t\t\tif (resData != null) {");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\tfor (var i = 0; i < resData.LinkList.length; i++) {");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\tswitch (resData.LinkedTypeID) {");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tcase 1: resData.LinksList[i].LinkedAdi = resData.LinkList[i].LinkedCategoryAdi; break;");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tcase 2: resData.LinksList[i].LinkedAdi = resData.LinkList[i].LinkedContentAdi; break;");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tcase 3: resData.LinksList[i].LinkedAdi = resData.LinkList[i].LinkedProductAdi; break;");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tcase 4: resData.LinksList[i].LinkedAdi = resData.LinkList[i].LinkedGalleryAdi; break;");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tcase 5: resData.LinksList[i].LinkedAdi = resData.LinkList[i].LinkedPicturesAdi; break;");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tcase 6: resData.LinksList[i].LinkedAdi = resData.LinkList[i].LinkedFilesAdi; break;");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tcase 7: resData.LinksList[i].LinkedAdi = resData.LinkList[i].LinkedMetaAdi; break;");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t\t}");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t\t}");
+                                    yaz.WriteLine(ttab + "\t\t\t\t\t}");
+                                    yaz.WriteLine("");
+                                }
+                            }
+
+                            yaz.WriteLine(ttab + "\t\t\t\t\tthis.model = resData;");
+                            yaz.WriteLine(ttab + "\t\t\t\t\tthis.callTable = false;");
+
+                            if (table.FkcList.Count > 0)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine(ttab + "\t\t\t\t\tsetTimeout(() => {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\tDataTable();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t$(document)");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\t.off(\"click\", \".fg-button\")");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\t.on(\"click\", \".fg-button\", () => {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\tsetTimeout(() => {");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\t\tthis.FillData(" + hasRightHiddenModel + ");");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\t\t}, 1);");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t\t\t});");
+                                yaz.WriteLine(ttab + "\t\t\t\t\t}, 1);");
+                            }
+
+                            yaz.WriteLine(ttab + "\t\t\t\t}, resError => this.errorMsg = resError, () => { this.subscription.unsubscribe(); });");
+                            yaz.WriteLine(ttab + "\t\t\t});");
+                            yaz.WriteLine(ttab + "\t\t}");
+
+                            if (table.FkcList.Count > 0)
+                            {
+                                yaz.WriteLine("");
+                                yaz.WriteLine(ttab + "\t\tsetTimeout(() => {");
+                                yaz.WriteLine(ttab + "\t\t\tif ($(\".dropdown-menu\").first().find(\"a\").length <= 0) {");
+                                yaz.WriteLine(ttab + "\t\t\t\t$(\".btn-group\").remove();");
+                                yaz.WriteLine(ttab + "\t\t\t}");
+                                yaz.WriteLine(ttab + "\t\t}, 1);");
+                            }
+
+                            if (updateHasRights)
+                            {
+                                yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                            }
+
+                            yaz.WriteLine("\t}");
+
                             yaz.WriteLine("}");
                             yaz.Close();
+                        }
+                    }
+
+                    if (Table == "Users" && hasUserRights)
+                    {
+                        //GrupDegistir
+                        using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\general\\" + Table.ToUrl(true) + "\\changegroup.ts", FileMode.Create))
+                        {
+                            using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
+                            {
+                                yaz.WriteLine("import { Component } from '@angular/core';");
+                                yaz.WriteLine("import { ModelService } from '../../../services/model';");
+                                yaz.WriteLine("import { Router, ActivatedRoute, Params } from '@angular/router';");
+                                yaz.WriteLine("import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("@Component({");
+                                yaz.WriteLine("\ttemplateUrl: './changegroup.html'");
+                                yaz.WriteLine("})");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("export class AdminUsersChangeGroupComponent {");
+                                yaz.WriteLine("\terrorMsg: string;");
+                                yaz.WriteLine("\tid: string;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tchangeGroupForm: FormGroup;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tdata: any;");
+                                yaz.WriteLine("\tmodel: any;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tconstructor(private service: ModelService, private router: Router, private route: ActivatedRoute, private formBuilder: FormBuilder) {");
+                                yaz.WriteLine("\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tngOnInit() {");
+                                yaz.WriteLine("\t\tthis.data = new Object();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tthis.route.params.subscribe((params: Params) => {");
+                                yaz.WriteLine("\t\t\tthis.id = params['id'];");
+                                yaz.WriteLine("\t\t\tthis.service.get(\"Users\", \"ChangeGroup\", this.id).subscribe((resData: any) => {");
+                                yaz.WriteLine("\t\t\t\tthis.model = resData;");
+                                yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError);");
+                                yaz.WriteLine("\t\t});");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tthis.changeGroupForm = this.formBuilder.group({");
+                                yaz.WriteLine("\t\t\tID: new FormControl(null, [Validators.required, Validators.min(1)]),");
+                                yaz.WriteLine("\t\t\tGroupID: new FormControl(null, [Validators.required, Validators.min(1)]),");
+                                yaz.WriteLine("\t\t});");
+                                yaz.WriteLine("\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tonSubmit() {");
+                                yaz.WriteLine("\t\tthis.data.ID = this.changeGroupForm.get(\"ID\").value;");
+                                yaz.WriteLine("\t\tthis.data.GroupID = this.changeGroupForm.get(\"GroupID\").value;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tthis.service.post(\"Users\", \"ChangeGroup\", this.data).subscribe((answer: any) => {");
+                                yaz.WriteLine("\t\t\tif (answer.Mesaj == null) {");
+                                yaz.WriteLine("\t\t\t\tthis.router.navigate(['/Admin/Users']);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\telse {");
+                                yaz.WriteLine("\t\t\t\t$(\".alertMessage\").text(answer.Mesaj);");
+                                yaz.WriteLine("\t\t\t\t$(\".alert-error\").fadeIn(\"slow\");");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                                yaz.WriteLine("\t}");
+                                yaz.WriteLine("}");
+                                yaz.Close();
+                            }
                         }
                     }
                 }
@@ -3616,49 +4673,342 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
-                    yaz.WriteLine("using System.Web.Mvc;");
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("using System;");
+                        yaz.WriteLine("using System.Linq;");
+                        yaz.WriteLine("using System.Web.Mvc;");
+                        yaz.WriteLine("using System.Globalization;");
+                        yaz.WriteLine("using " + repositoryName + ".Data;");
+                        yaz.WriteLine("using " + repositoryName + ".UsersModel;");
+                        yaz.WriteLine("using TDLibrary;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class SharedController : Controller");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\treadonly " + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                        yaz.WriteLine("\t\treadonly Users curUser = AppTools.User;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpPost]");
+                        yaz.WriteLine("\t\tpublic JsonResult Login([System.Web.Http.FromBody] Users user)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tusp_UsersSelectLogin_Result rb = entity.usp_UsersSelectLogin(user.Username, user.Password.ToMD5()).FirstOrDefault();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tif (rb != null)");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\tuser = rb.ChangeModel<Users>();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tSession[\"CurrentUser\"] = user;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tentity.usp_UsersLoginTimeUpdate(user.ID, DateTime.Now.ToString(CultureInfo.CurrentCulture));");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\tAppTools.User.Log(\"grs\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\treturn Json(true);");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn Json(false);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult Logout()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tAppTools.User.Log(\"cks\");");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = null;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult LoginControl()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tif (Session[\"CurrentUser\"] == null)");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\telse");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\ttry");
+                        yaz.WriteLine("\t\t\t\t{");
+                        yaz.WriteLine("\t\t\t\t\tUsers user = Session[\"CurrentUser\"] as Users;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\tusp_UsersSelectLogin_Result rb = entity.usp_UsersSelectLogin(user.Username, user.Password).FirstOrDefault();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\t\t\tif (rb != null)");
+                        yaz.WriteLine("\t\t\t\t\t{");
+                        yaz.WriteLine("\t\t\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\telse");
+                        yaz.WriteLine("\t\t\t\t\t{");
+                        yaz.WriteLine("\t\t\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\tcatch");
+                        yaz.WriteLine("\t\t\t\t{");
+                        yaz.WriteLine("\t\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult CurrentUser()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn Json((Users)Session[\"CurrentUser\"], JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult CurrentUserRights(string url, string process)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn Json(curUser.UserRights(url, process), JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult ShowTypes()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn Json(Lib.ShowTypes(), JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult HasRight(string url, string process)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn Json(curUser.HasRight(url, process), JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+                    }
+                    else
+                    {
+                        yaz.WriteLine("using System.Web.Mvc;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
+                        yaz.WriteLine("{");
+                        yaz.WriteLine("\tpublic class SharedController : Controller");
+                        yaz.WriteLine("\t{");
+                        yaz.WriteLine("\t\t[HttpPost]");
+                        yaz.WriteLine("\t\tpublic JsonResult Login([System.Web.Http.FromBody] dynamic user)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = user;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn Json(true);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult Logout()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = null;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult LoginControl()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tif (Session[\"CurrentUser\"] == null)");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t\telse");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult CurrentUser()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn Json(\"Username\", JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("}");
+                    }
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateAngularLib()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\Lib\\Lib.cs", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("using System;");
+                    yaz.WriteLine("using System.Collections.Generic;");
+                    yaz.WriteLine("using System.Linq;");
+                    yaz.WriteLine("using System.Reflection;");
+                    yaz.WriteLine("using System.Web;");
+                    yaz.WriteLine("using System.Web.Configuration;");
+                    yaz.WriteLine("using System.Web.Caching;");
+                    yaz.WriteLine("using Cacher = System.Web.HttpRuntime;");
+                    yaz.WriteLine("using " + repositoryName + ".Data;");
+                    yaz.WriteLine("using " + repositoryName + ".UsersModel;");
+                    yaz.WriteLine("using TDLibrary;");
                     yaz.WriteLine("");
-                    yaz.WriteLine("namespace " + projectName + ".Areas.Ajax.Controllers");
+                    yaz.WriteLine("namespace " + projectName);
                     yaz.WriteLine("{");
-                    yaz.WriteLine("\tpublic class SharedController : Controller");
+                    yaz.WriteLine("\tpublic class AppTools");
                     yaz.WriteLine("\t{");
-                    yaz.WriteLine("\t\t[HttpPost]");
-                    yaz.WriteLine("\t\tpublic JsonResult Login([System.Web.Http.FromBody] dynamic user)");
+                    yaz.WriteLine("\t\tpublic static string UploadPath");
                     yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = user;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\treturn Json(true);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[HttpGet]");
-                    yaz.WriteLine("\t\tpublic JsonResult Logout()");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tSession[\"CurrentUser\"] = null;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[HttpGet]");
-                    yaz.WriteLine("\t\tpublic JsonResult LoginControl()");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tif (Session[\"CurrentUser\"] == null)");
+                    yaz.WriteLine("\t\t\tget");
                     yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\treturn Json(false, JsonRequestBehavior.AllowGet);");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t\telse");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                    yaz.WriteLine("\t\t\t\treturn WebConfigurationManager.AppSettings[\"UploadPath\"] != null ? WebConfigurationManager.AppSettings[\"UploadPath\"].ToString() : string.Empty;");
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\t[HttpGet]");
-                    yaz.WriteLine("\t\tpublic JsonResult CurrentUser()");
+                    yaz.WriteLine("\t\tpublic static Users User");
                     yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\treturn Json(\"Username\", JsonRequestBehavior.AllowGet);");
+                    yaz.WriteLine("\t\t\tget");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\treturn HttpContext.Current.Session[\"CurrentUser\"] != null ? HttpContext.Current.Session[\"CurrentUser\"] as Users : null;");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tpublic static string GetTime");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tget");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\treturn DateTime.Now.ToShortDateString() + \" \" + DateTime.Now.ToShortTimeString();");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tpublic static class UserProcesses");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\tpublic static List<usp_UserGroupRightsByUserIDAndUrl_Result> UserRights(this Users user, string url = null, string process = null)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tList<usp_UserGroupRightsByUserIDAndUrl_Result> result;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (Cacher.Cache[\"CurrentUserRights_\" + user.ID.ToString()] == null)");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\tList<usp_UserGroupRightsByUserIDAndUrl_Result> userRights = entity.usp_UserGroupRightsByUserIDAndUrl(user.ID, null, null).ToList();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tCacher.Cache.Insert(\"CurrentUserRights_\" + user.ID.ToString(), userRights, null, DateTime.Now.AddMinutes(15), Cache.NoSlidingExpiration, CacheItemPriority.Default, null);");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tresult = Cacher.Cache[\"CurrentUserRights_\" + user.ID.ToString()] as List<usp_UserGroupRightsByUserIDAndUrl_Result>;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (url.ToNull() != null)");
+                    yaz.WriteLine("\t\t\t\tresult = result.Where(a => a.Url == url).ToList();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (process.ToNull() != null)");
+                    yaz.WriteLine("\t\t\t\tresult = result.Where(a => a.ShortName == process).ToList();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn result;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tpublic static bool HasRight(this Users user, string url, string process = \"s\")");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tif (user == null)");
+                    yaz.WriteLine("\t\t\t\treturn false;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tList<usp_UserGroupRightsByUserIDAndUrl_Result> list = user.UserRights(url, process);");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tbool result = list.Count > 0 ? true : false;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn result;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tpublic static void Log<T>(this Users user, T model, string processShortName, string description = null, string idName = \"ID\")");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tif (user != null)");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tif (model != null)");
+                    yaz.WriteLine("\t\t\t\t{");
+                    yaz.WriteLine("\t\t\t\t\tif (model.GetType() == typeof(int))");
+                    yaz.WriteLine("\t\t\t\t\t\tdescription += CreateLogValues(model.ToString(), idName);");
+                    yaz.WriteLine("\t\t\t\t\telse");
+                    yaz.WriteLine("\t\t\t\t\t\tdescription += model.CreateLogValues(idName);");
+                    yaz.WriteLine("\t\t\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tdescription = description == null ? null : description.SplitText(0, 255);");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tentity.usp_LogsByProcessShortNameInsert(processShortName, user.ID, AppTools.GetTime, description);");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tpublic static void Log(this Users user, string processShortName, string description = null)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tif (user != null)");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tdescription = description == null ? null : description.SplitText(0, 255);");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tentity.usp_LogsByProcessShortNameInsert(processShortName, user.ID, AppTools.GetTime, description);");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tprivate static string CreateLogValues<T>(this T model, string idName)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tstring result = \" [\";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tforeach (PropertyInfo item in model.GetType().GetProperties())");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\tif (idName == item.Name && item.GetValue(model).ToString() == \"0\")");
+                    yaz.WriteLine("\t\t\t\t\tgoto devam;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tif (item.Name == \"Mesaj\")");
+                    yaz.WriteLine("\t\t\t\t\tbreak;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tresult += item.Name + \": \" + item.GetValue(model) + \", \";");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tdevam:;");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn result.TrimEnd(' ').TrimEnd(',') + \"]\";");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tprivate static string CreateLogValues(string model, string idName)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\treturn \" [\" + idName + \": \" + model.ToString() + \"]\";");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tpublic static class ExtMethods");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\tpublic static bool? ShowType(this string url)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\tList<usp_TypesShowSelect_Result> list = Lib.ShowTypes().Where(a => a.Url == url).ToList();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tbool result = list.Count > 0 ? list.FirstOrDefault().Show : false;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn result;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\tpublic static string ToNull(this string value)");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\treturn value == \"null\" ? null : value;");
+                    yaz.WriteLine("\t\t}");
+                    yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tpublic class Lib");
+                    yaz.WriteLine("\t{");
+                    yaz.WriteLine("\t\tpublic static List<usp_TypesShowSelect_Result> ShowTypes()");
+                    yaz.WriteLine("\t\t{");
+                    yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities entity = new " + cmbVeritabani.Text + "Entities();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tList<usp_TypesShowSelect_Result> result;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tif (Cacher.Cache[\"ShowTypes\"] == null)");
+                    yaz.WriteLine("\t\t\t{");
+                    yaz.WriteLine("\t\t\t\tList<usp_TypesShowSelect_Result> showTypes = entity.usp_TypesShowSelect(null).ToList();");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\t\tCacher.Cache.Insert(\"ShowTypes\", showTypes, null, DateTime.Now.AddMinutes(15), Cache.NoSlidingExpiration, CacheItemPriority.Default, null);");
+                    yaz.WriteLine("\t\t\t}");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\tresult = Cacher.Cache[\"ShowTypes\"] as List<usp_TypesShowSelect_Result>;");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\t\t\treturn result;");
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("}");
-                    yaz.Close();
                 }
             }
         }

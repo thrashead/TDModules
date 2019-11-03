@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
-namespace TDFactory.Helper
+namespace TDFactory
 {
     public static class ExMethods
     {
@@ -263,6 +263,41 @@ namespace TDFactory.Helper
             }
 
             return returnValue;
+        }
+
+        public static string ToUserRightType(this string tableName)
+        {
+            switch (tableName)
+            {
+                case "Category": return "Category";
+                case "CategoryT": return "Category";
+                case "Content": return "Content";
+                case "ContentT": return "Content";
+                case "Gallery": return "Gallery";
+                case "GalleryT": return "Gallery";
+                case "Meta": return "Meta";
+                case "MetaT": return "Meta";
+                case "Product": return "Product";
+                case "ProductT": return "Product";
+                case "Files": return "Files";
+                case "Pictures": return "Pictures";
+                case "LangContent": return "Translation";
+                case "LangContentT": return "Translation";
+                case "Links": return "LinkTypes";
+                case "LinkTypes": return "LinkTypes";
+                case "Logs": return "Logs";
+                case "LogProcess": return "Logs";
+                case "LogTypes": return "Logs";
+                case "Users": return "Users";
+                case "UserGroups": return "Users";
+                case "UserGroupTables": return "Users";
+                case "UserGroupProcess": return "Users";
+                case "UserGroupRights": return "Users";
+                case "Translation": return "Translation";
+                case "Types": return "Types";
+                case "Visitors": return "Website";
+                default: return "Website";
+            }
         }
     }
 }
