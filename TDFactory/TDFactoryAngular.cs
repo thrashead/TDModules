@@ -647,6 +647,21 @@ namespace TDFactory
                     yaz.WriteLine("<ul class=\"menu\">");
                     yaz.WriteLine("\t<li><a data-url=\"Index\" routerLink=\"/\">Ana Sayfa</a></li>");
                     yaz.WriteLine("</ul>");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("<br />");
+                        yaz.WriteLine("<br />");
+                        yaz.WriteLine("<img src=\"/" + projectName + "/Uploads/{{ flag?.Flag }}\" /> {{ flag?.ShortName }}");
+                        yaz.WriteLine("<ul>");
+                        yaz.WriteLine("\t<li *ngFor=\"let item of LangList\">");
+                        yaz.WriteLine("\t\t<a href=\"javascript:;\" (click)=\"OnLangSelect(item?.ID)\">");
+                        yaz.WriteLine("\t\t\t<img src=\"/" + projectName + "/Uploads/{{ item?.Flag }}\" /> {{ item?.ShortName }}");
+                        yaz.WriteLine("\t\t</a>");
+                        yaz.WriteLine("\t</li>");
+                        yaz.WriteLine("</ul>");
+                    }
+
                     yaz.Close();
                 }
             }
@@ -656,15 +671,66 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component } from '@angular/core';");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("import { SiteService } from '../../../services/site';");
+                    }
+
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToUrl(true) + "-header',");
                     yaz.WriteLine("\ttemplateUrl: './header.html'");
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
+
                     yaz.WriteLine("export class HeaderComponent {");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("\terrorMsg: string;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tflag: any = {};");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tLangList: any;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tconstructor(private service: SiteService) {");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                    }
+
                     yaz.WriteLine("\tngOnInit() {");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("\t\tthis.GetLangs();");
+                    }
+
                     yaz.WriteLine("\t}");
+                    yaz.WriteLine("");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("\t//Translation");
+                        yaz.WriteLine("\tGetLangs() {");
+                        yaz.WriteLine("\t\tthis.service.get(\"Site\", \"GetLangs\").subscribe((resData: any) => {");
+                        yaz.WriteLine("\t\t\tthis.LangList = resData;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tthis.service.get(\"Site\", \"SelectedLang\").subscribe((resData: any) => {");
+                        yaz.WriteLine("\t\t\t\tthis.flag = resData;");
+                        yaz.WriteLine("\t\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tOnLangSelect(id) {");
+                        yaz.WriteLine("\t\tthis.service.get(\"Site\", \"SelectLang\", id).subscribe((resData: any) => {");
+                        yaz.WriteLine("\t\t\tif (resData == true) {");
+                        yaz.WriteLine("\t\t\t\twindow.location.reload();");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t}");
+                    }
+
                     yaz.WriteLine("}");
                     yaz.Close();
                 }
@@ -4929,6 +4995,17 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
                     yaz.WriteLine("using System.Web.Mvc;");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("using Repository.TranslationModel;");
+                    }
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("using Repository.VisitorsModel;");
+                    }
+
                     yaz.WriteLine("");
                     yaz.WriteLine("namespace " + projectName + ".Controllers");
                     yaz.WriteLine("{");
@@ -4936,6 +5013,24 @@ namespace TDFactory
                     yaz.WriteLine("\t{");
                     yaz.WriteLine("\t\tpublic ActionResult Index()");
                     yaz.WriteLine("\t\t{");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("\t\t\tif (Session[\"CurrentLang\"] == null)");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\tTranslation translation = new Translation();");
+                        yaz.WriteLine("\t\t\t\tSession[\"CurrentLang\"] = translation.ByCode(\"TR\");");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("");
+                    }
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("\t\t\tVisitors visitor = new Visitors();");
+                        yaz.WriteLine("\t\t\tvisitor.VisitorCount(AppTools.GetIPAddress);");
+                        yaz.WriteLine("");
+                    }
+
                     yaz.WriteLine("\t\t\treturn View();");
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("\t}");
@@ -4959,6 +5054,7 @@ namespace TDFactory
                         yaz.WriteLine("using System.Collections.Generic;");
                         yaz.WriteLine("using " + repositoryName + ".LangContentModel;");
                         yaz.WriteLine("using " + repositoryName + ".NoLangContentModel;");
+                        yaz.WriteLine("using " + repositoryName + ".TranslationModel;");
                         yaz.WriteLine("using TDLibrary;");
                         yaz.WriteLine("using Models;");
                     }
@@ -4972,6 +5068,33 @@ namespace TDFactory
                     if (hasLangs)
                     {
                         CreateAngularLangItemModel();
+
+                        yaz.WriteLine("\t\t#region Translation");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult GetLangs()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tTranslation translation = new Translation();");
+                        yaz.WriteLine("\t\t\treturn Json(translation.List(), JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult SelectedLang()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\treturn Json((Translation)Session[\"CurrentLang\"], JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult SelectLang(int param)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tTranslation translation = new Translation();");
+                        yaz.WriteLine("\t\t\tSession[\"CurrentLang\"] = translation.Select(param);");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn Json(true, JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t#endregion");
+                        yaz.WriteLine("");
 
                         yaz.WriteLine("\t\t#region LangContent");
                         yaz.WriteLine("");
@@ -5018,6 +5141,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#endregion");
                         yaz.WriteLine("");
+
                         yaz.WriteLine("\t\t#region NoLangContent");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t[HttpGet]");

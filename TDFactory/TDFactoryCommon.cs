@@ -1571,6 +1571,17 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
                             }
+
+                            if (Table == "Translation")
+                            {
+                                yaz.WriteLine("\t\tpublic ITranslation ByCode(string code)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tusp_TranslationByCode_Result table = entity.usp_TranslationByCode(code).FirstOrDefault();");
+                                yaz.WriteLine("\t\t\tITranslation translation = table.ChangeModel<Translation>();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn translation;");
+                                yaz.WriteLine("\t\t}");
+                            }
                         }
 
                         if (hasUserRights && Table == "Visitors")
@@ -1587,6 +1598,13 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t{");
                             yaz.WriteLine("\t\t\t\treturn false;");
                             yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\tpublic string VisitorCount(string ipAddress)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tint? count = entity.usp_VisitorCount(ipAddress, DateTime.Now.ToShortDateString()).FirstOrDefault();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn count.ToString();");
                             yaz.WriteLine("\t\t}");
                         }
 
@@ -4399,6 +4417,7 @@ namespace TDFactory
                     yaz.WriteLine("\tFROM [dbo].[Logs]");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
                     yaz.WriteLine("");
                     yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_VisitorsClear]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
@@ -4416,6 +4435,35 @@ namespace TDFactory
                     yaz.WriteLine("\tFROM [dbo].[Visitors]");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_VisitorCount]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_VisitorCount]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_VisitorCount]");
+                    yaz.WriteLine("\t@IPAddress nvarchar(25),");
+                    yaz.WriteLine("\t@VisitTime nvarchar(25)");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tdeclare @count int = (SELECT count(1) FROM [dbo].[Visitors]");
+                    yaz.WriteLine("\tWHERE [IPAddress] = @IPAddress and [VisitTime] = @VisitTime)");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tif (@count = 0)");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\t\tINSERT INTO [dbo].[Visitors] ([IPAddress],[VisitTime])");
+                    yaz.WriteLine("\t\tSELECT @IPAddress, @VisitTime");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT count(1) FROM [dbo].[Visitors]");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
                     yaz.Close();
                 }
             }
@@ -4803,6 +4851,26 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_TranslationByCode]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_TranslationByCode]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_TranslationByCode]");
+                    yaz.WriteLine("\t@ShortName nvarchar(5)");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT TOP 1 [ID], [TransName], [ShortName], [Flag], [Active]");
+                    yaz.WriteLine("\tFROM   [dbo].[Translation]");
+                    yaz.WriteLine("\tWHERE  ([ShortName] = @ShortName OR @ShortName IS NULL) and [Deleted] = 0");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+
                     yaz.Close();
                 }
             }
