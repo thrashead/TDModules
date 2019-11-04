@@ -11,7 +11,7 @@ namespace TDFactory
         }
 
         public string Title { get; set; }
-
+        
         public List<AdminMenu> SubMenu { get; set; }
 
         public static List<AdminMenu> FillMenu(List<string> tables, ConnectionInfo conInfo)

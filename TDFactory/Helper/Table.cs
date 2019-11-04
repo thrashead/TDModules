@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace TDFactory
 {
@@ -15,22 +14,8 @@ namespace TDFactory
                 SqlConnection con = new SqlConnection(Helper.CreateConnectionText(conInfo));
                 List<ColumnInfo> tableColumnInfos = GetTableColumnInfos().Where(a => a.TableName == tableName).ToList();
                 TableName = tableName;
-                Columns = Helper.GetColumnsInfo(conInfo, tableName);
-                SearchTextColumn = GetColumnText(Columns);
-                URLColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstUrlColumns))).ToList();
-                GUIDColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstGuidColumns))).ToList();
-                CODEColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstCodeColumns))).ToList();
-                DELETEDColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstDeletedColumns))).ToList();
-                FILEColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstFileColumns))).ToList();
-                IMAGEColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstImageColumns))).ToList();
-                SEARCHColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstSearchColumns))).ToList();
-                MAILColumns = Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstMailColumns))).ToList();
-                EDITORColumns = Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.ToUrl(true).In(ListBoxItems(lstDeletedColumns)) && !a.ColumnName.ToUrl(true).In(ListBoxItems(lstFileColumns)) && !a.ColumnName.ToUrl(true).In(ListBoxItems(lstImageColumns))).ToList();
-                FkcList = ForeignKeyCheck(con, tableName).Where(a => a.PrimaryTableName == tableName).ToList();
-                FkcForeignList = ForeignKeyCheck(con).Where(a => a.ForeignTableName == tableName).ToList();
-                IdentityColumns = Helper.ReturnIdentityColumn(conInfo, tableName);
-                ID = IdentityColumns.Count > 0 ? IdentityColumns.FirstOrDefault() : "id";
-                Deleted = DELETEDColumns.Count > 0 ? true : false;
+                FkcList = ForeignKeyCheck(con, TableName).Where(a => a.PrimaryTableName == TableName).ToList();
+                FkcForeignList = ForeignKeyCheck(con).Where(a => a.ForeignTableName == TableName).ToList();
             }
         }
 
@@ -51,10 +36,5 @@ namespace TDFactory
         public List<ForeignKeyChecker> FkcList { get; set; }
         public List<ForeignKeyChecker> FkcForeignList { get; set; }
         public List<string> IdentityColumns { get; set; }
-
-        string[] ListBoxItems(ListBox listBox)
-        {
-            return listBox.Items.ToStringList();
-        }
     }
 }

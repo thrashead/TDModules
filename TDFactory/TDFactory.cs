@@ -57,6 +57,7 @@ namespace TDFactory
         bool hasUserRights = false;
         bool hasLogs = false;
         bool hasLinks = false;
+        bool hasLangs = false;
 
         private void TDFactoryForm_Load(object sender, EventArgs e)
         {
@@ -352,6 +353,35 @@ namespace TDFactory
             ImageColumns,
             SearchColumns,
             MailColumns
+        }
+
+        public void FillTable(Table table)
+        {
+            if (!String.IsNullOrEmpty(table.TableName))
+            {
+                SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
+                List<ColumnInfo> tableColumnInfos = GetTableColumnInfos().Where(a => a.TableName == table.TableName).ToList();
+                table.TableName = table.TableName;
+                table.Columns = Helper.GetColumnsInfo(connectionInfo, table.TableName);
+                table.URLColumns = table.Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstUrlColumns))).ToList();
+                table.GUIDColumns = table.Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstGuidColumns))).ToList();
+                table.CODEColumns = table.Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstCodeColumns))).ToList();
+                table.DELETEDColumns = table.Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstDeletedColumns))).ToList();
+                table.FILEColumns = table.Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstFileColumns))).ToList();
+                table.IMAGEColumns = table.Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstImageColumns))).ToList();
+                table.SEARCHColumns = table.Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstSearchColumns))).ToList();
+                table.MAILColumns = table.Columns.Where(a => a.ColumnName.ToUrl(true).In(ListBoxItems(lstMailColumns))).ToList();
+                table.EDITORColumns = table.Columns.Where(a => a.Type.Name == "String" && a.CharLength == -1 && !a.ColumnName.ToUrl(true).In(ListBoxItems(lstDeletedColumns)) && !a.ColumnName.ToUrl(true).In(ListBoxItems(lstFileColumns)) && !a.ColumnName.ToUrl(true).In(ListBoxItems(lstImageColumns))).ToList();
+                table.SearchTextColumn = GetColumnText(table.Columns);
+                table.IdentityColumns = Helper.ReturnIdentityColumn(connectionInfo, table.TableName);
+                table.ID = table.IdentityColumns.Count > 0 ? table.IdentityColumns.FirstOrDefault() : "id";
+                table.Deleted = table.DELETEDColumns.Count > 0 ? true : false;
+            }
+        }
+
+        string[] ListBoxItems(ListBox listBox)
+        {
+            return listBox.Items.ToStringList();
         }
     }
 }

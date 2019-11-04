@@ -83,6 +83,13 @@ namespace TDFactory
                         }
 
                         yaz.WriteLine("using System.Linq;");
+
+                        if (hasLangs && Table == "LangContent")
+                        {
+                            yaz.WriteLine("using System.Web.Caching;");
+                            yaz.WriteLine("using Cacher = System.Web.HttpRuntime;");
+                        }
+
                         yaz.WriteLine(repositoryType);
                         yaz.WriteLine("using TDLibrary;");
 
@@ -944,229 +951,76 @@ namespace TDFactory
 
                         string hasLinkID = hasLinks && Table == "Links" ? ", int? linkID = null" : "";
 
-                        yaz.WriteLine("\t\tpublic I" + Table + " Insert(I" + Table + " table = null" + linkID + hasLinkID + ")");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tif (table == null)");
-                        yaz.WriteLine("\t\t\t\ttable = new " + Table + "();");
-                        yaz.WriteLine("");
 
-                        l = 0;
-                        if (fkcListForeign.Count > 0)
+                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
-                            foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                            {
-                                string PrimaryTableName = fkc.PrimaryTableName;
-                                string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
-
-                                yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\",  \"" + columnText + "\", " + links[l] + ");");
-                                yaz.WriteLine("");
-
-                                l++;
-                            }
-                        }
-
-                        if (hasLinks)
-                        {
-                            if (Table == "Links")
-                            {
-                                yaz.WriteLine("\t\t\tint? linkedTypeID = null;");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tif (linkID == null && linkTypeID == null)");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tlinkedTypeID = tableLinkTypes.FirstOrDefault().LinkedTypeID;");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tif (tableLinkTypes.Count > 0)");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\ttable.LinkedItemList = ReturnList(linkedTypeID, linkID, linkTypeID);");
-                                yaz.WriteLine("\t\t\t\ttable.LinkTypesList = tableLinkTypes.ToSelectList<usp_LinkTypesSelect_Result, SelectListItem>(\"ID\", \"Title\", linkTypeID);");
-                                yaz.WriteLine("\t\t\t}");
-                                yaz.WriteLine("\t\t\telse");
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Bağlantı oluşturabilmek için önce Bağlı Tip ekleyiniz.\";");
-                                yaz.WriteLine("\t\t\t}");
-                            }
-
-                            if (Table == "LinkTypes")
-                            {
-                                yaz.WriteLine("\t\t\ttable.MainTypeList.AddRange(ReturnList(0));");
-                                yaz.WriteLine("\t\t\ttable.LinkedTypeList.AddRange(ReturnList(0, 2));");
-                                yaz.WriteLine("\t\t\ttable.MainList.AddRange(ReturnList(1));");
-                            }
-
-                            yaz.WriteLine("");
-                        }
-
-                        yaz.WriteLine("\t\t\treturn table;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        // Insert
-                        yaz.WriteLine("\t\tpublic bool Insert(I" + Table + " table)");
-                        yaz.WriteLine("\t\t{");
-
-                        if (hasUserRights && Table == "Users")
-                        {
-                            yaz.WriteLine("\t\t\ttable.Password = table.Password.ToMD5();");
-                            yaz.WriteLine("");
-                        }
-
-                        if (urlColumns.Count > 0)
-                        {
-                            foreach (ColumnInfo item in urlColumns)
-                            {
-                                yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToUrl();");
-                            }
-
-                            yaz.WriteLine("");
-                        }
-
-                        if (guidColumns.Count > 0)
-                        {
-                            foreach (ColumnInfo item in guidColumns)
-                            {
-                                if (item.CharLength > 0)
-                                    yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = Guider.GetGuid(" + item.CharLength + ");");
-                            }
-
-                            yaz.WriteLine("");
-                        }
-
-                        string insertSql = "var result = entity.usp_" + Table + "Insert(";
-                        foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
-                        {
-                            if (!column.IsIdentity)
-                            {
-                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
-                                    insertSql += "table." + column.ColumnName + ", ";
-                            }
-                        }
-                        insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
-                        insertSql += ").FirstOrDefault();";
-
-                        yaz.WriteLine("\t\t\t" + insertSql);
-
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif(result != null)");
-                        yaz.WriteLine("\t\t\t\treturn true;");
-                        yaz.WriteLine("\t\t\telse");
-                        yaz.WriteLine("\t\t\t\treturn false;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        if (identityColumns.Count > 0)
-                        {
-                            //Update
-                            yaz.WriteLine("\t\tpublic I" + Table + " Update(int? id = null, I" + Table + " table = null)");
+                            yaz.WriteLine("\t\tpublic I" + Table + " Insert(I" + Table + " table = null" + linkID + hasLinkID + ")");
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\tif (table == null)");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\ttable = Select(id);");
-                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\t\ttable = new " + Table + "();");
+                            yaz.WriteLine("");
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t\telse");
-                                yaz.WriteLine("\t\t\t{");
-                            }
-
+                            l = 0;
                             if (fkcListForeign.Count > 0)
                             {
-                                l = 1;
-
                                 foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
                                 {
-                                    if (l > 1)
-                                    {
-                                        yaz.WriteLine("");
-                                    }
-
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
-
-                                    l++;
-
-                                    if (fkcList.Count > 0)
-                                    {
-                                        yaz.WriteLine("");
-                                    }
-                                }
-                            }
-
-                            if (fkcList.Count > 0)
-                            {
-                                l = 1;
-                                foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
-                                {
-                                    foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
-                                    {
-                                        string PrimaryTableName = fkc.PrimaryTableName;
-                                        string ForeignTableName = fkc2.ForeignTableName;
-
-                                        yaz.WriteLine("\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
-                                        yaz.WriteLine("\t\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
-
-                                        if (l != fkcList.Count)
-                                            yaz.WriteLine("");
-                                    }
+                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\",  \"" + columnText + "\", " + links[l] + ");");
+                                    yaz.WriteLine("");
 
                                     l++;
                                 }
-                            }
-
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
-                            {
-                                yaz.WriteLine("\t\t\t}");
                             }
 
                             if (hasLinks)
                             {
-                                yaz.WriteLine("");
-
                                 if (Table == "Links")
                                 {
-                                    yaz.WriteLine("\t\t\tusp_LinkTypesSelectTop_Result tableLinkTypesTop = entity.usp_LinkTypesSelectTop(table.LinkTypeID, 1).FirstOrDefault();");
-                                    yaz.WriteLine("\t\t\ttable.LinkedItemList = ReturnList(table.LinkedTypeID, table.LinkID);");
-                                    yaz.WriteLine("\t\t\ttable.LinkedTypesAdi = tableLinkTypesTop.Title;");
+                                    yaz.WriteLine("\t\t\tint? linkedTypeID = null;");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tif (linkID == null && linkTypeID == null)");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tlinkedTypeID = tableLinkTypes.FirstOrDefault().LinkedTypeID;");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tif (tableLinkTypes.Count > 0)");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\ttable.LinkedItemList = ReturnList(linkedTypeID, linkID, linkTypeID);");
+                                    yaz.WriteLine("\t\t\t\ttable.LinkTypesList = tableLinkTypes.ToSelectList<usp_LinkTypesSelect_Result, SelectListItem>(\"ID\", \"Title\", linkTypeID);");
+                                    yaz.WriteLine("\t\t\t}");
+                                    yaz.WriteLine("\t\t\telse");
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\ttable.Mesaj = \"Bağlantı oluşturabilmek için önce Bağlı Tip ekleyiniz.\";");
+                                    yaz.WriteLine("\t\t\t}");
                                 }
 
                                 if (Table == "LinkTypes")
                                 {
-                                    yaz.WriteLine("\t\t\ttable.MainTypeList.AddRange(ReturnList(0, table.MainTypeID));");
-                                    yaz.WriteLine("\t\t\ttable.LinkedTypeList.AddRange(ReturnList(0, table.LinkedTypeID));");
-                                    yaz.WriteLine("\t\t\ttable.MainList.AddRange(ReturnList(table.MainTypeID, table.MainID));");
-                                    yaz.WriteLine("\t\t\ttable.LinkList = entity.usp_LinksDetailByLinkTypeIDSelect(table.ID).ToList().ChangeModelList<Links, usp_LinksDetailByLinkTypeIDSelect_Result>();");
+                                    yaz.WriteLine("\t\t\ttable.MainTypeList.AddRange(ReturnList(0));");
+                                    yaz.WriteLine("\t\t\ttable.LinkedTypeList.AddRange(ReturnList(0, 2));");
+                                    yaz.WriteLine("\t\t\ttable.MainList.AddRange(ReturnList(1));");
                                 }
-                            }
 
-                            yaz.WriteLine("");
+                                yaz.WriteLine("");
+                            }
 
                             yaz.WriteLine("\t\t\treturn table;");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
-
-                            //Update
-                            string curUserID = hasUserRights && Table == "Users" ? ", int? curUserID = null" : "";
-
-                            yaz.WriteLine("\t\tpublic bool Update(I" + Table + " table" + curUserID + ")");
+                            // Insert
+                            yaz.WriteLine("\t\tpublic bool Insert(I" + Table + " table)");
                             yaz.WriteLine("\t\t{");
 
                             if (hasUserRights && Table == "Users")
                             {
-                                yaz.WriteLine("\t\t\tstring password = table.Password == null ? entity.usp_UsersOldPasswordSelect(table.ID).FirstOrDefault() : table.Password.ToMD5();");
-                                yaz.WriteLine("\t\t\ttable.Password = password;");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tif (curUserID == table.ID)");
-                                yaz.WriteLine("\t\t\t\ttable.Active = true;");
+                                yaz.WriteLine("\t\t\ttable.Password = table.Password.ToMD5();");
                                 yaz.WriteLine("");
                             }
-
-                            string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
 
                             if (urlColumns.Count > 0)
                             {
@@ -1178,80 +1032,227 @@ namespace TDFactory
                                 yaz.WriteLine("");
                             }
 
-                            string updateSql = "var result = entity.usp_" + Table + "Update(";
-                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
+                            if (guidColumns.Count > 0)
                             {
-                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
-                                    updateSql += "table." + column.ColumnName + ", ";
-                            }
-                            updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
-                            updateSql += ").FirstOrDefault();";
+                                foreach (ColumnInfo item in guidColumns)
+                                {
+                                    if (item.CharLength > 0)
+                                        yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = Guider.GetGuid(" + item.CharLength + ");");
+                                }
 
-                            yaz.WriteLine("\t\t\t" + updateSql);
-                            yaz.WriteLine("");
-
-                            yaz.WriteLine("\t\t\tif(result != null)");
-
-                            if (hasUserRights && Table == "Users")
-                            {
-                                yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tif (curUserID == table.ID)");
-                                yaz.WriteLine("\t\t\t\t\tHttpContext.Current.Session[\"CurrentUser\"] = entity.usp_UsersSelectTop(table.ID, 1).FirstOrDefault().ChangeModel<Users>();");
                                 yaz.WriteLine("");
                             }
 
-                            yaz.WriteLine("\t\t\t\treturn true;");
-
-                            if (hasUserRights && Table == "Users")
+                            string insertSql = "var result = entity.usp_" + Table + "Insert(";
+                            foreach (ColumnInfo column in tableColumnInfos.Where(a => a.TableName == Table).ToList())
                             {
-                                yaz.WriteLine("\t\t\t}");
+                                if (!column.IsIdentity)
+                                {
+                                    if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                        insertSql += "table." + column.ColumnName + ", ";
+                                }
                             }
+                            insertSql = insertSql.TrimEnd(' ').TrimEnd(',');
+                            insertSql += ").FirstOrDefault();";
 
+                            yaz.WriteLine("\t\t\t" + insertSql);
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif(result != null)");
+                            yaz.WriteLine("\t\t\t\treturn true;");
                             yaz.WriteLine("\t\t\telse");
                             yaz.WriteLine("\t\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                        }
 
-                            //Copy
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\tpublic bool Copy(" + columntype.ReturnCSharpType() + " id)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\ttry");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tvar result = entity.usp_" + Table + "Copy(id).FirstOrDefault();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn result == null ? false : true;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\tcatch");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn false;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}");
-
-                            //Delete
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\tpublic bool Delete(" + columntype.ReturnCSharpType() + "? id = null)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\ttry");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\tcatch");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn false;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}");
-
-                            if (deleted)
+                        if (identityColumns.Count > 0)
+                        {
+                            if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                             {
-                                //Remove
+                                //Update
+                                yaz.WriteLine("\t\tpublic I" + Table + " Update(int? id = null, I" + Table + " table = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tif (table == null)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\ttable = Select(id);");
+                                yaz.WriteLine("\t\t\t}");
+
+                                if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                                {
+                                    yaz.WriteLine("\t\t\telse");
+                                    yaz.WriteLine("\t\t\t{");
+                                }
+
+                                if (fkcListForeign.Count > 0)
+                                {
+                                    l = 1;
+
+                                    foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        if (l > 1)
+                                        {
+                                            yaz.WriteLine("");
+                                        }
+
+                                        string PrimaryTableName = fkc.PrimaryTableName;
+                                        string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
+
+                                        yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+
+                                        l++;
+
+                                        if (fkcList.Count > 0)
+                                        {
+                                            yaz.WriteLine("");
+                                        }
+                                    }
+                                }
+
+                                if (fkcList.Count > 0)
+                                {
+                                    l = 1;
+                                    foreach (ForeignKeyChecker fkc in fkcList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
+                                    {
+                                        foreach (ForeignKeyChecker fkc2 in fkcList.GroupBy(a => a.ForeignTableName).Select(a => a.First()).ToList())
+                                        {
+                                            string PrimaryTableName = fkc.PrimaryTableName;
+                                            string ForeignTableName = fkc2.ForeignTableName;
+
+                                            yaz.WriteLine("\t\t\t\tList<usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result> " + ForeignTableName.ToUrl(true) + "ModelList = entity.usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect(table." + id + ").ToList();"); ;
+                                            yaz.WriteLine("\t\t\t\ttable." + ForeignTableName + "List.AddRange(" + ForeignTableName.ToUrl(true) + "ModelList.ChangeModelList<" + ForeignTableName + ", usp_" + ForeignTableName + "_" + PrimaryTableName + "ByLinkedIDSelect_Result>());");
+
+                                            if (l != fkcList.Count)
+                                                yaz.WriteLine("");
+                                        }
+
+                                        l++;
+                                    }
+                                }
+
+                                if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                                {
+                                    yaz.WriteLine("\t\t\t}");
+                                }
+
+                                if (hasLinks)
+                                {
+                                    yaz.WriteLine("");
+
+                                    if (Table == "Links")
+                                    {
+                                        yaz.WriteLine("\t\t\tusp_LinkTypesSelectTop_Result tableLinkTypesTop = entity.usp_LinkTypesSelectTop(table.LinkTypeID, 1).FirstOrDefault();");
+                                        yaz.WriteLine("\t\t\ttable.LinkedItemList = ReturnList(table.LinkedTypeID, table.LinkID);");
+                                        yaz.WriteLine("\t\t\ttable.LinkedTypesAdi = tableLinkTypesTop.Title;");
+                                    }
+
+                                    if (Table == "LinkTypes")
+                                    {
+                                        yaz.WriteLine("\t\t\ttable.MainTypeList.AddRange(ReturnList(0, table.MainTypeID));");
+                                        yaz.WriteLine("\t\t\ttable.LinkedTypeList.AddRange(ReturnList(0, table.LinkedTypeID));");
+                                        yaz.WriteLine("\t\t\ttable.MainList.AddRange(ReturnList(table.MainTypeID, table.MainID));");
+                                        yaz.WriteLine("\t\t\ttable.LinkList = entity.usp_LinksDetailByLinkTypeIDSelect(table.ID).ToList().ChangeModelList<Links, usp_LinksDetailByLinkTypeIDSelect_Result>();");
+                                    }
+                                }
+
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic bool Remove(" + columntype.ReturnCSharpType() + "? id = null)");
+
+                                yaz.WriteLine("\t\t\treturn table;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+
+
+                                //Update
+                                string curUserID = hasUserRights && Table == "Users" ? ", int? curUserID = null" : "";
+
+                                yaz.WriteLine("\t\tpublic bool Update(I" + Table + " table" + curUserID + ")");
+                                yaz.WriteLine("\t\t{");
+
+                                if (hasUserRights && Table == "Users")
+                                {
+                                    yaz.WriteLine("\t\t\tstring password = table.Password == null ? entity.usp_UsersOldPasswordSelect(table.ID).FirstOrDefault() : table.Password.ToMD5();");
+                                    yaz.WriteLine("\t\t\ttable.Password = password;");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tif (curUserID == table.ID)");
+                                    yaz.WriteLine("\t\t\t\ttable.Active = true;");
+                                    yaz.WriteLine("");
+                                }
+
+                                string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
+
+                                if (urlColumns.Count > 0)
+                                {
+                                    foreach (ColumnInfo item in urlColumns)
+                                    {
+                                        yaz.WriteLine("\t\t\ttable." + item.ColumnName + " = table." + searchText + ".ToUrl();");
+                                    }
+
+                                    yaz.WriteLine("");
+                                }
+
+                                string updateSql = "var result = entity.usp_" + Table + "Update(";
+
+                                List<ColumnInfo> viewColumns = tableColumnInfos.Where(a => a.TableName == Table).ToList();
+
+                                if (hasUserRights && Table == "Users")
+                                    viewColumns = viewColumns.Where(a => a.ColumnName != "LoginTime").ToList();
+
+                                foreach (ColumnInfo column in viewColumns)
+                                {
+                                    if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
+                                        updateSql += "table." + column.ColumnName + ", ";
+                                }
+                                updateSql = updateSql.TrimEnd(' ').TrimEnd(',');
+                                updateSql += ").FirstOrDefault();";
+
+                                yaz.WriteLine("\t\t\t" + updateSql);
+                                yaz.WriteLine("");
+
+                                yaz.WriteLine("\t\t\tif(result != null)");
+
+                                if (hasUserRights && Table == "Users")
+                                {
+                                    yaz.WriteLine("\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\tif (curUserID == table.ID)");
+                                    yaz.WriteLine("\t\t\t\t\tHttpContext.Current.Session[\"CurrentUser\"] = entity.usp_UsersSelectTop(table.ID, 1).FirstOrDefault().ChangeModel<Users>();");
+                                    yaz.WriteLine("");
+                                }
+
+                                yaz.WriteLine("\t\t\t\treturn true;");
+
+                                if (hasUserRights && Table == "Users")
+                                {
+                                    yaz.WriteLine("\t\t\t}");
+                                }
+
+                                yaz.WriteLine("\t\t\telse");
+                                yaz.WriteLine("\t\t\t\treturn false;");
+                                yaz.WriteLine("\t\t}");
+
+                                //Copy
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic bool Copy(" + columntype.ReturnCSharpType() + " id)");
                                 yaz.WriteLine("\t\t{");
                                 yaz.WriteLine("\t\t\ttry");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Remove(id);");
+                                yaz.WriteLine("\t\t\t\tvar result = entity.usp_" + Table + "Copy(id).FirstOrDefault();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\treturn result == null ? false : true;");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t\tcatch");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturn false;");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}");
+
+                                //Delete
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic bool Delete(" + columntype.ReturnCSharpType() + "? id = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\ttry");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Delete(id);");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\t\treturn true;");
                                 yaz.WriteLine("\t\t\t}");
@@ -1260,203 +1261,22 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\treturn false;");
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("\t\t}");
-                            }
 
-                            if (Table == "Users" && hasUserRights)
-                            {
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic IUsers ChangeGroup(" + columntype.ReturnCSharpType() + " id, IUsers table = null)");
-                                yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tif (table == null)");
-                                yaz.WriteLine("\t\t\t\ttable = Select(id);");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tList<usp_UserGroupsSelect_Result> tableUsersGroup = entity.usp_UserGroupsSelect(null).ToList();");
-                                yaz.WriteLine("\t\t\ttable.UserGroupsList = tableUsersGroup.ToSelectList<usp_UserGroupsSelect_Result, SelectListItem>(\"ID\", \"Name\", table.GroupID);");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\treturn table;");
-                                yaz.WriteLine("\t\t}");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic bool ChangeGroup(IUsers table)");
-                                yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tvar result = entity.usp_UsersGroupUpdate(table.ID, table.GroupID);");
-                                yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tif (result != null)");
-                                yaz.WriteLine("\t\t\t\treturn true;");
-                                yaz.WriteLine("\t\t\telse");
-                                yaz.WriteLine("\t\t\t\treturn false;");
-                                yaz.WriteLine("\t\t}");
-                            }
-
-                            if (hasLinks)
-                            {
-                                yaz.WriteLine("");
-
-                                if (Table == "Links")
+                                if (deleted)
                                 {
-                                    yaz.WriteLine("\t\tpublic static List<SelectListItem> ReturnList(int? linkedTypeID = 1, int? linkID = null, int? linkTypeID = null)");
+                                    //Remove
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\tpublic bool Remove(" + columntype.ReturnCSharpType() + "? id = null)");
                                     yaz.WriteLine("\t\t{");
-                                    yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities _entity = new " + cmbVeritabani.Text + "Entities();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tList<SelectListItem> linkItems = new List<SelectListItem>();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tint? _linkedTypeID = linkTypeID == null ? linkedTypeID : linkTypeID;");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tif (linkTypeID == null)");
-                                    yaz.WriteLine("\t\t\t\t_linkedTypeID = linkedTypeID;");
-                                    yaz.WriteLine("\t\t\telse");
+                                    yaz.WriteLine("\t\t\ttry");
                                     yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\tusp_LinkTypesSelectTop_Result table = _entity.usp_LinkTypesSelectTop(linkTypeID, 1).FirstOrDefault();");
+                                    yaz.WriteLine("\t\t\t\tentity.usp_" + Table + "Remove(id);");
                                     yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t_linkedTypeID = table.LinkedTypeID;");
+                                    yaz.WriteLine("\t\t\t\treturn true;");
                                     yaz.WriteLine("\t\t\t}");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tswitch (_linkedTypeID)");
+                                    yaz.WriteLine("\t\t\tcatch");
                                     yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\tcase 1:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_CategorySelect_Result> tableCatItems = _entity.usp_CategorySelect(null).ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableCatItems)");
-                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
-                                    yaz.WriteLine("\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\tcase 2:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_ContentSelect_Result> tableContItems = _entity.usp_ContentSelect(null).ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableContItems)");
-                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
-                                    yaz.WriteLine("\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\tcase 3:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_ProductSelect_Result> tableProdItems = _entity.usp_ProductSelect(null).ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableProdItems)");
-                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
-                                    yaz.WriteLine("\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\tcase 4:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_GallerySelect_Result> tableGalItems = _entity.usp_GallerySelect(null).ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableGalItems)");
-                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
-                                    yaz.WriteLine("\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\tcase 5:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_PicturesSelect_Result> tablePicItems = _entity.usp_PicturesSelect(null).ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tablePicItems)");
-                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
-                                    yaz.WriteLine("\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\tcase 6:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_FilesSelect_Result> tableFileItems = _entity.usp_FilesSelect(null).ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableFileItems)");
-                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
-                                    yaz.WriteLine("\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\tcase 7:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_MetaSelect_Result> tableMetaItems = _entity.usp_MetaSelect(null).ToList();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\t\t\tforeach (var item in tableMetaItems)");
-                                    yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
-                                    yaz.WriteLine("\t\t\t\t\t\telse");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
-                                    yaz.WriteLine("\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t}");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\treturn linkItems;");
-                                    yaz.WriteLine("\t\t}");
-                                }
-
-                                if (Table == "LinkTypes")
-                                {
-                                    yaz.WriteLine("\t\tpublic static List<SelectListItem> FillList(dynamic list, LinkType linkType = LinkType.Table, int selectedID = 0)");
-                                    yaz.WriteLine("\t\t{");
-                                    yaz.WriteLine("\t\t\tList<SelectListItem> returnList = new List<SelectListItem>();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tforeach (dynamic item in list)");
-                                    yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\tswitch (linkType)");
-                                    yaz.WriteLine("\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\tcase LinkType.Type:");
-                                    yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
-                                    yaz.WriteLine("\t\t\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tText = item.TypeName,");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
-                                    yaz.WriteLine("\t\t\t\t\t\t});");
-                                    yaz.WriteLine("\t\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\t\tcase LinkType.Table:");
-                                    yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
-                                    yaz.WriteLine("\t\t\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tText = item.Title,");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
-                                    yaz.WriteLine("\t\t\t\t\t\t});");
-                                    yaz.WriteLine("\t\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\t\tdefault:");
-                                    yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
-                                    yaz.WriteLine("\t\t\t\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tText = item.Title,");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
-                                    yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
-                                    yaz.WriteLine("\t\t\t\t\t\t});");
-                                    yaz.WriteLine("\t\t\t\t\t\tbreak;");
-                                    yaz.WriteLine("\t\t\t\t}");
-                                    yaz.WriteLine("\t\t\t}");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\treturn returnList;");
-                                    yaz.WriteLine("\t\t}");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\tpublic enum LinkType");
-                                    yaz.WriteLine("\t\t{");
-                                    yaz.WriteLine("\t\t\tType,");
-                                    yaz.WriteLine("\t\t\tTable");
-                                    yaz.WriteLine("\t\t}");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\tpublic static List<SelectListItem> ReturnList(int? typeID, int selectedID = 0)");
-                                    yaz.WriteLine("\t\t{");
-                                    yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities _entity = new " + cmbVeritabani.Text + "Entities();");
-                                    yaz.WriteLine("");
-                                    yaz.WriteLine("\t\t\tswitch (typeID)");
-                                    yaz.WriteLine("\t\t\t{");
-                                    yaz.WriteLine("\t\t\t\tcase 1:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_CategorySelect_Result> categories = _entity.usp_CategorySelect(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\treturn FillList(categories, LinkType.Table, selectedID);");
-                                    yaz.WriteLine("\t\t\t\tcase 2:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_ContentSelect_Result> contents = _entity.usp_ContentSelect(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\treturn FillList(contents, LinkType.Table, selectedID);");
-                                    yaz.WriteLine("\t\t\t\tcase 3:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_ProductSelect_Result> products = _entity.usp_ProductSelect(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\treturn FillList(products, LinkType.Table, selectedID);");
-                                    yaz.WriteLine("\t\t\t\tcase 4:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_GallerySelect_Result> galleries = _entity.usp_GallerySelect(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\treturn FillList(galleries, LinkType.Table, selectedID);");
-                                    yaz.WriteLine("\t\t\t\tcase 5:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_PicturesSelect_Result> pictures = _entity.usp_PicturesSelect(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\treturn FillList(pictures, LinkType.Table, selectedID);");
-                                    yaz.WriteLine("\t\t\t\tcase 6:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_FilesSelect_Result> files = _entity.usp_FilesSelect(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\treturn FillList(files, LinkType.Table, selectedID);");
-                                    yaz.WriteLine("\t\t\t\tcase 7:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_MetaSelect_Result> meta = _entity.usp_MetaSelect(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\treturn FillList(meta, LinkType.Table, selectedID);");
-                                    yaz.WriteLine("\t\t\t\tdefault:");
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_TypesLinkableSelect_Result> types = _entity.usp_TypesLinkableSelect(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\treturn FillList(types, LinkType.Type, selectedID);");
+                                    yaz.WriteLine("\t\t\t\treturn false;");
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t}");
                                 }
@@ -1469,7 +1289,324 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#region User Defined");
                         yaz.WriteLine("");
-                        yaz.WriteLine("");
+
+                        if (hasUserRights && Table == "Users")
+                        {
+                            yaz.WriteLine("\t\tpublic IUsers ChangeGroup(int id, IUsers table = null)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tif (table == null)");
+                            yaz.WriteLine("\t\t\t\ttable = Select(id);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tList<usp_UserGroupsSelect_Result> tableUsersGroup = entity.usp_UserGroupsSelect(null).ToList();");
+                            yaz.WriteLine("\t\t\ttable.UserGroupsList = tableUsersGroup.ToSelectList<usp_UserGroupsSelect_Result, SelectListItem>(\"ID\", \"Name\", table.GroupID);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn table;");
+                            yaz.WriteLine("\t\t}");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\tpublic bool ChangeGroup(IUsers table)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tvar result = entity.usp_UsersGroupUpdate(table.ID, table.GroupID);");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\tif (result != null)");
+                            yaz.WriteLine("\t\t\t\treturn true;");
+                            yaz.WriteLine("\t\t\telse");
+                            yaz.WriteLine("\t\t\t\treturn false;");
+                            yaz.WriteLine("\t\t}");
+                        }
+
+                        if (hasLinks)
+                        {
+                            if (Table == "Links")
+                            {
+                                yaz.WriteLine("\t\tpublic static List<SelectListItem> ReturnList(int? linkedTypeID = 1, int? linkID = null, int? linkTypeID = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities _entity = new " + cmbVeritabani.Text + "Entities();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tList<SelectListItem> linkItems = new List<SelectListItem>();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tint? _linkedTypeID = linkTypeID == null ? linkedTypeID : linkTypeID;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (linkTypeID == null)");
+                                yaz.WriteLine("\t\t\t\t_linkedTypeID = linkedTypeID;");
+                                yaz.WriteLine("\t\t\telse");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tusp_LinkTypesSelectTop_Result table = _entity.usp_LinkTypesSelectTop(linkTypeID, 1).FirstOrDefault();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t_linkedTypeID = table.LinkedTypeID;");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tswitch (_linkedTypeID)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tcase 1:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_CategorySelect_Result> tableCatItems = _entity.usp_CategorySelect(null).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\tforeach (var item in tableCatItems)");
+                                yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                yaz.WriteLine("\t\t\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                yaz.WriteLine("\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\tcase 2:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_ContentSelect_Result> tableContItems = _entity.usp_ContentSelect(null).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\tforeach (var item in tableContItems)");
+                                yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                yaz.WriteLine("\t\t\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                yaz.WriteLine("\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\tcase 3:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_ProductSelect_Result> tableProdItems = _entity.usp_ProductSelect(null).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\tforeach (var item in tableProdItems)");
+                                yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                yaz.WriteLine("\t\t\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                yaz.WriteLine("\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\tcase 4:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_GallerySelect_Result> tableGalItems = _entity.usp_GallerySelect(null).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\tforeach (var item in tableGalItems)");
+                                yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                yaz.WriteLine("\t\t\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                yaz.WriteLine("\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\tcase 5:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_PicturesSelect_Result> tablePicItems = _entity.usp_PicturesSelect(null).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\tforeach (var item in tablePicItems)");
+                                yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                yaz.WriteLine("\t\t\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                yaz.WriteLine("\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\tcase 6:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_FilesSelect_Result> tableFileItems = _entity.usp_FilesSelect(null).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\tforeach (var item in tableFileItems)");
+                                yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                yaz.WriteLine("\t\t\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                yaz.WriteLine("\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\tcase 7:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_MetaSelect_Result> tableMetaItems = _entity.usp_MetaSelect(null).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\t\tforeach (var item in tableMetaItems)");
+                                yaz.WriteLine("\t\t\t\t\t\tif (item.ID == linkID)");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title, Selected = true });");
+                                yaz.WriteLine("\t\t\t\t\t\telse");
+                                yaz.WriteLine("\t\t\t\t\t\t\tlinkItems.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.Title });");
+                                yaz.WriteLine("\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn linkItems;");
+                                yaz.WriteLine("\t\t}");
+                            }
+
+                            if (Table == "LinkTypes")
+                            {
+                                yaz.WriteLine("\t\tpublic static List<SelectListItem> FillList(dynamic list, LinkType linkType = LinkType.Table, int selectedID = 0)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<SelectListItem> returnList = new List<SelectListItem>();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tforeach (dynamic item in list)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tswitch (linkType)");
+                                yaz.WriteLine("\t\t\t\t{");
+                                yaz.WriteLine("\t\t\t\t\tcase LinkType.Type:");
+                                yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
+                                yaz.WriteLine("\t\t\t\t\t\t{");
+                                yaz.WriteLine("\t\t\t\t\t\t\tText = item.TypeName,");
+                                yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
+                                yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
+                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("\t\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\t\tcase LinkType.Table:");
+                                yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
+                                yaz.WriteLine("\t\t\t\t\t\t{");
+                                yaz.WriteLine("\t\t\t\t\t\t\tText = item.Title,");
+                                yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
+                                yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
+                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("\t\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\t\tdefault:");
+                                yaz.WriteLine("\t\t\t\t\t\treturnList.Add(new SelectListItem()");
+                                yaz.WriteLine("\t\t\t\t\t\t{");
+                                yaz.WriteLine("\t\t\t\t\t\t\tText = item.Title,");
+                                yaz.WriteLine("\t\t\t\t\t\t\tValue = item.ID.ToString(),");
+                                yaz.WriteLine("\t\t\t\t\t\t\tSelected = item.ID == selectedID ? true : false");
+                                yaz.WriteLine("\t\t\t\t\t\t});");
+                                yaz.WriteLine("\t\t\t\t\t\tbreak;");
+                                yaz.WriteLine("\t\t\t\t}");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn returnList;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic enum LinkType");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tType,");
+                                yaz.WriteLine("\t\t\tTable");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic static List<SelectListItem> ReturnList(int? typeID, int selectedID = 0)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities _entity = new " + cmbVeritabani.Text + "Entities();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tswitch (typeID)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tcase 1:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_CategorySelect_Result> categories = _entity.usp_CategorySelect(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\treturn FillList(categories, LinkType.Table, selectedID);");
+                                yaz.WriteLine("\t\t\t\tcase 2:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_ContentSelect_Result> contents = _entity.usp_ContentSelect(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\treturn FillList(contents, LinkType.Table, selectedID);");
+                                yaz.WriteLine("\t\t\t\tcase 3:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_ProductSelect_Result> products = _entity.usp_ProductSelect(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\treturn FillList(products, LinkType.Table, selectedID);");
+                                yaz.WriteLine("\t\t\t\tcase 4:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_GallerySelect_Result> galleries = _entity.usp_GallerySelect(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\treturn FillList(galleries, LinkType.Table, selectedID);");
+                                yaz.WriteLine("\t\t\t\tcase 5:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_PicturesSelect_Result> pictures = _entity.usp_PicturesSelect(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\treturn FillList(pictures, LinkType.Table, selectedID);");
+                                yaz.WriteLine("\t\t\t\tcase 6:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_FilesSelect_Result> files = _entity.usp_FilesSelect(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\treturn FillList(files, LinkType.Table, selectedID);");
+                                yaz.WriteLine("\t\t\t\tcase 7:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_MetaSelect_Result> meta = _entity.usp_MetaSelect(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\treturn FillList(meta, LinkType.Table, selectedID);");
+                                yaz.WriteLine("\t\t\t\tdefault:");
+                                yaz.WriteLine("\t\t\t\t\tList<usp_TypesLinkableSelect_Result> types = _entity.usp_TypesLinkableSelect(null).ToList();");
+                                yaz.WriteLine("\t\t\t\t\treturn FillList(types, LinkType.Type, selectedID);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("\t\t}");
+                            }
+                        }
+
+                        if (hasLangs)
+                        {
+                            if (Table == "LangContent")
+                            {
+                                yaz.WriteLine("\t\tpublic List<usp_LangContentDetail_Result> Detail(dynamic codes, int? transID = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<usp_LangContentDetail_Result> returnTable;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (Cacher.Cache[\"LangContents\"] == null)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tList<usp_LangContentDetail_Result> table = entity.usp_LangContentDetail().ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\tCacher.Cache.Insert(\"LangContents\", table, null, DateTime.Now.AddMinutes(15), Cache.NoSlidingExpiration, CacheItemPriority.Default, null);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturnTable = Cacher.Cache[\"LangContents\"] as List<usp_LangContentDetail_Result>;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (transID != null)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\treturnTable = returnTable.Where(a => a.TransID == transID).ToList();");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tList<usp_LangContentDetail_Result> tempTable = new List<usp_LangContentDetail_Result>();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tforeach (dynamic item in codes)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tif (item.Code != null && item.ShortCode != null)");
+                                yaz.WriteLine("\t\t\t\t\ttempTable.AddRange(returnTable.Where(a => a.ShortCode == item.ShortCode && a.Code == item.Code).ToList());");
+                                yaz.WriteLine("\t\t\t\telse if (item.Code != null && item.ShortCode == null)");
+                                yaz.WriteLine("\t\t\t\t\ttempTable.AddRange(returnTable.Where(a => a.Code == item.Code).ToList());");
+                                yaz.WriteLine("\t\t\t\telse if (item.Code == null && item.ShortCode != null)");
+                                yaz.WriteLine("\t\t\t\t\ttempTable.AddRange(returnTable.Where(a => a.ShortCode == item.ShortCode).ToList());");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturnTable = tempTable;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn returnTable;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic List<usp_LangContentByCode_Result> ByCode(string code, int transID, int? top = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<usp_LangContentByCode_Result> table = entity.usp_LangContentByCode(code, transID, top).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn table;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic List<usp_LangContentByShortCode_Result> ByShortCode(string shortCode, int transID, int? top = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<usp_LangContentByShortCode_Result> table = entity.usp_LangContentByShortCode(shortCode, transID, top).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn table;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic List<usp_LangContentByCodeAndShortCode_Result> ByCodeAndShortCode(string code, string shortCode, int transID, int? top = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<usp_LangContentByCodeAndShortCode_Result> table = entity.usp_LangContentByCodeAndShortCode(code, shortCode, transID, top).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn table;");
+                                yaz.WriteLine("\t\t}");
+                            }
+
+                            if (Table == "NoLangContent")
+                            {
+                                yaz.WriteLine("\t\tpublic List<usp_NoLangContentByCode_Result> ByCode(string code, int? top = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<usp_NoLangContentByCode_Result> table = entity.usp_NoLangContentByCode(code, top).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn table;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic List<usp_NoLangContentByShortCode_Result> ByShortCode(string shortCode, int? top = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<usp_NoLangContentByShortCode_Result> table = entity.usp_NoLangContentByShortCode(shortCode, top).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn table;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic List<usp_NoLangContentByCodeAndShortCode_Result> ByCodeAndShortCode(string code, string shortCode, int? top = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<usp_NoLangContentByCodeAndShortCode_Result> table = entity.usp_NoLangContentByCodeAndShortCode(code, shortCode, top).ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn table;");
+                                yaz.WriteLine("\t\t}");
+                            }
+                        }
+
+                        if (hasUserRights && Table == "Visitors")
+                        {
+                            yaz.WriteLine("\t\tpublic bool Clear()");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\ttry");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity.usp_VisitorsClear();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn true;");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\tcatch");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn false;");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t}");
+                        }
+
+                        if (hasLogs && Table == "Logs")
+                        {
+                            yaz.WriteLine("\t\tpublic bool Clear()");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\ttry");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity.usp_LogsClear();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn true;");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\tcatch");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn false;");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t}");
+                        }
+
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#endregion");
 
@@ -1760,31 +1897,35 @@ namespace TDFactory
 
                         string hasLinkID = hasLinks && Table == "Links" ? ", int? linkID" : "";
 
-                        yaz.WriteLine("\t\tI" + Table + " Insert(I" + Table + " table" + linkID + hasLinkID + ");");
+                        string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
 
-                        yaz.WriteLine("\t\tbool Insert(I" + Table + " table);");
-
-                        if (identityColumns.Count > 0)
+                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
-                            string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
+                            yaz.WriteLine("\t\tI" + Table + " Insert(I" + Table + " table" + linkID + hasLinkID + ");");
 
-                            //Update
-                            yaz.WriteLine("\t\tI" + Table + " Update(int? id, I" + Table + " table);");
+                            yaz.WriteLine("\t\tbool Insert(I" + Table + " table);");
 
-                            string curUserID = hasUserRights && Table == "Users" ? ", int? curUserID" : "";
-
-                            yaz.WriteLine("\t\tbool Update(I" + Table + " table" + curUserID + ");");
-
-                            //Copy
-                            yaz.WriteLine("\t\tbool Copy(" + columntype.ReturnCSharpType() + " id);");
-
-                            //Delete
-                            yaz.WriteLine("\t\tbool Delete(" + columntype.ReturnCSharpType() + "? id);");
-
-                            if (deleted)
+                            if (identityColumns.Count > 0)
                             {
-                                //Remove
-                                yaz.WriteLine("\t\tbool Remove(" + columntype.ReturnCSharpType() + "? id);");
+
+                                //Update
+                                yaz.WriteLine("\t\tI" + Table + " Update(int? id, I" + Table + " table);");
+
+                                string curUserID = hasUserRights && Table == "Users" ? ", int? curUserID" : "";
+
+                                yaz.WriteLine("\t\tbool Update(I" + Table + " table" + curUserID + ");");
+
+                                //Copy
+                                yaz.WriteLine("\t\tbool Copy(" + columntype.ReturnCSharpType() + " id);");
+
+                                //Delete
+                                yaz.WriteLine("\t\tbool Delete(" + columntype.ReturnCSharpType() + "? id);");
+
+                                if (deleted)
+                                {
+                                    //Remove
+                                    yaz.WriteLine("\t\tbool Remove(" + columntype.ReturnCSharpType() + "? id);");
+                                }
                             }
 
                             if (Table == "Users" && hasUserRights)
@@ -1956,38 +2097,41 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
-                        // Insert
-                        yaz.WriteLine("\t\t[OperationContract]");
-                        yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                        yaz.WriteLine("\t\tbool Insert(" + Table + "Data table);");
-
-                        if (identityColumns.Count > 0)
+                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
-                            // Update
-                            yaz.WriteLine("");
+                            // Insert
                             yaz.WriteLine("\t\t[OperationContract]");
-                            yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                            yaz.WriteLine("\t\tbool Update(" + Table + "Data table);");
-                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Insert/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                            yaz.WriteLine("\t\tbool Insert(" + Table + "Data table);");
 
-                            // Copy
-                            yaz.WriteLine("\t\t[OperationContract]");
-                            yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Copy/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                            yaz.WriteLine("\t\tbool Copy(string id);");
-                            yaz.WriteLine("");
-
-                            // Delete
-                            yaz.WriteLine("\t\t[OperationContract]");
-                            yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Delete/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                            yaz.WriteLine("\t\tbool Delete(string id);");
-
-                            if (deleted)
+                            if (identityColumns.Count > 0)
                             {
-                                // Remove
+                                // Update
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t[OperationContract]");
-                                yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Remove/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                                yaz.WriteLine("\t\tbool Remove(string id);");
+                                yaz.WriteLine("\t\t[WebInvoke(Method = \"POST\", UriTemplate = \"/Update/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                                yaz.WriteLine("\t\tbool Update(" + Table + "Data table);");
+                                yaz.WriteLine("");
+
+                                // Copy
+                                yaz.WriteLine("\t\t[OperationContract]");
+                                yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Copy/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                                yaz.WriteLine("\t\tbool Copy(string id);");
+                                yaz.WriteLine("");
+
+                                // Delete
+                                yaz.WriteLine("\t\t[OperationContract]");
+                                yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Delete/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                                yaz.WriteLine("\t\tbool Delete(string id);");
+
+                                if (deleted)
+                                {
+                                    // Remove
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t[OperationContract]");
+                                    yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/Remove/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                                    yaz.WriteLine("\t\tbool Remove(string id);");
+                                }
                             }
                         }
 
@@ -2188,67 +2332,70 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
-                        //Insert
-                        yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data table)");
-                        yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tif (table != null)");
-                        yaz.WriteLine("\t\t\t\treturn model.Insert(table.ChangeModel<" + Table + ">());");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn false;");
-                        yaz.WriteLine("\t\t}");
-                        yaz.WriteLine("");
-
-                        if (identityColumns.Count > 0)
+                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
-                            //Update
-                            yaz.WriteLine("\t\tpublic bool Update(" + Table + "Data table)");
+                            //Insert
+                            yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data table)");
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\tif (table != null)");
-                            yaz.WriteLine("\t\t\t\treturn model.Update(table.ChangeModel<" + Table + ">());");
+                            yaz.WriteLine("\t\t\t\treturn model.Insert(table.ChangeModel<" + Table + ">());");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\treturn false;");
                             yaz.WriteLine("\t\t}");
                             yaz.WriteLine("");
 
-                            //Copy
-                            yaz.WriteLine("\t\tpublic bool Copy(string id)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tint _id;");
-                            yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tif (con)");
-                            yaz.WriteLine("\t\t\t\treturn model.Copy(_id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\treturn false;");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-
-                            //Delete
-                            yaz.WriteLine("\t\tpublic bool Delete(string id)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tint _id;");
-                            yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tif (con)");
-                            yaz.WriteLine("\t\t\t\treturn model.Delete(_id);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\treturn false;");
-                            yaz.WriteLine("\t\t}");
-
-                            if (deleted)
+                            if (identityColumns.Count > 0)
                             {
-                                //Remove
+                                //Update
+                                yaz.WriteLine("\t\tpublic bool Update(" + Table + "Data table)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tif (table != null)");
+                                yaz.WriteLine("\t\t\t\treturn model.Update(table.ChangeModel<" + Table + ">());");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic bool Remove(string id)");
+                                yaz.WriteLine("\t\t\treturn false;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+
+                                //Copy
+                                yaz.WriteLine("\t\tpublic bool Copy(string id)");
                                 yaz.WriteLine("\t\t{");
                                 yaz.WriteLine("\t\t\tint _id;");
                                 yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\tif (con)");
-                                yaz.WriteLine("\t\t\t\treturn model.Remove(_id);");
+                                yaz.WriteLine("\t\t\t\treturn model.Copy(_id);");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn false;");
                                 yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+
+                                //Delete
+                                yaz.WriteLine("\t\tpublic bool Delete(string id)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tint _id;");
+                                yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (con)");
+                                yaz.WriteLine("\t\t\t\treturn model.Delete(_id);");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn false;");
+                                yaz.WriteLine("\t\t}");
+
+                                if (deleted)
+                                {
+                                    //Remove
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\tpublic bool Remove(string id)");
+                                    yaz.WriteLine("\t\t{");
+                                    yaz.WriteLine("\t\t\tint _id;");
+                                    yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tif (con)");
+                                    yaz.WriteLine("\t\t\t\treturn model.Remove(_id);");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\treturn false;");
+                                    yaz.WriteLine("\t\t}");
+                                }
                             }
                         }
 
@@ -2794,19 +2941,108 @@ namespace TDFactory
                         yaz.WriteLine("");
                         //SelectAll//
 
-                        //Insert//
-                        yaz.WriteLine("/* Insert */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Insert]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Insert]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Insert]");
-
-                        i = 1;
-                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
+                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
-                            if (!column.IsIdentity)
+                            //Insert//
+                            yaz.WriteLine("/* Insert */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Insert]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Insert]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Insert]");
+
+                            i = 1;
+                            foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    string extra = "";
+
+                                    if (column.DataType.In(diziML))
+                                        extra += column.MaxLength != "" ? "(" + column.MaxLength + ")" : "";
+
+                                    extra += column.IsNullable ? " = NULL" : "";
+
+                                    if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count)
+                                        yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
+                                    else
+                                        yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
+                                }
+
+                                i++;
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    sqlText = sqlText + "[" + column.ColumnName + "],";
+                                }
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText + ")";
+
+                            yaz.WriteLine(sqlText);
+
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                {
+                                    if (!column.IsIdentity)
+                                    {
+                                        sqlText = sqlText + "@" + column.ColumnName + ",";
+                                    }
+                                }
+                                else
+                                {
+                                    if (!column.IsIdentity)
+                                    {
+                                        sqlText = sqlText + "0,";
+                                    }
+                                }
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
+                            yaz.WriteLine("END;");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //Insert//
+
+                            //Update//
+                            yaz.WriteLine("/* Update */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Update]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Update]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
+
+                            List<ColumnInfo> viewColumns = columnNames;
+
+                            if (hasUserRights && Table == "Users")
+                                viewColumns = viewColumns.Where(a => a.ColumnName != "LoginTime").ToList();
+
+                            viewColumns = viewColumns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
+
+                            i = 1;
+                            foreach (ColumnInfo column in viewColumns)
                             {
                                 string extra = "";
 
@@ -2815,267 +3051,150 @@ namespace TDFactory
 
                                 extra += column.IsNullable ? " = NULL" : "";
 
-                                if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count)
+                                if (i != viewColumns.Count)
                                     yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
                                 else
                                     yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
+
+                                i++;
                             }
 
-                            i++;
-                        }
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
 
-                        yaz.WriteLine("AS");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tSET NOCOUNT ON");
-                        yaz.WriteLine("");
+                            yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "]");
 
-                        sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
+                            sqlText = "\tSET ";
 
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.IsIdentity)
+                            foreach (ColumnInfo column in viewColumns)
                             {
-                                sqlText = sqlText + "[" + column.ColumnName + "],";
-                            }
-                        }
-
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText + ")";
-
-                        yaz.WriteLine(sqlText);
-
-                        sqlText = "\tSELECT ";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
-                            {
-                                if (!column.IsIdentity)
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
                                 {
-                                    sqlText = sqlText + "@" + column.ColumnName + ",";
+                                    if (!column.IsIdentity)
+                                    {
+                                        sqlText = sqlText + "[" + column.ColumnName + "] = @" + column.ColumnName + ",";
+                                    }
                                 }
                             }
-                            else
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+
+                            yaz.WriteLine(sqlText);
+
+                            if (idType != null)
                             {
-                                if (!column.IsIdentity)
-                                {
-                                    sqlText = sqlText + "0,";
-                                }
+                                yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
                             }
-                        }
 
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText.Replace(",", ", ");
+                            yaz.WriteLine("");
 
-                        yaz.WriteLine(sqlText);
+                            sqlText = "\tSELECT ";
 
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
-                        yaz.WriteLine("END;");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("");
-                        //Insert//
-
-                        //Update//
-                        yaz.WriteLine("/* Update */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Update]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Update]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
-
-                        i = 1;
-                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
-                        {
-                            string extra = "";
-
-                            if (column.DataType.In(diziML))
-                                extra += column.MaxLength != "" ? "(" + column.MaxLength + ")" : "";
-
-                            extra += column.IsNullable ? " = NULL" : "";
-
-                            if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList().Count)
-                                yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
-                            else
-                                yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
-
-                            i++;
-                        }
-
-                        yaz.WriteLine("AS");
-                        yaz.WriteLine("\tSET NOCOUNT ON");
-                        yaz.WriteLine("\tSET XACT_ABORT ON");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tBEGIN TRAN");
-                        yaz.WriteLine("");
-
-                        yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "]");
-
-                        sqlText = "\tSET ";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
+                            foreach (ColumnInfo column in viewColumns)
                             {
-                                if (!column.IsIdentity)
-                                {
-                                    sqlText = sqlText + "[" + column.ColumnName + "] = @" + column.ColumnName + ",";
-                                }
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText = sqlText + "[" + column.ColumnName + "],";
                             }
-                        }
 
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
 
-                        yaz.WriteLine(sqlText);
+                            yaz.WriteLine(sqlText);
 
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
-                        }
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
-                        yaz.WriteLine("");
-
-                        sqlText = "\tSELECT ";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
-                                sqlText = sqlText + "[" + column.ColumnName + "],";
-                        }
-
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText.Replace(",", ", ");
-
-                        yaz.WriteLine(sqlText);
-
-                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
-                        }
-
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tCOMMIT");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("");
-                        //Update//
-
-                        //Copy//
-                        yaz.WriteLine("/* Copy */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Copy]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Copy]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Copy]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\t@" + idColumn + " " + idType);
-                        }
-
-                        yaz.WriteLine("AS");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tSET NOCOUNT ON");
-                        yaz.WriteLine("");
-
-                        sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.IsIdentity)
+                            if (idType != null)
                             {
-                                sqlText = sqlText + "[" + column.ColumnName + "],";
+                                yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
                             }
-                        }
 
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText + ")";
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //Update//
 
-                        yaz.WriteLine(sqlText);
-
-                        sqlText = "\tSELECT ";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.IsIdentity)
-                            {
-                                if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
-                                {
-                                    sqlText = sqlText + "'Kopya_' + A.[" + column.ColumnName + "],";
-                                }
-                                else if (column.ColumnName == searchText)
-                                {
-                                    sqlText = sqlText + "A.[" + column.ColumnName + "] + ' (Kopya)',";
-                                }
-                                else if (column.ColumnName.In(UrlColumns, InType.ToUrlLower))
-                                {
-                                    sqlText = sqlText + "A.[" + column.ColumnName + "] + '-(Kopya)',";
-                                }
-                                else
-                                    sqlText = sqlText + "A.[" + column.ColumnName + "],";
-                            }
-                        }
-
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText += " FROM " + schema + ".[" + Table + "] A WHERE A.[" + idColumn + "] = @" + idColumn;
-                        sqlText = sqlText.Replace(",", ", ");
-
-                        yaz.WriteLine(sqlText);
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
-                        yaz.WriteLine("END;");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("");
-                        //Copy//
-
-                        //Delete//
-                        yaz.WriteLine("/* Delete */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Delete]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Delete]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Delete]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\t@" + idColumn + " " + idType);
-                        }
-
-                        yaz.WriteLine("AS");
-                        yaz.WriteLine("\tSET NOCOUNT ON");
-                        yaz.WriteLine("\tSET XACT_ABORT ON");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tBEGIN TRAN");
-                        yaz.WriteLine("");
-
-                        yaz.WriteLine("\tDELETE");
-                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
-                        }
-
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tCOMMIT");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("");
-                        //Delete//
-
-                        //Remove//
-                        if (deleted != "")
-                        {
-                            yaz.WriteLine("/* Remove */");
-                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Remove]') IS NOT NULL");
+                            //Copy//
+                            yaz.WriteLine("/* Copy */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Copy]') IS NOT NULL");
                             yaz.WriteLine("BEGIN");
-                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Remove]");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Copy]");
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
-                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Remove]");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Copy]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + idColumn + " " + idType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    sqlText = sqlText + "[" + column.ColumnName + "],";
+                                }
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText + ")";
+
+                            yaz.WriteLine(sqlText);
+
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                    {
+                                        sqlText = sqlText + "'Kopya_' + A.[" + column.ColumnName + "],";
+                                    }
+                                    else if (column.ColumnName == searchText)
+                                    {
+                                        sqlText = sqlText + "A.[" + column.ColumnName + "] + ' (Kopya)',";
+                                    }
+                                    else if (column.ColumnName.In(UrlColumns, InType.ToUrlLower))
+                                    {
+                                        sqlText = sqlText + "A.[" + column.ColumnName + "] + '-(Kopya)',";
+                                    }
+                                    else
+                                        sqlText = sqlText + "A.[" + column.ColumnName + "],";
+                                }
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText += " FROM " + schema + ".[" + Table + "] A WHERE A.[" + idColumn + "] = @" + idColumn;
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
+                            yaz.WriteLine("END;");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //Copy//
+
+                            //Delete//
+                            yaz.WriteLine("/* Delete */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Delete]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Delete]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Delete]");
 
                             if (idType != null)
                             {
@@ -3089,7 +3208,8 @@ namespace TDFactory
                             yaz.WriteLine("\tBEGIN TRAN");
                             yaz.WriteLine("");
 
-                            yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "] SET [Deleted] = 1");
+                            yaz.WriteLine("\tDELETE");
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
                             if (idType != null)
                             {
@@ -3100,8 +3220,45 @@ namespace TDFactory
                             yaz.WriteLine("\tCOMMIT");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("");
+                            //Delete//
+
+                            //Remove//
+                            if (deleted != "")
+                            {
+                                yaz.WriteLine("/* Remove */");
+                                yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Remove]') IS NOT NULL");
+                                yaz.WriteLine("BEGIN");
+                                yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Remove]");
+                                yaz.WriteLine("END");
+                                yaz.WriteLine("GO");
+                                yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Remove]");
+
+                                if (idType != null)
+                                {
+                                    yaz.WriteLine("\t@" + idColumn + " " + idType);
+                                }
+
+                                yaz.WriteLine("AS");
+                                yaz.WriteLine("\tSET NOCOUNT ON");
+                                yaz.WriteLine("\tSET XACT_ABORT ON");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tBEGIN TRAN");
+                                yaz.WriteLine("");
+
+                                yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "] SET [Deleted] = 1");
+
+                                if (idType != null)
+                                {
+                                    yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
+                                }
+
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tCOMMIT");
+                                yaz.WriteLine("GO");
+                                yaz.WriteLine("");
+                            }
+                            //Remove//
                         }
-                        //Remove//
                     }
 
                     yaz.Close();
@@ -3118,6 +3275,9 @@ namespace TDFactory
 
             if (hasLinks)
                 CreateLinkStoredProcedure();
+
+            if (hasLangs)
+                CreateLangStoredProcedure();
         }
 
         void CreateSplitStoredProcedure()
@@ -3126,6 +3286,7 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
+
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\" + Table + ".sql", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
@@ -3653,19 +3814,108 @@ namespace TDFactory
                         yaz.WriteLine("");
                         //SelectAll//
 
-                        //Insert//
-                        yaz.WriteLine("/* Insert */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Insert]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Insert]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Insert]");
-
-                        i = 1;
-                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
+                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
-                            if (!column.IsIdentity)
+                            //Insert//
+                            yaz.WriteLine("/* Insert */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Insert]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Insert]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Insert]");
+
+                            i = 1;
+                            foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList())
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    string extra = "";
+
+                                    if (column.DataType.In(diziML))
+                                        extra += column.MaxLength != "" ? "(" + column.MaxLength + ")" : "";
+
+                                    extra += column.IsNullable ? " = NULL" : "";
+
+                                    if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count)
+                                        yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
+                                    else
+                                        yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
+                                }
+
+                                i++;
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    sqlText = sqlText + "[" + column.ColumnName + "],";
+                                }
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText + ")";
+
+                            yaz.WriteLine(sqlText);
+
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                {
+                                    if (!column.IsIdentity)
+                                    {
+                                        sqlText = sqlText + "@" + column.ColumnName + ",";
+                                    }
+                                }
+                                else
+                                {
+                                    if (!column.IsIdentity)
+                                    {
+                                        sqlText = sqlText + "0,";
+                                    }
+                                }
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
+                            yaz.WriteLine("END;");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //Insert//
+
+                            //Update//
+                            yaz.WriteLine("/* Update */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Update]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Update]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
+
+                            List<ColumnInfo> viewColumns = columnNames;
+
+                            if (hasUserRights && Table == "Users")
+                                viewColumns = viewColumns.Where(a => a.ColumnName != "LoginTime").ToList();
+
+                            viewColumns = viewColumns.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList();
+
+                            i = 1;
+                            foreach (ColumnInfo column in viewColumns)
                             {
                                 string extra = "";
 
@@ -3674,267 +3924,150 @@ namespace TDFactory
 
                                 extra += column.IsNullable ? " = NULL" : "";
 
-                                if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower)).ToList().Count)
+                                if (i != viewColumns.Count)
                                     yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
                                 else
                                     yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
+
+                                i++;
                             }
 
-                            i++;
-                        }
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
 
-                        yaz.WriteLine("AS");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tSET NOCOUNT ON");
-                        yaz.WriteLine("");
+                            yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "]");
 
-                        sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
+                            sqlText = "\tSET ";
 
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.IsIdentity)
+                            foreach (ColumnInfo column in viewColumns)
                             {
-                                sqlText = sqlText + "[" + column.ColumnName + "],";
-                            }
-                        }
-
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText + ")";
-
-                        yaz.WriteLine(sqlText);
-
-                        sqlText = "\tSELECT ";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
-                            {
-                                if (!column.IsIdentity)
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
                                 {
-                                    sqlText = sqlText + "@" + column.ColumnName + ",";
+                                    if (!column.IsIdentity)
+                                    {
+                                        sqlText = sqlText + "[" + column.ColumnName + "] = @" + column.ColumnName + ",";
+                                    }
                                 }
                             }
-                            else
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+
+                            yaz.WriteLine(sqlText);
+
+                            if (idType != null)
                             {
-                                if (!column.IsIdentity)
-                                {
-                                    sqlText = sqlText + "0,";
-                                }
+                                yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
                             }
-                        }
 
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText.Replace(",", ", ");
+                            yaz.WriteLine("");
 
-                        yaz.WriteLine(sqlText);
+                            sqlText = "\tSELECT ";
 
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
-                        yaz.WriteLine("END;");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("");
-                        //Insert//
-
-                        //Update//
-                        yaz.WriteLine("/* Update */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Update]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Update]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Update]");
-
-                        i = 1;
-                        foreach (ColumnInfo column in columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList())
-                        {
-                            string extra = "";
-
-                            if (column.DataType.In(diziML))
-                                extra += column.MaxLength != "" ? "(" + column.MaxLength + ")" : "";
-
-                            extra += column.IsNullable ? " = NULL" : "";
-
-                            if (i != columnNames.Where(a => !a.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !a.ColumnName.In(GuidColumns, InType.ToUrlLower)).ToList().Count)
-                                yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd() + ",");
-                            else
-                                yaz.WriteLine("\t@" + column.ColumnName + " " + column.DataType + extra.TrimEnd());
-
-                            i++;
-                        }
-
-                        yaz.WriteLine("AS");
-                        yaz.WriteLine("\tSET NOCOUNT ON");
-                        yaz.WriteLine("\tSET XACT_ABORT ON");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tBEGIN TRAN");
-                        yaz.WriteLine("");
-
-                        yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "]");
-
-                        sqlText = "\tSET ";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower) && !column.ColumnName.In(GuidColumns, InType.ToUrlLower))
+                            foreach (ColumnInfo column in viewColumns)
                             {
-                                if (!column.IsIdentity)
-                                {
-                                    sqlText = sqlText + "[" + column.ColumnName + "] = @" + column.ColumnName + ",";
-                                }
+                                if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
+                                    sqlText = sqlText + "[" + column.ColumnName + "],";
                             }
-                        }
 
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText.Replace(",", ", ");
 
-                        yaz.WriteLine(sqlText);
+                            yaz.WriteLine(sqlText);
 
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
-                        }
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
-                        yaz.WriteLine("");
-
-                        sqlText = "\tSELECT ";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.ColumnName.In(DeletedColumns, InType.ToUrlLower))
-                                sqlText = sqlText + "[" + column.ColumnName + "],";
-                        }
-
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText.Replace(",", ", ");
-
-                        yaz.WriteLine(sqlText);
-
-                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
-                        }
-
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tCOMMIT");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("");
-                        //Update//
-
-                        //Copy//
-                        yaz.WriteLine("/* Copy */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Copy]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Copy]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Copy]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\t@" + idColumn + " " + idType);
-                        }
-
-                        yaz.WriteLine("AS");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tSET NOCOUNT ON");
-                        yaz.WriteLine("");
-
-                        sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.IsIdentity)
+                            if (idType != null)
                             {
-                                sqlText = sqlText + "[" + column.ColumnName + "],";
+                                yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
                             }
-                        }
 
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText = sqlText + ")";
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //Update//
 
-                        yaz.WriteLine(sqlText);
-
-                        sqlText = "\tSELECT ";
-
-                        foreach (ColumnInfo column in columnNames)
-                        {
-                            if (!column.IsIdentity)
-                            {
-                                if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
-                                {
-                                    sqlText = sqlText + "'Kopya_' + A.[" + column.ColumnName + "],";
-                                }
-                                else if (column.ColumnName == searchText)
-                                {
-                                    sqlText = sqlText + "A.[" + column.ColumnName + "] + ' (Kopya)',";
-                                }
-                                else if (column.ColumnName.In(UrlColumns, InType.ToUrlLower))
-                                {
-                                    sqlText = sqlText + "A.[" + column.ColumnName + "] + '-(Kopya)',";
-                                }
-                                else
-                                    sqlText = sqlText + "A.[" + column.ColumnName + "],";
-                            }
-                        }
-
-                        sqlText = sqlText.Remove(sqlText.Length - 1);
-                        sqlText += " FROM " + schema + ".[" + Table + "] A WHERE A.[" + idColumn + "] = @" + idColumn;
-                        sqlText = sqlText.Replace(",", ", ");
-
-                        yaz.WriteLine(sqlText);
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
-                        yaz.WriteLine("END;");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("");
-                        //Copy//
-
-                        //Delete//
-                        yaz.WriteLine("/* Delete */");
-                        yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Delete]') IS NOT NULL");
-                        yaz.WriteLine("BEGIN");
-                        yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Delete]");
-                        yaz.WriteLine("END");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Delete]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\t@" + idColumn + " " + idType);
-                        }
-
-                        yaz.WriteLine("AS");
-                        yaz.WriteLine("\tSET NOCOUNT ON");
-                        yaz.WriteLine("\tSET XACT_ABORT ON");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tBEGIN TRAN");
-                        yaz.WriteLine("");
-
-                        yaz.WriteLine("\tDELETE");
-                        yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
-                        }
-
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\tCOMMIT");
-                        yaz.WriteLine("GO");
-                        yaz.WriteLine("");
-                        //Delete//
-
-                        //Remove//
-                        if (deleted != "")
-                        {
-                            yaz.WriteLine("/* Remove */");
-                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Remove]') IS NOT NULL");
+                            //Copy//
+                            yaz.WriteLine("/* Copy */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Copy]') IS NOT NULL");
                             yaz.WriteLine("BEGIN");
-                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Remove]");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Copy]");
                             yaz.WriteLine("END");
                             yaz.WriteLine("GO");
-                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Remove]");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Copy]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + idColumn + " " + idType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("");
+
+                            sqlText = "\tINSERT INTO " + schema + ".[" + Table + "] (";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    sqlText = sqlText + "[" + column.ColumnName + "],";
+                                }
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText = sqlText + ")";
+
+                            yaz.WriteLine(sqlText);
+
+                            sqlText = "\tSELECT ";
+
+                            foreach (ColumnInfo column in columnNames)
+                            {
+                                if (!column.IsIdentity)
+                                {
+                                    if (column.ColumnName.In(FileColumns, InType.ToUrlLower) || column.ColumnName.In(ImageColumns, InType.ToUrlLower))
+                                    {
+                                        sqlText = sqlText + "'Kopya_' + A.[" + column.ColumnName + "],";
+                                    }
+                                    else if (column.ColumnName == searchText)
+                                    {
+                                        sqlText = sqlText + "A.[" + column.ColumnName + "] + ' (Kopya)',";
+                                    }
+                                    else if (column.ColumnName.In(UrlColumns, InType.ToUrlLower))
+                                    {
+                                        sqlText = sqlText + "A.[" + column.ColumnName + "] + '-(Kopya)',";
+                                    }
+                                    else
+                                        sqlText = sqlText + "A.[" + column.ColumnName + "],";
+                                }
+                            }
+
+                            sqlText = sqlText.Remove(sqlText.Length - 1);
+                            sqlText += " FROM " + schema + ".[" + Table + "] A WHERE A.[" + idColumn + "] = @" + idColumn;
+                            sqlText = sqlText.Replace(",", ", ");
+
+                            yaz.WriteLine(sqlText);
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tSELECT cast(@@IDENTITY as int)");
+                            yaz.WriteLine("END;");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //Copy//
+
+                            //Delete//
+                            yaz.WriteLine("/* Delete */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Delete]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Delete]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Delete]");
 
                             if (idType != null)
                             {
@@ -3948,7 +4081,8 @@ namespace TDFactory
                             yaz.WriteLine("\tBEGIN TRAN");
                             yaz.WriteLine("");
 
-                            yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "] SET [Deleted] = 1");
+                            yaz.WriteLine("\tDELETE");
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
                             if (idType != null)
                             {
@@ -3959,9 +4093,46 @@ namespace TDFactory
                             yaz.WriteLine("\tCOMMIT");
                             yaz.WriteLine("GO");
                             yaz.WriteLine("");
+                            //Delete//
+
+                            //Remove//
+                            if (deleted != "")
+                            {
+                                yaz.WriteLine("/* Remove */");
+                                yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "Remove]') IS NOT NULL");
+                                yaz.WriteLine("BEGIN");
+                                yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "Remove]");
+                                yaz.WriteLine("END");
+                                yaz.WriteLine("GO");
+                                yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "Remove]");
+
+                                if (idType != null)
+                                {
+                                    yaz.WriteLine("\t@" + idColumn + " " + idType);
+                                }
+
+                                yaz.WriteLine("AS");
+                                yaz.WriteLine("\tSET NOCOUNT ON");
+                                yaz.WriteLine("\tSET XACT_ABORT ON");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tBEGIN TRAN");
+                                yaz.WriteLine("");
+
+                                yaz.WriteLine("\tUPDATE " + schema + ".[" + Table + "] SET [Deleted] = 1");
+
+                                if (idType != null)
+                                {
+                                    yaz.WriteLine("\tWHERE [" + idColumn + "] = @" + idColumn);
+                                }
+
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\tCOMMIT");
+                                yaz.WriteLine("GO");
+                                yaz.WriteLine("");
+                            }
+                            //Remove//
+                            yaz.Close();
                         }
-                        //Remove//
-                        yaz.Close();
                     }
                 }
             }
@@ -4211,6 +4382,40 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LogsClear]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LogsClear]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_LogsClear]");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tDELETE");
+                    yaz.WriteLine("\tFROM [dbo].[Logs]");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_VisitorsClear]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_VisitorsClear]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_VisitorsClear]");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tDELETE");
+                    yaz.WriteLine("\tFROM [dbo].[Visitors]");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
                     yaz.Close();
                 }
             }
@@ -4372,6 +4577,229 @@ namespace TDFactory
                     yaz.WriteLine("\tSELECT [ID], [TypeName], [Url], [TableName], [Linkable]");
                     yaz.WriteLine("\tFROM   [dbo].[Types]");
                     yaz.WriteLine("\tWHERE  ([ID] = @ID OR @ID IS NULL) and [Linkable] = 1 and [Show] = 1");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.Close();
+                }
+            }
+        }
+
+        void CreateLangStoredProcedure()
+        {
+            using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\_Langs.sql", FileMode.Create))
+            {
+                using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
+                {
+                    yaz.WriteLine("USE [" + DBName + "]");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LangContentDetail]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LangContentDetail]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_LangContentDetail]");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT LT.[ShortDescription],LT.[ShortDescription2],LT.[Description],LT.[Description2],L.[Code],L.[ShortCode],LT.[TransID]");
+                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LangContentByCode]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LangContentByCode]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_LangContentByCode]");
+                    yaz.WriteLine("\t@Code nvarchar(25),");
+                    yaz.WriteLine("\t@TransID int,");
+                    yaz.WriteLine("\t@Top int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                    yaz.WriteLine("\tWHERE L.[Code] = @Code and LT.[TransID] = @TransID");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("\telse");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                    yaz.WriteLine("\tWHERE L.[Code] = @Code and LT.[TransID] = @TransID");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LangContentByCodeAndShortCode]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LangContentByCodeAndShortCode]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_LangContentByCodeAndShortCode]");
+                    yaz.WriteLine("\t@Code nvarchar(25),");
+                    yaz.WriteLine("\t@ShortCode nvarchar(15),");
+                    yaz.WriteLine("\t@TransID int,");
+                    yaz.WriteLine("\t@Top int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                    yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and L.[Code] = @Code and LT.[TransID] = @TransID");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("\telse");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                    yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and L.[Code] = @Code and LT.[TransID] = @TransID");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LangContentByShortCode]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LangContentByShortCode]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_LangContentByShortCode]");
+                    yaz.WriteLine("\t@ShortCode nvarchar(15),");
+                    yaz.WriteLine("\t@TransID int,");
+                    yaz.WriteLine("\t@Top int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                    yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and LT.[TransID] = @TransID");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("\telse");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                    yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and LT.[TransID] = @TransID");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_NoLangContentByCode]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_NoLangContentByCode]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_NoLangContentByCode]");
+                    yaz.WriteLine("\t@Code nvarchar(25),");
+                    yaz.WriteLine("\t@Top int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                    yaz.WriteLine("\tWHERE N.[Code] = @Code");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("\telse");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                    yaz.WriteLine("\tWHERE N.[Code] = @Code");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_NoLangContentByCodeAndShortCode]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_NoLangContentByCodeAndShortCode]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_NoLangContentByCodeAndShortCode]");
+                    yaz.WriteLine("\t@Code nvarchar(25),");
+                    yaz.WriteLine("\t@ShortCode nvarchar(15),");
+                    yaz.WriteLine("\t@Top int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                    yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode and N.[Code] = @Code");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("\telse");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                    yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode and N.[Code] = @Code");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_NoLangContentByShortCode]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_NoLangContentByShortCode]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_NoLangContentByShortCode]");
+                    yaz.WriteLine("\t@ShortCode nvarchar(15),");
+                    yaz.WriteLine("\t@Top int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                    yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode");
+                    yaz.WriteLine("\tend");
+                    yaz.WriteLine("\telse");
+                    yaz.WriteLine("\tbegin");
+                    yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                    yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode");
+                    yaz.WriteLine("\tend");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");

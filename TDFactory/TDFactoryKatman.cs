@@ -167,6 +167,7 @@ namespace TDFactory
                     hasUserRights = Helper.HasUserRights(selectedTables);
                     hasLogs = Helper.HasLogs(selectedTables);
                     hasLinks = Helper.HasLinks(selectedTables);
+                    hasLangs = Helper.HasLangs(selectedTables);
 
                     if (chkAngular.Checked)
                     {

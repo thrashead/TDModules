@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 
 namespace TDFactory
 {
@@ -325,6 +326,33 @@ namespace TDFactory
             }
 
             if (!tableNames.Contains("Types"))
+            {
+                control = false;
+                goto end;
+            }
+
+            end:;
+
+            return control;
+        }
+
+        public static bool HasLangs(List<string> tableNames)
+        {
+            bool control = true;
+
+            if (!tableNames.Contains("LangContent"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("LangContentT"))
+            {
+                control = false;
+                goto end;
+            }
+
+            if (!tableNames.Contains("NoLangContent"))
             {
                 control = false;
                 goto end;

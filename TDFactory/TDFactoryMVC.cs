@@ -844,13 +844,13 @@ namespace TDFactory
                         if (item.SubMenu.Count <= 0)
                         {
                             yaz.WriteLine("\t\t<li data-url=\"" + item.Title + "\">");
-                            yaz.WriteLine("\t\t\t<a href=\"@AppMgr.AdminPath/" + item.Title + "\"><i class=\"icon icon-home\"></i> <span>" + item.Title.ToTurkish(lstLang) + "</span></a>");
+                            yaz.WriteLine("\t\t\t<a href=\"@AppMgr.AdminPath/" + item.Title + "\"><i class=\"icon " + item.Title.ToIcon() + "\"></i> <span>" + item.Title.ToTurkish(lstLang) + "</span></a>");
                             yaz.WriteLine("\t\t</li>");
                         }
                         else
                         {
                             yaz.WriteLine("\t\t<li class=\"submenu\">");
-                            yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon icon-home\"></i> <span>" + item.Title.ToTurkish(lstLang) + "</span></a>");
+                            yaz.WriteLine("\t\t\t<a href=\"javascript:;\"><i class=\"icon " + item.Title.ToIcon() + "\"></i> <span>" + item.Title.ToTurkish(lstLang) + "</span></a>");
                             yaz.WriteLine("\t\t\t<ul>");
                             yaz.WriteLine("\t\t\t\t<li data-url=\"" + item.Title + "\"><a href=\"@AppMgr.AdminPath/" + item.Title + "\">" + item.Title.ToTurkish(lstLang) + "</a></li>");
 
@@ -953,6 +953,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
+                FillTable(table);
                 SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string tableLang = Table.ToTurkish(lstLang);
@@ -986,14 +987,14 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("<div id=\"content\">");
                         yaz.WriteLine("\t<div id=\"content-header\">");
-                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + tableLang + " Tablosu</a></div>");
+                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"" + Table.ToIcon() + "\"></i> " + tableLang + " Tablosu</a></div>");
                         yaz.WriteLine("\t</div>");
                         yaz.WriteLine("\t<div class=\"container-fluid\">");
                         yaz.WriteLine("\t\t<div class=\"row-fluid\">");
                         yaz.WriteLine("\t\t\t<div class=\"span12\">");
                         yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
                         yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
-                        yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
+                        yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"" + Table.ToIcon() + "\"></i></span>");
                         yaz.WriteLine("\t\t\t\t\t\t<h5>" + tableLang + " Tablosu</h5>");
                         yaz.WriteLine("\t\t\t\t\t</div>");
                         yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
@@ -1124,7 +1125,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("<div id=\"content\">");
                         yaz.WriteLine("\t<div id=\"content-header\">");
-                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + tableLang + " Ekle</a></div>");
+                        yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"" + Table.ToIcon() + "\"></i> " + tableLang + " Ekle</a></div>");
                         yaz.WriteLine("\t</div>");
                         yaz.WriteLine("\t<div class=\"container-fluid\">");
 
@@ -1248,7 +1249,7 @@ namespace TDFactory
                             yaz.WriteLine("");
                             yaz.WriteLine("<div id=\"content\">");
                             yaz.WriteLine("\t<div id=\"content-header\">");
-                            yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"icon-home\"></i> " + tableLang + " Düzenle</a></div>");
+                            yaz.WriteLine("\t\t<div id=\"breadcrumb\"> <a class=\"tip-bottom\"><i class=\"" + Table.ToIcon() + "\"></i> " + tableLang + " Düzenle</a></div>");
                             yaz.WriteLine("\t</div>");
                             yaz.WriteLine("\t<div class=\"container-fluid\">");
 
@@ -1371,7 +1372,7 @@ namespace TDFactory
                                         yaz.WriteLine("\t\t\t<div class=\"span12\">");
                                         yaz.WriteLine("\t\t\t\t<div class=\"widget-box\">");
                                         yaz.WriteLine("\t\t\t\t\t<div class=\"widget-title\">");
-                                        yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"icon-home\"></i></span>");
+                                        yaz.WriteLine("\t\t\t\t\t\t<span class=\"icon\"><i class=\"" + Table.ToIcon() + "\"></i></span>");
                                         yaz.WriteLine("\t\t\t\t\t\t<h5>Bağlı " + ForeignTableName.ToTurkish(lstLang) + " Tablosu</h5>");
                                         yaz.WriteLine("\t\t\t\t\t</div>");
                                         yaz.WriteLine("\t\t\t\t\t<div class=\"widget-content nopadding\">");
@@ -1494,6 +1495,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
+                FillTable(table);
                 SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 CreateMVCDirectories(Table);
@@ -2106,7 +2108,7 @@ namespace TDFactory
 
                     foreach (AdminMenu item in adminMenu)
                     {
-                        yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a href=\"@AppMgr.AdminPath/" + item.Title + "\"> <i class=\"icon-home\"></i> " + item.Title.ToTurkish(lstLang) + "</a> </li>");
+                        yaz.WriteLine("\t\t\t\t<li class=\"" + colors[i % 7] + "\"> <a href=\"@AppMgr.AdminPath/" + item.Title + "\"> <i class=\"" + item.Title.ToIcon() + "\"></i> " + item.Title.ToTurkish(lstLang) + "</a> </li>");
                         i++;
                     }
 

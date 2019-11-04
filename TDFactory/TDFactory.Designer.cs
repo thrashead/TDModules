@@ -1150,6 +1150,7 @@
             "LogProcess-Log İşlemi",
             "Logs-Log",
             "LogTypes-Log Tipi",
+            "NoLangContent-Dilsiz İçerik",
             "MetaT-Meta (Dil)",
             "Pictures-Resim",
             "Product-Ürün",

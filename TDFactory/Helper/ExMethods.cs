@@ -288,6 +288,7 @@ namespace TDFactory
                 case "Logs": return "Logs";
                 case "LogProcess": return "Logs";
                 case "LogTypes": return "Logs";
+                case "NoLangContent": return "Translation";
                 case "Users": return "Users";
                 case "UserGroups": return "Users";
                 case "UserGroupTables": return "Users";
@@ -297,6 +298,42 @@ namespace TDFactory
                 case "Types": return "Types";
                 case "Visitors": return "Website";
                 default: return "Website";
+            }
+        }
+
+        public static string ToIcon(this string tableName)
+        {
+            switch (tableName)
+            {
+                case "Category": return "icon-sitemap";
+                case "CategoryT": return "icon-sitemap";
+                case "Content": return "icon-edit";
+                case "ContentT": return "icon-edit";
+                case "Gallery": return "icon-picture";
+                case "GalleryT": return "icon-picture";
+                case "Meta": return "icon-tags";
+                case "MetaT": return "icon-tags";
+                case "Product": return "icon-barcode";
+                case "ProductT": return "icon-barcode";
+                case "Files": return "icon-file";
+                case "Pictures": return "icon-camera-retro";
+                case "LangContent": return "icon-flag";
+                case "LangContentT": return "icon-flag";
+                case "Links": return "icon-link";
+                case "LinkTypes": return "icon-link";
+                case "Logs": return "icon-eye-open";
+                case "LogProcess": return "icon-eye-open";
+                case "LogTypes": return "icon-eye-open";
+                case "NoLangContent": return "icon-flag";
+                case "Users": return "icon-user";
+                case "UserGroups": return "icon-user";
+                case "UserGroupTables": return "icon-user";
+                case "UserGroupProcess": return "icon-user";
+                case "UserGroupRights": return "icon-user";
+                case "Translation": return "icon-globe";
+                case "Types": return "icon-pushpin";
+                case "Visitors": return "icon-plane";
+                default: return "icon-home";
             }
         }
     }

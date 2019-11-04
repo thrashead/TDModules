@@ -587,6 +587,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
+                FillTable(table);
                 SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string _table = Table.ToUrl(true);
@@ -1650,6 +1651,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
+                FillTable(table);
                 Table tableFrgn = new Table(null, connectionInfo);
                 SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
@@ -1661,6 +1663,7 @@ namespace TDFactory
                 {
                     ForeignKeyChecker fkc = table.FkcForeignList.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).FirstOrDefault();
                     tableFrgn = new Table(fkc.PrimaryTableName, connectionInfo);
+                    FillTable(tableFrgn);
                 }
 
                 //Sayfa
@@ -3300,6 +3303,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
+                FillTable(table);
                 SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string _table = Table.ToUrl(true);
@@ -3823,6 +3827,7 @@ namespace TDFactory
             foreach (string Table in selectedTables)
             {
                 Table table = new Table(Table, connectionInfo);
+                FillTable(table);
                 SqlConnection con = new SqlConnection(Helper.CreateConnectionText(connectionInfo));
 
                 string _table = Table.ToUrl(true);
