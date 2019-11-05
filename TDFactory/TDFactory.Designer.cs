@@ -408,9 +408,12 @@
             "thumb",
             "thumburl",
             "thumbnail",
+            "flag",
+            "flagurl",
             "resim",
             "fotograf",
-            "imaj"});
+            "imaj",
+            "bayrak"});
             this.lstImageColumns.Location = new System.Drawing.Point(9, 57);
             this.lstImageColumns.Name = "lstImageColumns";
             this.lstImageColumns.Size = new System.Drawing.Size(65, 173);

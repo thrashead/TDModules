@@ -338,27 +338,12 @@ namespace TDFactory
 
         public static bool HasLangs(List<string> tableNames)
         {
-            bool control = true;
+            bool control = false;
 
-            if (!tableNames.Contains("LangContent"))
+            if ((tableNames.Contains("LangContent") && tableNames.Contains("LangContentT")) || tableNames.Contains("NoLangContent"))
             {
-                control = false;
-                goto end;
+                control = true;
             }
-
-            if (!tableNames.Contains("LangContentT"))
-            {
-                control = false;
-                goto end;
-            }
-
-            if (!tableNames.Contains("NoLangContent"))
-            {
-                control = false;
-                goto end;
-            }
-
-            end:;
 
             return control;
         }
