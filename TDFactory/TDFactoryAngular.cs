@@ -2793,6 +2793,10 @@ namespace TDFactory
                                                         }
                                                     }
                                                 }
+                                                else if (Table == "Category" && column.ColumnName == "ParentID")
+                                                {
+                                                    yaz.WriteLine("\t\t\t\t\t<select id=\"ParentID\" [ngModel]=\"model?.ParentID\" formControlName=\"ParentID\"><option *ngFor=\"let item of model?.ParentCategories\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
+                                                }
                                                 else
                                                 {
                                                     yaz.WriteLine("\t\t\t\t\t<input id=\"" + column.ColumnName + "\" [ngModel]=\"model?." + column.ColumnName + "\" formControlName=\"" + column.ColumnName + "\" type=\"number\" />");
@@ -2957,6 +2961,10 @@ namespace TDFactory
                                                                 yaz.WriteLine("\t\t\t\t\t<select id=\"MainID\" class=\"selectMain\" [ngModel]=\"model?.MainID\" formControlName=\"MainID\"><option *ngFor=\"let item of model?.MainList\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
                                                             }
                                                         }
+                                                    }
+                                                    else if (Table == "Category" && column.ColumnName == "ParentID")
+                                                    {
+                                                        yaz.WriteLine("\t\t\t\t\t<select id=\"ParentID\" [ngModel]=\"model?.ParentID\" formControlName=\"ParentID\"><option *ngFor=\"let item of model?.ParentCategories\" selected=\"{{ item?.Selected ? 'selected' : '' }}\" value=\"{{ item?.Value }}\">{{ item?.Text }}</option></select>");
                                                     }
                                                     else
                                                     {
@@ -3456,7 +3464,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\tthis.data = new Object();");
                             yaz.WriteLine("");
 
-                            if (table.FkcForeignList.Count > 0)
+                            if (table.FkcForeignList.Count > 0 || (Table == "Category" && table.Columns.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\tthis.subscription = this.service.get(\"" + Table + "\", \"Insert\").subscribe((answer: any) => {");
                                 yaz.WriteLine("\t\t\tthis.model = answer;");
@@ -3523,7 +3531,14 @@ namespace TDFactory
                                         {
                                             if (column.Type.Name.In(new string[] { "Int16", "Int32", "Int64" }))
                                             {
-                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(1)]),");
+                                                if (Table == "Category" && column.ColumnName == "ParentID")
+                                                {
+                                                    yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(0)]),");
+                                                }
+                                                else
+                                                {
+                                                    yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(1)]),");
+                                                }
                                             }
                                             else if (column.Type.Name == "String")
                                             {
@@ -3904,7 +3919,14 @@ namespace TDFactory
                                         {
                                             if (column.Type.Name.In(new string[] { "Int16", "Int32", "Int64" }))
                                             {
-                                                yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(1)]),");
+                                                if (Table == "Category" && column.ColumnName == "ParentID")
+                                                {
+                                                    yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(0)]),");
+                                                }
+                                                else
+                                                {
+                                                    yaz.WriteLine("\t\t\t" + column.ColumnName + ": new FormControl(null, [Validators.required, Validators.min(1)]),");
+                                                }
                                             }
                                             else if (column.Type.Name == "String")
                                             {
@@ -4389,7 +4411,7 @@ namespace TDFactory
 
                         if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
-                            if (table.FkcForeignList.Count > 0)
+                            if (table.FkcForeignList.Count > 0 || (Table == "Category" && table.Columns.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 // Ekle
                                 yaz.WriteLine("\t\t[HttpGet]");

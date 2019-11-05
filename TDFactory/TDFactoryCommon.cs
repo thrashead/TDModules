@@ -77,7 +77,7 @@ namespace TDFactory
                             yaz.WriteLine("using System.Web;");
                         }
 
-                        if (fkcListForeign.Count > 0 || allowHtml)
+                        if (fkcListForeign.Count > 0 || allowHtml || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                         {
                             yaz.WriteLine("using System.Web.Mvc;");
                         }
@@ -138,6 +138,11 @@ namespace TDFactory
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     yaz.WriteLine("\t\t\t" + PrimaryTableName + "List = new List<SelectListItem>();");
                                 }
+                            }
+
+                            if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                            {
+                                yaz.WriteLine("\t\t\tParentCategories = new List<SelectListItem>();");
                             }
 
                             if (hasLinks)
@@ -316,6 +321,11 @@ namespace TDFactory
                             }
                         }
 
+                        if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                        {
+                            yaz.WriteLine("\t\tpublic List<SelectListItem> ParentCategories { get; set; }");
+                        }
+
                         if (fkcListForeign.Count > 0)
                         {
                             yaz.WriteLine("");
@@ -444,6 +454,13 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t{");
                             }
 
+                            if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(item.ID).ToList();");
+                                yaz.WriteLine("\t\t\t\t\titem.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", item.ParentID, true);");
+                                yaz.WriteLine("");
+                            }
+
                             if (fkcListForeign.Count > 0)
                             {
                                 foreach (ForeignKeyChecker fkc in fkcListForeign.GroupBy(a => a.PrimaryTableName).Select(a => a.First()).ToList())
@@ -520,6 +537,13 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t\t{");
                         }
 
+                        if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                        {
+                            yaz.WriteLine("\t\t\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(item.ID).ToList();");
+                            yaz.WriteLine("\t\t\t\t\titem.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", item.ParentID, true);");
+                            yaz.WriteLine("");
+                        }
+
                         j = 1;
                         if (fkcListForeign.Count > 0)
                         {
@@ -591,6 +615,13 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t{");
                         }
 
+                        if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                        {
+                            yaz.WriteLine("\t\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(table.ID).ToList();");
+                            yaz.WriteLine("\t\t\t\ttable.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", table.ParentID, true);");
+                            yaz.WriteLine("");
+                        }
+
                         j = 1;
                         if (fkcListForeign.Count > 0)
                         {
@@ -658,6 +689,13 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\t\t\tif (relation)");
                                 yaz.WriteLine("\t\t\t{");
+                            }
+
+                            if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(table.ID).ToList();");
+                                yaz.WriteLine("\t\t\t\ttable.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", table.ParentID, true);");
+                                yaz.WriteLine("");
                             }
 
                             j = 1;
@@ -728,6 +766,13 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\t\t\tif (relation)");
                                 yaz.WriteLine("\t\t\t{");
+                            }
+
+                            if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(table.ID).ToList();");
+                                yaz.WriteLine("\t\t\t\ttable.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", table.ParentID, true);");
+                                yaz.WriteLine("");
                             }
 
                             j = 1;
@@ -802,6 +847,13 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t{");
                             }
 
+                            if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(item.ID).ToList();");
+                                yaz.WriteLine("\t\t\t\t\titem.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", item.ParentID, true);");
+                                yaz.WriteLine("");
+                            }
+
                             j = 1;
                             if (fkcListForeign.Count > 0)
                             {
@@ -873,6 +925,13 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t{");
                                 yaz.WriteLine("\t\t\t\tforeach(" + Table + " item in table)");
                                 yaz.WriteLine("\t\t\t\t{");
+                            }
+
+                            if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                            {
+                                yaz.WriteLine("\t\t\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(item.ID).ToList();");
+                                yaz.WriteLine("\t\t\t\t\titem.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", item.ParentID, true);");
+                                yaz.WriteLine("");
                             }
 
                             j = 1;
@@ -959,6 +1018,13 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tif (table == null)");
                             yaz.WriteLine("\t\t\t\ttable = new " + Table + "();");
                             yaz.WriteLine("");
+
+                            if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                            {
+                                yaz.WriteLine("\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(null).ToList();");
+                                yaz.WriteLine("\t\t\ttable.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", null, true);");
+                                yaz.WriteLine("");
+                            }
 
                             l = 0;
                             if (fkcListForeign.Count > 0)
@@ -1082,6 +1148,13 @@ namespace TDFactory
                                 {
                                     yaz.WriteLine("\t\t\telse");
                                     yaz.WriteLine("\t\t\t{");
+                                }
+
+                                if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                                {
+                                    yaz.WriteLine("\t\t\t\tList<usp_CategoryParentSelect_Result> parentList = entity.usp_CategoryParentSelect(table.ID).ToList();");
+                                    yaz.WriteLine("\t\t\t\ttable.ParentCategories = parentList.ToSelectList<usp_CategoryParentSelect_Result, SelectListItem>(\"ID\", \"Title\", table.ParentID, true);");
+                                    yaz.WriteLine("");
                                 }
 
                                 if (fkcListForeign.Count > 0)
@@ -1650,7 +1723,8 @@ namespace TDFactory
 
                         yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Collections.Generic;");
-                        if (fkcListForeign.Count > 0)
+
+                        if (fkcListForeign.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                         {
                             yaz.WriteLine("using System.Web.Mvc;");
                         }
@@ -1783,6 +1857,11 @@ namespace TDFactory
                                 string ForeignTableName = fkc.ForeignTableName;
                                 yaz.WriteLine("\t\tList<I" + ForeignTableName + "> " + ForeignTableName + "List { get; set; }");
                             }
+                        }
+
+                        if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                        {
+                            yaz.WriteLine("\t\tList<SelectListItem> ParentCategories { get; set; }");
                         }
 
                         if (fkcListForeign.Count > 0)
@@ -2959,6 +3038,44 @@ namespace TDFactory
                         yaz.WriteLine("");
                         //SelectAll//
 
+                        if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                        {
+                            //ParentSelect//
+                            yaz.WriteLine("/* Select */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "ParentSelect]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "ParentSelect]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "ParentSelect]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + idColumn + " " + idType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\tSELECT [ID], [Title]");
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\tWHERE ([" + idColumn + "] <> @" + idColumn + " OR @" + idColumn + " IS NULL)" + deleted);
+                            }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //ParentSelect//
+                        }
+
                         if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             //Insert//
@@ -3304,7 +3421,6 @@ namespace TDFactory
 
             foreach (string Table in selectedTables)
             {
-
                 using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\StoredProcedures\\" + Table + ".sql", FileMode.Create))
                 {
                     using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
@@ -3831,6 +3947,44 @@ namespace TDFactory
                         yaz.WriteLine("GO");
                         yaz.WriteLine("");
                         //SelectAll//
+
+                        if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
+                        {
+                            //ParentSelect//
+                            yaz.WriteLine("/* Select */");
+                            yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "ParentSelect]') IS NOT NULL");
+                            yaz.WriteLine("BEGIN");
+                            yaz.WriteLine("\tDROP PROC " + schema + ".[usp_" + Table + "ParentSelect]");
+                            yaz.WriteLine("END");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "ParentSelect]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\t@" + idColumn + " " + idType);
+                            }
+
+                            yaz.WriteLine("AS");
+                            yaz.WriteLine("\tSET NOCOUNT ON");
+                            yaz.WriteLine("\tSET XACT_ABORT ON");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tBEGIN TRAN");
+                            yaz.WriteLine("");
+
+                            yaz.WriteLine("\tSELECT [ID], [Title]");
+                            yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
+
+                            if (idType != null)
+                            {
+                                yaz.WriteLine("\tWHERE ([" + idColumn + "] <> @" + idColumn + " OR @" + idColumn + " IS NULL)" + deleted);
+                            }
+
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\tCOMMIT");
+                            yaz.WriteLine("GO");
+                            yaz.WriteLine("");
+                            //ParentSelect//
+                        }
 
                         if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
