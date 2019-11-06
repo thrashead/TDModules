@@ -946,14 +946,17 @@ namespace TDFactory
         {
             if (fileDialogLang.ShowDialog() == DialogResult.OK)
             {
-                lstLang.Items.Clear();
+                if (chkLangReset.Checked)
+                    lstLang.Items.Clear();
+
                 string dosya = fileDialogLang.FileName;
                 TextReader reader = File.OpenText(dosya);
                 string str;
                 while ((str = reader.ReadLine()) != null)
                 {
                     if (!String.IsNullOrEmpty(str))
-                        lstLang.Items.Add(str);
+                        if (!lstLang.Items.Contains(str))
+                            lstLang.Items.Add(str);
                 }
                 reader.Close();
                 reader.Dispose();

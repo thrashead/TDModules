@@ -228,6 +228,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.fileDialogLang = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialogLang = new System.Windows.Forms.SaveFileDialog();
+            this.chkLangReset = new System.Windows.Forms.CheckBox();
             this.tbconTablar.SuspendLayout();
             this.tabpageKatmanlariOlustur.SuspendLayout();
             this.grpIslem.SuspendLayout();
@@ -291,6 +292,7 @@
             this.pnlKaydet.Controls.Add(this.chkLang);
             this.pnlKaydet.Controls.Add(this.tbconKolonlar);
             this.pnlKaydet.Controls.Add(this.chkRepositoryInternal);
+            this.pnlKaydet.Controls.Add(this.chkLangReset);
             this.pnlKaydet.Controls.Add(this.chkAngular);
             this.pnlKaydet.Controls.Add(this.txtProjectName);
             this.pnlKaydet.Controls.Add(this.pnlAndroidService);
@@ -1214,7 +1216,7 @@
             this.btnLangFile.Font = new System.Drawing.Font("Arial", 8.25F);
             this.btnLangFile.Location = new System.Drawing.Point(762, 295);
             this.btnLangFile.Name = "btnLangFile";
-            this.btnLangFile.Size = new System.Drawing.Size(138, 23);
+            this.btnLangFile.Size = new System.Drawing.Size(86, 23);
             this.btnLangFile.TabIndex = 91;
             this.btnLangFile.Text = "Dosyadan Ekle";
             this.btnLangFile.UseVisualStyleBackColor = true;
@@ -2860,6 +2862,18 @@
             // 
             this.saveFileDialogLang.Filter = "Metin Dosyası|*.txt";
             // 
+            // chkLangReset
+            // 
+            this.chkLangReset.AutoSize = true;
+            this.chkLangReset.Checked = true;
+            this.chkLangReset.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkLangReset.Location = new System.Drawing.Point(854, 298);
+            this.chkLangReset.Name = "chkLangReset";
+            this.chkLangReset.Size = new System.Drawing.Size(51, 17);
+            this.chkLangReset.TabIndex = 88;
+            this.chkLangReset.Text = "Sıfırla";
+            this.chkLangReset.UseVisualStyleBackColor = true;
+            // 
             // TDFactory
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -3118,5 +3132,6 @@
         private System.Windows.Forms.OpenFileDialog fileDialogLang;
         private System.Windows.Forms.Button btnLangSaveFile;
         private System.Windows.Forms.SaveFileDialog saveFileDialogLang;
+        private System.Windows.Forms.CheckBox chkLangReset;
     }
 }
