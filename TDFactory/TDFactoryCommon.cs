@@ -84,7 +84,7 @@ namespace TDFactory
 
                         yaz.WriteLine("using System.Linq;");
 
-                        if (hasLangs && Table == "LangContent")
+                        if (hasLangs && (Table == "LangContent" || Table == "NoLangContent"))
                         {
                             yaz.WriteLine("using System.Web.Caching;");
                             yaz.WriteLine("using Cacher = System.Web.HttpRuntime;");
@@ -1353,37 +1353,65 @@ namespace TDFactory
                                     yaz.WriteLine("\t\t\t}");
                                     yaz.WriteLine("\t\t}");
                                 }
+
+                                if (hasUserRights && Table == "Users")
+                                {
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\tpublic IUsers ChangeGroup(int id, IUsers table = null)");
+                                    yaz.WriteLine("\t\t{");
+                                    yaz.WriteLine("\t\t\tif (table == null)");
+                                    yaz.WriteLine("\t\t\t\ttable = Select(id);");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tList<usp_UserGroupsSelect_Result> tableUsersGroup = entity.usp_UserGroupsSelect(null).ToList();");
+                                    yaz.WriteLine("\t\t\ttable.UserGroupsList = tableUsersGroup.ToSelectList<usp_UserGroupsSelect_Result, SelectListItem>(\"ID\", \"Name\", table.GroupID);");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\treturn table;");
+                                    yaz.WriteLine("\t\t}");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\tpublic bool ChangeGroup(IUsers table)");
+                                    yaz.WriteLine("\t\t{");
+                                    yaz.WriteLine("\t\t\tvar result = entity.usp_UsersGroupUpdate(table.ID, table.GroupID);");
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\tif (result != null)");
+                                    yaz.WriteLine("\t\t\t\treturn true;");
+                                    yaz.WriteLine("\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\treturn false;");
+                                    yaz.WriteLine("\t\t}");
+                                }
                             }
                         }
 
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t#endregion");
-
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t#region User Defined");
-                        yaz.WriteLine("");
-
-                        if (hasUserRights && Table == "Users")
+                        if (hasUserRights && Table == "Visitors")
                         {
-                            yaz.WriteLine("\t\tpublic IUsers ChangeGroup(int id, IUsers table = null)");
+                            yaz.WriteLine("\t\tpublic bool Clear()");
                             yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tif (table == null)");
-                            yaz.WriteLine("\t\t\t\ttable = Select(id);");
+                            yaz.WriteLine("\t\t\ttry");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity.usp_VisitorsClear();");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tList<usp_UserGroupsSelect_Result> tableUsersGroup = entity.usp_UserGroupsSelect(null).ToList();");
-                            yaz.WriteLine("\t\t\ttable.UserGroupsList = tableUsersGroup.ToSelectList<usp_UserGroupsSelect_Result, SelectListItem>(\"ID\", \"Name\", table.GroupID);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\treturn table;");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\tpublic bool ChangeGroup(IUsers table)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tvar result = entity.usp_UsersGroupUpdate(table.ID, table.GroupID);");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tif (result != null)");
                             yaz.WriteLine("\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\telse");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\tcatch");
+                            yaz.WriteLine("\t\t\t{");
                             yaz.WriteLine("\t\t\t\treturn false;");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t}");
+                        }
+
+                        if (hasLogs && Table == "Logs")
+                        {
+                            yaz.WriteLine("\t\tpublic bool Clear()");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\ttry");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\tentity.usp_LogsClear();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\t\treturn true;");
+                            yaz.WriteLine("\t\t\t}");
+                            yaz.WriteLine("\t\t\tcatch");
+                            yaz.WriteLine("\t\t\t{");
+                            yaz.WriteLine("\t\t\t\treturn false;");
+                            yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t}");
                         }
 
@@ -1391,6 +1419,7 @@ namespace TDFactory
                         {
                             if (Table == "Links")
                             {
+                                yaz.WriteLine("");
                                 yaz.WriteLine("\t\tpublic static List<SelectListItem> ReturnList(int? linkedTypeID = 1, int? linkID = null, int? linkTypeID = null)");
                                 yaz.WriteLine("\t\t{");
                                 yaz.WriteLine("\t\t\t" + cmbVeritabani.Text + "Entities _entity = new " + cmbVeritabani.Text + "Entities();");
@@ -1481,6 +1510,7 @@ namespace TDFactory
 
                             if (Table == "LinkTypes")
                             {
+                                yaz.WriteLine("");
                                 yaz.WriteLine("\t\tpublic static List<SelectListItem> FillList(dynamic list, LinkType linkType = LinkType.Table, int selectedID = 0)");
                                 yaz.WriteLine("\t\t{");
                                 yaz.WriteLine("\t\t\tList<SelectListItem> returnList = new List<SelectListItem>();");
@@ -1560,29 +1590,44 @@ namespace TDFactory
                             }
                         }
 
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t#endregion");
+
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t#region User Defined");
+                        yaz.WriteLine("");
+
+                        if (hasUserRights && Table == "Visitors")
+                        {
+                            yaz.WriteLine("\t\tpublic string VisitorCount(string ipAddress)");
+                            yaz.WriteLine("\t\t{");
+                            yaz.WriteLine("\t\t\tint? count = entity.sp_VisitorCount(ipAddress, DateTime.Now.ToShortDateString()).FirstOrDefault();");
+                            yaz.WriteLine("");
+                            yaz.WriteLine("\t\t\treturn count.ToString();");
+                            yaz.WriteLine("\t\t}");
+                        }
+
                         if (hasLangs)
                         {
                             if (Table == "LangContent")
                             {
-                                yaz.WriteLine("\t\tpublic List<usp_LangContentDetail_Result> Detail(dynamic codes, int? transID = null)");
+                                yaz.WriteLine("\t\tpublic List<sp_LangContentDetail_Result> FillLangs(dynamic codes, int? transID = null)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tList<usp_LangContentDetail_Result> returnTable;");
+                                yaz.WriteLine("\t\t\tList<sp_LangContentDetail_Result> returnTable;");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\tif (Cacher.Cache[\"LangContents\"] == null)");
                                 yaz.WriteLine("\t\t\t{");
-                                yaz.WriteLine("\t\t\t\tList<usp_LangContentDetail_Result> table = entity.usp_LangContentDetail().ToList();");
+                                yaz.WriteLine("\t\t\t\tList<sp_LangContentDetail_Result> table = entity.sp_LangContentDetail().ToList();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\t\tCacher.Cache.Insert(\"LangContents\", table, null, DateTime.Now.AddMinutes(15), Cache.NoSlidingExpiration, CacheItemPriority.Default, null);");
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\treturnTable = Cacher.Cache[\"LangContents\"] as List<usp_LangContentDetail_Result>;");
+                                yaz.WriteLine("\t\t\treturnTable = Cacher.Cache[\"LangContents\"] as List<sp_LangContentDetail_Result>;");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\tif (transID != null)");
-                                yaz.WriteLine("\t\t\t{");
                                 yaz.WriteLine("\t\t\t\treturnTable = returnTable.Where(a => a.TransID == transID).ToList();");
-                                yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\t\tList<usp_LangContentDetail_Result> tempTable = new List<usp_LangContentDetail_Result>();");
+                                yaz.WriteLine("\t\t\tList<sp_LangContentDetail_Result> tempTable = new List<sp_LangContentDetail_Result>();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\tforeach (dynamic item in codes)");
                                 yaz.WriteLine("\t\t\t{");
@@ -1599,23 +1644,23 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\treturn returnTable;");
                                 yaz.WriteLine("\t\t}");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic List<usp_LangContentByCode_Result> ByCode(string code, int transID, int? top = null)");
+                                yaz.WriteLine("\t\tpublic List<sp_LangContentByCode_Result> ByCode(string code, int transID, int? top = null)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tList<usp_LangContentByCode_Result> table = entity.usp_LangContentByCode(code, transID, top).ToList();");
+                                yaz.WriteLine("\t\t\tList<sp_LangContentByCode_Result> table = entity.sp_LangContentByCode(code, transID, top).ToList();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic List<usp_LangContentByShortCode_Result> ByShortCode(string shortCode, int transID, int? top = null)");
+                                yaz.WriteLine("\t\tpublic List<sp_LangContentByShortCode_Result> ByShortCode(string shortCode, int transID, int? top = null)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tList<usp_LangContentByShortCode_Result> table = entity.usp_LangContentByShortCode(shortCode, transID, top).ToList();");
+                                yaz.WriteLine("\t\t\tList<sp_LangContentByShortCode_Result> table = entity.sp_LangContentByShortCode(shortCode, transID, top).ToList();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic List<usp_LangContentByCodeAndShortCode_Result> ByCodeAndShortCode(string code, string shortCode, int transID, int? top = null)");
+                                yaz.WriteLine("\t\tpublic List<sp_LangContentByCodeAndShortCode_Result> ByCodeAndShortCode(string code, string shortCode, int transID, int? top = null)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tList<usp_LangContentByCodeAndShortCode_Result> table = entity.usp_LangContentByCodeAndShortCode(code, shortCode, transID, top).ToList();");
+                                yaz.WriteLine("\t\t\tList<sp_LangContentByCodeAndShortCode_Result> table = entity.sp_LangContentByCodeAndShortCode(code, shortCode, transID, top).ToList();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
@@ -1623,23 +1668,53 @@ namespace TDFactory
 
                             if (Table == "NoLangContent")
                             {
-                                yaz.WriteLine("\t\tpublic List<usp_NoLangContentByCode_Result> ByCode(string code, int? top = null)");
+                                yaz.WriteLine("\t\tpublic List<sp_NoLangContentDetail_Result> FillNoLangs(dynamic codes)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tList<usp_NoLangContentByCode_Result> table = entity.usp_NoLangContentByCode(code, top).ToList();");
+                                yaz.WriteLine("\t\t\tList<sp_NoLangContentDetail_Result> returnTable;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tif (Cacher.Cache[\"NoLangContents\"] == null)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tList<sp_NoLangContentDetail_Result> table = entity.sp_NoLangContentDetail().ToList();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\t\tCacher.Cache.Insert(\"NoLangContents\", table, null, DateTime.Now.AddMinutes(15), Cache.NoSlidingExpiration, CacheItemPriority.Default, null);");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturnTable = Cacher.Cache[\"NoLangContents\"] as List<sp_NoLangContentDetail_Result>;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tList<sp_NoLangContentDetail_Result> tempTable = new List<sp_NoLangContentDetail_Result>();");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\tforeach (dynamic item in codes)");
+                                yaz.WriteLine("\t\t\t{");
+                                yaz.WriteLine("\t\t\t\tif (item.Code != null && item.ShortCode != null)");
+                                yaz.WriteLine("\t\t\t\t\ttempTable.AddRange(returnTable.Where(a => a.ShortCode == item.ShortCode && a.Code == item.Code).ToList());");
+                                yaz.WriteLine("\t\t\t\telse if (item.Code != null && item.ShortCode == null)");
+                                yaz.WriteLine("\t\t\t\t\ttempTable.AddRange(returnTable.Where(a => a.Code == item.Code).ToList());");
+                                yaz.WriteLine("\t\t\t\telse if (item.Code == null && item.ShortCode != null)");
+                                yaz.WriteLine("\t\t\t\t\ttempTable.AddRange(returnTable.Where(a => a.ShortCode == item.ShortCode).ToList());");
+                                yaz.WriteLine("\t\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturnTable = tempTable;");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\t\treturn returnTable;");
+                                yaz.WriteLine("\t\t}");
+                                yaz.WriteLine("");
+                                yaz.WriteLine("\t\tpublic List<sp_NoLangContentByCode_Result> ByCode(string code, int? top = null)");
+                                yaz.WriteLine("\t\t{");
+                                yaz.WriteLine("\t\t\tList<sp_NoLangContentByCode_Result> table = entity.sp_NoLangContentByCode(code, top).ToList();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic List<usp_NoLangContentByShortCode_Result> ByShortCode(string shortCode, int? top = null)");
+                                yaz.WriteLine("\t\tpublic List<sp_NoLangContentByShortCode_Result> ByShortCode(string shortCode, int? top = null)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tList<usp_NoLangContentByShortCode_Result> table = entity.usp_NoLangContentByShortCode(shortCode, top).ToList();");
+                                yaz.WriteLine("\t\t\tList<sp_NoLangContentByShortCode_Result> table = entity.sp_NoLangContentByShortCode(shortCode, top).ToList();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
                                 yaz.WriteLine("");
-                                yaz.WriteLine("\t\tpublic List<usp_NoLangContentByCodeAndShortCode_Result> ByCodeAndShortCode(string code, string shortCode, int? top = null)");
+                                yaz.WriteLine("\t\tpublic List<sp_NoLangContentByCodeAndShortCode_Result> ByCodeAndShortCode(string code, string shortCode, int? top = null)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tList<usp_NoLangContentByCodeAndShortCode_Result> table = entity.usp_NoLangContentByCodeAndShortCode(code, shortCode, top).ToList();");
+                                yaz.WriteLine("\t\t\tList<sp_NoLangContentByCodeAndShortCode_Result> table = entity.sp_NoLangContentByCodeAndShortCode(code, shortCode, top).ToList();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
@@ -1649,53 +1724,12 @@ namespace TDFactory
                             {
                                 yaz.WriteLine("\t\tpublic ITranslation ByCode(string code)");
                                 yaz.WriteLine("\t\t{");
-                                yaz.WriteLine("\t\t\tusp_TranslationByCode_Result table = entity.usp_TranslationByCode(code).FirstOrDefault();");
+                                yaz.WriteLine("\t\t\tsp_TranslationByCode_Result table = entity.sp_TranslationByCode(code).FirstOrDefault();");
                                 yaz.WriteLine("\t\t\tITranslation translation = table.ChangeModel<Translation>();");
                                 yaz.WriteLine("");
                                 yaz.WriteLine("\t\t\treturn translation;");
                                 yaz.WriteLine("\t\t}");
                             }
-                        }
-
-                        if (hasUserRights && Table == "Visitors")
-                        {
-                            yaz.WriteLine("\t\tpublic bool Clear()");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\ttry");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_VisitorsClear();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\tcatch");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn false;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\tpublic string VisitorCount(string ipAddress)");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\tint? count = entity.usp_VisitorCount(ipAddress, DateTime.Now.ToShortDateString()).FirstOrDefault();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\treturn count.ToString();");
-                            yaz.WriteLine("\t\t}");
-                        }
-
-                        if (hasLogs && Table == "Logs")
-                        {
-                            yaz.WriteLine("\t\tpublic bool Clear()");
-                            yaz.WriteLine("\t\t{");
-                            yaz.WriteLine("\t\t\ttry");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\tentity.usp_LogsClear();");
-                            yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\t\treturn true;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t\tcatch");
-                            yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\treturn false;");
-                            yaz.WriteLine("\t\t\t}");
-                            yaz.WriteLine("\t\t}");
                         }
 
                         yaz.WriteLine("");
@@ -4591,12 +4625,12 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_VisitorCount]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_VisitorCount]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_VisitorCount]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_VisitorCount]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_VisitorCount]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_VisitorCount]");
                     yaz.WriteLine("\t@IPAddress nvarchar(25),");
                     yaz.WriteLine("\t@VisitTime nvarchar(25)");
                     yaz.WriteLine("AS");
@@ -4799,12 +4833,12 @@ namespace TDFactory
                     yaz.WriteLine("USE [" + DBName + "]");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LangContentDetail]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentDetail]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LangContentDetail]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentDetail]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_LangContentDetail]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentDetail]");
                     yaz.WriteLine("AS");
                     yaz.WriteLine("\tSET NOCOUNT ON");
                     yaz.WriteLine("\tSET XACT_ABORT ON");
@@ -4818,12 +4852,12 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LangContentByCode]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByCode]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LangContentByCode]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByCode]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_LangContentByCode]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByCode]");
                     yaz.WriteLine("\t@Code nvarchar(25),");
                     yaz.WriteLine("\t@TransID int,");
                     yaz.WriteLine("\t@Top int");
@@ -4851,12 +4885,12 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LangContentByCodeAndShortCode]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByCodeAndShortCode]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LangContentByCodeAndShortCode]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByCodeAndShortCode]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_LangContentByCodeAndShortCode]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByCodeAndShortCode]");
                     yaz.WriteLine("\t@Code nvarchar(25),");
                     yaz.WriteLine("\t@ShortCode nvarchar(15),");
                     yaz.WriteLine("\t@TransID int,");
@@ -4885,12 +4919,12 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LangContentByShortCode]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByShortCode]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LangContentByShortCode]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByShortCode]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_LangContentByShortCode]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByShortCode]");
                     yaz.WriteLine("\t@ShortCode nvarchar(15),");
                     yaz.WriteLine("\t@TransID int,");
                     yaz.WriteLine("\t@Top int");
@@ -4918,12 +4952,30 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_NoLangContentByCode]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentDetail]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_NoLangContentByCode]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentDetail]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_NoLangContentByCode]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentDetail]");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT N.[ShortDescription],N.[ShortDescription2],N.[Description],N.[Description2],N.[Code],N.[ShortCode]");
+                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByCode]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByCode]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByCode]");
                     yaz.WriteLine("\t@Code nvarchar(25),");
                     yaz.WriteLine("\t@Top int");
                     yaz.WriteLine("AS");
@@ -4948,12 +5000,12 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_NoLangContentByCodeAndShortCode]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByCodeAndShortCode]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_NoLangContentByCodeAndShortCode]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByCodeAndShortCode]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_NoLangContentByCodeAndShortCode]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByCodeAndShortCode]");
                     yaz.WriteLine("\t@Code nvarchar(25),");
                     yaz.WriteLine("\t@ShortCode nvarchar(15),");
                     yaz.WriteLine("\t@Top int");
@@ -4979,12 +5031,12 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_NoLangContentByShortCode]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByShortCode]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_NoLangContentByShortCode]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByShortCode]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_NoLangContentByShortCode]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByShortCode]");
                     yaz.WriteLine("\t@ShortCode nvarchar(15),");
                     yaz.WriteLine("\t@Top int");
                     yaz.WriteLine("AS");
@@ -5009,12 +5061,12 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_TranslationByCode]') IS NOT NULL");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_TranslationByCode]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_TranslationByCode]");
+                    yaz.WriteLine("\tDROP PROC [dbo].[sp_TranslationByCode]");
                     yaz.WriteLine("END");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_TranslationByCode]");
+                    yaz.WriteLine("CREATE PROC [dbo].[sp_TranslationByCode]");
                     yaz.WriteLine("\t@ShortName nvarchar(5)");
                     yaz.WriteLine("AS");
                     yaz.WriteLine("\tSET NOCOUNT ON");

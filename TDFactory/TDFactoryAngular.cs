@@ -747,6 +747,15 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("<br />");
+                        yaz.WriteLine("<br />");
+                        yaz.WriteLine("<span><b>Ziyaretçi Sayısı : </b>{{ visitorCount }}</span>");
+                    }
+
+                    yaz.WriteLine("<br />");
+                    yaz.WriteLine("<br />");
                     yaz.WriteLine("<ul class=\"menu\">");
                     yaz.WriteLine("\t<li><a data-url=\"Index\" routerLink=\"/\">Ana Sayfa</a></li>");
                     yaz.WriteLine("</ul>");
@@ -759,6 +768,12 @@ namespace TDFactory
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
                     yaz.WriteLine("import { Component } from '@angular/core';");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("import { SiteService } from '../../../services/site';");
+                    }
+
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\tselector: '" + projectName.Substring(0, 3).ToUrl(true) + "-footer',");
@@ -766,8 +781,37 @@ namespace TDFactory
                     yaz.WriteLine("})");
                     yaz.WriteLine("");
                     yaz.WriteLine("export class FooterComponent {");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("\terrorMsg: string;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tvisitorCount: string;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tconstructor(private service: SiteService) {");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                    }
+
                     yaz.WriteLine("\tngOnInit() {");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("\t\tthis.VisitorCount();");
+                    }
+
                     yaz.WriteLine("\t}");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tVisitorCount() {");
+                        yaz.WriteLine("\t\tthis.service.get(\"Site\", \"VisitorCount\").subscribe((resData: any) => {");
+                        yaz.WriteLine("\t\t\tthis.visitorCount = resData;");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t}");
+                    }
+
                     yaz.WriteLine("}");
                     yaz.Close();
                 }
@@ -5062,6 +5106,15 @@ namespace TDFactory
                         yaz.WriteLine("using " + repositoryName + ".LangContentModel;");
                         yaz.WriteLine("using " + repositoryName + ".NoLangContentModel;");
                         yaz.WriteLine("using " + repositoryName + ".TranslationModel;");
+                    }
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("using " + repositoryName + ".VisitorsModel;");
+                    }
+
+                    if (hasLangs)
+                    {
                         yaz.WriteLine("using TDLibrary;");
                         yaz.WriteLine("using Models;");
                     }
@@ -5110,7 +5163,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\tLangContent langContent = new LangContent();");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn Json(langContent.Detail(codes, AppTools.GetLang.ID));");
+                        yaz.WriteLine("\t\t\treturn Json(langContent.FillLangs(codes, AppTools.GetLang.ID));");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t[HttpGet]");
@@ -5151,6 +5204,14 @@ namespace TDFactory
 
                         yaz.WriteLine("\t\t#region NoLangContent");
                         yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpPost]");
+                        yaz.WriteLine("\t\tpublic JsonResult SetNoLangContents([System.Web.Http.FromBody] List<LangItem> codes)");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tNoLangContent noLangContent = new NoLangContent();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn Json(noLangContent.FillNoLangs(codes));");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
                         yaz.WriteLine("\t\t[HttpGet]");
                         yaz.WriteLine("\t\tpublic JsonResult GetNoLangContentByCode(string param, string param2)");
                         yaz.WriteLine("\t\t{");
@@ -5182,6 +5243,22 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t\treturn Json(noLangContent.ByCodeAndShortCode(param, param2, param3.ToInteger()), JsonRequestBehavior.AllowGet);");
                         yaz.WriteLine("\t\t\telse");
                         yaz.WriteLine("\t\t\t\treturn Json(noLangContent.ByCodeAndShortCode(param, param2, param3.ToInteger()).FirstOrDefault(), JsonRequestBehavior.AllowGet);");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t#endregion");
+                        yaz.WriteLine("");
+                    }
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("\t\t#region Visitors");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t[HttpGet]");
+                        yaz.WriteLine("\t\tpublic JsonResult VisitorCount()");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tVisitors visitors = new Visitors();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\treturn Json(visitors.VisitorCount(AppTools.GetIPAddress), JsonRequestBehavior.AllowGet);");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#endregion");
