@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 
 namespace TDFactory
 {
@@ -340,7 +339,31 @@ namespace TDFactory
         {
             bool control = false;
 
-            if ((tableNames.Contains("LangContent") && tableNames.Contains("LangContentT")) || tableNames.Contains("NoLangContent"))
+            if (tableNames.Contains("LangContent") && tableNames.Contains("LangContentT"))
+            {
+                control = true;
+            }
+
+            return control;
+        }
+
+        public static bool HasVisitors(List<string> tableNames)
+        {
+            bool control = false;
+
+            if (tableNames.Contains("Visitors"))
+            {
+                control = true;
+            }
+
+            return control;
+        }
+
+        public static bool HasNoLangs(List<string> tableNames)
+        {
+            bool control = false;
+
+            if (tableNames.Contains("NoLangContent"))
             {
                 control = true;
             }

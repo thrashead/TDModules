@@ -164,10 +164,12 @@ namespace TDFactory
                     SearchColumns = lstSearchColumns.Items.ToStringList();
                     MailColumns = lstMailColumns.Items.ToStringList();
 
+                    hasVisitors = Helper.HasVisitors(selectedTables);
                     hasUserRights = Helper.HasUserRights(selectedTables);
                     hasLogs = Helper.HasLogs(selectedTables);
                     hasLinks = Helper.HasLinks(selectedTables);
                     hasLangs = Helper.HasLangs(selectedTables);
+                    hasNoLangs = Helper.HasNoLangs(selectedTables);
 
                     if (chkAngular.Checked)
                     {

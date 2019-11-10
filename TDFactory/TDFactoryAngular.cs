@@ -747,7 +747,7 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.UTF8))
                 {
-                    if (hasUserRights)
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("<br />");
                         yaz.WriteLine("<br />");
@@ -769,7 +769,7 @@ namespace TDFactory
                 {
                     yaz.WriteLine("import { Component } from '@angular/core';");
 
-                    if (hasUserRights)
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("import { SiteService } from '../../../services/site';");
                     }
@@ -782,7 +782,7 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("export class FooterComponent {");
 
-                    if (hasUserRights)
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("\terrorMsg: string;");
                         yaz.WriteLine("");
@@ -795,14 +795,14 @@ namespace TDFactory
 
                     yaz.WriteLine("\tngOnInit() {");
 
-                    if (hasUserRights)
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("\t\tthis.VisitorCount();");
                     }
 
                     yaz.WriteLine("\t}");
 
-                    if (hasUserRights)
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("");
                         yaz.WriteLine("\tVisitorCount() {");
@@ -2249,7 +2249,7 @@ namespace TDFactory
 
                         yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + tableFolder + "/" + Table.ToUrl(true) + "';");
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             yaz.WriteLine("import { Admin" + Table + "InsertComponent } from './admin/views/" + tableFolder + "/" + Table.ToUrl(true) + "/insert';");
                             yaz.WriteLine("import { Admin" + Table + "UpdateComponent } from './admin/views/" + tableFolder + "/" + Table.ToUrl(true) + "/update';");
@@ -2297,7 +2297,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\tAdmin" + Table + "IndexComponent,");
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             yaz.WriteLine("\t\tAdmin" + Table + "InsertComponent,");
                             yaz.WriteLine("\t\tAdmin" + Table + "UpdateComponent,");
@@ -2348,7 +2348,7 @@ namespace TDFactory
 
                         yaz.WriteLine("import { Admin" + Table + "IndexComponent } from './admin/views/" + tableFolder + "/" + Table.ToUrl(true) + "';");
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             yaz.WriteLine("import { Admin" + Table + "InsertComponent } from './admin/views/" + tableFolder + "/" + Table.ToUrl(true) + "/insert';");
                             yaz.WriteLine("import { Admin" + Table + "UpdateComponent } from './admin/views/" + tableFolder + "/" + Table.ToUrl(true) + "/update';");
@@ -2385,7 +2385,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "', component: Admin" + Table + "IndexComponent },");
                         yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Index', component: Admin" + Table + "IndexComponent },");
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Insert', component: Admin" + Table + "InsertComponent },");
                             yaz.WriteLine("\t\t\t{ path: 'Admin/" + Table + "/Update/:id', component: Admin" + Table + "UpdateComponent },");
@@ -2587,7 +2587,7 @@ namespace TDFactory
 
                         if (table.IdentityColumns.Count > 0)
                         {
-                            if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                            if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                             {
                                 yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>İşlem</th>");
                             }
@@ -2667,7 +2667,7 @@ namespace TDFactory
 
                         if (table.IdentityColumns.Count > 0)
                         {
-                            if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                            if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                             {
                                 yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td style=\"text-align:center;\">");
                                 yaz.WriteLine("\t\t\t\t\t\t\t\t\t\t<div class=\"btn-group\" style=\"text-align:left;\">");
@@ -2695,7 +2695,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t</div>");
                         yaz.WriteLine("\t\t</div>");
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t<div class=\"pagelinks\"" + insertShow + ">");
@@ -2724,7 +2724,7 @@ namespace TDFactory
                     }
                 }
 
-                if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                 {
                     //Ekle
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + tableFolder + "\\" + Table.ToUrl(true) + "\\insert.html", FileMode.Create))
@@ -3433,7 +3433,7 @@ namespace TDFactory
                     }
                 }
 
-                if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                 {
                     //Ekle
                     using (FileStream fs = new FileStream(PathAddress + "\\" + projectFolder + "\\src\\app\\admin\\views\\" + tableFolder + "\\" + Table.ToUrl(true) + "\\insert.ts", FileMode.Create))
@@ -4453,7 +4453,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             if (table.FkcForeignList.Count > 0 || (Table == "Category" && table.Columns.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
@@ -4580,7 +4580,7 @@ namespace TDFactory
                         {
                             string columntype = table.Columns.Where(a => a.ColumnName == table.ID).FirstOrDefault().Type.Name.ToString();
 
-                            if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                            if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                             {
                                 //Duzenle
                                 yaz.WriteLine("\t\t[HttpGet]");
@@ -4748,7 +4748,7 @@ namespace TDFactory
 
                             string idUserControl = hasUserRights && Table == "Users" ? " || curUser?.ID == id" : "";
 
-                            if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                            if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                             {
                                 //Kopyala
                                 yaz.WriteLine("\t\t[HttpGet]");
@@ -4986,7 +4986,7 @@ namespace TDFactory
                             }
                         }
 
-                        if (hasUserRights && Table == "Visitors")
+                        if (hasVisitors && Table == "Visitors")
                         {
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t[HttpGet]");
@@ -5052,7 +5052,7 @@ namespace TDFactory
                         yaz.WriteLine("using Repository.TranslationModel;");
                     }
 
-                    if (hasUserRights)
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("using Repository.VisitorsModel;");
                     }
@@ -5075,7 +5075,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                     }
 
-                    if (hasUserRights)
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("\t\t\tVisitors visitor = new Visitors();");
                         yaz.WriteLine("\t\t\tvisitor.VisitorCount(AppTools.GetIPAddress);");
@@ -5103,20 +5103,24 @@ namespace TDFactory
                     {
                         yaz.WriteLine("using System.Linq;");
                         yaz.WriteLine("using System.Collections.Generic;");
-                        yaz.WriteLine("using " + repositoryName + ".LangContentModel;");
-                        yaz.WriteLine("using " + repositoryName + ".NoLangContentModel;");
+                        yaz.WriteLine("using Models;");
                         yaz.WriteLine("using " + repositoryName + ".TranslationModel;");
+                        yaz.WriteLine("using " + repositoryName + ".LangContentModel;");
                     }
 
-                    if (hasUserRights)
+                    if (hasNoLangs)
+                    {
+                        yaz.WriteLine("using " + repositoryName + ".NoLangContentModel;");
+                    }
+
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("using " + repositoryName + ".VisitorsModel;");
                     }
 
-                    if (hasLangs)
+                    if (hasLangs || hasNoLangs)
                     {
                         yaz.WriteLine("using TDLibrary;");
-                        yaz.WriteLine("using Models;");
                     }
 
                     yaz.WriteLine("");
@@ -5201,7 +5205,9 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#endregion");
                         yaz.WriteLine("");
+                    }
 
+                    if (hasNoLangs) { 
                         yaz.WriteLine("\t\t#region NoLangContent");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t[HttpPost]");
@@ -5249,7 +5255,7 @@ namespace TDFactory
                         yaz.WriteLine("");
                     }
 
-                    if (hasUserRights)
+                    if (hasVisitors)
                     {
                         yaz.WriteLine("\t\t#region Visitors");
                         yaz.WriteLine("");
@@ -5516,6 +5522,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\treturn result;");
                         yaz.WriteLine("\t\t}");
                     }
+
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tpublic class AppTools");
@@ -5549,14 +5556,19 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t}");
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("");
-                    yaz.WriteLine("\t\tpublic static Translation GetLang");
-                    yaz.WriteLine("\t\t{");
-                    yaz.WriteLine("\t\t\tget");
-                    yaz.WriteLine("\t\t\t{");
-                    yaz.WriteLine("\t\t\t\treturn HttpContext.Current.Session[\"CurrentLang\"] != null ? HttpContext.Current.Session[\"CurrentLang\"] as Translation : null;");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t}");
-                    yaz.WriteLine("");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("\t\tpublic static Translation GetLang");
+                        yaz.WriteLine("\t\t{");
+                        yaz.WriteLine("\t\t\tget");
+                        yaz.WriteLine("\t\t\t{");
+                        yaz.WriteLine("\t\t\t\treturn HttpContext.Current.Session[\"CurrentLang\"] != null ? HttpContext.Current.Session[\"CurrentLang\"] as Translation : null;");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t}");
+                        yaz.WriteLine("");
+                    }
+
                     yaz.WriteLine("\t\tpublic static string GetIPAddress");
                     yaz.WriteLine("\t\t{");
                     yaz.WriteLine("\t\t\tget");

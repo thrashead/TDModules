@@ -84,7 +84,7 @@ namespace TDFactory
 
                         yaz.WriteLine("using System.Linq;");
 
-                        if (hasLangs && (Table == "LangContent" || Table == "NoLangContent"))
+                        if ((hasLangs || hasNoLangs) && (Table == "LangContent" || Table == "NoLangContent"))
                         {
                             yaz.WriteLine("using System.Web.Caching;");
                             yaz.WriteLine("using Cacher = System.Web.HttpRuntime;");
@@ -519,13 +519,13 @@ namespace TDFactory
                         yaz.WriteLine("");
 
                         // ListAll
-                        yaz.WriteLine("\t\tpublic List<" + Table + "> ListAll(int? id = null, bool relation = true)");
+                        yaz.WriteLine("\t\tpublic List<" + Table + "> ListAll(bool relation = true)");
                         yaz.WriteLine("\t\t{");
                         yaz.WriteLine("\t\t\tList<" + Table + "> table;");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t\tList<usp_" + Table + "SelectAll_Result> tableTemp;");
                         yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\ttableTemp = entity.usp_" + Table + "SelectAll(id).ToList();");
+                        yaz.WriteLine("\t\t\ttableTemp = entity.usp_" + Table + "SelectAll().ToList();");
                         yaz.WriteLine("\t\t\ttable = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + "SelectAll_Result>();");
                         yaz.WriteLine("");
 
@@ -1011,7 +1011,7 @@ namespace TDFactory
                         string hasLinkID = hasLinks && Table == "Links" ? ", int? linkID = null" : "";
 
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             yaz.WriteLine("\t\tpublic I" + Table + " Insert(I" + Table + " table = null" + linkID + hasLinkID + ")");
                             yaz.WriteLine("\t\t{");
@@ -1134,7 +1134,7 @@ namespace TDFactory
 
                         if (identityColumns.Count > 0)
                         {
-                            if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                            if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                             {
                                 //Update
                                 yaz.WriteLine("\t\tpublic I" + Table + " Update(int? id = null, I" + Table + " table = null)");
@@ -1381,7 +1381,7 @@ namespace TDFactory
                             }
                         }
 
-                        if (hasUserRights && Table == "Visitors")
+                        if (hasVisitors && Table == "Visitors")
                         {
                             yaz.WriteLine("\t\tpublic bool Clear()");
                             yaz.WriteLine("\t\t{");
@@ -1597,7 +1597,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t#region User Defined");
                         yaz.WriteLine("");
 
-                        if (hasUserRights && Table == "Visitors")
+                        if (hasVisitors && Table == "Visitors")
                         {
                             yaz.WriteLine("\t\tpublic string VisitorCount(string ipAddress)");
                             yaz.WriteLine("\t\t{");
@@ -1665,7 +1665,10 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
                             }
+                        }
 
+                        if (hasNoLangs)
+                        {
                             if (Table == "NoLangContent")
                             {
                                 yaz.WriteLine("\t\tpublic List<sp_NoLangContentDetail_Result> FillNoLangs(dynamic codes)");
@@ -1719,7 +1722,10 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\treturn table;");
                                 yaz.WriteLine("\t\t}");
                             }
+                        }
 
+                        if (hasLangs || hasNoLangs)
+                        {
                             if (Table == "Translation")
                             {
                                 yaz.WriteLine("\t\tpublic ITranslation ByCode(string code)");
@@ -1979,7 +1985,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\tList<" + Table + "> List(int? id, int? top, bool relation);");
 
                         // ListAll
-                        yaz.WriteLine("\t\tList<" + Table + "> ListAll(int? id, bool relation);");
+                        yaz.WriteLine("\t\tList<" + Table + "> ListAll(bool relation);");
 
                         // Select
                         yaz.WriteLine("\t\tI" + Table + " Select(int? id, bool relation);");
@@ -2030,7 +2036,7 @@ namespace TDFactory
 
                         string columntype = tableColumnInfos.Where(a => a.ColumnName == id && a.TableName == Table).FirstOrDefault().Type.Name.ToString();
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             yaz.WriteLine("\t\tI" + Table + " Insert(I" + Table + " table" + linkID + hasLinkID + ");");
 
@@ -2182,8 +2188,8 @@ namespace TDFactory
 
                         // SelectAll
                         yaz.WriteLine("\t\t[OperationContract]");
-                        yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectAll/?id={id}\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
-                        yaz.WriteLine("\t\tList<" + Table + "Data> SelectAll(string id);");
+                        yaz.WriteLine("\t\t[WebGet(UriTemplate = \"/SelectAll/\", ResponseFormat = WebMessageFormat.Json, RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped)]");
+                        yaz.WriteLine("\t\tList<" + Table + "Data> SelectAll();");
                         yaz.WriteLine("");
 
                         // SelectByID
@@ -2228,7 +2234,7 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             // Insert
                             yaz.WriteLine("\t\t[OperationContract]");
@@ -2398,15 +2404,9 @@ namespace TDFactory
                         yaz.WriteLine("");
 
                         //SelectAll
-                        yaz.WriteLine("\t\tpublic List<" + Table + "Data> SelectAll(string id)");
+                        yaz.WriteLine("\t\tpublic List<" + Table + "Data> SelectAll()");
                         yaz.WriteLine("\t\t{");
-                        yaz.WriteLine("\t\t\tint _id;");
-                        yaz.WriteLine("\t\t\tbool con = int.TryParse(id, out _id);");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\tif (con)");
-                        yaz.WriteLine("\t\t\t\treturn model.ListAll(_id).ChangeModelList<" + Table + "Data, " + Table + ">();");
-                        yaz.WriteLine("");
-                        yaz.WriteLine("\t\t\treturn model.ListAll(null).ChangeModelList<" + Table + "Data, " + Table + ">();");
+                        yaz.WriteLine("\t\t\treturn model.ListAll().ChangeModelList<" + Table + "Data, " + Table + ">();");
                         yaz.WriteLine("\t\t}");
                         yaz.WriteLine("");
 
@@ -2463,7 +2463,7 @@ namespace TDFactory
                             yaz.WriteLine("");
                         }
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             //Insert
                             yaz.WriteLine("\t\tpublic bool Insert(" + Table + "Data table)");
@@ -3035,12 +3035,6 @@ namespace TDFactory
                         yaz.WriteLine("END");
                         yaz.WriteLine("GO");
                         yaz.WriteLine("CREATE PROC " + schema + ".[usp_" + Table + "SelectAll]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\t@" + idColumn + " " + idType);
-                        }
-
                         yaz.WriteLine("AS");
                         yaz.WriteLine("\tSET NOCOUNT ON");
                         yaz.WriteLine("\tSET XACT_ABORT ON");
@@ -3060,12 +3054,6 @@ namespace TDFactory
 
                         yaz.WriteLine(sqlText);
                         yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
-
-                        if (idType != null)
-                        {
-                            yaz.WriteLine("\tWHERE ([" + idColumn + "] = @" + idColumn + " OR @" + idColumn + " IS NULL)");
-                        }
-
                         yaz.WriteLine("");
                         yaz.WriteLine("\tCOMMIT");
                         yaz.WriteLine("GO");
@@ -3110,7 +3098,7 @@ namespace TDFactory
                             //ParentSelect//
                         }
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             //Insert//
                             yaz.WriteLine("/* Insert */");
@@ -3445,7 +3433,7 @@ namespace TDFactory
             if (hasLinks)
                 CreateLinkStoredProcedure();
 
-            if (hasLangs)
+            if (hasLangs || hasNoLangs)
                 CreateLangStoredProcedure();
         }
 
@@ -4020,7 +4008,7 @@ namespace TDFactory
                             //ParentSelect//
                         }
 
-                        if (!((hasUserRights || hasLogs) && (Table == "Visitors" || Table == "Logs")))
+                        if (!((hasVisitors || hasLogs) && (Table == "Visitors" || Table == "Logs")))
                         {
                             //Insert//
                             yaz.WriteLine("/* Insert */");
@@ -4589,72 +4577,81 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LogsClear]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_LogsClear]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_LogsClear]");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tDELETE");
-                    yaz.WriteLine("\tFROM [dbo].[Logs]");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_VisitorsClear]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[usp_VisitorsClear]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[usp_VisitorsClear]");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tDELETE");
-                    yaz.WriteLine("\tFROM [dbo].[Visitors]");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_VisitorCount]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_VisitorCount]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_VisitorCount]");
-                    yaz.WriteLine("\t@IPAddress nvarchar(25),");
-                    yaz.WriteLine("\t@VisitTime nvarchar(25)");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif(@IPAddress not like '::1')");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\t\tdeclare @count int = (SELECT count(1) FROM [dbo].[Visitors]");
-                    yaz.WriteLine("\t\tWHERE [IPAddress] = @IPAddress and [VisitTime] = @VisitTime)");
-                    yaz.WriteLine("\t");
-                    yaz.WriteLine("\t\tif (@count = 0)");
-                    yaz.WriteLine("\t\tbegin");
-                    yaz.WriteLine("\t\t\tINSERT INTO [dbo].[Visitors] ([IPAddress],[VisitTime])");
-                    yaz.WriteLine("\t\t\tSELECT @IPAddress, @VisitTime");
-                    yaz.WriteLine("\t\tend");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tSELECT count(1) FROM [dbo].[Visitors]");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
+
+                    if (hasLogs)
+                    {
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_LogsClear]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[usp_LogsClear]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[usp_LogsClear]");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tDELETE");
+                        yaz.WriteLine("\tFROM [dbo].[Logs]");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                    }
+
+                    if (hasVisitors)
+                    {
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_VisitorsClear]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[usp_VisitorsClear]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[usp_VisitorsClear]");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tDELETE");
+                        yaz.WriteLine("\tFROM [dbo].[Visitors]");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_VisitorCount]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_VisitorCount]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_VisitorCount]");
+                        yaz.WriteLine("\t@IPAddress nvarchar(25),");
+                        yaz.WriteLine("\t@VisitTime nvarchar(25)");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif(@IPAddress not like '::1')");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\t\tdeclare @count int = (SELECT count(1) FROM [dbo].[Visitors]");
+                        yaz.WriteLine("\t\tWHERE [IPAddress] = @IPAddress and [VisitTime] = @VisitTime)");
+                        yaz.WriteLine("\t");
+                        yaz.WriteLine("\t\tif (@count = 0)");
+                        yaz.WriteLine("\t\tbegin");
+                        yaz.WriteLine("\t\t\tINSERT INTO [dbo].[Visitors] ([IPAddress],[VisitTime])");
+                        yaz.WriteLine("\t\t\tSELECT @IPAddress, @VisitTime");
+                        yaz.WriteLine("\t\tend");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tSELECT count(1) FROM [dbo].[Visitors]");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                    }
+
                     yaz.Close();
                 }
             }
@@ -4833,234 +4830,243 @@ namespace TDFactory
                     yaz.WriteLine("USE [" + DBName + "]");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentDetail]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentDetail]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentDetail]");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tSELECT LT.[ShortDescription],LT.[ShortDescription2],LT.[Description],LT.[Description2],L.[Code],L.[ShortCode],LT.[TransID]");
-                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
-                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByCode]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByCode]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByCode]");
-                    yaz.WriteLine("\t@Code nvarchar(25),");
-                    yaz.WriteLine("\t@TransID int,");
-                    yaz.WriteLine("\t@Top int");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
-                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
-                    yaz.WriteLine("\tWHERE L.[Code] = @Code and LT.[TransID] = @TransID");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("\telse");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
-                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
-                    yaz.WriteLine("\tWHERE L.[Code] = @Code and LT.[TransID] = @TransID");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByCodeAndShortCode]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByCodeAndShortCode]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByCodeAndShortCode]");
-                    yaz.WriteLine("\t@Code nvarchar(25),");
-                    yaz.WriteLine("\t@ShortCode nvarchar(15),");
-                    yaz.WriteLine("\t@TransID int,");
-                    yaz.WriteLine("\t@Top int");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
-                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
-                    yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and L.[Code] = @Code and LT.[TransID] = @TransID");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("\telse");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
-                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
-                    yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and L.[Code] = @Code and LT.[TransID] = @TransID");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByShortCode]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByShortCode]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByShortCode]");
-                    yaz.WriteLine("\t@ShortCode nvarchar(15),");
-                    yaz.WriteLine("\t@TransID int,");
-                    yaz.WriteLine("\t@Top int");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
-                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
-                    yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and LT.[TransID] = @TransID");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("\telse");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
-                    yaz.WriteLine("\tON L.ID = LT.LangContentID");
-                    yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and LT.[TransID] = @TransID");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentDetail]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentDetail]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentDetail]");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tSELECT N.[ShortDescription],N.[ShortDescription2],N.[Description],N.[Description2],N.[Code],N.[ShortCode]");
-                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByCode]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByCode]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByCode]");
-                    yaz.WriteLine("\t@Code nvarchar(25),");
-                    yaz.WriteLine("\t@Top int");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
-                    yaz.WriteLine("\tWHERE N.[Code] = @Code");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("\telse");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
-                    yaz.WriteLine("\tWHERE N.[Code] = @Code");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByCodeAndShortCode]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByCodeAndShortCode]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByCodeAndShortCode]");
-                    yaz.WriteLine("\t@Code nvarchar(25),");
-                    yaz.WriteLine("\t@ShortCode nvarchar(15),");
-                    yaz.WriteLine("\t@Top int");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
-                    yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode and N.[Code] = @Code");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("\telse");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
-                    yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode and N.[Code] = @Code");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByShortCode]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByShortCode]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByShortCode]");
-                    yaz.WriteLine("\t@ShortCode nvarchar(15),");
-                    yaz.WriteLine("\t@Top int");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
-                    yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("\telse");
-                    yaz.WriteLine("\tbegin");
-                    yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
-                    yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
-                    yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode");
-                    yaz.WriteLine("\tend");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("");
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentDetail]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentDetail]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentDetail]");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tSELECT LT.[ShortDescription],LT.[ShortDescription2],LT.[Description],LT.[Description2],L.[Code],L.[ShortCode],LT.[TransID]");
+                        yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                        yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByCode]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByCode]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByCode]");
+                        yaz.WriteLine("\t@Code nvarchar(25),");
+                        yaz.WriteLine("\t@TransID int,");
+                        yaz.WriteLine("\t@Top int");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                        yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                        yaz.WriteLine("\tWHERE L.[Code] = @Code and LT.[TransID] = @TransID");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("\telse");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                        yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                        yaz.WriteLine("\tWHERE L.[Code] = @Code and LT.[TransID] = @TransID");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByCodeAndShortCode]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByCodeAndShortCode]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByCodeAndShortCode]");
+                        yaz.WriteLine("\t@Code nvarchar(25),");
+                        yaz.WriteLine("\t@ShortCode nvarchar(15),");
+                        yaz.WriteLine("\t@TransID int,");
+                        yaz.WriteLine("\t@Top int");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                        yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                        yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and L.[Code] = @Code and LT.[TransID] = @TransID");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("\telse");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                        yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                        yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and L.[Code] = @Code and LT.[TransID] = @TransID");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentByShortCode]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentByShortCode]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_LangContentByShortCode]");
+                        yaz.WriteLine("\t@ShortCode nvarchar(15),");
+                        yaz.WriteLine("\t@TransID int,");
+                        yaz.WriteLine("\t@Top int");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                        yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                        yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and LT.[TransID] = @TransID");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("\telse");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT TOP (@TOP) L.Code,L.ShortCode,LT.[ID],L.[Title],LT.[ShortDescription],LT.[Description],LT.[ShortDescription2],LT.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[LangContent] L JOIN [dbo].[LangContentT] LT");
+                        yaz.WriteLine("\tON L.ID = LT.LangContentID");
+                        yaz.WriteLine("\tWHERE L.[ShortCode] = @ShortCode and LT.[TransID] = @TransID");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                    }
+
+                    if (hasNoLangs)
+                    {
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentDetail]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentDetail]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentDetail]");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tSELECT N.[ShortDescription],N.[ShortDescription2],N.[Description],N.[Description2],N.[Code],N.[ShortCode]");
+                        yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByCode]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByCode]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByCode]");
+                        yaz.WriteLine("\t@Code nvarchar(25),");
+                        yaz.WriteLine("\t@Top int");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                        yaz.WriteLine("\tWHERE N.[Code] = @Code");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("\telse");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                        yaz.WriteLine("\tWHERE N.[Code] = @Code");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByCodeAndShortCode]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByCodeAndShortCode]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByCodeAndShortCode]");
+                        yaz.WriteLine("\t@Code nvarchar(25),");
+                        yaz.WriteLine("\t@ShortCode nvarchar(15),");
+                        yaz.WriteLine("\t@Top int");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                        yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode and N.[Code] = @Code");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("\telse");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                        yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode and N.[Code] = @Code");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_NoLangContentByShortCode]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_NoLangContentByShortCode]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_NoLangContentByShortCode]");
+                        yaz.WriteLine("\t@ShortCode nvarchar(15),");
+                        yaz.WriteLine("\t@Top int");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tif(@Top <= 0 or @Top is null)");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                        yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("\telse");
+                        yaz.WriteLine("\tbegin");
+                        yaz.WriteLine("\tSELECT TOP (@TOP) N.[ID],N.Code,N.ShortCode,N.[Title],N.[ShortDescription],N.[Description],N.[ShortDescription2],N.[Description2]");
+                        yaz.WriteLine("\tFROM [dbo].[NoLangContent] N");
+                        yaz.WriteLine("\tWHERE N.[ShortCode] = @ShortCode");
+                        yaz.WriteLine("\tend");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
+                    }
+
                     yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_TranslationByCode]') IS NOT NULL");
                     yaz.WriteLine("BEGIN");
                     yaz.WriteLine("\tDROP PROC [dbo].[sp_TranslationByCode]");

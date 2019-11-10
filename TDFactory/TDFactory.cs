@@ -55,6 +55,8 @@ namespace TDFactory
         public static bool langChecked;
 
         bool hasUserRights = false;
+        bool hasVisitors = false;
+        bool hasNoLangs = false;
         bool hasLogs = false;
         bool hasLinks = false;
         bool hasLangs = false;
