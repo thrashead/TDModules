@@ -3062,6 +3062,8 @@ namespace TDFactory
 
                         if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
                         {
+                            string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
+
                             //ParentSelect//
                             yaz.WriteLine("/* Select */");
                             yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "ParentSelect]') IS NOT NULL");
@@ -3083,7 +3085,7 @@ namespace TDFactory
                             yaz.WriteLine("\tBEGIN TRAN");
                             yaz.WriteLine("");
 
-                            yaz.WriteLine("\tSELECT [ID], [Title]");
+                            yaz.WriteLine("\tSELECT [ID], [" + columnText + "] as 'Title'");
                             yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
                             if (idType != null)
@@ -3972,6 +3974,8 @@ namespace TDFactory
 
                         if (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0)
                         {
+                            string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == Table).ToList()).Replace(".ToString()", "");
+
                             //ParentSelect//
                             yaz.WriteLine("/* Select */");
                             yaz.WriteLine("IF OBJECT_ID('" + schema + ".[usp_" + Table + "ParentSelect]') IS NOT NULL");
@@ -3993,7 +3997,7 @@ namespace TDFactory
                             yaz.WriteLine("\tBEGIN TRAN");
                             yaz.WriteLine("");
 
-                            yaz.WriteLine("\tSELECT [ID], [Title]");
+                            yaz.WriteLine("\tSELECT [ID], [" + columnText + "] as 'Title'");
                             yaz.WriteLine("\tFROM " + schema + ".[" + Table + "]");
 
                             if (idType != null)
@@ -4833,6 +4837,26 @@ namespace TDFactory
 
                     if (hasLangs)
                     {
+                        yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_TranslationByCode]') IS NOT NULL");
+                        yaz.WriteLine("BEGIN");
+                        yaz.WriteLine("\tDROP PROC [dbo].[sp_TranslationByCode]");
+                        yaz.WriteLine("END");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("CREATE PROC [dbo].[sp_TranslationByCode]");
+                        yaz.WriteLine("\t@ShortName nvarchar(5)");
+                        yaz.WriteLine("AS");
+                        yaz.WriteLine("\tSET NOCOUNT ON");
+                        yaz.WriteLine("\tSET XACT_ABORT ON");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tBEGIN TRAN");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tSELECT TOP 1 [ID], [TransName], [ShortName], [Flag], [Active]");
+                        yaz.WriteLine("\tFROM   [dbo].[Translation]");
+                        yaz.WriteLine("\tWHERE  ([ShortName] = @ShortName OR @ShortName IS NULL) and [Deleted] = 0");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tCOMMIT");
+                        yaz.WriteLine("GO");
+                        yaz.WriteLine("");
                         yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_LangContentDetail]') IS NOT NULL");
                         yaz.WriteLine("BEGIN");
                         yaz.WriteLine("\tDROP PROC [dbo].[sp_LangContentDetail]");
@@ -5066,25 +5090,6 @@ namespace TDFactory
                         yaz.WriteLine("GO");
                         yaz.WriteLine("");
                     }
-
-                    yaz.WriteLine("IF OBJECT_ID('[dbo].[sp_TranslationByCode]') IS NOT NULL");
-                    yaz.WriteLine("BEGIN");
-                    yaz.WriteLine("\tDROP PROC [dbo].[sp_TranslationByCode]");
-                    yaz.WriteLine("END");
-                    yaz.WriteLine("GO");
-                    yaz.WriteLine("CREATE PROC [dbo].[sp_TranslationByCode]");
-                    yaz.WriteLine("\t@ShortName nvarchar(5)");
-                    yaz.WriteLine("AS");
-                    yaz.WriteLine("\tSET NOCOUNT ON");
-                    yaz.WriteLine("\tSET XACT_ABORT ON");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tBEGIN TRAN");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tSELECT TOP 1 [ID], [TransName], [ShortName], [Flag], [Active]");
-                    yaz.WriteLine("\tFROM   [dbo].[Translation]");
-                    yaz.WriteLine("\tWHERE  ([ShortName] = @ShortName OR @ShortName IS NULL) and [Deleted] = 0");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tCOMMIT");
 
                     yaz.Close();
                 }
@@ -5591,11 +5596,11 @@ namespace TDFactory
                     yaz.WriteLine("GO");
                     yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (1, 1, N'admin', N'21232f297a57a5a743894a0e4a801fc3', 1, NULL, 0)");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (1, 2, N'user', N'ee11cbb19052e40b07aac0ca060c23ee', 1, NULL, 0)");
+                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (2, 2, N'user', N'ee11cbb19052e40b07aac0ca060c23ee', 1, NULL, 0)");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (1, 3, N'newcomer', N'5aa6311ba467857c6115cc755fde29f2', 1, NULL, 0)");
+                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (3, 3, N'newcomer', N'5aa6311ba467857c6115cc755fde29f2', 1, NULL, 0)");
                     yaz.WriteLine("GO");
-                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (1, 4, N'blocked', N'61326117ed4a9ddf3f754e71e119e5b3', 1, NULL, 0)");
+                    yaz.WriteLine("INSERT [dbo].[Users] ([ID], [GroupID], [Username], [Password], [Active], [LoginTime], [Deleted]) VALUES (4, 4, N'blocked', N'61326117ed4a9ddf3f754e71e119e5b3', 1, NULL, 0)");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("SET IDENTITY_INSERT [dbo].[Users] OFF");
                     yaz.WriteLine("GO");
