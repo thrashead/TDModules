@@ -446,7 +446,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\tif (relation)");
                                 yaz.WriteLine("\t\t\t{");
@@ -505,7 +505,7 @@ namespace TDFactory
                                 }
                             }
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\t\t}");
                                 yaz.WriteLine("\t\t\t}");
@@ -529,7 +529,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\ttable = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + "SelectAll_Result>();");
                         yaz.WriteLine("");
 
-                        if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                        if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                         {
                             yaz.WriteLine("\t\t\tif (relation)");
                             yaz.WriteLine("\t\t\t{");
@@ -588,7 +588,7 @@ namespace TDFactory
                             }
                         }
 
-                        if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                        if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                         {
                             yaz.WriteLine("\t\t\t\t}");
                             yaz.WriteLine("\t\t\t}");
@@ -609,7 +609,7 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t" + Table + " table = tableTemp.ChangeModel<" + Table + ">();");
                         yaz.WriteLine("");
 
-                        if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                        if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                         {
                             yaz.WriteLine("\t\t\tif (relation)");
                             yaz.WriteLine("\t\t\t{");
@@ -666,7 +666,7 @@ namespace TDFactory
                             }
                         }
 
-                        if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                        if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                         {
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("");
@@ -685,7 +685,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t" + Table + " table = tableTemp.ChangeModel<" + Table + ">();");
                             yaz.WriteLine("");
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\tif (relation)");
                                 yaz.WriteLine("\t\t\t{");
@@ -742,7 +742,7 @@ namespace TDFactory
                                 }
                             }
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("");
@@ -762,7 +762,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\t" + Table + " table = tableTemp.ChangeModel<" + Table + ">();");
                             yaz.WriteLine("");
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\tif (relation)");
                                 yaz.WriteLine("\t\t\t{");
@@ -819,7 +819,7 @@ namespace TDFactory
                                 }
                             }
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\t}");
                                 yaz.WriteLine("");
@@ -839,7 +839,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tList<" + Table + "> table = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + "SelectBy" + item.ColumnName + "_Result>();");
                             yaz.WriteLine("");
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\tif (relation)");
                                 yaz.WriteLine("\t\t\t{");
@@ -898,7 +898,7 @@ namespace TDFactory
                                 }
                             }
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\t\t}");
                                 yaz.WriteLine("\t\t\t}");
@@ -919,7 +919,7 @@ namespace TDFactory
                             yaz.WriteLine("\t\t\tList<" + Table + "> table = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + "SelectBy" + item.ColumnName + "_Result>();");
                             yaz.WriteLine("");
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\tif (relation)");
                                 yaz.WriteLine("\t\t\t{");
@@ -978,7 +978,7 @@ namespace TDFactory
                                 }
                             }
 
-                            if (fkcListForeign.Count > 0 || fkcList.Count > 0)
+                            if (fkcListForeign.Count > 0 || fkcList.Count > 0 || (Table == "Category" && columnNames.Where(a => a.ColumnName == "ParentID").Count() > 0))
                             {
                                 yaz.WriteLine("\t\t\t\t}");
                                 yaz.WriteLine("\t\t\t}");
