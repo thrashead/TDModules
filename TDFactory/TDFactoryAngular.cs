@@ -876,7 +876,7 @@ namespace TDFactory
                 {
                     yaz.WriteLine("import { Component } from '@angular/core';");
 
-                    if (hasLangs)
+                    if (hasLangs || hasNoLangs)
                     {
                         yaz.WriteLine("import { SiteService } from '../../services/site';");
                         yaz.WriteLine("import { LangItem } from '../../models/LangItem';");
@@ -890,7 +890,7 @@ namespace TDFactory
                     yaz.WriteLine("");
                     yaz.WriteLine("export class IndexComponent {");
 
-                    if (hasLangs)
+                    if (hasLangs || hasNoLangs)
                     {
                         yaz.WriteLine("\terrorMsg: string;");
                         yaz.WriteLine("");
@@ -902,9 +902,10 @@ namespace TDFactory
                     yaz.WriteLine("\tngOnInit() {");
 
                     if (hasLangs)
-                    {
                         yaz.WriteLine("\t\tthis.SetLangContents();");
-                    }
+
+                    if (hasNoLangs)
+                        yaz.WriteLine("\t\tthis.SetNoLangContents();");
 
                     yaz.WriteLine("\t}");
 
@@ -913,7 +914,6 @@ namespace TDFactory
                         yaz.WriteLine("");
                         yaz.WriteLine("\t//LangContents");
                         yaz.WriteLine("\tlangItems: Array<LangItem>;");
-                        yaz.WriteLine("\tlangItem: LangItem;");
                         yaz.WriteLine("\tlangs: any;");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t//LangContent");
@@ -936,12 +936,60 @@ namespace TDFactory
                         yaz.WriteLine("\t\t\t});");
                         yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
                         yaz.WriteLine("\t}");
+                    }
+
+                    if (hasNoLangs)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t//NoLangContents");
+                        yaz.WriteLine("\tnoLangItems: Array<LangItem>;");
+                        yaz.WriteLine("\tnoLangs: any;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t//NoLangContent");
+                        yaz.WriteLine("\tSetNoLangContents() {");
+                        yaz.WriteLine("\t\tthis.PushNoLangItems();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tthis.service.post(\"Site\", \"SetNoLangContents\", this.noLangItems).subscribe((resData: any) => {");
+                        yaz.WriteLine("\t\t\tthis.noLangs = new Object();");
+                        yaz.WriteLine("\t\t\tthis.noLangs.code2 = new Object();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\t\tresData.forEach((item, i) => {");
+                        yaz.WriteLine("\t\t\t\tswitch (item.Code) {");
+                        yaz.WriteLine("\t\t\t\t\tcase \"code\": this.noLangs.code = item.ShortDescription; break;");
+                        yaz.WriteLine("\t\t\t\t\tcase \"code2\":");
+                        yaz.WriteLine("\t\t\t\t\t\tswitch (item.ShortCode) {");
+                        yaz.WriteLine("\t\t\t\t\t\t\tcase \"scode\": this.noLangs.code2.scode = item.Description; break;");
+                        yaz.WriteLine("\t\t\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t\t\t\tbreak;");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t});");
+                        yaz.WriteLine("\t\t}, resError => this.errorMsg = resError);");
+                        yaz.WriteLine("\t}");
+                    }
+
+                    if (hasLangs)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tlangItem: LangItem;");
                         yaz.WriteLine("");
                         yaz.WriteLine("\tPushLangItems() {");
                         yaz.WriteLine("\t\tthis.langItems = new Array<LangItem>();");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\tthis.langItems.push(Lib.SetLangItem(this.langItem, \"code\"));");
                         yaz.WriteLine("\t\tthis.langItems.push(Lib.SetLangItem(this.langItem, \"code2\", \"scode\"));");
+                        yaz.WriteLine("\t}");
+                    }
+
+                    if (hasNoLangs)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tnoLangItem: LangItem;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tPushNoLangItems() {");
+                        yaz.WriteLine("\t\tthis.noLangItems = new Array<LangItem>();");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tthis.noLangItems.push(Lib.SetLangItem(this.noLangItem, \"code\"));");
+                        yaz.WriteLine("\t\tthis.noLangItems.push(Lib.SetLangItem(this.noLangItem, \"code2\", \"scode\"));");
                         yaz.WriteLine("\t}");
                     }
 
@@ -957,7 +1005,7 @@ namespace TDFactory
                     yaz.WriteLine("import { Injectable } from '@angular/core';");
                     yaz.WriteLine("import { Router } from '@angular/router';");
 
-                    if (hasLangs)
+                    if (hasLangs || hasNoLangs)
                     {
                         yaz.WriteLine("import { LangItem } from '../models/LangItem';");
                     }
@@ -1019,7 +1067,7 @@ namespace TDFactory
                     yaz.WriteLine("\t\t}");
                     yaz.WriteLine("\t}");
 
-                    if (hasLangs)
+                    if (hasLangs || hasNoLangs)
                     {
                         yaz.WriteLine("");
                         yaz.WriteLine("\tstatic SetLangItem(langItem: LangItem, code: string = null, shortCode: string = null) {");
@@ -5099,11 +5147,15 @@ namespace TDFactory
                 {
                     yaz.WriteLine("using System.Web.Mvc;");
 
-                    if (hasLangs)
+                    if (hasLangs || hasNoLangs)
                     {
                         yaz.WriteLine("using System.Linq;");
                         yaz.WriteLine("using System.Collections.Generic;");
                         yaz.WriteLine("using Models;");
+                    }
+
+                    if (hasLangs)
+                    {
                         yaz.WriteLine("using " + repositoryName + ".TranslationModel;");
                         yaz.WriteLine("using " + repositoryName + ".LangContentModel;");
                     }
@@ -5129,10 +5181,13 @@ namespace TDFactory
                     yaz.WriteLine("\tpublic class SiteController : Controller");
                     yaz.WriteLine("\t{");
 
-                    if (hasLangs)
+                    if (hasLangs || hasNoLangs)
                     {
                         CreateAngularLangItemModel();
+                    }
 
+                    if (hasLangs)
+                    {
                         yaz.WriteLine("\t\t#region Translation");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t[HttpGet]");
@@ -5207,7 +5262,8 @@ namespace TDFactory
                         yaz.WriteLine("");
                     }
 
-                    if (hasNoLangs) { 
+                    if (hasNoLangs)
+                    {
                         yaz.WriteLine("\t\t#region NoLangContent");
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t[HttpPost]");
