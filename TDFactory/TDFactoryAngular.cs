@@ -5049,12 +5049,12 @@ namespace TDFactory
 
                     if (hasLangs)
                     {
-                        yaz.WriteLine("using Repository.TranslationModel;");
+                        yaz.WriteLine("using " + repositoryName + ".TranslationModel;");
                     }
 
                     if (hasVisitors)
                     {
-                        yaz.WriteLine("using Repository.VisitorsModel;");
+                        yaz.WriteLine("using " + repositoryName + ".VisitorsModel;");
                     }
 
                     yaz.WriteLine("");
