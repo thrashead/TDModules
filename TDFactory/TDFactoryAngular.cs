@@ -2598,6 +2598,13 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th class=\"hideColumn2\">Bağlanacak Tip</th>");
                             }
                         }
+                        else if (hasUserRights && Table == "UserGroupRights")
+                        {
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>ID</th>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>Bağlı Kullanıcı Grup Tablosu</th>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th>Bağlı Kullanıcı Grup İşlemi</th>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<th class=\"hideColumn\">İzin Var mı?</th>");
+                        }
                         else
                         {
                             i = 0;
@@ -2664,6 +2671,13 @@ namespace TDFactory
                                 yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.MainAdi }}</td>");
                                 yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td class=\"hideColumn2\">{{ item?.LinkedTypeAdi }}</td>");
                             }
+                        }
+                        else if (hasUserRights && Table == "UserGroupRights")
+                        {
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.ID }}</td>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.UserGroupsAdi + ' > ' + item?.UserGroupTablesAdi }}</td>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td>{{ item?.UserGroupProcessAdi }}</td>");
+                            yaz.WriteLine("\t\t\t\t\t\t\t\t\t<td class=\"hideColumn\" style=\"text-align:center;\"><img *ngIf=\"item?.Allow\" class=\"active\" /><img *ngIf=\"!item?.Allow\" class=\"passive\" /></td>");
                         }
                         else
                         {

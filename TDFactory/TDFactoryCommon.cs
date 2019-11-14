@@ -395,6 +395,11 @@ namespace TDFactory
                             }
                         }
 
+                        if (hasUserRights && Table == "UserGroupRights")
+                        {
+                            yaz.WriteLine("\t\tpublic string UserGroupsAdi { get; set; }");
+                        }
+
                         yaz.WriteLine("");
                         yaz.WriteLine("\t\t#endregion");
                         yaz.WriteLine("");
@@ -431,13 +436,28 @@ namespace TDFactory
                             yaz.WriteLine("\t\t{");
                             yaz.WriteLine("\t\t\tList<" + Table + "> table;");
                             yaz.WriteLine("");
-                            yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> tableTemp;");
+
+                            if (hasUserRights && Table == "UserGroupRights")
+                                yaz.WriteLine("\t\t\tList<usp_" + Table + "DetailSelect_Result> tableTemp;");
+                            else
+                                yaz.WriteLine("\t\t\tList<usp_" + Table + linked + "Select_Result> tableTemp;");
+
                             yaz.WriteLine("\t\t\tList<usp_" + Table + "SelectTop_Result> tableTopTemp;");
                             yaz.WriteLine("");
                             yaz.WriteLine("\t\t\tif (top == null)");
                             yaz.WriteLine("\t\t\t{");
-                            yaz.WriteLine("\t\t\t\ttableTemp = entity.usp_" + Table + linked + "Select(id).ToList();");
-                            yaz.WriteLine("\t\t\t\ttable = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + linked + "Select_Result>();");
+
+                            if (hasUserRights && Table == "UserGroupRights")
+                            {
+                                yaz.WriteLine("\t\t\t\ttableTemp = entity.usp_" + Table + "DetailSelect(id).ToList();");
+                                yaz.WriteLine("\t\t\t\ttable = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + "DetailSelect_Result>();");
+                            }
+                            else
+                            {
+                                yaz.WriteLine("\t\t\t\ttableTemp = entity.usp_" + Table + linked + "Select(id).ToList();");
+                                yaz.WriteLine("\t\t\t\ttable = tableTemp.ChangeModelList<" + Table + ", usp_" + Table + linked + "Select_Result>();");
+                            }
+
                             yaz.WriteLine("\t\t\t}");
                             yaz.WriteLine("\t\t\telse");
                             yaz.WriteLine("\t\t\t{");
@@ -468,8 +488,25 @@ namespace TDFactory
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                    string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                    yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                    if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                    {
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item2 in tableUserGroupTables)");
+                                        yaz.WriteLine("\t\t\t\t\t{");
+                                        yaz.WriteLine("\t\t\t\t\t\tif (item2.ID == item.UserGroupTableID)");
+                                        yaz.WriteLine("\t\t\t\t\t\t\titem.UserGroupTablesList.Add(new SelectListItem() { Value = item2.ID.ToString(), Text = item2.UserGroupsAdi + \" > \" + item2.TypesAdi, Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t\t\t\titem.UserGroupTablesList.Add(new SelectListItem() { Value = item2.ID.ToString(), Text = item2.UserGroupsAdi + \" > \" + item2.TypesAdi });");
+                                        yaz.WriteLine("\t\t\t\t\t}");
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + detailSelect + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                    }
 
                                     if (j < fkcListForeign.Count)
                                         yaz.WriteLine("");
@@ -552,8 +589,25 @@ namespace TDFactory
                                 string PrimaryTableName = fkc.PrimaryTableName;
                                 string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                {
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item2 in tableUserGroupTables)");
+                                    yaz.WriteLine("\t\t\t\t\t{");
+                                    yaz.WriteLine("\t\t\t\t\t\tif (item2.ID == item.UserGroupTableID)");
+                                    yaz.WriteLine("\t\t\t\t\t\t\titem.UserGroupTablesList.Add(new SelectListItem() { Value = item2.ID.ToString(), Text = item2.UserGroupsAdi + \" > \" + item2.TypesAdi, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\t\titem.UserGroupTablesList.Add(new SelectListItem() { Value = item2.ID.ToString(), Text = item2.UserGroupsAdi + \" > \" + item2.TypesAdi });");
+                                    yaz.WriteLine("\t\t\t\t\t}");
+                                }
+                                else
+                                {
+                                    yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                }
 
                                 if (j < fkcListForeign.Count)
                                     yaz.WriteLine("");
@@ -630,8 +684,24 @@ namespace TDFactory
                                 string PrimaryTableName = fkc.PrimaryTableName;
                                 string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                {
+                                    yaz.WriteLine("");
+                                    yaz.WriteLine("\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item in tableUserGroupTables)");
+                                    yaz.WriteLine("\t\t\t\t\tif (item.ID == table.UserGroupTableID)");
+                                    yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi, Selected = true });");
+                                    yaz.WriteLine("\t\t\t\t\telse");
+                                    yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi });");
+
+                                }
+                                else
+                                {
+                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                }
 
                                 if (j < fkcListForeign.Count)
                                     yaz.WriteLine("");
@@ -706,8 +776,24 @@ namespace TDFactory
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                    string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                    if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                    {
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item in tableUserGroupTables)");
+                                        yaz.WriteLine("\t\t\t\t\tif (item.ID == table.UserGroupTableID)");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi, Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi });");
+
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                    }
 
                                     if (j < fkcListForeign.Count)
                                         yaz.WriteLine("");
@@ -783,8 +869,24 @@ namespace TDFactory
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                    string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                    if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                    {
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item in tableUserGroupTables)");
+                                        yaz.WriteLine("\t\t\t\t\tif (item.ID == table.UserGroupTableID)");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi, Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi });");
+
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                    }
 
                                     if (j < fkcListForeign.Count)
                                         yaz.WriteLine("");
@@ -862,8 +964,24 @@ namespace TDFactory
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                    string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                    if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                    {
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item in tableUserGroupTables)");
+                                        yaz.WriteLine("\t\t\t\t\tif (item.ID == table.UserGroupTableID)");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi, Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi });");
+
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                    }
 
                                     if (j < fkcListForeign.Count)
                                         yaz.WriteLine("");
@@ -942,8 +1060,24 @@ namespace TDFactory
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                    yaz.WriteLine("\t\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                    string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                    if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                    {
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item in tableUserGroupTables)");
+                                        yaz.WriteLine("\t\t\t\t\tif (item.ID == table.UserGroupTableID)");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi, Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi });");
+
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\t\t\titem." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", item." + fkc.ForeignColumnName + ");");
+                                    }
 
                                     if (j < fkcListForeign.Count)
                                         yaz.WriteLine("");
@@ -1034,8 +1168,25 @@ namespace TDFactory
                                     string PrimaryTableName = fkc.PrimaryTableName;
                                     string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                    yaz.WriteLine("\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                    yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\",  \"" + columnText + "\", " + links[l] + ");");
+                                    string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                    yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                    if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                    {
+                                        yaz.WriteLine("");
+                                        yaz.WriteLine("\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item in tableUserGroupTables)");
+                                        yaz.WriteLine("\t\t\t\t\tif (item.ID == table.UserGroupTableID)");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi, Selected = true });");
+                                        yaz.WriteLine("\t\t\t\t\telse");
+                                        yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi });");
+
+                                    }
+                                    else
+                                    {
+                                        yaz.WriteLine("\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\",  \"" + columnText + "\", " + links[l] + ");");
+                                    }
+
                                     yaz.WriteLine("");
 
                                     l++;
@@ -1171,8 +1322,24 @@ namespace TDFactory
                                         string PrimaryTableName = fkc.PrimaryTableName;
                                         string columnText = GetColumnText(tableColumnInfos.Where(a => a.TableName == PrimaryTableName).ToList(), false);
 
-                                        yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + "Select(null).ToList();");
-                                        yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                        string detailSelect = hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables" ? "Detail" : "";
+
+                                        yaz.WriteLine("\t\t\t\tList<usp_" + PrimaryTableName + detailSelect + "Select_Result> table" + PrimaryTableName + " = entity.usp_" + PrimaryTableName + detailSelect + "Select(null).ToList();");
+
+                                        if (hasUserRights && Table == "UserGroupRights" && PrimaryTableName == "UserGroupTables")
+                                        {
+                                            yaz.WriteLine("");
+                                            yaz.WriteLine("\t\t\t\tforeach (usp_UserGroupTablesDetailSelect_Result item in tableUserGroupTables)");
+                                            yaz.WriteLine("\t\t\t\t\tif (item.ID == table.UserGroupTableID)");
+                                            yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi, Selected = true });");
+                                            yaz.WriteLine("\t\t\t\t\telse");
+                                            yaz.WriteLine("\t\t\t\t\t\ttable.UserGroupTablesList.Add(new SelectListItem() { Value = item.ID.ToString(), Text = item.UserGroupsAdi + \" > \" + item.TypesAdi });");
+
+                                        }
+                                        else
+                                        {
+                                            yaz.WriteLine("\t\t\t\ttable." + PrimaryTableName + "List = table" + PrimaryTableName + ".ToSelectList<usp_" + PrimaryTableName + "Select_Result, SelectListItem>(\"" + fkc.PrimaryColumnName + "\", \"" + columnText + "\", table." + fkc.ForeignColumnName + ");");
+                                        }
 
                                         l++;
 
@@ -1971,6 +2138,11 @@ namespace TDFactory
                                 yaz.WriteLine("\t\tstring MainFilesAdi { get; set; }");
                                 yaz.WriteLine("\t\tstring MainMetaAdi { get; set; }");
                             }
+                        }
+
+                        if (hasUserRights && Table == "UserGroupRights")
+                        {
+                            yaz.WriteLine("\t\tstring UserGroupsAdi { get; set; }");
                         }
 
                         yaz.WriteLine("");
@@ -4581,6 +4753,58 @@ namespace TDFactory
                     yaz.WriteLine("\tCOMMIT");
                     yaz.WriteLine("GO");
                     yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_UserGroupTablesDetailSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_UserGroupTablesDetailSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_UserGroupTablesDetailSelect]");
+                    yaz.WriteLine("\t@GroupID int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT UGT.[ID], UGT.[TypeID], UGT.[UserGroupID],");
+                    yaz.WriteLine("\t(Select T.[TypeName] FROM [Types] T where T.[ID] = UGT.[TypeID]) as 'TypesAdi',");
+                    yaz.WriteLine("\t(Select UG.[Name] FROM [UserGroups] UG where UG.[ID] = UGT.[UserGroupID]) as 'UserGroupsAdi'");
+                    yaz.WriteLine("\tFROM [dbo].[UserGroupTables] UGT join UserGroups UG");
+                    yaz.WriteLine("\ton UG.ID = UGT.UserGroupID");
+                    yaz.WriteLine("\tWHERE (UG.[ID] = @GroupID OR @GroupID IS NULL)");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("IF OBJECT_ID('[dbo].[usp_UserGroupRightsDetailSelect]') IS NOT NULL");
+                    yaz.WriteLine("BEGIN");
+                    yaz.WriteLine("\tDROP PROC [dbo].[usp_UserGroupRightsDetailSelect]");
+                    yaz.WriteLine("END");
+                    yaz.WriteLine("GO");
+                    yaz.WriteLine("CREATE PROC [dbo].[usp_UserGroupRightsDetailSelect]");
+                    yaz.WriteLine("\t@ID int");
+                    yaz.WriteLine("AS");
+                    yaz.WriteLine("\tSET NOCOUNT ON");
+                    yaz.WriteLine("\tSET XACT_ABORT ON");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tBEGIN TRAN");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tSELECT UGR.[ID], UGR.[UserGroupTableID], UGR.[UserGroupProcessID], UGR.[Allow], UG.Name as 'UserGroupsAdi',");
+                    yaz.WriteLine("\t(");
+                    yaz.WriteLine("\tSELECT T.[TypeName] from [dbo].[UserGroupTables] UGT");
+                    yaz.WriteLine("\tjoin [dbo].[Types] T on T.[ID] = UGT.[TypeID]");
+                    yaz.WriteLine("\twhere UGT.[ID] = UGR.[UserGroupTableID]");
+                    yaz.WriteLine("\t) as 'UserGroupTablesAdi',");
+                    yaz.WriteLine("\t(Select UGP.[Name] FROM [UserGroupProcess] UGP where UGP.[ID] = UGR.[UserGroupProcessID]) as 'UserGroupProcessAdi',");
+                    yaz.WriteLine("\t(Select UGP.[ShortName] FROM [UserGroupProcess] UGP where UGP.[ID] = UGR.[UserGroupProcessID]) as 'UserGroupProcessKisaAdi'");
+                    yaz.WriteLine("\tFROM [dbo].[UserGroupRights] UGR join UserGroupTables GT");
+                    yaz.WriteLine("\ton GT.ID = UGR.UserGroupTableID");
+                    yaz.WriteLine("\tjoin UserGroups UG");
+                    yaz.WriteLine("\ton UG.ID = GT.UserGroupID");
+                    yaz.WriteLine("\tWHERE (UG.[ID] = @ID OR @ID IS NULL)");
+                    yaz.WriteLine("");
+                    yaz.WriteLine("\tCOMMIT");
+                    yaz.WriteLine("GO");
 
                     if (hasLogs)
                     {
@@ -5608,7 +5832,7 @@ namespace TDFactory
                         yaz.WriteLine("GO");
                     }
 
-                    if(hasLogs)
+                    if (hasLogs)
                     {
                         yaz.WriteLine("SET IDENTITY_INSERT [dbo].[LogTypes] ON");
                         yaz.WriteLine("GO");
