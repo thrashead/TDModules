@@ -5339,13 +5339,15 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
+                    string tempRepositoryName = chkRepositoryInternal.Checked ? projectName : repositoryName;
+
                     if (hasUserRights)
                     {
                         yaz.WriteLine("using System;");
                         yaz.WriteLine("using System.Linq;");
                         yaz.WriteLine("using System.Web.Mvc;");
                         yaz.WriteLine("using System.Globalization;");
-                        yaz.WriteLine("using " + repositoryName + ".Data;");
+                        yaz.WriteLine("using " + tempRepositoryName + ".Data;");
                         yaz.WriteLine("using " + repositoryName + ".UsersModel;");
                         yaz.WriteLine("using TDLibrary;");
                         yaz.WriteLine("");
@@ -5531,6 +5533,8 @@ namespace TDFactory
             {
                 using (StreamWriter yaz = new StreamWriter(fs, Encoding.Unicode))
                 {
+                    string tempRepositoryName = chkRepositoryInternal.Checked ? projectName : repositoryName;
+
                     yaz.WriteLine("using System;");
                     yaz.WriteLine("using System.Collections.Generic;");
                     yaz.WriteLine("using System.Linq;");
@@ -5539,7 +5543,7 @@ namespace TDFactory
                     yaz.WriteLine("using System.Web.Configuration;");
                     yaz.WriteLine("using System.Web.Caching;");
                     yaz.WriteLine("using Cacher = System.Web.HttpRuntime;");
-                    yaz.WriteLine("using " + repositoryName + ".Data;");
+                    yaz.WriteLine("using " + tempRepositoryName + ".Data;");
 
                     if (hasUserRights)
                     {
