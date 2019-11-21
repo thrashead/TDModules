@@ -844,7 +844,6 @@ namespace TDFactory
                     yaz.WriteLine("\tngOnInit() {");
                     yaz.WriteLine("\t{");
                     yaz.WriteLine("\t\tthis.LoadScripts();");
-                    yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tthis.router.events.subscribe((event: RouterEvent) => {");
                     yaz.WriteLine("\t\t\tif (event instanceof ActivationEnd) {");
@@ -1569,10 +1568,10 @@ namespace TDFactory
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tstatic CKValue(id: string) {");
-                    yaz.WriteLine("\tif ($(\".ck-content[data-id='\" + id + \"']\").html() == null)");
-                    yaz.WriteLine("\t\treturn \"\";");
-                    yaz.WriteLine("\telse");
-                    yaz.WriteLine("\t\treturn $(\".ck-content[data-id='\" + id + \"']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
+                    yaz.WriteLine("\t\tif ($(\".ck-content[data-id='\" + id + \"']\").html() == null)");
+                    yaz.WriteLine("\t\t\treturn \"\";");
+                    yaz.WriteLine("\t\telse");
+                    yaz.WriteLine("\t\t\treturn $(\".ck-content[data-id='\" + id + \"']\").html().replace(\"<p>\", \"\").replace(\"</p>\", \"\");");
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tstatic ConvertToCKEditor(id: string, time: number = 1000) {");
@@ -1585,31 +1584,36 @@ namespace TDFactory
                     yaz.WriteLine("\t\t\t\t});");
                     yaz.WriteLine("\t\t}, time);");
                     yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tstatic UserRight(userRights: any, model: string, shortname: string = \"s\"): boolean {");
-                    yaz.WriteLine("\t\tlet returnItem: boolean = false;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tuserRights.forEach((item, i) => {");
-                    yaz.WriteLine("\t\t\tif (item.Url == model) {");
-                    yaz.WriteLine("\t\t\t\tif (item.ShortName == shortname) {");
-                    yaz.WriteLine("\t\t\t\t\treturnItem = true;");
-                    yaz.WriteLine("\t\t\t\t}");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t});");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\treturn returnItem;");
-                    yaz.WriteLine("\t}");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\tstatic ShowType(showTypes: any, model: string): boolean {");
-                    yaz.WriteLine("\t\tlet returnItem: boolean = false;");
-                    yaz.WriteLine("");
-                    yaz.WriteLine("\t\tshowTypes.forEach((item, i) => {");
-                    yaz.WriteLine("\t\t\tif (item.Url == model) {");
-                    yaz.WriteLine("\t\t\t\treturnItem = true;");
-                    yaz.WriteLine("\t\t\t}");
-                    yaz.WriteLine("\t\t});");
-                    yaz.WriteLine("\t\treturn returnItem;");
-                    yaz.WriteLine("\t}");
+
+                    if (hasUserRights)
+                    {
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tstatic UserRight(userRights: any, model: string, shortname: string = \"s\"): boolean {");
+                        yaz.WriteLine("\t\tlet returnItem: boolean = false;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tuserRights.forEach((item, i) => {");
+                        yaz.WriteLine("\t\t\tif (item.Url == model) {");
+                        yaz.WriteLine("\t\t\t\tif (item.ShortName == shortname) {");
+                        yaz.WriteLine("\t\t\t\t\treturnItem = true;");
+                        yaz.WriteLine("\t\t\t\t}");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\treturn returnItem;");
+                        yaz.WriteLine("\t}");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\tstatic ShowType(showTypes: any, model: string): boolean {");
+                        yaz.WriteLine("\t\tlet returnItem: boolean = false;");
+                        yaz.WriteLine("");
+                        yaz.WriteLine("\t\tshowTypes.forEach((item, i) => {");
+                        yaz.WriteLine("\t\t\tif (item.Url == model) {");
+                        yaz.WriteLine("\t\t\t\treturnItem = true;");
+                        yaz.WriteLine("\t\t\t}");
+                        yaz.WriteLine("\t\t});");
+                        yaz.WriteLine("\t\treturn returnItem;");
+                        yaz.WriteLine("\t}");
+                    }
+
                     yaz.WriteLine("");
                     yaz.WriteLine("\tstatic LinkActivation() {");
                     yaz.WriteLine("\t\tsetTimeout(function () {");
@@ -2045,7 +2049,7 @@ namespace TDFactory
                     yaz.WriteLine("import { Component, ViewEncapsulation } from '@angular/core';");
                     yaz.WriteLine("import { Router } from '@angular/router';");
                     yaz.WriteLine("import { FormBuilder, FormGroup, FormControl, Validators } from '@angular/forms';");
-                    yaz.WriteLine("import { SharedService } from '../../services/shared.js';");
+                    yaz.WriteLine("import { SharedService } from '../../services/shared';");
                     yaz.WriteLine("");
                     yaz.WriteLine("@Component({");
                     yaz.WriteLine("\ttemplateUrl: './login.html',");
@@ -3530,6 +3534,7 @@ namespace TDFactory
                             yaz.WriteLine("");
                             yaz.WriteLine("\tdata: any;");
                             yaz.WriteLine("\tmodel: any;");
+
                             yaz.WriteLine("");
 
                             if (table.FILEColumns.Count > 0 || table.IMAGEColumns.Count > 0)
@@ -4495,7 +4500,9 @@ namespace TDFactory
                         yaz.WriteLine("\t{");
 
                         yaz.WriteLine("\t\treadonly " + Table + " model = new " + Table + "();");
-                        yaz.WriteLine("\t\treadonly Users curUser = AppTools.User;");
+
+                        if (hasUserRights)
+                            yaz.WriteLine("\t\treadonly Users curUser = AppTools.User;");
 
                         yaz.WriteLine("");
 
