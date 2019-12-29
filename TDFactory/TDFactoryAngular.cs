@@ -842,7 +842,6 @@ namespace TDFactory
                     yaz.WriteLine("\t}");
                     yaz.WriteLine("");
                     yaz.WriteLine("\tngOnInit() {");
-                    yaz.WriteLine("\t{");
                     yaz.WriteLine("\t\tthis.LoadScripts();");
                     yaz.WriteLine("");
                     yaz.WriteLine("\t\tthis.router.events.subscribe((event: RouterEvent) => {");
